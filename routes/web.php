@@ -12,9 +12,13 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('login');
 });
 
 Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::group(['prefix' => 'admin'], function () {
+    Route::group(['middleware' => ['auth']], function(){
+        Route::get('/home', 'HomeController@index')->name('home');
+        Route::resource('google_cloud_vision', 'googleVisionCloudController');
+    });
+});
