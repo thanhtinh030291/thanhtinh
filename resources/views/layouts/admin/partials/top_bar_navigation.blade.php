@@ -2,7 +2,7 @@
 <div class="headerbar">
     <!-- LOGO -->
     <div class="headerbar-left">
-        <a href="{{ url('dashboard') }}" class="logo"><img style="width:200px" alt="Logo" src="{{asset('images/logo.png')}}" /> <span></span></a>
+        <a href="{{ url('') }}" class="logo"><img style="width:50px" alt="Logo" src="{{asset('images/logo.png')}}" /> <span style="color: #0C4588">PACIFIC CROSS</span></a>
     </div>
 
     <nav class="navbar-custom">

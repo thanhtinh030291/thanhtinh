@@ -3,7 +3,7 @@
         <div class="breadcrumb-holder">
             <h1 class="main-title float-left">{{ $title }}</h1>
             <ol class="breadcrumb float-right">
-                <li class="breadcrumb-item"><a href="{{ url('dashboard') }}">{{ __('message.dashboard') }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ url('admin/home') }}">{{ __('message.home') }}</a></li>
                 @if (!empty($parent_url))
                     <li class="breadcrumb-item"><a href="{{ $parent_url }}">{{ $parent_name }}</a></li>
                 @endif

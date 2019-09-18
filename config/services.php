@@ -44,4 +44,12 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id' => env('client_id'),
+        'client_secret' => env('client_secret'),
+        'redirect' => env('redirect'),
+        'map_google' => env('map_google'),
+        'google_cloud_key' =>  env('GOOGLE_CLOUD_KEY')
+    ],
+
 ];

@@ -12,13 +12,9 @@
                         <i class="fa fa-fw fa-ticket"></i> <span> {{__('message.scanner_OCR')}} </span>
                     </a>
                     <ul class="list-unstyled">
-                        <li class="{{ setActive('admin/google_cloud_vision') }}">
-                            <a class="{{ setActive('admin/google_cloud_vision') }}"
-                            href="{{ url('admin/google_cloud_vision') }}"><span> {{ __('message.google_cloud_vision_API')}}</span></a>
-                        </li>
-                        <li class="{{ setActive('admin/google_cloud_vision') }}">
-                            <a class="{{ setActive('admin/google_cloud_vision') }}"
-                            href="{{ url('admin/google_cloud_vision') }}"><span> {{ __('message.abbyy')}}</span></a>
+                        <li class="{{ setActive('admin/form_claim') }}">
+                            <a class="{{ setActive('admin/form_claim') }}"
+                            href="{{ url('admin/form_claim') }}"><span> {{ __('message.google_cloud_vision_API')}}</span></a>
                         </li>
                     </ul>
                 </li>

@@ -19,6 +19,7 @@ Auth::routes();
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => ['auth']], function(){
         Route::get('/home', 'HomeController@index')->name('home');
-        Route::resource('google_cloud_vision', 'googleVisionCloudController');
+        Route::resource('form_claim', 'formClaimController');
+        Route::post('/annotate', 'formClaimController@annotateImage');
     });
 });
