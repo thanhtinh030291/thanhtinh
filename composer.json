@@ -13,7 +13,7 @@
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "~5.0",
-        "wapnen/google-cloud-vision-php": "dev-master"
+        "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

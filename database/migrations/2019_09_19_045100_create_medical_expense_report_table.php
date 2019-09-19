@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateClaimTable extends Migration
+class CreateMedicalExpenseReportTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateClaimTable extends Migration
      */
     public function up()
     {
-        Schema::create('claims', function (Blueprint $table) {
+        Schema::create('medical_expense_report', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->nullable();
-            $table->longText('data')->nullable();
-            $table->string('url')->nullable();
+            $table->string('content');
+            $table->integer('unit_price');
+            $table->integer('quantity');
+            $table->integer('amount');
+            $table->integer('is_deleted')->default('0');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -30,6 +31,6 @@ class CreateClaimTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('claim');
+        Schema::dropIfExists('medical_expense_report');
     }
 }
