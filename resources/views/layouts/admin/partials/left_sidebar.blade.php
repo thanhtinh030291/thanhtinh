@@ -9,12 +9,12 @@
                 </li>
                 <li class="submenu">
                     <a href="#">
-                        <i class="fa fa-fw fa-ticket"></i> <span> {{__('message.scanner_OCR')}} </span>
+                        <i class="fa fa-fw fa-ticket"></i> <span> {{__('message.claim_management')}} </span>
                     </a>
                     <ul class="list-unstyled">
-                        <li class="{{ setActive('admin/form_claim') }}">
+                        <li class="{{ setActive('admin/form_claim') }}"> 
                             <a class="{{ setActive('admin/form_claim') }}"
-                            href="{{ url('admin/form_claim') }}"><span> {{ __('message.google_cloud_vision_API')}}</span></a>
+                            href="{{ url('admin/form_claim') }}"><span> {{ __('message.form_claim_orc')}}</span></a>
                         </li>
                     </ul>
                 </li>

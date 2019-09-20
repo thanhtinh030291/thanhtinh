@@ -18,9 +18,9 @@ return [
     'total' => 'Total',
     'reset' => 'Reset',
     'save' => 'Save',
-    'scanner_OCR' => 'Scanner OCR',
-    'google_cloud_vision_API' => 'Google Cloud Vision',
-    'abbyy' => 'ABBYY',
+    'form_claim_orc' => 'form claim ORC',
+    
+    
 
     //Claim
     'add_claim' => 'claim was successfully created',
@@ -32,7 +32,7 @@ return [
     'delete_claim_warning' => 'claim delete confirmation!',
     'claim_image' => 'claim Image',
     'claim_name' => 'claim Name',
-    'claim_management' => 'claim Management',
+    'claim_management' => 'Claim Management',
     'enter_claim_name' => 'Enter claim name',
     'enter_claim_email' => 'Enter claim email',
     'enter_claim_password' => 'Enter claim password',

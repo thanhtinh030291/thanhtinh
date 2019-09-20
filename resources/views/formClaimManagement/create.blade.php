@@ -16,22 +16,59 @@
         <div class="card">
             <div class="card-body">
                 {{ Form::open(array('files' => true,'url' => 'admin/annotate', 'method' => 'post' ,'class'=>'form-horizontal')) }}
-                <!-- Create tour -->
-                <!-- Add file image -->
+                <!-- Add file file -->
                 <div class="row">
-                    <div class="col-md-6">
-                        <input id="upload" type="file" class="form-control{{ $errors->has('image') ? ' is-invalid' : '' }}" name="image" value="{{ old('image') }}" required autofocus>
-                            @if ($errors->has('image'))
-                                <span class="invalid-feedback">
-                                    <strong>{{ $errors->first('image') }}</strong>
-                                </span>
-                            @endif
+                    <div class="col-md-8">
+                        <input id="fileUpload" type="file" class="form-control" name="file" value="{{ old('file') }}" required autofocus>
                     </div>
-                    <div class="col-md-6">
-                        <div id="dvExcel">
-                        </div>
+                    <div class="col-md-4">
+                        <input type="button" id="upload" value="Upload" class="btn btn-primary"/>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12" id="dvExcel">
+                        <table id="file_tbl" class="display table dataTable table_add_new">
+                            </thead>
+                                <tr>
+                                    <th>content</th>
+                                    <th>unit</th>
+                                    <th>quantity</th>
+                                    <th>unit price</th>
+                                    <th>unit price of insurance</th>
+                                    <th>service payout rate</th>
+                                    <th>total amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="empty_season_price" style="display: none;">
+                                </tr>
+                                
+                                <tr id="clone_season_price" style="display: none;">
+                                    <td>{{ Form::text('_content', null, ['class' => 'form-control']) }}</td>
+                                    <td style="width : 10%">{{ Form::text('_unit', null, ['class' => 'form-control']) }}</td>
+                                    <td style="width : 10%">{{ Form::text('_quantity', null, ['class' => 'form-control']) }}</td>
+                                    <td style="width : 10%">{{ Form::text('_unitPrice', null, ['class' => 'form-control']) }}</td>
+                                    <td style="width : 10%">{{ Form::text('_unitPriceOfInsurance', null, ['class' => 'form-control']) }}</td>
+                                    <td style="width : 10%">{{ Form::text('_servicePayoutRate', null, ['class' => 'form-control']) }}</td>
+                                    <td style="width : 15%">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                {{ Form::text('_totalAmount', null, ['class' => 'form-control']) }}
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button type="button" class="delete_row_btn p-0">&#x2613;</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Template table -->
+
+                
+                <br/>
                 <div class="d-flex justify-content-center">
                     <a class="btn btn-secondary btnt" href="{{url('admin/form_claim')}}">
                         {{ __('message.back')}}
@@ -98,51 +135,88 @@
 
             //Read all rows from First Sheet into an JSON array.
             var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
+            //console.log(excelRows);
 
             //Create a HTML Table element.
             var table = $("<table />");
-            table[0].border = "1";
+           
+            table[0].className = "table";
 
             //Add the header row.
             var row = $(table[0].insertRow(-1));
 
             //Add the header cells.
-            var headerCell = $("<th />");
-            headerCell.html("Id");
-            row.append(headerCell);
-
-            var headerCell = $("<th />");
-            headerCell.html("Name");
-            row.append(headerCell);
-
-            var headerCell = $("<th />");
-            headerCell.html("Country");
-            row.append(headerCell);
-
+            var nameHead = [ "content", "unit", "quantity", "unit price", "unit price of insurance", "service payout rate", "total amount" ];
+            jQuery.each( nameHead, function( i, val ) {
+                var headerCell = $("<th />");
+                headerCell.html(val);
+                row.append(headerCell);
+            });
+           
             //Add the data rows from Excel file.
             for (var i = 0; i < excelRows.length; i++) {
                 //Add the data row.
-                var row = $(table[0].insertRow(-1));
+                var clone =  '<tr id="row-'+i+'">';
+                clone +=  $("#clone_season_price").clone().html() + '</tr>';
+                clone = clone.replace("_content", "_content["+i+"]");
+                clone = clone.replace("_unit", "_unit["+i+"]");
+                clone = clone.replace("_quantity", "_quantity["+i+"]");
+                clone = clone.replace("_unitPrice", "_unitPrice["+i+"]");
+                clone = clone.replace("_unitPriceOfInsurance", "_unitPriceOfInsurance["+i+"]");
+                clone = clone.replace("_servicePayoutRate", "_servicePayoutRate["+i+"]");
+                clone = clone.replace("_totalAmount", "_totalAmount["+i+"]");
+                $("#empty_season_price").before(clone);
+
+                //Add the data row.
+                //var row = $(table[0].insertRow(-1));
 
                 //Add the data cells.
-                var cell = $("<td />");
-                cell.html(excelRows[i].Id);
-                row.append(cell);
-
-                cell = $("<td />");
-                cell.html(excelRows[i].Name);
-                row.append(cell);
-
-                cell = $("<td />");
-                cell.html(excelRows[i].Country);
-                row.append(cell);
+                jQuery.each( excelRows[i], function( key, val ) {
+                    console.log(val);
+                    switch(key) {
+                        case 'content':
+                            $('input[name="_content['+i+']"]').val(val);
+                            break;
+                        case 'unit':
+                            $('input[name="_unit['+i+']"]').val(val);
+                            break;
+                        case 'quantity':
+                            $('input[name="_quantity['+i+']"]').val(val);
+                            break;
+                        case "unit price":
+                            $('input[name="_unitPrice['+i+']"]').val(val);
+                            break;
+                        case "unit price of insurance":
+                            $('input[name="_unitPriceOfInsurance['+i+']"]').val(val);
+                            break;
+                        case "service payout rate":
+                            $('input[name="_servicePayoutRate['+i+']"]').val(val);
+                            break;
+                        case "total amount":
+                            $('input[name="_totalAmount['+i+']"]').val(val);
+                            break;
+                        default:
+                            break;
+                            // code block
+                    }
+                    // $('input[name="_startDate['+count+']"]').val(startDate);
+                    // var cell = $("<td />");
+                    // var html = ""
+                    // cell.html(excelRows[i][val]);
+                    // row.append(cell);
+                });
             }
-
-            var dvExcel = $("#dvExcel");
-            dvExcel.html("");
-            dvExcel.append(table);
+            // var dvExcel = $("#dvExcel");
+            // dvExcel.html("");
+            // dvExcel.append(table);
         };
     </script>
+    <script>
+        $(document).on("click", ".delete_row_btn", function(){
+             $(this).closest('tr').remove();
+        });
+    </script>
+
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {

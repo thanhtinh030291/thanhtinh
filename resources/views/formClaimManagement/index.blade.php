@@ -6,8 +6,8 @@
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
-    'title'       => __('message.google_cloud_vision_API'),
-    'page_name'   => __('message.google_cloud_vision_API'),
+    'title'       => __('message.form_claim_orc'),
+    'page_name'   => __('message.form_claim_orc'),
 ])
 <div class="row">
     <div class="col-md-12">
@@ -26,9 +26,7 @@
                 <label  class="font-weight-bold" for="search"> {{ __('message.search')}}</label>
             </div>
             <div class="card-body">
-                <div class="row" style="padding: 0 10px 10px 0">    
-                    <img id="duck" src="duck.jpg" alt="Why did the duck cross the road?" title="Why did the duck cross the road?">
-                </div>
+                
                 {{ Form::submit( __('message.search'), ['class' => 'btn btn-info']) }}
                 <button type="button" id="clearForm" class="btn btn-default"> {{ __('message.reset')}}</button>    
             </div>
