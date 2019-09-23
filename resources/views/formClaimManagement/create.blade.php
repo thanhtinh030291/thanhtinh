@@ -19,10 +19,15 @@
                 <!-- Add file file -->
                 <div class="row">
                     <div class="col-md-8">
-                        <input id="fileUpload" type="file" class="form-control" name="file" value="{{ old('file') }}" required autofocus>
+                        <input id="fileUpload" type="file" class="form-control" name="file" value="{{ old('file') }}"  autofocus>
                     </div>
                     <div class="col-md-4">
                         <input type="button" id="upload" value="Upload" class="btn btn-primary"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" id="previewFile">
+
                     </div>
                 </div>
                 <div class="row">
@@ -87,6 +92,39 @@
 @section('scripts')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/xlsx.full.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/jszip.js"></script>
+    <script src="{{asset('js/tiff.min.js')}}"></script>
+    <script type="text/javascript">
+        $(function () {
+            Tiff.initialize({TOTAL_MEMORY: 16777216 * 10});
+            function show(file) {
+                $('#previewFile').empty();
+                var reader = new FileReader();
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                    var buffer = e.target.result;
+                    var tiff = new Tiff({buffer: buffer});
+                    for (var i = 0, len = tiff.countDirectory(); i < len; ++i) {
+                        tiff.setDirectory(i);
+                        var width = tiff.width();
+                        var height = tiff.height();
+                        var canvas = tiff.toCanvas();
+                        $('#previewFile').append(canvas);
+                    }
+                    // var canvas = tiff.toCanvas();
+                    
+                    // if (canvas) {
+                    //     $('#previewFile').empty().append(canvas);
+                    // }
+                };
+                })(file);
+                reader.readAsArrayBuffer(file);
+            }
+        $('#fileUpload').on('change', function (event) {
+            show(event.target.files[0]);
+        });
+    });
+    </script>
+
     
     <script type="text/javascript">
         $("body").on("click", "#upload", function () {

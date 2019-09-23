@@ -31,7 +31,6 @@
                 <button type="button" id="clearForm" class="btn btn-default"> {{ __('message.reset')}}</button>    
             </div>
         </div>
-       
         {{ Form::close() }}
     </div>
 </div>
