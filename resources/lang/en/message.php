@@ -41,4 +41,6 @@ return [
     'claim_create' => 'Claim Create',
     'claim_view' => 'Claim View',
     'claim_edit' => 'Claim Edit',
+    'page_select' => 'Page Select',
+    'id_claim' => 'ID Claim',
 ];

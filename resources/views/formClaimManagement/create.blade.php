@@ -2,7 +2,9 @@
 @extends('layouts.admin.master')
 @section('title', __('message.claim_create'))
 @section('stylesheets')
-   
+   <style>
+       thead, tbody { display: block; }
+   </style>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -21,13 +23,19 @@
                     <div class="col-md-8">
                         <input id="fileUpload" type="file" class="form-control" name="file" value="{{ old('file') }}"  autofocus>
                     </div>
-                    <div class="col-md-4">
-                        <input type="button" id="upload" value="Upload" class="btn btn-primary"/>
-                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12" id="previewFile">
-
+                
+                <div class="row mt-2 ml-2" >
+                    <div class="col-md-6 border border-secondary" style="max-height : 400px">
+                        <p class="text-danger"> Please select page to scan OCR </p>
+                        <table id="filePreview"  class="table">
+                            <tbody style=" height: 300px; overflow-y: auto; overflow-x: hidden; display: block;">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        {{ Form::label('id_claim', __('message.id_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
+                        {{ Form::text('id_claim', old('id_claim'), [ 'class' => 'form-control item-price', 'required', 'readonly']) }}
                     </div>
                 </div>
                 <div class="row">
@@ -94,6 +102,13 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/jszip.js"></script>
     <script src="{{asset('js/tiff.min.js')}}"></script>
     <script type="text/javascript">
+        function tinh() {
+            $('input[type=radio]').change(function(){
+                alert ( $(this).val() );
+            
+            })
+        };
+
         $(function () {
             Tiff.initialize({TOTAL_MEMORY: 16777216 * 10});
             function show(file) {
@@ -101,24 +116,30 @@
                 var reader = new FileReader();
                 reader.onload = (function (theFile) {
                     return function (e) {
-                    var buffer = e.target.result;
-                    var tiff = new Tiff({buffer: buffer});
-                    for (var i = 0, len = tiff.countDirectory(); i < len; ++i) {
-                        tiff.setDirectory(i);
-                        var width = tiff.width();
-                        var height = tiff.height();
-                        var canvas = tiff.toCanvas();
-                        $('#previewFile').append(canvas);
+                        var buffer = e.target.result;
+                        var tiff = new Tiff({buffer: buffer});
+                        
+                        for (var i = 0, len = tiff.countDirectory(); i < len; ++i) {
+                        
+                            tiff.setDirectory(i);
+                            var canvas = tiff.toCanvas();
+                            $("#filePreview").find('tbody')
+                            .append($('<tr>')
+                                .append($('<td>')
+                                    .attr('style', 'width:  60%')
+                                    .append(canvas)
+                                )
+                                .append($('<td>')
+                                    .append($('<input type="radio" name="page" value="'+i+'">'))
+                                    .append("<p>Page " +i+ "</p>")
+                                )
+                            );
+                        }
                     }
-                    // var canvas = tiff.toCanvas();
-                    
-                    // if (canvas) {
-                    //     $('#previewFile').empty().append(canvas);
-                    // }
-                };
                 })(file);
-                reader.readAsArrayBuffer(file);
-            }
+            reader.readAsArrayBuffer(file);
+            
+        }
         $('#fileUpload').on('change', function (event) {
             show(event.target.files[0]);
         });

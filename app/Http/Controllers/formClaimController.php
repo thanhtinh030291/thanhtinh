@@ -8,6 +8,7 @@ use GoogleCloudVision\Request\AnnotateImageRequest;
 use Exception;
 use Config;
 use \CURLFile;
+use Storage;
 
 class formClaimController extends Controller
 {
@@ -95,18 +96,23 @@ class formClaimController extends Controller
     public function annotateImage(Request $request)
     {
         $file = $request->file;
+        $page = $request->page;
         $filename = $file->getClientOriginalName();
         $dirUpload = Config::get('constants.formClaimUpload');
         $dirStorage = Config::get('constants.formClaimStorage');
+        $dirUploadSelect =  Config::get('constants.formClaimSelect');
         $file->storeAs($dirUpload, $filename);
         $ext = strtolower(substr($filename, strrpos($filename, '.') + 1));
-        $images = new \Imagick(public_path($dirStorage).$filename);
+        $path_dir = Storage::disk('public')->path("formClaim/");
+        $images = new \Imagick($path_dir.$filename);
+        $newFileName = $page . explode('.', $filename)[0] . '.png'; 
         foreach ($images as $i => $image) {
-            $image->setImageFormat("png");
-            $upload_path = public_path('storage/');
-            $image->writeImage($upload_path . $i . $filename);
+            if ($i == $page) {
+                $image->setImageFormat("png");
+                $upload_path = Storage::disk('public')->path("formClaimSelect/");
+                $image->writeImage($upload_path . $newFileName);
+            }
         }
-        dd($images);
 
         // 1. Send image to Cloud OCR SDK using processImage call
         // 2.	Get response as xml
@@ -128,7 +134,7 @@ class formClaimController extends Controller
         // Get path to file that we are going to recognize
         //$local_directory=dirname(__FILE__).'/images/';
         //$filePath = $local_directory.'/'.$fileName;
-        $filePath = public_path('storage/test_p001.tiff');
+        $filePath = Storage::disk('public')->path("formClaimSelect/$newFileName");
         
         if(!file_exists($filePath))
         {
