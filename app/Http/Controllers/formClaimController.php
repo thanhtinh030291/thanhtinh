@@ -9,7 +9,7 @@ use Exception;
 use Config;
 use \CURLFile;
 use Storage;
-
+use File;
 class formClaimController extends Controller
 {
     /**
@@ -110,6 +110,10 @@ class formClaimController extends Controller
             if ($i == $page) {
                 $image->setImageFormat("png");
                 $upload_path = Storage::disk('public')->path("formClaimSelect/");
+                if(!File::exists($upload_path)) {
+                    // path does not exist
+                    File::makeDirectory($upload_path, 0777, true, true);
+                }
                 $image->writeImage($upload_path . $newFileName);
             }
         }
@@ -267,10 +271,11 @@ class formClaimController extends Controller
         curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, false);
         $response = curl_exec($curlHandle);
         curl_close($curlHandle);
-        
+        Storage::put('file.xlsx', $response);
+        dd($response);
         // Let user donwload rtf result
-        header('Content-type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment; filename="file.xlsx"');
-        echo $response;
+        // header('Content-type: application/vnd.ms-excel');
+        // header('Content-Disposition: attachment; filename="file.xlsx"');
+        // echo $response;
     }
 }
