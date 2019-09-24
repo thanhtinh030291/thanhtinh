@@ -56,16 +56,6 @@ function generateLogMsg(Exception $exception) {
     return $message . ' at '. $file . ':' . $line;
 }
 
-function formatDate($string, $format = 'Y/m/d') {
-    return date($format, strtotime($string));
-}
-
-// Return code 
-function getCode($prefix = null , $id = null){
-    (int)$range_code = config('constants.rangeCode');
-    return $prefix . str_pad($id, $range_code, "0", STR_PAD_LEFT);
-}
-
 /**
  * Format price display
  *
@@ -87,304 +77,165 @@ function formatPrice($number, $symbol = '', $insert_before = false)
     return $insert_before == true ? $symbol.implode(".", $parts) : implode(".", $parts).$symbol;
 }
 
-/**
- * Remove format price become string
- *
- * @param string $string [string for remove format price]
- *
- * @return string
- */
-function removeFormatPrice($string) 
-{
-    if (empty($string)) {
-        return $string;
-    }
-    $pattern = '/[^0-9|.]+/';
-    $string  = preg_replace($pattern, "", $string);
-    return $string;
-}
+// SDK ABBYY CLOUD
+function scanORC($filePath, $fileNameStore){
+     // 1. Send image to Cloud OCR SDK using processImage call
+        // 2.	Get response as xml
+        // 3.	Read taskId from xml
 
-/**
- * Remove format number of all element inside array
- *
- * @param array $price_list [array need remove format number price]
- * 
- * @return array
- */
-function removeFormatPriceList(array $price_list)
-{
-    if (empty($price_list)) {
-        return [];
-    }
+        // To create an application and obtain a password,
+        // register at https://cloud.ocrsdk.com/Account/Register
+        // More info on getting your application id and password at
+        // https://ocrsdk.com/documentation/faq/#faq3
+        // Name of application you created
+        $applicationId = 'pacific-cross';
+        // Password should be sent to your e-mail after application was created
+        $password = 'WHNcLgqhdjvtp4s9D3vmZDhf';
+        $fileName = 'myfile.jpg';
+        // URL of the processing service. Change to http://cloud-westus.ocrsdk.com
+        // if you created your application in US location
+        $serviceUrl = 'http://cloud-eu.ocrsdk.com';
 
-    $result = [];
-    foreach ($price_list as $key => $value) {
-        if (is_array($value)) {
-            $result[$key] = removeFormatPriceList($value);
+        // Get path to file that we are going to recognize
+        //$local_directory=dirname(__FILE__).'/images/';
+        //$filePath = $local_directory.'/'.$fileName;
+        //$filePath = Storage::disk('public')->path("formClaimSelect/$newFileName");
+        
+        if(!file_exists($filePath))
+        {
+            die('File '.$filePath.' not found.');
+        }
+        if(!is_readable($filePath) )
+        {
+            die('Access to file '.$filePath.' denied.');
+        }
+        
+        // Recognizing with English language to rtf
+        // You can use combination of languages like ?language=english,russian or
+        // ?language=english,french,dutch
+        // For details, see API reference for processImage method
+        $url = $serviceUrl.'/processImage?language=english,vietnamese&exportFormat=xlsx';
+        
+        // Send HTTP POST request and ret xml response
+        $curlHandle = curl_init();
+        curl_setopt($curlHandle, CURLOPT_URL, $url);
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curlHandle, CURLOPT_USERPWD, "$applicationId:$password");
+        curl_setopt($curlHandle, CURLOPT_POST, 1);
+        curl_setopt($curlHandle, CURLOPT_USERAGENT, "PHP Cloud OCR SDK Sample");
+        curl_setopt($curlHandle, CURLOPT_FAILONERROR, true);
+        $post_array = array();
+        if((version_compare(PHP_VERSION, '5.5') >= 0)) {
+            $post_array["my_file"] = new \CURLFile($filePath, 'image/png', 'testpic');
         } else {
-            $result[$key] = removeFormatPrice($value);
+            $post_array["my_file"] = "@".$filePath;
         }
-    }
-    return $result;
-}
+        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $post_array); 
+        $response = curl_exec($curlHandle);
+        if($response == FALSE) {
+            $errorText = curl_error($curlHandle);
+            curl_close($curlHandle);
+            die($errorText);
+        }
+        $httpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        curl_close($curlHandle);
 
-/**
- * Get config of element with key is code value is name display
- * 
- * @param string $key    [string link to element]
- * @param string $locale [locale value]
- * 
- * @return array [array empty if not have]
- */
-function configCode2Name($key = '', $locale = '')
-{
-    $setting = config($key);
-    $code = data_get($setting, 'code', []);
-    $name = _getNameByLocale(data_get($setting, 'name', []), $locale);
-
-    if (empty($code) || empty($name) || count($code) != count($name)) {
-        return [];
-    }
-
-    $keys   = array_values($code);
-    $values = array_values($name);
-    $result = array_combine($keys, $values);
-
-    return $result;
-}
-
-
-function _getNameByLocale($names, $locale = '')
-{
-    if (!empty($locale)) {
-        $names = data_get($names, $locale, []);
-    } else {
-        $locale_default = localeNow();
-        $names = data_get($names, $locale_default, $names);
-    }
-    return $names;
-}
-
-/**
- * Get key of $code in link
- * Require: have "code" element on link config
- *
- * @param string $link [Link go to config]
- * @param mixed  $code [code need to find key corresponding|string|int]
- *
- * @return string [key of element config]
- */
-function getKeyOfCode($link, $code)
-{
-    $code_list = config($link.'.code');
-    if (empty($code_list) || !is_array($code_list)) {
-        return null;
-    }
-    return array_search($code, $code_list);
-}
-
-/**
- * Use code for find key => use key for find name display
- * Config from $link must have at least 2 element is 'code' & 'name'
- * NOTE: 
- *    user must identify that config link have locale or not
- *    Unless will be try to get name from default locale
- * Require: have "code" & "name" element on link config
- *
- * @param string $link   [Link go to config]
- * @param mixed  $code   [code need to find name corresponding type:string|int]
- * @param string $locale [string locale ex: ja, en, vi, ...]
- *
- * @return string [name display of code in link]
- */
-function getNameByCode($link, $code, $locale = '')
-{
-    $setting = config($link);
-    $code_list = data_get($setting, 'code');
-    if (empty($code_list) || !is_array($code_list)) {
-        return null;
-    }
-    $key = array_search($code, $code_list);
-    $name_list = _getNameByLocale(data_get($setting, 'name', []), $locale);
-
-    return data_get($name_list, $key);
-}
-
-/**
- * Use code for find key => use key for find name display
- * NOTE: 
- *    user must identify that config link have locale or not
- *    Unless will be try to get name from default locale
- * Require: have "code" & "name" element on link config
- *
- * @param string $link   [Link go to config]
- * @param array  $codes  [code need to find name corresponding type:string|int]
- * @param string $locale [string locale ex: ja, en, vi, ...]
- *
- * @return array [name display of code in link]
- */
-function getNamesByCodes($link, $codes, $locale = '')
-{
-    if (!is_array($codes) || empty($codes)) {
-        return [];
-    }
-
-    $setting   = config($link);
-    $code_list = data_get($setting, 'code');
-    if (empty($code_list) || !is_array($code_list)) {
-        return null;
-    }
-
-    //code => key
-    $keys = [];
-    foreach ($codes as $code) {
-        $keys[] = array_search($code, $code_list);
-    }
-
-    //search name display by key above
-    $name_list = _getNameByLocale(data_get($setting, 'name', []), $locale);
-    $names = [];
-    foreach ($keys as $no => $key) {
-        $names[] = data_get($name_list, $key);
-    }
-
-    //combine for array code => name display
-    $result = array_combine($codes, $names);
-
-    return $result;
-}
-
-/**
- * Generate day list can have of month
- * 
- * @param string $char_after_day_no [character end of day number]
- * 
- * @return array
- */
-function genDayList($char_after_day_no = '') 
-{
-    $result = [];
-    $day_of_month = 31;
-    for ($i=1; $i<=$day_of_month; $i++) {
-        $result[$i] = $i . $char_after_day_no;
-    }
-    return $result;
-}
-
-/**
- * Generate month list can have of year
- * 
- * @param string $char_after_month [character end of day number]
- * 
- * @return array
- */
-function genMonthList($char_after_month = '')
-{
-    $result = [];
-    $month_of_year = 12;
-    for ($i=1; $i<=$month_of_year; $i++) {
-        $result[$i] = $i . $char_after_month;
-    }
-    return $result;
-}
-
-/**
- * Generate year list
- * 
- * @param numeric $from            [year begin of list]
- * @param numeric $to              [year end of list]
- * @param string  $char_after_year [string after year display]
- * 
- * @return array
- */
-function genYearList($from = null, $to = null, $char_after_year = '')
-{
-    if (is_null($from)) {
-        $from = config('constants.default_year_begin');
-    }
-    if (is_null($to)) {
-        $to = date("Y") + config('constants.disp_year_after_now');
-    }
-    if (!is_numeric($from) || !is_numeric($to)) {
-        return [];
-    }
-    
-    $result = [];
-    for ($i = $from; $i <= $to; $i++) {
-        $result[$i] = $i . $char_after_year;
-    }
-    return $result;
-}
-
-/**
- * Get locale of app is running
- *
- * @return string [locale ja, en, ...]
- */
-function localeNow()
-{
-    return app()->getLocale();
-}
-
-
-/**
- * Get id user is login present
- *
- * @return string
- */
-function getLoginId()
-{
-    return data_get(auth()->user(), 'id');
-}
-
-/**
- * General perpage
- *
- * @return int
- */
-function generalPerPage()
-{
-    return config('constants.paginator.itemPerPage');
-}
-
-function checkPurchaseByStripe($amount,$stripeToken)
-    {
-        try {
-            $charge = \Stripe\Charge::create([
-                'currency' => 'JPY',
-                'amount' => $amount,
-                'source' => $stripeToken,
-                'description' => 'charge',
-            ]);
-            if ($charge->status == 'succeeded') {
-                return ['status' => 'success', 'data' => $charge];
-            }else{
-                return ['status' => 'error', 'message' => __('web.charge_error')]; 
+        // Parse xml response
+        $xml = simplexml_load_string($response);
+        if($httpCode != 200) {
+            if(property_exists($xml, "message")) {
+            die($xml->message);
             }
-
-        }catch(Stripe\Error\Card $e) {
-            $body = $e->getJsonBody();
-            $err  = $body['error'];
-            return ['status' => 'error', 'message' => $err['message']];
-        }catch (\Stripe\Error\InvalidRequest $e) {
-            $body = $e->getJsonBody();
-            $err  = $body['error'];
-            return ['status' => 'error', 'message' => $err['message']];
-        } catch (\Stripe\Error\Authentication $e) {
-            $body = $e->getJsonBody();
-            $err  = $body['error'];
-            return ['status' => 'error', 'message' => $err['message']];
-        } catch (\Stripe\Error\ApiConnection $e) {
-            $body = $e->getJsonBody();
-            $err  = $body['error'];
-            return ['status' => 'error', 'message' => $err['message']];
-        } catch (\Stripe\Error\Base $e) {
-            $body = $e->getJsonBody();
-            $err  = $body['error'];
-            return ['status' => 'error', 'message' => $err['message']];
-        } catch (Exception $e) {
-            $body = $e->getJsonBody();
-            $err  = $body['error'];
-            return ['status' => 'error', 'message' => $err['message']];
+            die("unexpected response ".$response);
         }
-    }
+
+        $arr = $xml->task[0]->attributes();
+        $taskStatus = $arr["status"];
+        if($taskStatus != "Queued") {
+            die("Unexpected task status ".$taskStatus);
+        }
+        
+        // Task id
+        $taskid = $arr["id"];  
+        
+        // 4. Get task information in a loop until task processing finishes
+        // 5. If response contains "Completed" staus - extract url with result
+        // 6. Download recognition result (text) and display it
+
+        $url = $serviceUrl.'/getTaskStatus';
+        // Note: a logical error in more complex surrounding code can cause
+        // a situation where the code below tries to prepare for getTaskStatus request
+        // while not having a valid task id. Such request would fail anyway.
+        // It's highly recommended that you have an explicit task id validity check
+        // right before preparing a getTaskStatus request.
+        if(empty($taskid) || (strpos($taskid, "00000000-0") !== false)) {
+            die("Invalid task id used when preparing getTaskStatus request");
+        }
+        $qry_str = "?taskid=$taskid";
+
+        // Check task status in a loop until it is finished
+
+        // Note: it's recommended that your application waits
+        // at least 2 seconds before making the first getTaskStatus request
+        // and also between such requests for the same task.
+        // Making requests more often will not improve your application performance.
+        // Note: if your application queues several files and waits for them
+        // it's recommended that you use listFinishedTasks instead (which is described
+        // at https://ocrsdk.com/documentation/apireference/listFinishedTasks/).
+        while(true)
+        {
+            sleep(5);
+            $curlHandle = curl_init();
+            curl_setopt($curlHandle, CURLOPT_URL, $url.$qry_str);
+            curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curlHandle, CURLOPT_USERPWD, "$applicationId:$password");
+            curl_setopt($curlHandle, CURLOPT_USERAGENT, "PHP Cloud OCR SDK Sample");
+            curl_setopt($curlHandle, CURLOPT_FAILONERROR, true);
+            $response = curl_exec($curlHandle);
+            $httpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+            curl_close($curlHandle);
+        
+            // parse xml
+            $xml = simplexml_load_string($response);
+            if($httpCode != 200) {
+            if(property_exists($xml, "message")) {
+                die($xml->message);
+            }
+            die("Unexpected response ".$response);
+            }
+            $arr = $xml->task[0]->attributes();
+            $taskStatus = $arr["status"];
+            if($taskStatus == "Queued" || $taskStatus == "InProgress") {
+            // continue waiting
+            continue;
+            }
+            if($taskStatus == "Completed") {
+            // exit this loop and proceed to handling the result
+            break;
+            }
+            if($taskStatus == "ProcessingFailed") {
+            die("Task processing failed: ".$arr["error"]);
+            }
+            die("Unexpected task status ".$taskStatus);
+        }
+
+        // Result is ready. Download it
+
+        $url = $arr["resultUrl"];   
+        $curlHandle = curl_init();
+        curl_setopt($curlHandle, CURLOPT_URL, $url);
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+        // Warning! This is for easier out-of-the box usage of the sample only.
+        // The URL to the result has https:// prefix, so SSL is required to
+        // download from it. For whatever reason PHP runtime fails to perform
+        // a request unless SSL certificate verification is off.
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, false);
+        $response = curl_exec($curlHandle);
+        curl_close($curlHandle);
+        $dir_save = 'public/formClaimExport/';
+        Storage::put($dir_save . $fileNameStore, $response);
+        // Let user donwload rtf result
+        // header('Content-type: application/vnd.ms-excel');
+        // header('Content-Disposition: attachment; filename="file.xlsx"');
+        // echo $response;
+}

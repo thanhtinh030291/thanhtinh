@@ -17,7 +17,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                {{ Form::open(array('files' => true,'url' => 'admin/annotate', 'method' => 'post' ,'class'=>'form-horizontal')) }}
+                {{ Form::open(array('files' => true,'url' => 'admin/form_claim', 'method' => 'post' ,'class'=>'form-horizontal')) }}
                 <!-- Add file file -->
                 <div class="row">
                     <div class="col-md-8">
@@ -35,7 +35,7 @@
                     </div>
                     <div class="col-md-6">
                         {{ Form::label('id_claim', __('message.id_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                        {{ Form::text('id_claim', old('id_claim'), [ 'class' => 'form-control item-price', 'required', 'readonly']) }}
+                        {{ Form::text('id_claim', old('id_claim'), [ 'class' => 'form-control', 'required']) }}
                     </div>
                 </div>
                 <div class="row">
@@ -130,7 +130,7 @@
                                     .append(canvas)
                                 )
                                 .append($('<td>')
-                                    .append($('<input type="radio" name="page" value="'+i+'">'))
+                                    .append($('<input type="checkbox" name="_page['+i+']" value="'+i+'">'))
                                     .append("<p>Page " +i+ "</p>")
                                 )
                             );

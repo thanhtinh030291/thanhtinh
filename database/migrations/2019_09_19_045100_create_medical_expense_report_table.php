@@ -15,11 +15,16 @@ class CreateMedicalExpenseReportTable extends Migration
     {
         Schema::create('medical_expense_report', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('content');
-            $table->integer('unit_price');
-            $table->integer('quantity');
-            $table->integer('amount');
-            $table->integer('is_deleted')->default('0');
+            $table->string('id_claim')->nullable();
+            $table->string('url_file')->nullable();
+            $table->string('url_file_split')->nullable();
+            $table->string('url_file_export')->nullable();
+            $table->string('content')->nullable();
+            $table->integer('unit_price')->nullable();
+            $table->integer('quantity')->nullable();
+            $table->integer('amount')->nullable();
+            $table->integer('created_user')->nullable();
+            $table->integer('updated_user')->nullable();
             $table->timestamps();
         });
     }
