@@ -56,18 +56,25 @@ class formClaimController extends Controller
 
         $path_dir = storage_path('app/public/formClaim/');
         $images = new \Imagick($path_dir.$imageName);
-         
+        // Temporary file
         foreach ($images as $i => $image) {
             if(in_array($i, $page)) {
                 $newFileName = $i ."-". $originalName . '.png';
                 $image->setImageFormat("png");
-                
                 if(!File::exists($dirUploadSelect)) {
                     File::makeDirectory($dirUploadSelect, 0777, true, true);
                 }
                 $image->writeImage($dirUploadSelect . $newFileName);
             }
         }
+        // Merger File
+        $imagenew = new \Imagick();
+        $imagenew->setImageFormat("tif");
+        foreach ($page as $key => $value) {
+            $fileUpload = $dirUploadSelect . $value ."-". $originalName . '.png';
+            $imagenew->addImage(new \Imagick($fileUpload));
+        }
+        $imagenew-> 
         foreach ($page as $key => $value) {
             $fileUpload = $dirUploadSelect . $value ."-". $originalName . '.png';
             $fileNameExport = $value ."-". $originalName . '.xlsx';
@@ -85,6 +92,7 @@ class formClaimController extends Controller
             DB::beginTransaction();
             if(Tours::create($dataNew)){
                 $file->storeAs($dirUpload, $imageName);
+                
             };
             DB::commit();
             $request->session()->flash('status', __('message.add_tour'));
