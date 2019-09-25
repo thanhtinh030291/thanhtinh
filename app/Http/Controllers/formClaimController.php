@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use GoogleCloudVision\GoogleCloudVision;
-use GoogleCloudVision\Request\AnnotateImageRequest;
 use Exception;
 use Config;
 use Storage;
@@ -12,6 +10,7 @@ use File;
 use App\medicalExpenseReport;
 use DB;
 use Auth;
+use App\Http\Requests\formClaimRequest;
 class formClaimController extends Controller
 {
     /**
@@ -19,9 +18,15 @@ class formClaimController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('formClaimManagement.index');
+        $itemPerPage = Config::get('constants.paginator.itemPerPage');
+        $id_claim =  $request->id_claim;
+        $finder = [
+            'id_claim' => $request->id_claim,
+        ];
+        $datas = medicalExpenseReport::where('id_claim', 'like', '%' . $finder['id_claim'] . '%')->paginate($itemPerPage);
+        return view('formClaimManagement.index', compact('finder', 'datas'));
     }
 
     /**
@@ -40,7 +45,7 @@ class formClaimController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(formClaimRequest $request)
     {
         $file = $request->file;
         $page = $request->_page;
@@ -56,46 +61,57 @@ class formClaimController extends Controller
 
         $path_dir = storage_path('app/public/formClaim/');
         $images = new \Imagick($path_dir.$imageName);
+        
         // Temporary file
+        $arrFileTemporary = [];
         foreach ($images as $i => $image) {
             if(in_array($i, $page)) {
-                $newFileName = $i ."-". $originalName . '.png';
-                $image->setImageFormat("png");
+                $newFileName = $i ."-". $originalName . '.tif';
+                $arrFileTemporary[] = $newFileName;
+                $image->setImageFormat("tif");
                 if(!File::exists($dirUploadSelect)) {
                     File::makeDirectory($dirUploadSelect, 0777, true, true);
                 }
                 $image->writeImage($dirUploadSelect . $newFileName);
             }
         }
+        
         // Merger File
         $imagenew = new \Imagick();
-        $imagenew->setImageFormat("tif");
-        foreach ($page as $key => $value) {
-            $fileUpload = $dirUploadSelect . $value ."-". $originalName . '.png';
-            $imagenew->addImage(new \Imagick($fileUpload));
+        
+        foreach ($arrFileTemporary as $key => $value) {
+        $imagenew->addImage(new \Imagick($dirUploadSelect . $value));
         }
-        $imagenew-> 
-        foreach ($page as $key => $value) {
-            $fileUpload = $dirUploadSelect . $value ."-". $originalName . '.png';
-            $fileNameExport = $value ."-". $originalName . '.xlsx';
-            $dataNew['url_file_split'][] = $fileNameExport;
-            scanORC($fileUpload  , $fileNameExport);
+        $mergeFileName = "Merge-". $originalName . '.tif';
+        $imagenew->resetIterator();
+        $combined = $imagenew->appendImages(true);
+        $combined->setImageFormat("tif");
+        $combined->writeImage($dirUploadSelect . $mergeFileName);
+
+        // detele Temporary file
+        $publicUploadSelect = Config::get('constants.formClaimSelect');
+        foreach ($arrFileTemporary as $key => $value) {
+            Storage::delete($publicUploadSelect . $value);
         }
 
+        $fileUpload = $dirUploadSelect . $mergeFileName;
+        $fileNameExport =  $originalName . '.xlsx';
+        
         $dataNew += [
             'created_user' =>  $userId,
             'updated_user' =>  $userId,
             'url_file'  =>  $imageName,
+            'url_file_split' => $mergeFileName,
+            'url_file_export' => $fileNameExport,
         ];
-       
         try {
             DB::beginTransaction();
-            if(Tours::create($dataNew)){
+            if(medicalExpenseReport::create($dataNew)){
                 $file->storeAs($dirUpload, $imageName);
-                
+                scanORC($fileUpload  , $fileNameExport);
             };
             DB::commit();
-            $request->session()->flash('status', __('message.add_tour'));
+            $request->session()->flash('status', __('message.add_claim'));
             return redirect('/admin/form_claim');
         } catch (Exception $e) {
             Log::error(generateLogMsg($e));
@@ -147,8 +163,17 @@ class formClaimController extends Controller
      */
     public function destroy($id)
     {
-        //
-    }
+        $data = medicalExpenseReport::findOrFail($id);
+        $dirUpload = Config::get('constants.formClaimUpload');
+        Storage::delete($dirUpload . $data->url_file);
 
-   
+        $dirUploadSelect = Config::get('constants.formClaimSelect');
+        Storage::delete($dirUploadSelect . $data->url_file_split);
+
+        $dirUploadExport = Config::get('constants.formClaimExport');
+        Storage::delete($dirUploadExport . $data->url_file_export);
+        $data->delete();
+
+        return redirect('/admin/form_claim')->with('status', __('message.delete_claim'));
+    }
 }

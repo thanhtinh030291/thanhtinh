@@ -2,9 +2,10 @@
 @extends('layouts.admin.master')
 @section('title', __('message.claim_create'))
 @section('stylesheets')
-   <style>
-       thead, tbody { display: block; }
-   </style>
+    <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
+    <style>
+        thead, tbody { display: block; }
+    </style>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -21,7 +22,7 @@
                 <!-- Add file file -->
                 <div class="row">
                     <div class="col-md-8">
-                        <input id="fileUpload" type="file" class="form-control" name="file" value="{{ old('file') }}"  autofocus>
+                        <input id="fileUpload" type="file" class="file" name="file" value="{{ old('file') }}"  autofocus>
                     </div>
                 </div>
                 
@@ -100,14 +101,13 @@
 @section('scripts')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/xlsx.full.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.13.5/jszip.js"></script>
+    <script src="{{asset('js/fileinput.js')}}"></script>
     <script src="{{asset('js/tiff.min.js')}}"></script>
     <script type="text/javascript">
-        function tinh() {
-            $('input[type=radio]').change(function(){
-                alert ( $(this).val() );
-            
-            })
-        };
+        $('#fileUpload').fileinput({
+            required: true,
+            allowedFileExtensions: ["tif", "tiff", "TIFF", 'TIF']
+        });
 
         $(function () {
             Tiff.initialize({TOTAL_MEMORY: 16777216 * 10});
@@ -272,7 +272,7 @@
     </script>
     <script>
         $(document).on("click", ".delete_row_btn", function(){
-             $(this).closest('tr').remove();
+            $(this).closest('tr').remove();
         });
     </script>
 

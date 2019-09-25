@@ -18,18 +18,24 @@ return [
     'total' => 'Total',
     'reset' => 'Reset',
     'save' => 'Save',
+    'control' => 'Control',
+    'edit' => 'Edit',
+    'view' => 'View',
+    'total' => 'Total',
+    'showing' => 'Showing',
+    'to' => 'to',
+    'of_total' => 'of total',
     'form_claim_orc' => 'form claim ORC',
-    
-    
+    'update_fail' => 'The system have an error and please try again',
 
     //Claim
     'add_claim' => 'claim was successfully created',
     'delete_claim' => 'claim was successfully deleted',
     'update_claim' => 'claim was successfully updated',
     'create_claim' => 'Create claim',
-    'claim_list' => 'claim List',
+    'claim_list' => 'Claim List',
     'delete_claim_confirm' => 'Do you want to delete this claim ?',
-    'delete_claim_warning' => 'claim delete confirmation!',
+    'delete_claim_warning' => 'Delete confirmation!',
     'claim_image' => 'claim Image',
     'claim_name' => 'claim Name',
     'claim_management' => 'Claim Management',
