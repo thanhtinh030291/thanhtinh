@@ -82,7 +82,7 @@
 
 
 @include('layouts.admin.partials.delete_model', [
-    'title'           => __('message.delete_claim_warning'),
+    'title'           => __('message.delete_claim_confirm'),
     'confirm_message' => __('message.delete_claim_confirm'),
 ])
 @endsection
