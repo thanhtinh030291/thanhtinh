@@ -129,7 +129,14 @@ class formClaimController extends Controller
      */
     public function show($id)
     {
-        //
+        
+        $data = medicalExpenseReport::findOrFail($id);
+        $dirStorage = Config::get('constants.formClaimStorage');
+        $dataImage =  $dirStorage . $data->url_file ;
+
+        $dirExportStorage = Config::get('constants.formClaimExportStorage');
+        $dataExport = $dirExportStorage . $data->url_file_export ;
+        return view('formClaimManagement.show', compact(['data', 'dataImage', 'dataExport']));
     }
 
     /**
