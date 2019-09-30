@@ -94,7 +94,7 @@
             required: true,
             allowedFileExtensions: ['xlsx', "xls", 'csv']
         }).on("filebatchselected", function(event, files) {
-            excelToHtml(file);
+            excelToHtml(files);
         });
 
         function arrayToTable(tableData) {
@@ -116,9 +116,52 @@
     
     <script type="text/javascript">
         function excelToHtml(file) {
-            console.log(Papa.parse(file).data);
+            data = file[0];
+            $('#fileUpload').parse({
+				config: {
+                    delimiter: "",	// auto-detect
+                    newline: "",	// auto-detect
+                    quoteChar: '"',
+                    escapeChar: '"',
+                    header: false,
+                    transformHeader: undefined,
+                    dynamicTyping: false,
+                    preview: 0,
+                    encoding: "",
+                    worker: false,
+                    comments: false,
+                    step: undefined,
+                    complete: completeFn,
+                    error: undefined,
+                    download: false,
+                    downloadRequestHeaders: undefined,
+                    skipEmptyLines: false,
+                    chunk: undefined,
+                    fastMode: undefined,
+                    beforeFirstChunk: undefined,
+                    withCredentials: undefined,
+                    transform: undefined,
+                    delimitersToGuess: [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP]
+                },
+				before: function(file, inputElem)
+				{
+					
+					console.log("Parsing file...", file);
+				},
+				error: function(err, file)
+				{
+					
+				},
+				complete: function()
+				{
+                    
+				}
+			});
         };
-
+        function completeFn(results)
+        {
+            console.log("    Results:", results);
+        }
     </script>
 
     <script>
