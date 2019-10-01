@@ -24,9 +24,8 @@ class formClaimRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'id_claim'      => 'required|unique:medical_expense_report',
-            'file'          => 'mimes:tif,tiff,TIF,TIFF| required |max:1999',
-            '_page'         => 'required',
+           // 'id_claim'      => 'required|unique:medical_expense_report',
+            'file'          => ' required |max:1999',
         ];
         return $rules;
     }

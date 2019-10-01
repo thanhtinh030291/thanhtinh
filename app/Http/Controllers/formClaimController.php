@@ -47,6 +47,7 @@ class formClaimController extends Controller
      */
     public function store(formClaimRequest $request)
     {
+        dd($request);
         $file = $request->file;
         $page = $request->_page;
         $dataNew = $request->except(['file']);
