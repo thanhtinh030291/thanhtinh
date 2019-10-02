@@ -10,6 +10,7 @@ use File;
 use App\Claim;
 use DB;
 use Auth;
+use App\ListReasonInject;
 use App\Http\Requests\formClaimRequest;
 class formClaimController extends Controller
 {
@@ -36,7 +37,8 @@ class formClaimController extends Controller
      */
     public function create()
     {
-        return view('formClaimManagement.create');
+        $listReasonInject = ListReasonInject::pluck('name', 'id');
+        return view('formClaimManagement.create', compact('listReasonInject'));
     }
 
     /**

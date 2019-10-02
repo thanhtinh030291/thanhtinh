@@ -57,6 +57,7 @@ return [
     'id_claim' => 'ID Claim',
     'date_created' => 'Created At',
     'date_updated' => 'Updated At',
+    'please_select' => '----------------------------------Please Select----------------------------------',
 
     // list_reason_inject
     'list_reason_inject' => 'List Reason Inject',

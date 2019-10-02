@@ -54,7 +54,9 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
-            <textarea class="form-control" id="commentModal" rows="3"></textarea>
+                
+            {{ Form::select('_selectReason', $listReasonInject, old('_selectReason'), [ 'class' => 'select2 ', 'required', 'placeholder' => __('message.please_select')]) }}
+            
         </div>
         <div class="modal-footer">
                 <button class="btn btn-danger">{{ __('message.yes')}} </button>
