@@ -3,79 +3,7 @@
 @section('title', __('message.claim_create'))
 @section('stylesheets')
     <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
-    <style>
-        thead, tbody { display: block; }
-        html {
-    font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
-    font-size: 14px;
-}
-
-.table {
-    border: none;
-}
-
-.table-definition thead th:first-child {
-    pointer-events: none;
-    background: white;
-    border: none;
-}
-
-.table td {
-    vertical-align: middle;
-}
-
-.page-item > * {
-    border: none;
-}
-
-.custom-checkbox {
-    min-height: 1rem;
-    padding-left: 0;
-    margin-right: 0;
-    cursor: pointer; 
-}
-.custom-checkbox .custom-control-indicator {
-    content: "";
-    display: inline-block;
-    position: relative;
-    width: 30px;
-    height: 10px;
-    background-color: #818181;
-    border-radius: 15px;
-    margin-right: 10px;
-    -webkit-transition: background .3s ease;
-    transition: background .3s ease;
-    vertical-align: middle;
-    margin: 0 16px;
-    box-shadow: none; 
-}
-    .custom-checkbox .custom-control-indicator:after {
-        content: "";
-        position: absolute;
-        display: inline-block;
-        width: 18px;
-        height: 18px;
-        background-color: #f1f1f1;
-        border-radius: 21px;
-        box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4);
-        left: -2px;
-        top: -4px;
-        -webkit-transition: left .3s ease, background .3s ease, box-shadow .1s ease;
-        transition: left .3s ease, background .3s ease, box-shadow .1s ease; 
-    }
-.custom-checkbox .custom-control-input:checked ~ .custom-control-indicator {
-    background-color: #84c7c1;
-    background-image: none;
-    box-shadow: none !important; 
-}
-.custom-checkbox .custom-control-input:checked ~ .custom-control-indicator:after {
-    background-color: #84c7c1;
-    left: 15px; 
-}
-.custom-checkbox .custom-control-input:focus ~ .custom-control-indicator {
-    box-shadow: none !important; 
-}
-    </style>
+    <link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -110,7 +38,6 @@
                 </div>
                 <!-- End file image -->
                 {{ Form::close() }}
-
                 
                 
             </div>
@@ -119,21 +46,23 @@
 </div>
 <!-- Modal -->
 <div id="confirmModal" class="modal fade" role="dialog">
-<div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Modal Header</h4>
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Reason For Inject</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <textarea class="form-control" id="commentModal" rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+                <button class="btn btn-danger">{{ __('message.yes')}} </button>
+                <button type="button" class="btn btn-secondary btn-cancel-delete" 
+                    data-dismiss="modal">{{ __('message.no') }}</button>
+        </div>
+        </div>
     </div>
-    <div class="modal-body">
-        <p>Some text in the modal.</p>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    </div>
-    </div>
-</div>
 </div>
 @endsection
 
@@ -159,12 +88,12 @@
                         .append($('<button type="button" class=" col-md-3 delete_row_btn btn p-0 btn-danger" data-toggle="tooltip" title="Delete this row in the table!" >&#x2613;</button>'))
                         .append($('<div class="col-md-6 p-0"></div>')
                             .append($('<label class="custom-control custom-checkbox"></label>')
-                                    .append($('<input type="checkbox" class="custom-control-input" checked name = "checkbox[]" value = "1">'))
+                                    .append($('<input type="checkbox" class="custom-control-input reject" data-id = "'+i+'" onchange="clickInject(this)" checked name = "checkbox[]" value = "1">'))
                                     .append($('<span class="custom-control-indicator"></span>'))
                             )
                         )
-                        .append($('<button type="button" class=" col-md-3 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="Delete this row in the table!" style = "display: block" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
-                        
+                        .append($('<button id="btnConfirm'+i+'" data-id = "'+i+'" type="button" class=" col-md-3 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="Reason for rejection!" style = "display: none" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
+                        .append($('<input type="text" class="custom-control-input" id="comment'+i+'"  name = "comment[]" style = "display: none" >'))
                     );
                     
                 }
@@ -183,9 +112,7 @@
 
         
     </script>
-    
 
-    
     <script type="text/javascript">
         function excelToHtml(file) {
             data = file[0];
@@ -221,7 +148,6 @@
 				},
 				error: function(err, file)
 				{
-					
 				},
 				complete: function()
 				{
@@ -231,7 +157,6 @@
         };
         function completeFn(results)
         {
-            console.log("    Results:", results);
             $('#dvExcel').append(arrayToTable(results.data));
         }
     </script>
@@ -242,12 +167,21 @@
         });
     </script>
     <script>
+        function clickInject(e){
+            var row = e.dataset.id;
+            if(!e.checked) {
+                $("#btnConfirm"+row).show();
+            }else{
+                $("#btnConfirm"+row).hide();
+            }
+        }
+
+        $('#confirmModal').on('shown.bs.modal', function (e) {
+            console.log('tinh');
+        })
+
         $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();   
-            $('.btnConfirm').on('click', function () {
-                $(this).tooltip('hide');
-                $("#confirmModal").modal();
-            });
+            $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
 

@@ -7,7 +7,7 @@ use Exception;
 use Config;
 use Storage;
 use File;
-use App\medicalExpenseReport;
+use App\Claim;
 use DB;
 use Auth;
 use App\Http\Requests\formClaimRequest;
@@ -25,7 +25,7 @@ class formClaimController extends Controller
         $finder = [
             'id_claim' => $request->id_claim,
         ];
-        $datas = medicalExpenseReport::where('id_claim', 'like', '%' . $finder['id_claim'] . '%')->paginate($itemPerPage);
+        $datas = Claim::where('id_claim', 'like', '%' . $finder['id_claim'] . '%')->paginate($itemPerPage);
         return view('formClaimManagement.index', compact('finder', 'datas'));
     }
 
@@ -107,7 +107,7 @@ class formClaimController extends Controller
         ];
         try {
             DB::beginTransaction();
-            if(medicalExpenseReport::create($dataNew)){
+            if(Claim::create($dataNew)){
                 $file->storeAs($dirUpload, $imageName);
                 scanORC($fileUpload  , $fileNameExport);
             };
@@ -131,7 +131,7 @@ class formClaimController extends Controller
     public function show($id)
     {
         
-        $data = medicalExpenseReport::findOrFail($id);
+        $data = Claim::findOrFail($id);
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
 
@@ -171,7 +171,7 @@ class formClaimController extends Controller
      */
     public function destroy($id)
     {
-        $data = medicalExpenseReport::findOrFail($id);
+        $data = Claim::findOrFail($id);
         $dirUpload = Config::get('constants.formClaimUpload');
         Storage::delete($dirUpload . $data->url_file);
 

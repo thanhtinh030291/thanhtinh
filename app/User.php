@@ -36,4 +36,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function getListIncharge()
+    {
+        return self::orderBy('id', 'desc')->pluck('name', 'id');
+    }
 }

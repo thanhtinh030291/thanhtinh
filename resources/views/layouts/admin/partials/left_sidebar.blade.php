@@ -16,7 +16,13 @@
                             <a class="{{ setActive('admin/form_claim') }}"
                             href="{{ url('admin/form_claim') }}"><span> {{ __('message.form_claim_orc')}}</span></a>
                         </li>
+                        <li class="{{ setActive('admin/list_reason_inject') }}"> 
+                            <a class="{{ setActive('admin/list_reason_inject') }}"
+                            href="{{ url('admin/list_reason_inject') }}"><span> {{ __('message.list_reason_inject')}}</span></a>
+                        </li>
                     </ul>
+                    
+
                 </li>
             </ul>
             <div class="clearfix"></div>

@@ -58,7 +58,7 @@ $langs = config('constants.lang');
                                 {{ Form::label('option', __('message.option'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
                             </div>
                             <div class="col-sm-4">
-                                    {{ Form::select('option', $valueOption , $transport->option, [ 'id'=>'optionTrans','class' => 'select2 form-control', 'required', 'placeholder' => __('message.please_select')]) }}
+                                {{ Form::select('option', $valueOption , $transport->option, [ 'id'=>'optionTrans','class' => 'select2 form-control', 'required', 'placeholder' => __('message.please_select')]) }}
                             </div>
                         </div>
                         <div class="row">
