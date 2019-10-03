@@ -24,7 +24,7 @@ class formClaimRequest extends FormRequest
     public function rules()
     {
         $rules = [
-           // 'id_claim'      => 'required|unique:medical_expense_report',
+            'code_claim'      => 'required|unique:claim',
             'file'          => ' required |max:1999',
         ];
         return $rules;

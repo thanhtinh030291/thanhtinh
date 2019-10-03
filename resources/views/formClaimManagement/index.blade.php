@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="col-md-12">                           
                             {{ Form::label('name', __('message.id_claim'), array('class' => 'labelas')) }}
-                            {{ Form::text('id_claim',$finder['id_claim'], ['class' => 'form-control']) }} <br/>                          
+                            {{ Form::text('code_claim',$finder['code_claim'], ['class' => 'form-control']) }} <br/>                          
                         </div>
                     </div>
                     <br>
@@ -53,13 +53,21 @@
                         <thead>
                             <tr>
                                 <th>{{ __('message.id_claim')}}</th>
+                                <th>{{ __('message.account_create')}}</th>
+                                <th>{{ __('message.account_edit')}}</th>
+                                <th>{{ __('message.date_created')}}</th>
+                                <th>{{ __('message.date_updated')}}</th>
                                 <th class='text-center'>{{ __('message.control')}}</th>
                             </tr>
                         </thead>
                         @foreach ($datas as $data)
                         <tbody>
                             <tr>
-                                <td>{{$data->id_claim}}</td>
+                                <td>{{$data->code_claim}}</td>
+                                <td>{{ $admin_list[$data->created_user] }}</td>
+                                <td>{{ $admin_list[$data->updated_user] }}</td>
+                                <td>{{ $data->created_at }}</td>
+                                <td>{{ $data->updated_at }}</td>
                                 <td style = "width : 15%" class='text-center'>
                                     <a class="btn btn-primary" href='{{url("admin/form_claim/$data->id")}}'>{{__('message.view')}}</a>
                                     <a class="btn btn-success" href='{{url("admin/form_claim/$data->id/edit")}}'>{{__('message.edit')}}</a>
