@@ -24,6 +24,7 @@ class formClaimRequest extends FormRequest
     public function rules()
     {
         $rules = [
+            '_column.*' => 'required_with_all:content',
             'code_claim'      => 'required|unique:claim',
             'file'          => ' required |max:1999',
         ];

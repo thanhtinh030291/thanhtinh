@@ -70,6 +70,11 @@ return [
     'reason_inject_create_success' => 'Reason inject was successfully created',
     'delete_reason_inject_confirm' => 'Do you want to delete this Reason ?',
     'delete_reason_inject_warning' => 'Delete confirmation!',
+    'content' => 'Content',
+    'unit_price' => 'Unit Price',
+    'quantity'   => 'Quantity',
+    'amount'   => 'Amount',
+    'status'   => 'Status',
 
     //account
     'account_create' => 'User Create',

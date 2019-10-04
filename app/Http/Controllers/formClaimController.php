@@ -74,11 +74,11 @@ class formClaimController extends Controller
         $dataItems = [];
         foreach ($rowData as $key => $value) {
             $dataItems[] = new ItemOfClaim([
-                'content' => $value[$fieldSelect['content']],
-                'unit_price' => $value[$fieldSelect['unit_price']],
-                'quantity' => $value[$fieldSelect['quantity']],
-                'amount' => $value[$fieldSelect['amount']],
-                'status' => $rowCheck[$key],
+                'content' => data_get($value, $fieldSelect['content'], ""),
+                'unit_price' =>  data_get($value, $fieldSelect['unit_price'], 0) ,
+                'quantity' => data_get($value, $fieldSelect['quantity'], 0),
+                'amount' => data_get($value, $fieldSelect['amount'], 0),
+                'status' =>data_get($rowCheck,$key, 1) ,
                 'created_user' => $userId,
                 'updated_user' => $userId,
             ]);
@@ -108,14 +108,15 @@ class formClaimController extends Controller
      */
     public function show($id)
     {
-        
+        $admin_list = User::getListIncharge();
         $data = Claim::findOrFail($id);
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
+        
+        $items = $data->item_of_claim;
 
-        $dirExportStorage = Config::get('constants.formClaimExportStorage');
-        $dataExport = $dirExportStorage . $data->url_file_export ;
-        return view('formClaimManagement.show', compact(['data', 'dataImage', 'dataExport']));
+
+        return view('formClaimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list']));
     }
 
     /**

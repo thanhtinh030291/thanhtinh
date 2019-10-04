@@ -16,4 +16,11 @@ return[
         40 => 40,
         50 => 50,
     ],
+    'field_select' => [
+        'content' => 'Content',
+        'unit_price' => 'Unit Price',
+        'quantity' => 'Quantity',
+        'amount' => 'Amount',
+    ]
+    
 ];

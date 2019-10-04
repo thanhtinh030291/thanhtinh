@@ -1,4 +1,7 @@
 <!-- Stored in resources/views/layouts/admin/partials/top_bar_navigation.blade.php -->
+@php
+    
+@endphp
 @extends('layouts.admin.master')
 @section('title', __('message.claim_create'))
 @section('stylesheets')
@@ -83,11 +86,22 @@
             required: true,
             allowedFileExtensions: ['xlsx', "xls", 'csv']
         }).on("filebatchselected", function(event, files) {
+            $( "#dvExcel" ).empty();
             excelToHtml(files);
         });
 
         function arrayToTable(tableData) {
             var table = $('<table class="table table-bordered"></table>');
+            //option select field
+            var arrOption = @json(config('constants.field_select'));
+            var selectOption = '<select name = "_column[]" class="select2 form-control">';
+            selectOption += '<option value="none" selected >---X---</option>';
+            $.each(arrOption, function (index, value) {
+                selectOption += '<option value="'+index+'" >'+value+'</option>';
+            });
+            selectOption += '</select>';
+
+
             $(tableData).each(function (i, rowData) {
                 var row = $('<tr></tr>');
                 if(i == 0){
@@ -106,18 +120,13 @@
                     );
                 }
                 $(rowData).each(function (j, cellData) {
+                    cellData = cellData  ? cellData : ""; 
                     if(i != 0){
                         row.append($('<td><input name = "_row['+i+'][]" value = "'+cellData+'" /></td>'));
                     }else{
                         row.append($('<th></th>')
-                            .append($('<select name = "_column[]" class="select2 form-control"></select>')
-                                .append('<option value="none" selected >---X---</option>')
-                                .append('<option value="content" >content</option>')
-                                .append('<option value="unit_price">unit price</option>')
-                                .append('<option value="quantity">quantity</option>')
-                                .append('<option value="amount" >amount</option>')
-                            )
-                            .append('<p>'+cellData+'</p>')
+                            .append($(selectOption))
+                            .append($('<input name = "_row['+i+'][]" value = "'+cellData+'" />'))
                         );
                     }
                     
@@ -174,6 +183,7 @@
         };
         function completeFn(results)
         {
+            console.log(results.data);
             $('#dvExcel').append(arrayToTable(results.data));
         }
     </script>
@@ -214,6 +224,14 @@
             $('[data-toggle="tooltip"]').tooltip({
                 customClass: 'tooltip-custom'
             });
+
+            //add old value
+            var old_data = @json(old('_row'));
+            if(old_data != null){
+                console.log(old_data);
+                $('#dvExcel').append(arrayToTable(Object.values(old_data)));
+            }
+            
         });
     </script>
 
