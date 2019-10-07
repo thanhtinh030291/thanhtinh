@@ -21,8 +21,17 @@
                             href="{{ url('admin/list_reason_inject') }}"><span> {{ __('message.list_reason_inject')}}</span></a>
                         </li>
                     </ul>
-                    
-
+                </li>
+                <li class="submenu">
+                    <a href="#">
+                        <i class="fa fa-fw fa-database"></i> <span> Import&Export Data </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li class="{{ setActive('admin/importExportView') }}"> 
+                            <a class="{{ setActive('admin/importExportView') }}"
+                            href="{{ url('admin/importExportView') }}"><span> Import Product</span></a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             <div class="clearfix"></div>

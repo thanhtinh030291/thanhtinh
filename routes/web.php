@@ -22,5 +22,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('form_claim', 'formClaimController');
         Route::post('/annotate', 'formClaimController@annotateImage');
         Route::resource('list_reason_inject', 'ListReasonInjectController');
+        Route::resource('product', 'ProductController');
+
+        Route::get('importExportView', 'CSVController@importExportView');
+        Route::post('import', 'CSVController@import')->name('import');
     });
 });

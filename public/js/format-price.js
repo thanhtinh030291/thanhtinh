@@ -1,9 +1,7 @@
 function formatPrice(x) {
     //remove format first
     x = removeFormatPrice(x);
-    var parts = x.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return parts.join(".");
+    return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 function removeFormatPrice(number) {
     number = number.toString();
@@ -18,8 +16,24 @@ function changeFormatObj(obj) {
 $(document).on("keyup", '.item-price', function(){
     changeFormatObj($(this));
 });
+
 $(document).ready(function() {
     $('.item-price').each(function(){
         changeFormatObj($(this));
     });
 });
+
+function checkPriceFormat(x, input_element){
+    var patt1 = /^\d+(,\d{3})*(.\d{3})*(.\d{1,2})?$/gm;
+    var is_valid = patt1.test(x);
+    if (is_valid) {
+        input_element.removeClass('invalid');
+        input_element.addClass('valid');
+    } else {
+        input_element.removeClass('valid');
+        input_element.addClass('invalid');
+    }
+}
+
+
+

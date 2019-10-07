@@ -127,7 +127,7 @@
                     }else{
                         row.append($('<th></th>')
                             .append($(selectOption).attr('id', j))
-                            .append($('<input name = "_row['+i+'][]" data-id= "'+j+'" value = "'+cellData+'" />'))
+                            .append($('<input name = "_row['+i+'][]" data-id= "'+j+'" value = "'+cellData+'" class ="p-1 h5 bg-info" readonly />'))
                         );
                     }
                     
@@ -188,20 +188,11 @@
         $(document).on("change", ".select_field", function(e){
             var optionSelected = $("option:selected", this);
             var valueSelected = this.value;
-            if(valueSelected == 'content'){
-                var id = $(this).attr('id');
-                var col = parseInt(id) + 2;
-                $("tr td:nth-child("+col+") input").addClass("item-price");
-                $("tr td:nth-child("+col+") input").val().replace(".",",");
-                var arrayElement = document.getElementsByClassName('item-price');
-                $.each( arrayElement, function( key, value ) {
-                    console.log(value.val());
-                });
-                
-            }
-            
-        });
-        
+            var id = $(this).attr('id');
+            var col = parseInt(id) + 2;
+            var arrElement = $("tr td:nth-child("+col+") input");
+            checkValueCol(valueSelected, arrElement);
+        });        
     </script>
 
 
