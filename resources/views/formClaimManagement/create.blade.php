@@ -81,6 +81,7 @@
     <script src="{{asset('js/papaparse.min.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="{{asset('js/formclaim.js')}}"></script>
+    <script src="{{ asset('js/format-price.js') }}"></script>
     <script type="text/javascript">
         $('#fileUpload').fileinput({
             required: true,
@@ -94,7 +95,7 @@
             var table = $('<table class="table table-bordered"></table>');
             //option select field
             var arrOption = @json(config('constants.field_select'));
-            var selectOption = '<select name = "_column[]" class="select2 form-control">';
+            var selectOption = '<select name = "_column[]" class="select2 form-control select_field">';
             selectOption += '<option value="none" selected >---X---</option>';
             $.each(arrOption, function (index, value) {
                 selectOption += '<option value="'+index+'" >'+value+'</option>';
@@ -125,8 +126,8 @@
                         row.append($('<td><input name = "_row['+i+'][]" value = "'+cellData+'" /></td>'));
                     }else{
                         row.append($('<th></th>')
-                            .append($(selectOption))
-                            .append($('<input name = "_row['+i+'][]" value = "'+cellData+'" />'))
+                            .append($(selectOption).attr('id', j))
+                            .append($('<input name = "_row['+i+'][]" data-id= "'+j+'" value = "'+cellData+'" />'))
                         );
                     }
                     
@@ -134,59 +135,9 @@
                 table.append(row);
             });
             return table;
-        }
-
-        
+        } 
     </script>
 
-    <script type="text/javascript">
-        function excelToHtml(file) {
-            data = file[0];
-            $('#fileUpload').parse({
-				config: {
-                    delimiter: "",	// auto-detect
-                    newline: "",	// auto-detect
-                    quoteChar: '"',
-                    escapeChar: '"',
-                    header: false,
-                    transformHeader: undefined,
-                    dynamicTyping: false,
-                    preview: 0,
-                    encoding: "",
-                    worker: false,
-                    comments: false,
-                    step: undefined,
-                    complete: completeFn,
-                    error: undefined,
-                    download: false,
-                    downloadRequestHeaders: undefined,
-                    skipEmptyLines: false,
-                    chunk: undefined,
-                    fastMode: undefined,
-                    beforeFirstChunk: undefined,
-                    withCredentials: undefined,
-                    transform: undefined,
-                    delimitersToGuess: [',', '\t', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP]
-                },
-				before: function(file, inputElem)
-				{
-					
-				},
-				error: function(err, file)
-				{
-				},
-				complete: function()
-				{
-                    
-				}
-			});
-        };
-        function completeFn(results)
-        {
-            console.log(results.data);
-            $('#dvExcel').append(arrayToTable(results.data));
-        }
-    </script>
 
     <script>
         $(document).on("click", ".delete_row_btn", function(){
@@ -233,7 +184,26 @@
             }
             
         });
+
+        $(document).on("change", ".select_field", function(e){
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            if(valueSelected == 'content'){
+                var id = $(this).attr('id');
+                var col = parseInt(id) + 2;
+                $("tr td:nth-child("+col+") input").addClass("item-price");
+                $("tr td:nth-child("+col+") input").val().replace(".",",");
+                var arrayElement = document.getElementsByClassName('item-price');
+                $.each( arrayElement, function( key, value ) {
+                    console.log(value.val());
+                });
+                
+            }
+            
+        });
+        
     </script>
+
 
     <script type="text/javascript">
         $.ajaxSetup({
