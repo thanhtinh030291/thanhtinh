@@ -47,10 +47,11 @@ function completeFn(results)
 // check form
 
 function checkValueCol(value, arrElemt){
-    
+    arrElemt.removeClass("item-price");
+    arrElemt.removeClass("item-content");
     switch (value) {
         case 'amount':
-        case 'price_unit':
+        case 'unit_price':
             {   
                 arrElemt.addClass("item-price");
                 arrElemt.val().replace(".",",");
@@ -72,6 +73,7 @@ function checkValueCol(value, arrElemt){
             break;
         case 'quantity':
             {
+
                 $.each(arrElemt, function (index, value) {
                     var patt1 = /^\d$/gm;
                     var is_valid = patt1.test($(this).val());
@@ -85,8 +87,33 @@ function checkValueCol(value, arrElemt){
                 });
             }
             break;
+        case 'content':
+            {
+                arrElemt.addClass("item-content");
+                $.each(arrElemt, function (index, value) {
+                    if ($(this).val() == '') {
+                        
+                    } else {
+                        $.ajax({
+                            url: '/admin/search',
+                            type: 'POST',
+                            context: this,
+                            data: {'search' : $(this).val()},
+                        })
+                        .done(function(res) {
+                            if(res.status == 'success'){
+                                $(this).after($("<div class ='mt-2 ml-1 row result'></div>")
+                                    .append($("<textarea class ='form-control col-md-9'   type='text'> "+res.data.name+" </textarea>"))  
+                                    .append("<p class='p-0 col-md-3'><button type='button' class='mt-3 btn btn-primary'>"+res.data.percent+" %</button></p>")       
+                                );
+                            }
+                        })
+                    };
+                })
+            }
+            break
         default:
-            arrElemt.removeClass("item-price");
+
             break;
     }
 }

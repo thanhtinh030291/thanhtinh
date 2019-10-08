@@ -10,11 +10,13 @@ use File;
 use App\Claim;
 use App\ItemOfClaim;
 use App\User;
+use App\Product;
 use DB;
 use Auth;
 use App\ListReasonInject;
 use App\Http\Requests\formClaimRequest;
 use Illuminate\Support\Facades\Log;
+use SimilarText\Finder;
 class formClaimController extends Controller
 {
     /**
@@ -154,5 +156,22 @@ class formClaimController extends Controller
         $dirUpload = Config::get('constants.formClaimUpload');
         Storage::delete($dirUpload . $data->url_file);
         return redirect('/admin/form_claim')->with('status', __('message.delete_claim'));
+    }
+
+    public function searchFullText(Request $request)
+    {
+            $res = ['status' => 'error'];
+        if ($request->search != '') {
+            $list = Product::pluck('name');
+            $finder = new Finder($request->search, $list);
+            $nameFirst = $finder->first();
+            if(isset($nameFirst)){
+                similar_text($request->search , $nameFirst, $percent);
+                if($percent >= Config::get('constants.percentSelect')){
+                    $res = ['status' => 'success', 'data' => ['name' => $nameFirst , 'percent' => round($percent, 0) ]];
+                }
+            }
+        }
+        return response()->json($res, 200);
     }
 }

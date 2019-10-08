@@ -7,6 +7,27 @@
 @section('stylesheets')
     <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
+    <style>
+        .preview-tiff {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid green;
+            transition: 1s;
+            width: 600px;
+            height: 400px;
+            background: aliceblue;
+            top: 20%;
+            right: 30px;
+            z-index: 99;
+        }
+
+        /*css của khối div*/
+        .move {
+            display: none;
+        }
+    </style>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -15,6 +36,11 @@
     'parent_name' => __('message.claim_management'),
     'page_name'   => __('message.claim_create'),
 ])
+<div class='preview-tiff'>
+    <h2 style="text-align: center; ">
+        Chạy xa em
+    </h2>
+</div>
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -92,7 +118,7 @@
         });
 
         function arrayToTable(tableData) {
-            var table = $('<table class="table table-bordered"></table>');
+            var table = $('<table class="table table-primary table-hover"></table>');
             //option select field
             var arrOption = @json(config('constants.field_select'));
             var selectOption = '<select name = "_column[]" class="select2 form-control select_field">';
@@ -123,7 +149,7 @@
                 $(rowData).each(function (j, cellData) {
                     cellData = cellData  ? cellData : ""; 
                     if(i != 0){
-                        row.append($('<td><input name = "_row['+i+'][]" value = "'+cellData+'" /></td>'));
+                        row.append($('<td><input class ="form-control" name = "_row['+i+'][]" value = "'+cellData+'" /></td>'));
                     }else{
                         row.append($('<th></th>')
                             .append($(selectOption).attr('id', j))
@@ -203,4 +229,15 @@
             }
         });
     </script>
+    <script>
+            let box = document.getElementById('box'),
+                btn = document.getElementById('button-preview')
+            document.addEventListener("DOMContentLoaded", function () {
+                var nut = document.querySelectorAll('button');
+                var khoi = document.querySelectorAll('div');
+                nut[0].onclick = function () {
+                    khoi[0].classList.toggle('move');
+                }
+            }, false)
+        </script>
 @endsection

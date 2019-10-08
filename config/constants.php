@@ -21,6 +21,7 @@ return[
         'unit_price' => 'Unit Price',
         'quantity' => 'Quantity',
         'amount' => 'Amount',
-    ]
+    ],
+    'percentSelect' => 70
     
 ];

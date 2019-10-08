@@ -19,9 +19,12 @@ Auth::routes();
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => ['auth']], function(){
         Route::get('/home', 'HomeController@index')->name('home');
+
         Route::resource('form_claim', 'formClaimController');
-        Route::post('/annotate', 'formClaimController@annotateImage');
+        Route::post('/search', 'formClaimController@searchFullText')->name('search');
+
         Route::resource('list_reason_inject', 'ListReasonInjectController');
+
         Route::resource('product', 'ProductController');
 
         Route::get('importExportView', 'CSVController@importExportView');
