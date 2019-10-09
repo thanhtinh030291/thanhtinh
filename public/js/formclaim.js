@@ -1,3 +1,61 @@
+function showTiff(file) {
+    $('#list-page').empty();
+    var reader = new FileReader();
+    reader.onload = (function (theFile) {
+        return function (e) {
+            var buffer = e.target.result;
+            var tiff = new Tiff({buffer: buffer});
+            //var canvas = tiff.toCanvas();
+            //var width = tiff.width();
+            //var height = tiff.height();
+            //if (canvas) {
+            //  $('#page').empty().append(canvas);
+            //}
+            for (var i = 0, len = tiff.countDirectory(); i < len; ++i) {
+                var num = parseInt(i) + 1;
+                if(i == selectpage){
+                    $('#list-page').append($('<button type="button" class= "btn btn-warning" onClick="clickPage(this)" data-id = "'+i+'">'+num+'</button>'));
+                }else{
+                    $('#list-page').append($('<button type="button" class= "btn btn-primary" onClick="clickPage(this)" data-id = "'+i+'">'+num+'</button>'));
+                }
+                
+                if(i == selectpage){
+                    tiff.setDirectory(i);
+                    var canvas = tiff.toCanvas();
+                    $('#show-page').empty().append(canvas);
+                }
+                
+            }
+        };
+    })(file);
+    reader.readAsArrayBuffer(file);
+}
+
+function clickPage(e){
+    console.log(e.dataset.id);
+    selectpage = e.dataset.id;
+    showTiff(trialImage);
+}
+
+function clickGo(){
+    var text = $("#select-inject-default option:selected").text();
+    var arrElementcheck = $('.checkbox_class');
+    $.each(arrElementcheck, function (index, value) {
+        var id = value.dataset.id;
+        if(value.checked){
+            $('#btnConfirm'+id).show();
+            $('#btnConfirm'+id).attr("title",text);
+            $('#inputReject'+id).prop("checked", false);
+            $('#reason'+id).val(text);
+        }
+    });
+};
+
+function checkAll(e){
+    console.log(e.checked);
+    $(".checkbox_class").prop("checked", e.checked);
+}
+
 function excelToHtml(file) {
     data = file[0];
     $('#fileUpload').parse({

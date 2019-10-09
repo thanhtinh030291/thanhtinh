@@ -8,24 +8,32 @@
     <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
     <style>
-        .preview-tiff {
-            position: fixed;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid green;
-            transition: 1s;
-            width: 600px;
-            height: 400px;
+        #page {
+            padding: 6px;
+            width: 41%;
+            min-height:20%;
+            max-height: 500px;
             background: aliceblue;
-            top: 20%;
-            right: 30px;
-            z-index: 99;
+            text-align: center;
+            line-height: 34px;
+            cursor: move;
+            border: 1px solid #d55900;
+            position: fixed;
+            top: 23%;
+            right: 2%;
+            z-index: 100;
+            overflow-x: hidden; 
+            overflow-x: auto;
+        }
+        .button-preview {
+            position: fixed;
+            top: 50%;
+            right: 5px;
         }
 
-        /*css của khối div*/
-        .move {
-            display: none;
+        .resize-checkbox {
+            width: 20px;
+            height: 20px;
         }
     </style>
 @endsection
@@ -36,11 +44,7 @@
     'parent_name' => __('message.claim_management'),
     'page_name'   => __('message.claim_create'),
 ])
-<div class='preview-tiff'>
-    <h2 style="text-align: center; ">
-        Chạy xa em
-    </h2>
-</div>
+
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -48,16 +52,44 @@
                 {{ Form::open(array('files' => true,'url' => 'admin/form_claim', 'method' => 'post' ,'class'=>'form-horizontal')) }}
                 <!-- Add file file -->
                 <div class="row">
-                    <div class="col-md-7">
-                        <input id="fileUpload" type="file" class="file" name="file" value="{{ old('file') }}"  autofocus>
+                    <div class="col-md-3">
+                        {{ Form::label('file', 'File ORC', array('class' => 'labelas')) }} <span class="text-danger">*(CSV )</span>
+                        {{ Form::file('file', array('id' => "fileUpload", 'class' => "file")) }} 
+
+                        
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-3">
+                        {{ Form::label('file2', 'File TIFF', array('class' => 'labelas')) }} <span class="text-danger">*(tif , tiff )</span>
+                        {{ Form::file('file2', array('id' => "fileUpload2", 'class' => "file")) }} 
+                    </div>
+                    <div class="col-md-6">
                         {{ Form::label('code_claim', __('message.code_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                        {{ Form::text('code_claim', old('code_claim'), array('class' => 'form-control', 'required')) }} 
+                        {{ Form::text('code_claim', old('code_claim'), array('class' => 'form-control', 'required')) }}
+                        <div id="page">
+                            <div id="list-page"></div>
+                            <div id="show-page"></div>
+                        </div>
+                        <button type="button" class=" btn btn-success button-preview"><i class="fa fa-search-plus" aria-hidden="true"></i></button>
                     </div>
                 </div>
                 <div class="row mt-5">
                     <div class="table-responsive" id="dvExcel" style="max-height:450px" >
+                    </div>
+                </div>
+                <div class="row p-2 mt-3 .bg-light">
+                    <div class="form-check col-md-1">
+                            <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input resize-checkbox" value="" onClick="checkAll(this)" > 
+                                <p class="ml-2 mt-2">Check All</p>
+                            </label>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div  class='col-md-11'>
+                                {{ Form::select('_sel', $listReasonInject, old('_sel'), array( 'id'=>'select-inject-default','class' => 'select2 labelas')) }}
+                            </div>
+                            <button type="button" onclick="clickGo()" class="btn btn-secondar col-md-1">GO</button>
+                        </div>
                     </div>
                 </div>
                 <!-- Template table -->
@@ -105,16 +137,27 @@
 @section('scripts')
     <script src="{{asset('js/fileinput.js')}}"></script>
     <script src="{{asset('js/papaparse.min.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="{{asset('js/popper.min.js')}}" ></script>
+    <script src="{{ asset('js/tiff.min.js') }}"></script>
     <script src="{{asset('js/formclaim.js')}}"></script>
     <script src="{{ asset('js/format-price.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <script type="text/javascript">
+        var trialImage;
+        var selectpage = 0;
         $('#fileUpload').fileinput({
             required: true,
-            allowedFileExtensions: ['xlsx', "xls", 'csv']
+            allowedFileExtensions: ['csv']
         }).on("filebatchselected", function(event, files) {
             $( "#dvExcel" ).empty();
             excelToHtml(files);
+        });
+        $('#fileUpload2').fileinput({
+            required: true,
+            allowedFileExtensions: ['tiff','tif','TIFF','TIF']
+        }).on("filebatchselected", function(event, files) {
+            trialImage = files[0];
+            showTiff(trialImage);
         });
 
         function arrayToTable(tableData) {
@@ -134,15 +177,16 @@
                 if(i == 0){
                     row.append('<th>Action</th>')
                 }else{
-                    row.append($('<td class="row m-0" style = "width : 130px"></td>')
+                    row.append($('<td class="row pl-0 pr-0 m-0" style = "width : 170px"></td>')
+                        .append($('<input class = "checkbox_class col-md-2 resize-checkbox" type="checkbox"  data-id = "'+i+'" />'))
                         .append($('<button type="button" class=" col-md-3 delete_row_btn btn p-0 btn-danger" data-toggle="tooltip" title="Delete this row in the table!" >&#x2613;</button>'))
-                        .append($('<div class="col-md-6 p-0"></div>')
+                        .append($('<div class="col-md-5 p-0"></div>')
                             .append($('<label class="custom-control custom-checkbox"></label>')
-                                    .append($('<input type="checkbox" class="custom-control-input reject" data-id = "'+i+'" onchange="clickInject(this)" checked name = "_checkbox[]" value = "1">'))
+                                    .append($('<input type="checkbox" id = "inputReject'+i+'" class="custom-control-input reject" data-id = "'+i+'" onchange="clickInject(this)" checked name = "_checkbox[]" value = "1">'))
                                     .append($('<span class="custom-control-indicator"></span>'))
                             )
                         )
-                        .append($('<button id="btnConfirm'+i+'" data-id = "'+i+'" type="button" class=" col-md-3 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="please enter reason for rejection!" style = "display: none" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
+                        .append($('<button id="btnConfirm'+i+'" data-id = "'+i+'" type="button" class=" col-md-2 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="please enter reason for rejection!" style = "display: none" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
                         .append($('<input type="text"  id="reason'+i+'"  name = "_reason[]" style = "display: none" >'))
                     );
                 }
@@ -229,15 +273,15 @@
             }
         });
     </script>
+        
     <script>
-            let box = document.getElementById('box'),
-                btn = document.getElementById('button-preview')
-            document.addEventListener("DOMContentLoaded", function () {
-                var nut = document.querySelectorAll('button');
-                var khoi = document.querySelectorAll('div');
-                nut[0].onclick = function () {
-                    khoi[0].classList.toggle('move');
-                }
-            }, false)
-        </script>
+        $( function() {
+            $( "#page" ).draggable();
+        } );
+        $(document).ready(function () {
+            $(".button-preview").click(function () {
+                $("#page").toggle(1000);
+            });
+        });
+    </script>
 @endsection
