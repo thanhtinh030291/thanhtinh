@@ -5,12 +5,6 @@ function showTiff(file) {
         return function (e) {
             var buffer = e.target.result;
             var tiff = new Tiff({buffer: buffer});
-            //var canvas = tiff.toCanvas();
-            //var width = tiff.width();
-            //var height = tiff.height();
-            //if (canvas) {
-            //  $('#page').empty().append(canvas);
-            //}
             for (var i = 0, len = tiff.countDirectory(); i < len; ++i) {
                 var num = parseInt(i) + 1;
                 if(i == selectpage){
@@ -32,13 +26,13 @@ function showTiff(file) {
 }
 
 function clickPage(e){
-    console.log(e.dataset.id);
     selectpage = e.dataset.id;
     showTiff(trialImage);
 }
-
+// button go click 
 function clickGo(){
     var text = $("#select-inject-default option:selected").text();
+    var valueSelect = $("#select-inject-default option:selected").val();
     var arrElementcheck = $('.checkbox_class');
     $.each(arrElementcheck, function (index, value) {
         var id = value.dataset.id;
@@ -46,15 +40,81 @@ function clickGo(){
             $('#btnConfirm'+id).show();
             $('#btnConfirm'+id).attr("title",text);
             $('#inputReject'+id).prop("checked", false);
-            $('#reason'+id).val(text);
+            $('#reason'+id).val(valueSelect);
         }
     });
+    $('.checkbox_class, .form-check-input').attr('checked', false);
+
+
 };
 
+// lick checkbox show buton comfirm
+function clickInject(e){
+    var row = e.dataset.id;
+    if(!e.checked) {
+        $("#btnConfirm"+row).show();
+    }else{
+        $("#btnConfirm"+row).hide();
+    }
+}
+
+// add value default to modal
+$(document).on("click", ".btnConfirm", function(){
+    var id = $(this).data('id');
+    $('#id_row').val(id);
+    var oldValue = $('#reason'+id).val();
+    console.log(oldValue);
+    $('#select-reason').val(oldValue).change();
+});
+
+// delete row in table
+$(document).on("click", ".delete_row_btn", function(){
+    $(this).closest('tr').remove();
+});
+
+// get input 
+var trialImage;
+var selectpage = 0;
+var fileCSV;
+$('#fileUpload').fileinput({
+    required: true,
+    allowedFileExtensions: ['csv']
+}).on("filebatchselected", function(event, files) {
+    fileCSV = files;
+    
+});
+
+function btnScan(){
+    if (typeof fileCSV === 'undefined') {
+        alert('Please enter file');
+    }else{
+        $( "#dvExcel" ).empty();
+        excelToHtml(fileCSV);
+    } 
+}
+
+$('#fileUpload2').fileinput({
+    required: false,
+    allowedFileExtensions: ['tiff','tif','TIFF','TIF']
+}).on("filebatchselected", function(event, files) {
+    trialImage = files[0];
+    showTiff(trialImage);
+});
+
+//button checkall click
 function checkAll(e){
-    console.log(e.checked);
     $(".checkbox_class").prop("checked", e.checked);
 }
+
+// setting on off div preview
+$( function() {
+    $( "#page" ).draggable();
+} );
+$(document).ready(function () {
+    $(".button-preview").click(function () {
+        $("#page").toggle(1000);
+    });
+});
 
 function excelToHtml(file) {
     data = file[0];

@@ -76,3 +76,32 @@ thead, tbody { display: block; }
 .invalid {
     background-color: #fba;
 }
+
+#page {
+    padding: 6px;
+    width: 41%;
+    min-height:20%;
+    max-height: 500px;
+    background: aliceblue;
+    text-align: center;
+    line-height: 34px;
+    cursor: move;
+    border: 1px solid #d55900;
+    position: fixed;
+    top: 23%;
+    right: 2%;
+    z-index: 100;
+    overflow-x: hidden; 
+    overflow-x: auto;
+    display: none;
+}
+.button-preview {
+    position: fixed;
+    top: 50%;
+    right: 5px;
+}
+
+.resize-checkbox {
+    width: 20px;
+    height: 20px;
+}

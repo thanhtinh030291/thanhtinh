@@ -3,9 +3,12 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\validSelectField;
+use App\Http\Traits\SanitizesInput;
 
 class formClaimRequest extends FormRequest
 {
+    use SanitizesInput;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,9 +27,10 @@ class formClaimRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            '_column.*' => 'required_with_all:content',
+            '_column.*' => 'distinct|nullable',
+            '_column' => [ new validSelectField()],
             'code_claim'      => 'required|unique:claim',
-            'file'          => ' required |max:1999',
+            'file'          => ' required |max:5999',
         ];
         return $rules;
     }

@@ -1,41 +1,12 @@
 <!-- Stored in resources/views/layouts/admin/partials/top_bar_navigation.blade.php -->
 @php
-    
+    dump(old());
 @endphp
 @extends('layouts.admin.master')
 @section('title', __('message.claim_create'))
 @section('stylesheets')
     <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
-    <style>
-        #page {
-            padding: 6px;
-            width: 41%;
-            min-height:20%;
-            max-height: 500px;
-            background: aliceblue;
-            text-align: center;
-            line-height: 34px;
-            cursor: move;
-            border: 1px solid #d55900;
-            position: fixed;
-            top: 23%;
-            right: 2%;
-            z-index: 100;
-            overflow-x: hidden; 
-            overflow-x: auto;
-        }
-        .button-preview {
-            position: fixed;
-            top: 50%;
-            right: 5px;
-        }
-
-        .resize-checkbox {
-            width: 20px;
-            height: 20px;
-        }
-    </style>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -55,8 +26,7 @@
                     <div class="col-md-3">
                         {{ Form::label('file', 'File ORC', array('class' => 'labelas')) }} <span class="text-danger">*(CSV )</span>
                         {{ Form::file('file', array('id' => "fileUpload", 'class' => "file")) }} 
-
-                        
+                        <button type="button" class="btn btn-danger mt-2 float-right" onclick="btnScan()" ><i class="fa fa-print" aria-hidden="true"></i> Scan</button>
                     </div>
                     <div class="col-md-3">
                         {{ Form::label('file2', 'File TIFF', array('class' => 'labelas')) }} <span class="text-danger">*(tif , tiff )</span>
@@ -120,7 +90,7 @@
         </div>
         <div class="modal-body">
                 
-            {{ Form::select('_selectReason', $listReasonInject, old('_selectReason'), [ 'id' => 'select-reason', 'class' => 'select2 ', 'required', 'placeholder' => __('message.please_select')]) }}
+            {{ Form::select('_selectReason', $listReasonInject, old('_selectReason'), [ 'id' => 'select-reason', 'class' => 'select2', 'required', 'placeholder' => __('message.please_select')]) }}
             {{ Form::hidden('_idrow', null , ['id' => 'id_row']) }}
             
         </div>
@@ -143,34 +113,16 @@
     <script src="{{ asset('js/format-price.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <script type="text/javascript">
-        var trialImage;
-        var selectpage = 0;
-        $('#fileUpload').fileinput({
-            required: true,
-            allowedFileExtensions: ['csv']
-        }).on("filebatchselected", function(event, files) {
-            $( "#dvExcel" ).empty();
-            excelToHtml(files);
-        });
-        $('#fileUpload2').fileinput({
-            required: true,
-            allowedFileExtensions: ['tiff','tif','TIFF','TIF']
-        }).on("filebatchselected", function(event, files) {
-            trialImage = files[0];
-            showTiff(trialImage);
-        });
-
         function arrayToTable(tableData) {
             var table = $('<table class="table table-primary table-hover"></table>');
             //option select field
             var arrOption = @json(config('constants.field_select'));
             var selectOption = '<select name = "_column[]" class="select2 form-control select_field">';
-            selectOption += '<option value="none" selected >---X---</option>';
+            selectOption += '<option value="" selected >---X---</option>';
             $.each(arrOption, function (index, value) {
                 selectOption += '<option value="'+index+'" >'+value+'</option>';
             });
             selectOption += '</select>';
-
 
             $(tableData).each(function (i, rowData) {
                 var row = $('<tr></tr>');
@@ -182,7 +134,7 @@
                         .append($('<button type="button" class=" col-md-3 delete_row_btn btn p-0 btn-danger" data-toggle="tooltip" title="Delete this row in the table!" >&#x2613;</button>'))
                         .append($('<div class="col-md-5 p-0"></div>')
                             .append($('<label class="custom-control custom-checkbox"></label>')
-                                    .append($('<input type="checkbox" id = "inputReject'+i+'" class="custom-control-input reject" data-id = "'+i+'" onchange="clickInject(this)" checked name = "_checkbox[]" value = "1">'))
+                                    .append($('<input type="checkbox" id = "inputReject'+i+'" class="custom-control-input reject" data-id = "'+i+'" onchange="clickInject(this)" checked name = "_checkbox['+i+']" value = "1">'))
                                     .append($('<span class="custom-control-indicator"></span>'))
                             )
                         )
@@ -207,30 +159,7 @@
             return table;
         } 
     </script>
-
-
     <script>
-        $(document).on("click", ".delete_row_btn", function(){
-            $(this).closest('tr').remove();
-        });
-    </script>
-    <script>
-        // lick checkbox show buton comfirm
-        function clickInject(e){
-            var row = e.dataset.id;
-            if(!e.checked) {
-                $("#btnConfirm"+row).show();
-            }else{
-                $("#btnConfirm"+row).hide();
-            }
-        }
-
-        // add value default to modal
-        $(document).on("click", ".btnConfirm", function(){
-            var id = $(this).data('id');
-            $('#id_row').val(id);
-        });
-
         // add value select to row and change tooltip
         $(document).on("click", "#btn-save-comfirm", function(){
             var id = $('#id_row').val();
@@ -247,10 +176,22 @@
             });
 
             //add old value
-            var old_data = @json(old('_row'));
-            if(old_data != null){
-                console.log(old_data);
-                $('#dvExcel').append(arrayToTable(Object.values(old_data)));
+            var old_data_row = @json(old('_row'));
+            if(old_data_row != null){
+                $('#dvExcel').append(arrayToTable(Object.values(old_data_row)));
+            }
+            var old_data_column = @json(old('_column'));
+            if(old_data_row != null){
+                $.each(old_data_column, function (index, value) {
+                    $('#'+index).val(value).change();
+                });
+            }
+            var old_data_checkbox = @json(old('_checkbox'));
+            if(old_data_checkbox != null){
+                $(".reject").prop('checked', false);
+                $.each(old_data_checkbox, function (index, value) {
+                    $('#inputReject'+index).prop('checked', value);
+                });
             }
             
         });
@@ -265,23 +206,11 @@
         });        
     </script>
 
-
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        });
-    </script>
-        
-    <script>
-        $( function() {
-            $( "#page" ).draggable();
-        } );
-        $(document).ready(function () {
-            $(".button-preview").click(function () {
-                $("#page").toggle(1000);
-            });
         });
     </script>
 @endsection
