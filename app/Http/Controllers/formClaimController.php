@@ -56,6 +56,7 @@ class formClaimController extends Controller
      */
     public function store(formClaimRequest $request)
     {
+
         $file = $request->file;
         $dataNew = $request->except(['file']);
         $userId = Auth::User()->id;
@@ -70,7 +71,7 @@ class formClaimController extends Controller
         ];
 
         // get value item
-        $fieldSelect =  array_flip(array_diff($request->_column, ['none']));
+        $fieldSelect =  array_flip(array_filter($request->_column));
         $rowData = array_values($request->_row);
         $rowCheck = $request->_checkbox;
         $dataItems = [];
@@ -85,7 +86,7 @@ class formClaimController extends Controller
                 'updated_user' => $userId,
             ]);
         }
-
+        array_shift($dataItems);
         try {
             DB::beginTransaction();
             $claim = Claim::create($dataNew);

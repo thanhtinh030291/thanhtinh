@@ -1,7 +1,3 @@
-<!-- Stored in resources/views/layouts/admin/partials/top_bar_navigation.blade.php -->
-@php
-    dump(old());
-@endphp
 @extends('layouts.admin.master')
 @section('title', __('message.claim_create'))
 @section('stylesheets')
@@ -59,6 +55,12 @@
                                 {{ Form::select('_sel', $listReasonInject, old('_sel'), array( 'id'=>'select-inject-default','class' => 'select2 labelas')) }}
                             </div>
                             <button type="button" onclick="clickGo()" class="btn btn-secondar col-md-1">GO</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row d-flex justify-content-end">
+                            <button type="button" onclick="totalAmount()" class="btn btn-secondar col-md-3">Total Amount</button>
+                            <p id="totalAmount" class="col-md-4 bg-danger p-2 m-0 font-weight-bold text-white"></p>
                         </div>
                     </div>
                 </div>

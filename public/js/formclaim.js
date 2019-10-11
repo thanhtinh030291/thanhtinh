@@ -63,7 +63,6 @@ $(document).on("click", ".btnConfirm", function(){
     var id = $(this).data('id');
     $('#id_row').val(id);
     var oldValue = $('#reason'+id).val();
-    console.log(oldValue);
     $('#select-reason').val(oldValue).change();
 });
 
@@ -115,6 +114,22 @@ $(document).ready(function () {
         $("#page").toggle(1000);
     });
 });
+// button sum amount 
+function totalAmount(){
+    var sum = 0;
+    $(".item-amount").each(function() {
+
+        var value = $(this).val();
+        value = value.replace(",", "");
+        console.log(value);
+        // add only if the value is number
+        if(!isNaN(value) && value.length != 0) {
+            sum += parseFloat(value);
+        }
+    });
+    $('#totalAmount').text(formatPrice(sum));
+}
+
 
 function excelToHtml(file) {
     data = file[0];
@@ -171,6 +186,9 @@ function checkValueCol(value, arrElemt){
         case 'amount':
         case 'unit_price':
             {   
+                if (value == 'amount'){
+                    arrElemt.addClass("item-amount");
+                } 
                 arrElemt.addClass("item-price");
                 arrElemt.val().replace(".",",");
                 var arrayElement = document.getElementsByClassName('item-price');

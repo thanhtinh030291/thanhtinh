@@ -27,9 +27,9 @@ class validSelectField implements Rule
     public function passes($attribute, $value)
     {
         $fieldSelect = config('constants.field_select');
-        foreach ($fieldSelect as $key => $value) {
-            if(!in_array($key, $fieldSelect)){
-                $this->message[] = 'Please select a column as the ' . $value;
+        foreach ($fieldSelect as $k => $v) {
+            if(!in_array($k, $value)){
+                $this->message[] = 'Please select a column as the ' . $v;
             }
         }
         if ($this->message != null) {
