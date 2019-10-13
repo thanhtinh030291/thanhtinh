@@ -56,9 +56,10 @@ class formClaimController extends Controller
      */
     public function store(formClaimRequest $request)
     {
+        dd($request);
 
         $file = $request->file;
-        $dataNew = $request->except(['file']);
+        $dataNew = $request->except(['file','file2']);
         $userId = Auth::User()->id;
         $dirUpload = Config::get('constants.formClaimUpload');
         

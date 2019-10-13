@@ -120,7 +120,7 @@ function totalAmount(){
     $(".item-amount").each(function() {
 
         var value = $(this).val();
-        value = value.replace(",", "");
+        value = value.replace(/[,]/g, "");
         console.log(value);
         // add only if the value is number
         if(!isNaN(value) && value.length != 0) {
@@ -190,10 +190,10 @@ function checkValueCol(value, arrElemt){
                     arrElemt.addClass("item-amount");
                 } 
                 arrElemt.addClass("item-price");
-                arrElemt.val().replace(".",",");
+                arrElemt.val().replace(/[.]/g,",");
                 var arrayElement = document.getElementsByClassName('item-price');
                 $.each(arrayElement, function (index, value) {
-                    var st = $(this).val().replace(".", ",");
+                    var st = $(this).val().replace(/[.]/g, ",");
                     st = st.toLowerCase();
                     st = st.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ|o/gi, '0');
                     if(st.split(",").pop() == '00'){

@@ -15,6 +15,7 @@ function changeFormatObj(obj) {
 }
 $(document).on("keyup", '.item-price', function(){
     changeFormatObj($(this));
+    checkPriceFormat($(this).val(), $(this));
 });
 
 $(document).ready(function() {
