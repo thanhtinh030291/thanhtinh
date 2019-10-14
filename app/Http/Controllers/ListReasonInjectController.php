@@ -24,7 +24,7 @@ class ListReasonInjectController extends Controller
             // 'updated_user' => $request->get('updated_user'),
             // 'updated_at' => $request->get('updated_at'),
         ];
-        $listReasonInject = ListReasonInject::search($data['search_params'])->orderBy('id', 'desc');
+        $listReasonInject = ListReasonInject::findByParams($data['search_params'])->orderBy('id', 'desc');
         $data['admin_list'] = User::getListIncharge();
         //pagination result
         $data['limit_list'] = config('constants.limit_list');

@@ -32,6 +32,8 @@ return [
     'unit_symbol' => 'item',
     'showing_range' => 'Showing :begin-:end',
     'name' => 'Name',
+    'email' => 'Email',
+    'password' => 'Password',
 
 
     //Claim
@@ -59,6 +61,7 @@ return [
     'date_updated' => 'Updated At',
     'please_select' => '----------------------------------Please Select----------------------------------',
     'code_claim' => 'Code Claim',
+    'letter' => 'Letter',
 
     // list_reason_inject
     'list_reason_inject' => 'List Reason Inject',
@@ -75,9 +78,42 @@ return [
     'quantity'   => 'Quantity',
     'amount'   => 'Amount',
     'status'   => 'Status',
+    'reason_reject' => 'Reason Reject',
 
     //account
     'account_create' => 'User Create',
     'account_view' => 'User View',
     'account_edit' => 'User Edit',
+
+    //product
+    'product' => 'List Medical & Service',
+    'create_product' => 'Create  Medical & Service',
+    'detail_product' => 'Detail  Medical & Service',
+    'edit_product' => 'Edit  Medical & Service',
+    'product_update_success' => ' Medical & Service was successfully updated',
+    'product_delete_success' => ' Medical & Service was successfully deleted',
+    'product_create_success' => ' Medical & Service was successfully created',
+    'product_confirm' => 'Do you want to delete this Medical & Service ?',
+    'product_warning' => 'Delete confirmation!',
+    //staff_management
+    'staff_management' => 'Staff Management',
+    'add_staff' => 'Staff was successfully created',
+    'delete_staff' => 'Staff was successfully deleted',
+    'update_staff' => 'Staff was successfully updated',
+    'create_staff' => 'Create Staff',
+    'staff_list' => 'Staff List',
+    'delete_staff_confirm' => 'Do you want to delete this staff ?',
+    'delete_staff_warning' => 'Staff delete confirmation!',
+    'staff_image' => 'Staff Image',
+    'staff_name' => 'Staff Name',
+    'enter_staff_name' => 'Enter staff name',
+    'enter_staff_email' => 'Enter staff email',
+    'enter_staff_password' => 'Enter staff password',
+    'enter_staff_password_confirmation' => 'Enter password confirmation',
+    'staff_detail' => 'Staff Details',
+    'staff_exist' => 'This email is already used, Please choose another.',
+    'staff_create' => 'Staff Create',
+    'staff_view' => 'Staff View',
+    'staff_edit' => 'Staff Edit',
+    'staff_reg_info' => 'Registered Information',
 ];

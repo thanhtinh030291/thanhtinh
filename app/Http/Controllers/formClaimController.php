@@ -56,8 +56,6 @@ class formClaimController extends Controller
      */
     public function store(formClaimRequest $request)
     {
-        dd($request);
-
         $file = $request->file;
         $dataNew = $request->except(['file','file2']);
         $userId = Auth::User()->id;
@@ -73,8 +71,10 @@ class formClaimController extends Controller
 
         // get value item
         $fieldSelect =  array_flip(array_filter($request->_column));
-        $rowData = array_values($request->_row);
+        $rowData = $request->_row;
+        array_shift_assoc($rowData);
         $rowCheck = $request->_checkbox;
+        $reason = $request->_reason;
         $dataItems = [];
         foreach ($rowData as $key => $value) {
             $dataItems[] = new ItemOfClaim([
@@ -82,12 +82,12 @@ class formClaimController extends Controller
                 'unit_price' =>  data_get($value, $fieldSelect['unit_price'], 0) ,
                 'quantity' => data_get($value, $fieldSelect['quantity'], 0),
                 'amount' => data_get($value, $fieldSelect['amount'], 0),
-                'status' =>data_get($rowCheck,$key, 1) ,
+                'status' =>data_get($rowCheck, $key, 0) ,
+                'list_reason_inject_id' => data_get($reason, $key),
                 'created_user' => $userId,
                 'updated_user' => $userId,
             ]);
         }
-        array_shift($dataItems);
         try {
             DB::beginTransaction();
             $claim = Claim::create($dataNew);
@@ -116,11 +116,11 @@ class formClaimController extends Controller
         $data = Claim::findOrFail($id);
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
-        
+        $listReasonInject = ListReasonInject::pluck('name', 'id');
         $items = $data->item_of_claim;
 
 
-        return view('formClaimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list']));
+        return view('formClaimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonInject']));
     }
 
     /**

@@ -141,7 +141,7 @@
                             )
                         )
                         .append($('<button id="btnConfirm'+i+'" data-id = "'+i+'" type="button" class=" col-md-2 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="please enter reason for rejection!" style = "display: none" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
-                        .append($('<input type="text"  id="reason'+i+'"  name = "_reason[]" style = "display: none" >'))
+                        .append($('<input type="text"  id="reason'+i+'"  name = "_reason['+i+']" style = "display: none" >'))
                     );
                 }
                 $(rowData).each(function (j, cellData) {

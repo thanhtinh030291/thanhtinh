@@ -1,9 +1,10 @@
 <!-- Stored in resources/views/layouts/admin/partials/top_bar_navigation.blade.php -->
 @php
-
+$sum = 0;
+$totalAmount = 0;
 @endphp
 @extends('layouts.admin.master')
-@section('title', __('message.transport_view'))
+@section('title', __('message.claim_view'))
 @section('stylesheets')
     <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
@@ -61,11 +62,40 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
+                    <label  class="font-weight-bold" for="letter">{{__('message.letter')}}</label>
+            </div> 
+            <div class="card-body">
+                @foreach ($items as $data)
+                    @php
+                        if($data->list_reason_inject_id){
+                            $sum += removeFormatPrice($data->amount);
+                        
+                    @endphp
+                        <h5 class="text-danger font-weight-bold"> - Chi phí " {{$data->content}} " ( {{$data->amount}} ) không được thanh toán do thuộc điều khoản " {{data_get($listReasonInject, $data->list_reason_inject_id, "")}} " .
+                        </h5>
+                    @php
+                        }
+                    @endphp
+                @endforeach
+                    
+                <div class="row d-flex justify-content-end mt-5">
+                    <button type="button"  class="btn btn-secondar col-md-3">Tổng Chi Phí Không Thanh Toán</button>
+                    <p id="totalAmount" class="col-md-4 bg-danger p-2 m-0 font-weight-bold text-white">{{formatPrice($sum)}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
                 
             </div>
             <div class="card-body">
                 @if (count($items) > 0)
-                <div class="table-responsive">
+                <div >
                     <table class="table table-primary table-hover">
                         <tbody>
                             <tr>
@@ -74,6 +104,7 @@
                                 <th>{{ __('message.quantity')}}</th>
                                 <th>{{ __('message.amount')}}</th>
                                 <th>{{ __('message.status')}}</th>
+                                <th>{{ __('message.reason_reject')}}</th>
                             </tr>
                         
                         
@@ -83,19 +114,29 @@
                                 <td>{{$data->unit_price}}</td>
                                 <td>{{$data->quantity}}</td>
                                 <td>{{$data->amount}}</td>
-                                
+                                @php
+                                    $totalAmount += removeFormatPrice($data->amount);
+                                @endphp
                                 <td>
                                     <label class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input " disabled readonly {{ $data->status == 1 ? 'checked' : ""}}>
                                         <span class="custom-control-indicator"></span>
                                     </label>
                                 </td>
-                                
+                                <td>
+                                    @if($data->list_reason_inject_id)
+                                        <p class="text-danger font-weight-bold">{{data_get($listReasonInject, $data->list_reason_inject_id, "")}}</p>
+                                    @endif
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
                         
                     </table>
+                    <div class="row d-flex justify-content-end">
+                        <button type="button"  class="btn btn-secondar col-md-3">Total Amount</button>
+                        <p id="totalAmount" class="col-md-4 bg-danger p-2 m-0 font-weight-bold text-white">{{formatPrice($totalAmount)}}</p>
+                    </div>
                 </div>
                 
                 @endif

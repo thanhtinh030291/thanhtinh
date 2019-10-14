@@ -19,6 +19,7 @@ Auth::routes();
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => ['auth']], function(){
         Route::get('/home', 'HomeController@index')->name('home');
+        Route::resource('admins', 'AdminController');
 
         Route::resource('form_claim', 'formClaimController');
         Route::post('/search', 'formClaimController@searchFullText')->name('search');

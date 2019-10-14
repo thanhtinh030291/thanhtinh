@@ -7,10 +7,13 @@ use Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 
-class Claim extends Model
+class Claim extends BaseModel
 {
     protected $guarded = ['id'];
     protected $table = 'claim';
+    protected static $table_static = 'claim';
+    protected $dates = ['deleted_at'];
+    
 
     public function item_of_claim()
     {

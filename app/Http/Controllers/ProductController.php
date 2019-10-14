@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\User;
+use Auth;
+use App\Product;
+use App\Http\Requests\reasonInjectRequest;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -11,9 +14,24 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $data['search_params'] = [
+            'name' => $request->get('name'),
+            // 'created_user' => $request->get('created_user'),
+            // 'created_at' => $request->get('created_at'),
+            // 'updated_user' => $request->get('updated_user'),
+            // 'updated_at' => $request->get('updated_at'),
+        ];
+        $Product = Product::findByParams($data['search_params'])->orderBy('id', 'desc');
+        $data['admin_list'] = User::getListIncharge();
+        //pagination result
+        $data['limit_list'] = config('constants.limit_list');
+        $data['limit'] = $request->get('limit');
+        $per_page = !empty($data['limit']) ? $data['limit'] : array_first($data['limit_list']);
+        $data['data']  = $Product->paginate($per_page);
+        
+        return view('ProductManagement.index', $data);
     }
 
     /**
@@ -23,7 +41,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('ProductManagement.create');
     }
 
     /**
@@ -32,9 +50,17 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(reasonInjectRequest $request)
     {
-        //
+        $userId = Auth::User()->id;
+        $data = $request->except([]);
+        $data['created_user'] = $userId;
+        $data['updated_user'] = $userId;
+
+        Product::create($data);
+        $request->session()->flash('status', __('message.reason_inject_create_success')); 
+        
+        return redirect('/admin/product');
     }
 
     /**
@@ -45,7 +71,10 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Product::findOrFail($id);
+        $userCreated = $data->userCreated->name;
+        $userUpdated = $data->userUpdated->name;
+        return view('ProductManagement.detail', compact('data', 'userCreated', 'userUpdated'));
     }
 
     /**
@@ -56,7 +85,8 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Product::findOrFail($id);
+        return view('ProductManagement.edit', compact('data'));
     }
 
     /**
@@ -66,9 +96,15 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(reasonInjectRequest $request, $id)
     {
-        //
+        $data = $request->except([]);
+        $userId = Auth::User()->id;
+        $data['updated_user'] = $userId;
+        Product::updateOrCreate(['id' => $id], $data);
+
+        $request->session()->flash('status', __('message.reason_inject_update_success')); 
+        return redirect('/admin/product');
     }
 
     /**
@@ -79,6 +115,8 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = Product::findOrFail($id);
+        $data->delete();
+        return redirect('/admin/product')->with('status', __('message.reason_inject_delete_success'));
     }
 }

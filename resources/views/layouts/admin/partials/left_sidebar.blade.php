@@ -20,6 +20,10 @@
                             <a class="{{ setActive('admin/list_reason_inject') }}"
                             href="{{ url('admin/list_reason_inject') }}"><span> {{ __('message.list_reason_inject')}}</span></a>
                         </li>
+                        <li class="{{ setActive('admin/product') }}"> 
+                            <a class="{{ setActive('admin/product') }}"
+                            href="{{ url('admin/product') }}"><span> {{ __('message.product')}}</span></a>
+                        </li>
                     </ul>
                 </li>
                 <li class="submenu">
@@ -32,6 +36,10 @@
                             href="{{ url('admin/importExportView') }}"><span> Import Product</span></a>
                         </li>
                     </ul>
+                </li>
+                <li class="{{ setActive('admin/admins') }}">
+                    <a  class="{{ setActive('admin/admins') }}" href="{{ url('admin/admins') }}">
+                    <i class="fa fa-fw fa-user-plus"></i><span> {{ __('message.staff_management')}}</span></a>
                 </li>
             </ul>
             <div class="clearfix"></div>

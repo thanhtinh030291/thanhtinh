@@ -16,10 +16,10 @@ class CreateListReasonInjectTable extends Migration
         Schema::create('list_reason_inject', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 500);
-            $table->integer('is_deleted')->default('0');
             $table->integer('created_user');
             $table->integer('updated_user');
             $table->timestamps();
+            $table->integer('is_deleted')->default('0');
             $table->softDeletes();
         });
     }

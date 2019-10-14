@@ -20,6 +20,8 @@ class CreateClaimTable extends Migration
             $table->integer('created_user');
             $table->integer('updated_user');
             $table->timestamps();
+            $table->integer('is_deleted')->default('0');
+            $table->softDeletes();
         });
     }
 

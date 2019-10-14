@@ -4,11 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Http\Traits\FindByFieldType;
 
 class BaseModel extends Model
 {
     use SoftDeletes;
-
+    use FindByFieldType;
     /**
      * Overwrite method delete of query builder
      * 
@@ -18,7 +19,7 @@ class BaseModel extends Model
     {
         $query = $this->newQuery()->where($this->getKeyName(), $this->getKey());
 
-        $is_deleted = 0;
+        $is_deleted = 1;
         $query->update(
             [
                 $this->getDeletedAtColumn() => date("Y-m-d H:i:s"),
