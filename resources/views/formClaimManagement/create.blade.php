@@ -140,7 +140,7 @@
                                     .append($('<span class="custom-control-indicator"></span>'))
                             )
                         )
-                        .append($('<button id="btnConfirm'+i+'" data-id = "'+i+'" type="button" class=" col-md-2 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="please enter reason for rejection!" style = "display: none" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
+                        .append($('<button id="btnConfirm'+i+'" data-id = "'+i+'" type="button" class=" col-md-2 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="please enter reason for rejection!"  data-popover="popover" data-content="none" style = "display: none" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
                         .append($('<input type="text"  id="reason'+i+'"  name = "_reason['+i+']" style = "display: none" >'))
                     );
                 }
@@ -168,7 +168,7 @@
             var selectText = $( "select#select-reason option:checked" ).text();
             var selectValue = $( "select#select-reason option:checked" ).val();
             $('#reason'+id).val(selectValue);
-            $('#btnConfirm'+id).attr('title', selectText)
+            $('#btnConfirm'+id).attr('title', selectText);
             $('#confirmModal').modal('hide');
         });
 
@@ -176,6 +176,8 @@
             $('[data-toggle="tooltip"]').tooltip({
                 customClass: 'tooltip-custom'
             });
+
+            $('[data-popover="popover"]').popover('show');
 
             //add old value
             var old_data_row = @json(old('_row'));

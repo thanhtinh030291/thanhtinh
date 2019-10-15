@@ -162,6 +162,7 @@ class formClaimController extends Controller
 
     public function searchFullText(Request $request)
     {
+        
             $res = ['status' => 'error'];
         if ($request->search != '') {
             $list = Product::pluck('name');

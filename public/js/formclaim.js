@@ -68,7 +68,20 @@ $(document).on("click", ".btnConfirm", function(){
 
 // delete row in table
 $(document).on("click", ".delete_row_btn", function(){
-    $(this).closest('tr').remove();
+    //$(this).closest('tr').remove();
+    $(this).toggleClass("btn-danger");
+    if($(this).hasClass("btn-danger")){
+        $(this).closest('tr').removeClass('bg-secondary');
+        $(this).closest('tr').find('input').prop('disabled', false);
+        $(this).closest('tr').find('.item-amount').toggleClass('item-amount');
+    } else{
+        
+        $(this).closest('tr').addClass('bg-secondary');
+        $(this).closest('tr').find('input').prop('disabled', true);
+        $(this).closest('tr').find('.item-amount').toggleClass('item-amount');
+    }
+    
+    //$(this).parents('tr').find('input').prop('disabled', false);
 });
 
 // get input 
