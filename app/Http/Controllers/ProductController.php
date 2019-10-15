@@ -31,7 +31,7 @@ class ProductController extends Controller
         $per_page = !empty($data['limit']) ? $data['limit'] : array_first($data['limit_list']);
         $data['data']  = $Product->paginate($per_page);
         
-        return view('ProductManagement.index', $data);
+        return view('productManagement.index', $data);
     }
 
     /**
@@ -41,7 +41,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('ProductManagement.create');
+        return view('productManagement.create');
     }
 
     /**
@@ -74,7 +74,7 @@ class ProductController extends Controller
         $data = Product::findOrFail($id);
         $userCreated = $data->userCreated->name;
         $userUpdated = $data->userUpdated->name;
-        return view('ProductManagement.detail', compact('data', 'userCreated', 'userUpdated'));
+        return view('productManagement.detail', compact('data', 'userCreated', 'userUpdated'));
     }
 
     /**
@@ -86,7 +86,7 @@ class ProductController extends Controller
     public function edit($id)
     {
         $data = Product::findOrFail($id);
-        return view('ProductManagement.edit', compact('data'));
+        return view('productManagement.edit', compact('data'));
     }
 
     /**
