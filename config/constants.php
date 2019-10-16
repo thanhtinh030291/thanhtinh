@@ -18,8 +18,6 @@ return[
     ],
     'field_select' => [
         'content' => 'Content',
-        'unit_price' => 'Unit Price',
-        'quantity' => 'Quantity',
         'amount' => 'Amount',
     ],
     'percentSelect' => 70

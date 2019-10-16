@@ -79,8 +79,6 @@ class formClaimController extends Controller
         foreach ($rowData as $key => $value) {
             $dataItems[] = new ItemOfClaim([
                 'content' => data_get($value, $fieldSelect['content'], ""),
-                'unit_price' =>  data_get($value, $fieldSelect['unit_price'], 0) ,
-                'quantity' => data_get($value, $fieldSelect['quantity'], 0),
                 'amount' => data_get($value, $fieldSelect['amount'], 0),
                 'status' =>data_get($rowCheck, $key, 0) ,
                 'list_reason_inject_id' => data_get($reason, $key),
@@ -162,7 +160,6 @@ class formClaimController extends Controller
 
     public function searchFullText(Request $request)
     {
-        
             $res = ['status' => 'error'];
         if ($request->search != '') {
             $list = Product::pluck('name');
@@ -173,6 +170,18 @@ class formClaimController extends Controller
                 if($percent >= Config::get('constants.percentSelect')){
                     $res = ['status' => 'success', 'data' => ['name' => $nameFirst , 'percent' => round($percent, 0) ]];
                 }
+            }
+        }
+        return response()->json($res, 200); 
+    }
+
+    public function searchFullText2(Request $request)
+    {
+        $res = ['status' => 'error'];
+        if ($request->search != '') {
+            $data = Product::FullTextSearch('name', $request->search)->pluck('name')->toArray();
+            if(isset($data)){
+                $res = ['status' => 'success', 'data' => $data];
             }
         }
         return response()->json($res, 200);

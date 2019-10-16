@@ -73,12 +73,10 @@ $(document).on("click", ".delete_row_btn", function(){
     if($(this).hasClass("btn-danger")){
         $(this).closest('tr').removeClass('bg-secondary');
         $(this).closest('tr').find('input').prop('disabled', false);
-        $(this).closest('tr').find('.item-amount').toggleClass('item-amount');
     } else{
         
         $(this).closest('tr').addClass('bg-secondary');
         $(this).closest('tr').find('input').prop('disabled', true);
-        $(this).closest('tr').find('.item-amount').toggleClass('item-amount');
     }
     
     //$(this).parents('tr').find('input').prop('disabled', false);
@@ -131,13 +129,14 @@ $(document).ready(function () {
 function totalAmount(){
     var sum = 0;
     $(".item-amount").each(function() {
-
-        var value = $(this).val();
-        value = value.replace(/[,]/g, "");
-        console.log(value);
-        // add only if the value is number
-        if(!isNaN(value) && value.length != 0) {
-            sum += parseFloat(value);
+        
+        if(! $(this).closest('tr').hasClass('bg-secondary')){
+            var value = $(this).val();
+            value = value.replace(/[,]/g, "");
+            // add only if the value is number
+            if(!isNaN(value) && value.length != 0) {
+                sum += parseFloat(value);
+            }
         }
     });
     $('#totalAmount').text(formatPrice(sum));
@@ -197,7 +196,6 @@ function checkValueCol(value, arrElemt){
     arrElemt.removeClass("item-content");
     switch (value) {
         case 'amount':
-        case 'unit_price':
             {   
                 if (value == 'amount'){
                     arrElemt.addClass("item-amount");
@@ -220,25 +218,10 @@ function checkValueCol(value, arrElemt){
                 });
             }
             break;
-        case 'quantity':
-            {
-
-                $.each(arrElemt, function (index, value) {
-                    var patt1 = /^\d$/gm;
-                    var is_valid = patt1.test($(this).val());
-                    if (is_valid) {
-                        $(this).removeClass('invalid');
-                        $(this).addClass('valid');
-                    } else {
-                        $(this).removeClass('valid');
-                        $(this).addClass('invalid');
-                    }
-                });
-            }
-            break;
         case 'content':
             {
                 arrElemt.addClass("item-content");
+                $('.result').empty();
                 $.each(arrElemt, function (index, value) {
                     if ($(this).val() == '') {
                         
@@ -262,7 +245,41 @@ function checkValueCol(value, arrElemt){
             }
             break
         default:
-
             break;
     }
+}
+// search2 ajax
+function search2(e){
+    console.log(e.value)
+    $.ajax({
+        url: '/admin/search2',
+        type: 'POST',
+        context: e,
+        data: {'search' : e.value},
+    })
+    .done(function(res) {
+        if(res.status == 'success'){
+            
+        }
+    })
+}
+
+//btn delete table item 
+$(document).on("click", ".delete_btn", function(){
+    $(this).closest('tr').remove();
+});
+//add input item
+var count = 1;
+function addInputItem(){
+    var clone =  '<tr id="row-'+count+'">';
+    clone +=  $("#clone_item").clone().html() + '</tr>';
+    clone = clone.replace("_content", "_content["+count+"]");
+    clone = clone.replace("_amount", "_amount["+count+"]");
+    clone = clone.replace("_reasonInject", "_reasonInject["+count+"]");
+    $("#empty_item").before(clone);
+    $('input[name="_content['+count+']"]').attr("required", "true");
+    $('input[name="_amount['+count+']"]').attr("required", "true");
+    $('select[name="_reasonInject['+count+']"]').attr({"required": "true"}).addClass('select2');
+    $('.select2').select2();
+    count++;
 }

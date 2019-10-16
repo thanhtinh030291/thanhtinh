@@ -23,6 +23,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::resource('form_claim', 'formClaimController');
         Route::post('/search', 'formClaimController@searchFullText')->name('search');
+        Route::post('/search2', 'formClaimController@searchFullText2')->name('search2');
 
         Route::resource('list_reason_inject', 'ListReasonInjectController');
 

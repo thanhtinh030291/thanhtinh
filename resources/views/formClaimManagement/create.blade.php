@@ -1,3 +1,4 @@
+
 @extends('layouts.admin.master')
 @section('title', __('message.claim_create'))
 @section('stylesheets')
@@ -64,8 +65,57 @@
                         </div>
                     </div>
                 </div>
-                <!-- Template table -->
-                
+                <!-- add new table -->
+                <div class="row mt-5">
+                    <div class="card col-md-9">
+                        <div class="row">
+                            <div class="col-sm-2 col-form-label ">
+                                {{ Form::label('new_items_reject', __('message.new_items_reject'), array('class' => 'card-title')) }}
+                            </div>
+                            <div class="col-sm-9">
+                                <button type="button" class="btn btn-secondary mt-2 btnt" onclick="addInputItem()">{{ __('message.add')}}</button>
+                            </div>
+                        </div>
+                        <table id="season_price_tbl" class="table">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('message.content')}}</th>
+                                    <th>{{ __('message.amount')}}</th>
+                                    <th>{{ __('message.reason_reject')}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="empty_item" style="display: none;">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr id="clone_item" style="display: none">
+                                    <td>{{ Form::text('_content', null, ['class' => 'form-control', 'onkeydown'=>'search2(this)' ]) }}</td>
+                                    <td style="width:180px">
+                                        {{ Form::text('_amount', null, ['class' => 'item-price form-control']) }}
+                                    </td>
+                                    <td style="width:480px">
+                                        <div style="width:480px">
+                                            {{ Form::select('_reasonInject', $listReasonInject,null, ['class' => ' form-control ']) }}
+                                        </div>
+                                    </td>
+                                    <td style="width:80px">
+                                        <button type="button"class="delete_btn btn btn-danger  p-0">&#x2613;</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card col-md-3">
+                        <div class="card-body"> 
+                            <h5 class="card-title">Suggestions </h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- end add new table -->
                 <br/>
                 <div class="d-flex justify-content-center">
                     <a class="btn btn-secondary btnt" href="{{url('admin/form_claim')}}">
@@ -73,7 +123,6 @@
                     </a>
                     <button type="submit" class="btn btn-danger center-block btnt ml-3" > {{__('message.save')}}</button>
                 </div>
-                <!-- End file image -->
                 {{ Form::close() }}
                 
                 
@@ -192,8 +241,14 @@
             }
             var old_data_checkbox = @json(old('_checkbox'));
             if(old_data_checkbox != null){
+                //mapping checkbox
+                    var change_data_checkbox = [] ; 
+                $.each(old_data_row, function (index, value) {
+                    change_data_checkbox.push(old_data_checkbox[index] ? old_data_checkbox[index] : 0);
+                });
+                //end
                 $(".reject").prop('checked', false);
-                $.each(old_data_checkbox, function (index, value) {
+                $.each(change_data_checkbox, function (index, value) {
                     $('#inputReject'+index).prop('checked', value);
                 });
             }

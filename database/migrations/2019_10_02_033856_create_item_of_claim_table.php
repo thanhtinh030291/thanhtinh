@@ -16,8 +16,6 @@ class CreateItemOfClaimTable extends Migration
         Schema::create('item_of_claim', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('content')->nullable();
-            $table->string('unit_price')->nullable();
-            $table->string('quantity')->nullable();
             $table->string('amount')->nullable();
             $table->integer('status')->default('1');
             $table->integer('claim_id')->nullable();

@@ -46,7 +46,8 @@ class Product extends BaseModel
 
     public function scopeFullTextSearch($query, $columns, $term)
     {
-        $query->whereRaw("MATCH ({$columns}) AGAINST (?)", $this->fullTextWildcards($term));
+        //$query->whereRaw("MATCH ({$columns}) AGAINST (?)", $this->fullTextWildcards($term));
+        $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)", $this->fullTextWildcards($term));
         return $query;
     }
 }

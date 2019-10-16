@@ -34,6 +34,8 @@ return [
     'name' => 'Name',
     'email' => 'Email',
     'password' => 'Password',
+    'add' => 'Add',
+    'new_items_reject' => 'New Items Reject',
 
 
     //Claim
