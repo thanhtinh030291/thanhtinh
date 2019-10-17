@@ -67,16 +67,16 @@
                 </div>
                 <!-- add new table -->
                 <div class="row mt-5">
-                    <div class="card col-md-9">
-                        <div class="row">
-                            <div class="col-sm-2 col-form-label ">
-                                {{ Form::label('new_items_reject', __('message.new_items_reject'), array('class' => 'card-title')) }}
-                            </div>
-                            <div class="col-sm-9">
-                                <button type="button" class="btn btn-secondary mt-2 btnt" onclick="addInputItem()">{{ __('message.add')}}</button>
-                            </div>
-                        </div>
-                        <table id="season_price_tbl" class="table">
+                    <div class="col-sm-2 col-form-label ">
+                        {{ Form::label('new_items_reject', __('message.new_items_reject'), array('class' => 'card-title')) }}
+                    </div>
+                    <div class="col-sm-9">
+                        <button type="button" class="btn btn-secondary mt-2 btnt" onclick="addInputItem()">{{ __('message.add')}}</button>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="card table-responsive col-md-9"  style="max-height:450px">
+                        <table id="season_price_tbl" class="table table-striped header-fixed">
                             <thead>
                                 <tr>
                                     <th>{{ __('message.content')}}</th>
@@ -93,13 +93,13 @@
                                     <td></td>
                                 </tr>
                                 <tr id="clone_item" style="display: none">
-                                    <td>{{ Form::text('_content', null, ['class' => 'form-control', 'onkeydown'=>'search2(this)' ]) }}</td>
+                                    <td>{{ Form::text('_content_default', null, ['class' => 'form-control', 'onkeydown'=>'search2(this)' ]) }}</td>
                                     <td style="width:180px">
-                                        {{ Form::text('_amount', null, ['class' => 'item-price form-control']) }}
+                                        {{ Form::text('_amount_default', null, ['class' => 'item-price form-control']) }}
                                     </td>
                                     <td style="width:480px">
                                         <div style="width:480px">
-                                            {{ Form::select('_reasonInject', $listReasonInject,null, ['class' => ' form-control ']) }}
+                                            {{ Form::select('_reasonInject_default', $listReasonInject,null, ['class' => ' form-control ' ,'placeholder' => 'Not Reject']) }}
                                         </div>
                                     </td>
                                     <td style="width:80px">
@@ -112,6 +112,9 @@
                     <div class="card col-md-3">
                         <div class="card-body"> 
                             <h5 class="card-title">Suggestions </h5>
+                            <div id="result_suggestions">
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -263,6 +266,20 @@
             var arrElement = $("tr td:nth-child("+col+") input");
             checkValueCol(valueSelected, arrElement);
         });        
+    </script>
+    // old 
+    <script>
+        $(document).on('ready', function() {
+            var content = @json(old('_content'));
+            var amount = @json(old('_amount'));
+            var reasonInject = @json(old('_reasonInject'));
+            if(content != null){
+                $.each(content, function (index, value) {
+                    addInputItem();
+                    addValueItem(content[index],amount[index],reasonInject[index],count-1);
+                });
+            }
+        });
     </script>
 
     <script type="text/javascript">

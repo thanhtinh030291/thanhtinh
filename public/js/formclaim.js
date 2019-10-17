@@ -55,6 +55,7 @@ function clickInject(e){
         $("#btnConfirm"+row).show();
     }else{
         $("#btnConfirm"+row).hide();
+        
     }
 }
 
@@ -87,7 +88,7 @@ var trialImage;
 var selectpage = 0;
 var fileCSV;
 $('#fileUpload').fileinput({
-    required: true,
+    required: false,
     allowedFileExtensions: ['csv']
 }).on("filebatchselected", function(event, files) {
     fileCSV = files;
@@ -259,7 +260,15 @@ function search2(e){
     })
     .done(function(res) {
         if(res.status == 'success'){
-            
+            $("#result_suggestions").empty();
+            var container = $("#result_suggestions");
+            res.data.forEach(function(text) {
+                var p = $("<p>", {
+                    text: text,
+                    class: "div-added"
+                });
+                container.append(p);
+            });
         }
     })
 }
@@ -272,14 +281,22 @@ $(document).on("click", ".delete_btn", function(){
 var count = 1;
 function addInputItem(){
     var clone =  '<tr id="row-'+count+'">';
+    clone += '<input name = "_idItem['+count+']" type="hidden" >';
     clone +=  $("#clone_item").clone().html() + '</tr>';
-    clone = clone.replace("_content", "_content["+count+"]");
-    clone = clone.replace("_amount", "_amount["+count+"]");
-    clone = clone.replace("_reasonInject", "_reasonInject["+count+"]");
+    clone = clone.replace("_content_default", "_content["+count+"]");
+    clone = clone.replace("_amount_default", "_amount["+count+"]");
+    clone = clone.replace("_reasonInject_default", "_reasonInject["+count+"]");
     $("#empty_item").before(clone);
     $('input[name="_content['+count+']"]').attr("required", "true");
     $('input[name="_amount['+count+']"]').attr("required", "true");
-    $('select[name="_reasonInject['+count+']"]').attr({"required": "true"}).addClass('select2');
+    $('select[name="_reasonInject['+count+']"]').addClass('select2');
     $('.select2').select2();
     count++;
 }
+function addValueItem(content, amount, reasonInject, count, idItem = ""){
+    $('input[name="_content['+count+']"]').val(content);
+    $('input[name="_amount['+count+']"]').val(amount);
+    $('select[name="_reasonInject['+count+']"]').val(reasonInject).change();
+    $('input[name="_idItem['+count+']"]').val(idItem);
+}
+

@@ -29,8 +29,8 @@ class formClaimRequest extends FormRequest
         $rules = [
             '_column.*' => 'distinct|nullable',
             '_column' => [ new validSelectField()],
+            'file'          => 'required_with:_row',
             'code_claim'      => 'required|unique:claim',
-            'file'          => ' required |max:5999',
         ];
         return $rules;
     }

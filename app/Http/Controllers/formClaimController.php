@@ -32,7 +32,7 @@ class formClaimController extends Controller
         $finder = [
             'code_claim' => $request->code_claim,
         ];
-        $datas = Claim::where('code_claim', 'like', '%' . $finder['code_claim'] . '%')->paginate($itemPerPage);
+        $datas = Claim::where('code_claim', 'like', '%' . $finder['code_claim'] . '%')->orderBy('id', 'desc')->paginate($itemPerPage);
         return view('formClaimManagement.index', compact('finder', 'datas', 'admin_list'));
     }
     
@@ -62,30 +62,55 @@ class formClaimController extends Controller
         $dirUpload = Config::get('constants.formClaimUpload');
         
         // store file
-        $imageName = Claim::storeFile($file, $dirUpload);
+        if($file){
+            $imageName = Claim::storeFile($file, $dirUpload);
+            $dataNew += ['url_file'  =>  $imageName];
+        }
         $dataNew += [
             'created_user' =>  $userId,
             'updated_user' =>  $userId,
-            'url_file'  =>  $imageName,
         ];
 
-        // get value item
-        $fieldSelect =  array_flip(array_filter($request->_column));
-        $rowData = $request->_row;
-        array_shift_assoc($rowData);
-        $rowCheck = $request->_checkbox;
-        $reason = $request->_reason;
         $dataItems = [];
-        foreach ($rowData as $key => $value) {
-            $dataItems[] = new ItemOfClaim([
-                'content' => data_get($value, $fieldSelect['content'], ""),
-                'amount' => data_get($value, $fieldSelect['amount'], 0),
-                'status' =>data_get($rowCheck, $key, 0) ,
-                'list_reason_inject_id' => data_get($reason, $key),
-                'created_user' => $userId,
-                'updated_user' => $userId,
-            ]);
+        // get value item orc
+
+        if( $request->_row){
+            $fieldSelect =  array_flip(array_filter($request->_column));
+            $rowData = $request->_row;
+            array_shift_assoc($rowData);
+            $rowCheck = $request->_checkbox;
+            $reason = $request->_reason;
+            foreach ($rowData as $key => $value) {
+                $dataItems[] = new ItemOfClaim([
+                    'content' => data_get($value, $fieldSelect['content'], ""),
+                    'amount' => data_get($value, $fieldSelect['amount'], 0),
+                    'status' =>data_get($rowCheck, $key, 0) ,
+                    'list_reason_inject_id' => data_get($reason, $key),
+                    'created_user' => $userId,
+                    'updated_user' => $userId,
+                ]);
+            }
         }
+
+        // GET value add item
+        if($request->_content){
+            $rowContent = $request->_content;
+            $rowAmount = $request->_amount;
+            $reasonInject = $request->_reasonInject;
+            foreach ($rowContent as $key => $value) {
+                $dataItems[] = new ItemOfClaim([
+                    'content' => $value,
+                    'amount' => data_get($rowAmount, $key, 0),
+                    'status' => 0,
+                    'list_reason_inject_id' => data_get($reasonInject, $key),
+                    'created_user' => $userId,
+                    'updated_user' => $userId,
+                ]);
+            }
+        }
+        
+
+        //
         try {
             DB::beginTransaction();
             $claim = Claim::create($dataNew);
@@ -129,7 +154,20 @@ class formClaimController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Claim::findOrFail($id);
+        $listReasonInject = ListReasonInject::pluck('name', 'id');
+        $dirStorage = Config::get('constants.formClaimStorage');
+        $dataImage = [];
+        $previewConfig = [];
+        if($data->url_file){
+            $dataImage[] = "<img class='kv-preview-data file-preview-image' src='" . asset('images/csv.png') . "'>";
+            $previewConfig[]['caption'] = $data->url_file;
+            $previewConfig[]['width'] = "120px";
+            $previewConfig[]['url'] = "/admin/tours/removeImage";
+            $previewConfig[]['key'] = $data->url_file;
+        }
+        //dd($data->item_of_claim->pluck('content'));
+        return view('formClaimManagement.edit', compact(['data', 'dataImage', 'previewConfig', 'listReasonInject']));
     }
 
     /**
@@ -141,9 +179,58 @@ class formClaimController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Claim::findOrFail($id);
+        $userId = Auth::User()->id;
+        $dataUpdate = $request;
+        $dataUpdate = $dataUpdate->except([]);
+        try {
+            DB::beginTransaction();
+            if (Claim::updateOrCreate(['id' => $id], $dataUpdate)) {
+                if ($request->_content != null) {
+                    $dataItemNew = [];
+                    foreach ($request->_idItem as $key => $value) {
+                        if ($value == null) {
+                            $dataItemNew[] = [
+                                'claim_id' => $id,
+                                'list_reason_inject_id' => $request->_reasonInject[$key],
+                                'content' => $request->_content[$key],
+                                'amount' => $request->_amount[$key],
+                                'created_user' => $userId,
+                                'updated_user' => $userId,
+                            ];
+                        } else {
+                            $keynew = $key - 1;
+                            $data->item_of_claim[$keynew]->updated_user = $userId;
+                            $data->item_of_claim[$keynew]->list_reason_inject_id = $request->_reasonInject[$key];
+                            $data->item_of_claim[$keynew]->content = $request->_content[$key];
+                            $data->item_of_claim[$keynew]->amount = $request->_amount[$key];
+                        }
+                    }
+                     //delete
+                    $dataDel = ItemOfClaim::whereNotIn('id', array_filter($request->_idItem))->where('claim_id', $id);
+                    $dataDel->delete();
+                    // update
+                    $data->push();
+                    // new season price
+                    $data->item_of_claim()->createMany($dataItemNew);
+                } else {
+                    $dataDel = ItemOfClaim::where('claim_id', $id);
+                    $dataDel->delete();
+                } // update and create new tour_set
+                DB::commit();
+                $request->session()->flash('status', __('message.update_transport'));
+            }
+            return redirect('/admin/form_claim');
+        } catch (Exception $e) {
+            Log::error(generateLogMsg($e));
+            DB::rollback();
+            $request->session()->flash(
+                'errorStatus', 
+                __('message.update_fail')
+            );
+            return redirect('/admin/form_claim/'.$id.'/edit')->withInput();
+        }
     }
-
     /**
      * Remove the specified resource from storage.
      *
