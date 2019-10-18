@@ -100,8 +100,6 @@ $totalAmount = 0;
                         <tbody>
                             <tr>
                                 <th>{{ __('message.content')}}</th>
-                                <th>{{ __('message.unit_price')}}</th>
-                                <th>{{ __('message.quantity')}}</th>
                                 <th>{{ __('message.amount')}}</th>
                                 <th>{{ __('message.status')}}</th>
                                 <th>{{ __('message.reason_reject')}}</th>
@@ -111,21 +109,19 @@ $totalAmount = 0;
                             @foreach ($items as $data)
                             <tr>
                                 <td>{{$data->content}}</td>
-                                <td>{{$data->unit_price}}</td>
-                                <td>{{$data->quantity}}</td>
                                 <td>{{$data->amount}}</td>
                                 @php
                                     $totalAmount += removeFormatPrice($data->amount);
                                 @endphp
                                 <td>
                                     <label class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input " disabled readonly {{ $data->status == 1 ? 'checked' : ""}}>
+                                        <input type="checkbox" class="custom-control-input " disabled readonly {{ $data->list_reason_inject_id ? "" : 'checked' }}>
                                         <span class="custom-control-indicator"></span>
                                     </label>
                                 </td>
                                 <td>
                                     @if($data->list_reason_inject_id)
-                                        <p class="text-danger font-weight-bold">{{data_get($listReasonInject, $data->list_reason_inject_id, "")}}</p>
+                                        <p class="text-danger font-weight-bold">{{ $data->list_reason_inject->name}}</p>
                                     @endif
                                 </td>
                             </tr>

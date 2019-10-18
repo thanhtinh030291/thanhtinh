@@ -84,7 +84,6 @@ class formClaimController extends Controller
                 $dataItems[] = new ItemOfClaim([
                     'content' => data_get($value, $fieldSelect['content'], ""),
                     'amount' => data_get($value, $fieldSelect['amount'], 0),
-                    'status' =>data_get($rowCheck, $key, 0) ,
                     'list_reason_inject_id' => data_get($reason, $key),
                     'created_user' => $userId,
                     'updated_user' => $userId,
@@ -101,7 +100,6 @@ class formClaimController extends Controller
                 $dataItems[] = new ItemOfClaim([
                     'content' => $value,
                     'amount' => data_get($rowAmount, $key, 0),
-                    'status' => 0,
                     'list_reason_inject_id' => data_get($reasonInject, $key),
                     'created_user' => $userId,
                     'updated_user' => $userId,

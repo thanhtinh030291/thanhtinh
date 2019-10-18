@@ -109,7 +109,7 @@
 <script src="{{asset('js/formclaim.js')}}"></script>
 <script src="{{ asset('js/format-price.js') }}"></script>
 <script src="{{ asset('js/jquery-ui.js') }}"></script>
-
+<script src="{{ asset('js/clipboard.js') }}"></script>
 <script>
 var dataImage = @json($dataImage);
 var previewConfig = @json($previewConfig);
@@ -150,6 +150,16 @@ $(document).on('ready', function() {
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    var clipboard = new ClipboardJS('.btn');
+    clipboard.on('success', function(e) {
+        if(idPaste){
+            $("#_content"+idPaste).val(e.text);
+            removeIdPaste();
+        }
+        else{
+            alert('Please select the region to paste');
         }
     });
 </script>

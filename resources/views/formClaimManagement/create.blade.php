@@ -72,7 +72,7 @@
                     </div>
                     <div class="col-sm-9">
                         <button type="button" class="btn btn-secondary mt-2 btnt" onclick="addInputItem()">{{ __('message.add')}}</button>
-                    </div>
+                    </div> 
                 </div>
                 <div class="row ">
                     <div class="card table-responsive col-md-9"  style="max-height:450px">
@@ -166,6 +166,7 @@
     <script src="{{asset('js/formclaim.js')}}"></script>
     <script src="{{ asset('js/format-price.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
+    <script src="{{ asset('js/clipboard.js') }}"></script>
     <script type="text/javascript">
         function arrayToTable(tableData) {
             var table = $('<table class="table table-primary table-hover"></table>');
@@ -193,7 +194,7 @@
                             )
                         )
                         .append($('<button id="btnConfirm'+i+'" data-id = "'+i+'" type="button" class=" col-md-2 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="please enter reason for rejection!"  data-popover="popover" data-content="none" style = "display: none" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
-                        .append($('<input type="text"  id="reason'+i+'"  name = "_reason['+i+']" style = "display: none" >'))
+                        .append($('<input type="hidden"  id="reason'+i+'"  name = "_reason['+i+']"  >'))
                     );
                 }
                 $(rowData).each(function (j, cellData) {
@@ -288,5 +289,16 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        var clipboard = new ClipboardJS('.btn');
+        clipboard.on('success', function(e) {
+            if(idPaste){
+                $("#_content"+idPaste).val(e.text);
+                removeIdPaste();
+            }
+            else{
+                alert('Please select the region to paste');
+            }
+        });
+
     </script>
 @endsection

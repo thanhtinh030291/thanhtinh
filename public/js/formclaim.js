@@ -55,7 +55,7 @@ function clickInject(e){
         $("#btnConfirm"+row).show();
     }else{
         $("#btnConfirm"+row).hide();
-        
+        $("#reason"+row).val('');
     }
 }
 
@@ -251,7 +251,7 @@ function checkValueCol(value, arrElemt){
 }
 // search2 ajax
 function search2(e){
-    console.log(e.value)
+    var id = e.dataset.id;
     $.ajax({
         url: '/admin/search2',
         type: 'POST',
@@ -262,13 +262,20 @@ function search2(e){
         if(res.status == 'success'){
             $("#result_suggestions").empty();
             var container = $("#result_suggestions");
-            res.data.forEach(function(text) {
-                var p = $("<p>", {
-                    text: text,
-                    class: "div-added"
+            res.data.forEach(function(value, key) {
+                var p = $("<input>", {
+                    value: value,
+                    class: "div-added",
+                    id : 'result_suggestions_'+key
                 });
-                container.append(p);
+                var div =  $('<div class="input-group mb-3"></div>');
+                div.append('<input type="text" data-id="'+id+'" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="'+value+'" id="result_suggestions_'+key+'">')
+                    .append($('<div class="input-group-append"></div>')
+                        .append('<button class="btn btn-outline-secondary" data-id="'+id+'" data-clipboard-demo data-clipboard-target="#result_suggestions_'+key+'" type="button"><i class="fa fa-clipboard" aria-hidden="true"></i></button>'));
+                container.append(div);
             });
+        }else{
+            $("#result_suggestions").empty();
         }
     })
 }
@@ -287,7 +294,7 @@ function addInputItem(){
     clone = clone.replace("_amount_default", "_amount["+count+"]");
     clone = clone.replace("_reasonInject_default", "_reasonInject["+count+"]");
     $("#empty_item").before(clone);
-    $('input[name="_content['+count+']"]').attr("required", "true");
+    $('input[name="_content['+count+']"]').attr({"required": "true", 'data-id': count, 'id': '_content'+count, 'onclick':"setIdPaste(this)"});
     $('input[name="_amount['+count+']"]').attr("required", "true");
     $('select[name="_reasonInject['+count+']"]').addClass('select2');
     $('.select2').select2();
@@ -299,4 +306,14 @@ function addValueItem(content, amount, reasonInject, count, idItem = ""){
     $('select[name="_reasonInject['+count+']"]').val(reasonInject).change();
     $('input[name="_idItem['+count+']"]').val(idItem);
 }
+
+//set get  idPaste 
+var idPaste ;
+function setIdPaste(e){
+    idPaste = e.dataset.id;
+}
+
+function removeIdPaste(){
+    idPaste = null;
+};
 
