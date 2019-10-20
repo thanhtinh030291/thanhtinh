@@ -24,24 +24,16 @@ $max = Config::get('constants.minMaxLength.max');
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                {{ Form::open(array('url' => '/admin/admins/'.$admin->id, 'method'=>'post', 'id' => 'frmUpdateStaff', 'files' => true))}} @method('PUT')
+                {{ Form::open(array('url' => '/admin/admins/'.$user->id, 'method'=>'post', 'id' => 'frmUpdateStaff', 'files' => true))}} @method('PUT')
                     <!-- Staff info -->
                     {{ Form::label('name',__('message.name'), array('class' => 'labelas')) }}
-                    {{ Form::text('name', $admin->name, ['class' => 'form-control','placeholder'=>__('message.enter_staff_name'), 'minlength' => $min, 'maxlength' => $max, 'required']) }}<br>
+                    {{ Form::text('name', $user->name, ['class' => 'form-control','placeholder'=>__('message.enter_staff_name'), 'minlength' => $min, 'maxlength' => $max, 'required']) }}<br>
                     {{ Form::label('email',__('message.email'), array('class' => 'labelas')) }}
-                    {{ Form::text('email', $admin->email, ['class' => 'form-control','placeholder'=>__('message.enter_staff_email'), 'maxlength' => "100", 'required', 'readonly']) }}<br>
-                    <div class="form-group">
-                    {{ Form::label('Staffimage',__('message.staff_image'), array('class' => 'labelas')) }}
-                        <div><img style="width: 400px" src='{{ asset(loadImg($admin->profile_image,"/storage/profile_image/"))}}'></div>
-                        <div class="col-sm-6">
-                            {{Form::file('profile_image', ['class' => 'profile_image'] )}}
-                        </div>
-                    </div>
-                    {{ Form::label('datecreated',__('message.date_created'), array('class' => 'labelas')) }}
-                    {{ Form::text('datecreated', $admin->created_at, ['class' => 'form-control', 'readonly']) }}<br>
-                    {{ Form::label('dateupdated',__('message.date_updated'), array('class' => 'labelas')) }}
-                    {{ Form::text('dateupdated', $admin->updated_at, ['class' => 'form-control', 'readonly']) }}<br>                    
-                   
+                    {{ Form::text('email', $user->email, ['class' => 'form-control','placeholder'=>__('message.enter_staff_email'), 'maxlength' => "100", 'required', 'readonly']) }}<br>
+
+                    {{ Form::label('role','Role', array('class' => 'labelas')) }}<span class="text-danger">*</span>
+                    {{ Form::select('_role', $all_roles_in_database, $user->roles->pluck('name'), ['class' => 'select2 form-control', 'multiple' => 'multiple', 'name'=>'_role[]']) }}<br>
+                    
 
                     <!-- Add update Button -->
                     <div class="form-group">

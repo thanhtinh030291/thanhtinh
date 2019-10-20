@@ -19,7 +19,7 @@ Auth::routes();
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => ['auth']], function(){
         Route::get('/home', 'HomeController@index')->name('home');
-        Route::resource('admins', 'AdminController');
+        
 
         Route::resource('form_claim', 'formClaimController');
         Route::post('/search', 'formClaimController@searchFullText')->name('search');
@@ -29,7 +29,8 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::resource('product', 'ProductController');
 
-        Route::get('importExportView', 'CSVController@importExportView');
-        Route::post('import', 'CSVController@import')->name('import');
+        Route::get('importExportView', 'CSVController@importExportView')->middleware(['role:super-admin']);
+        Route::post('import', 'CSVController@import')->name('import')->middleware(['role:super-admin']);
+        Route::resource('admins', 'AdminController')->middleware(['role:super-admin']);
     });
 });

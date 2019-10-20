@@ -26,21 +26,23 @@
                         </li>
                     </ul>
                 </li>
-                <li class="submenu">
-                    <a href="#">
-                        <i class="fa fa-fw fa-database"></i> <span> Import&Export Data </span>
-                    </a>
-                    <ul class="list-unstyled">
-                        <li class="{{ setActive('admin/importExportView') }}"> 
-                            <a class="{{ setActive('admin/importExportView') }}"
-                            href="{{ url('admin/importExportView') }}"><span> Import Product</span></a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="{{ setActive('admin/admins') }}">
-                    <a  class="{{ setActive('admin/admins') }}" href="{{ url('admin/admins') }}">
-                    <i class="fa fa-fw fa-user-plus"></i><span> {{ __('message.staff_management')}}</span></a>
-                </li>
+                @role('super-admin')
+                    <li class="submenu">
+                        <a href="#">
+                            <i class="fa fa-fw fa-database"></i> <span> Import&Export Data </span>
+                        </a>
+                        <ul class="list-unstyled">
+                            <li class="{{ setActive('admin/importExportView') }}"> 
+                                <a class="{{ setActive('admin/importExportView') }}"
+                                href="{{ url('admin/importExportView') }}"><span> Import Product</span></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="{{ setActive('admin/admins') }}">
+                        <a  class="{{ setActive('admin/admins') }}" href="{{ url('admin/admins') }}">
+                        <i class="fa fa-fw fa-user-plus"></i><span> {{ __('message.staff_management')}}</span></a>
+                    </li>
+                @endrole
             </ul>
             <div class="clearfix"></div>
         </div>

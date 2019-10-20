@@ -35,8 +35,11 @@ $max = Config::get('constants.minMaxLength.max');
 
                 {{ Form::label('password',__('message.password'), array('class' => 'labelas')) }}<span class="text-danger">*</span>
                 {{ Form::text('password', old('password'), ['class' => 'form-control', 'placeholder'=>__('message.enter_staff_password'), 'minlength' => $min, 'maxlength' => $max, 'required']) }}<br>
-                <!-- Add file image -->
-                {{Form::file('profile_image',  ['class'=> 'profile_image'] )}}<br><br>
+
+                {{ Form::label('role','Role', array('class' => 'labelas')) }}<span class="text-danger">*</span>
+                {{ Form::select('_role', $all_roles_in_database,old('_role'), ['class' => 'select2 form-control', 'multiple' => 'multiple', 'name'=>'_role[]']) }}<br>
+                
+
                 <a class="btn btn-secondary" href="{{url('admin/admins')}}"> {{ __('message.back')}} </a>
                 {{ Form::submit( __('message.save'),['class' => 'btn btn-primary center-block']) }}<br>
                 <!-- End file image -->
@@ -48,30 +51,5 @@ $max = Config::get('constants.minMaxLength.max');
 @endsection
 
 @section('scripts')
-<script>
-    $.fn.hasExtension = function (exts) {
-        return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test($(this).val());
-    }
 
-    $(document).ready(function () {
-        let fileSize;
-        $('.profile_image').bind('change', function () {
-            fileSize = this.files[0].size;
-        });
-        $('#frmCreateStaff').submit(function () {
-
-
-            if (!$('.profile_image').hasExtension(['.jpg', '.jpeg', '.png', '.jpe']) && $('.profile_image').val()!='') {
-                alert('The profile image must be a file of type: jpeg, jpg, png, jpe.');
-                return false;
-            }
-            if (fileSize / 1024 / 1024 > 2 && $('.profile_image').val()!='') {
-                alert('The profile image may not be greater than 2048 kilobytes.');
-                return false;
-            }
-            
-        });
-    });
-
-</script>
 @endsection

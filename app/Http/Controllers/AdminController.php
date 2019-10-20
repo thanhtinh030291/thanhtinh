@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Role;
 use App\Http\Requests\AdminRequest;
 use Auth;
 use Config;
@@ -61,7 +62,8 @@ class AdminController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function create() {
-		return view('adminManagement.create');
+		$all_roles_in_database = Role::all()->pluck('name','name');
+		return view('adminManagement.create', compact('all_roles_in_database'));
 	}
 
 	/**
@@ -71,13 +73,13 @@ class AdminController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(AdminRequest $request) {
-		$dataNew = $request->except('profile_image');
+		$dataNew = $request->except([]);
 		
 		$dataNew['password'] = bcrypt($dataNew['password']);
-		if ($admin = User::Create($dataNew)) {
+		if ($user = User::Create($dataNew)) {
+			$user->assignRole($request->_role);
 			$request->session()->flash('status', __('message.add_account'));
 			return redirect('/admin/admins/');
-
 		}
 	}
 
@@ -89,6 +91,7 @@ class AdminController extends Controller {
 	 */
 	public function show($id) {
 		$admin = User::findOrFail($id);
+		$all_roles_in_database = Role::all()->pluck('name','name');
 		return view('adminManagement.show', compact('admin'));
 	}
 
@@ -99,8 +102,10 @@ class AdminController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit($id) {
-		$admin = User::findOrFail($id);
-		return view('adminManagement.edit', compact('admin'));
+		$user = User::with('roles')->findOrFail($id);
+		dd($user->getAllPermissions());
+		$all_roles_in_database = Role::all()->pluck('name','name');
+		return view('adminManagement.edit', compact('user', 'all_roles_in_database'));
 	}
 
 	/**

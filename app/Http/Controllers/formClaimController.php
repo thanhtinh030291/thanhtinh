@@ -17,8 +17,27 @@ use App\ListReasonInject;
 use App\Http\Requests\formClaimRequest;
 use Illuminate\Support\Facades\Log;
 use SimilarText\Finder;
+use Illuminate\Support\Facades\Route;
 class formClaimController extends Controller
 {
+    public function __construct()
+    {
+        $prefix = (request()->segments())[1];
+        $action = explode('@',Route::getCurrentRoute()->getActionName())[1];
+        switch ($action) {
+            case 'edit':
+            $id = ((request()->route()->parameters)[$prefix]);
+            $data = Claim::findOrFail($id);
+            $user = Auth::user();
+            dump($id, $user, 'iii' );
+            //dump($user->can('update', $data));
+                break;
+            
+            default:
+                # code...
+                break;
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -56,6 +75,7 @@ class formClaimController extends Controller
      */
     public function store(formClaimRequest $request)
     {
+        
         $file = $request->file;
         $dataNew = $request->except(['file','file2']);
         $userId = Auth::User()->id;
@@ -133,8 +153,9 @@ class formClaimController extends Controller
      */
     public function show($id)
     {
-        $admin_list = User::getListIncharge();
+        
         $data = Claim::findOrFail($id);
+        $admin_list = User::getListIncharge();
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
         $listReasonInject = ListReasonInject::pluck('name', 'id');
@@ -153,6 +174,8 @@ class formClaimController extends Controller
     public function edit($id)
     {
         $data = Claim::findOrFail($id);
+        $user = Auth::user();
+        dd($user->can('update', $data));
         $listReasonInject = ListReasonInject::pluck('name', 'id');
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage = [];

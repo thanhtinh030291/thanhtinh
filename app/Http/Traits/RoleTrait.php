@@ -4,7 +4,7 @@ namespace App\Http\Traits;
 use App\Permission;
 use App\Role;
 
-trait HasPermissionsTrait {
+trait RoleTrait {
 
     public function roles() {
         return $this->belongsToMany(Role::class,'users_roles');

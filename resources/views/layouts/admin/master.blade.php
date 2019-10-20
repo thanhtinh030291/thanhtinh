@@ -58,6 +58,7 @@
         <!-- END footer -->
     </div>
     <!-- END main -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="{{asset('js/modernizr.min.js')}}"></script>
     <script src="{{asset('js/jquery.min.js')}}"></script>
     <script src="{{asset('js/popper.min.js')}}"></script>
