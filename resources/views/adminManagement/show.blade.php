@@ -27,32 +27,36 @@
                             <!-- Table Headings -->
                         <thead>
                             <tr>
-                                <th>{{ __('message.id')}} : {{$admin->id}}</th>
+                                <th>{{ __('message.id')}} : {{$user->id}}</th>
                             </tr>
                         </thead>
                         <!-- Table Body -->
                         <tbody>
                             <tr>
-                                <!-- echo image  from storage /-->
-                                <td><p class="font-weight-bold">{{ __('message.staff_image')}}</p>
-                                    <div><img style="width: 300px" src='{{ asset(loadImg($admin->profile_image,"/storage/profile_image/"))}}'></div>
-                                </td>
-                            </tr>
-                            <tr>
                                 <!-- Task Name -->
-                                <td><p class="font-weight-bold">{{ __('message.staff_name')}} </p><div> {{ $admin->name }}</div>
+                                <td><p class="font-weight-bold">{{ __('message.staff_name')}} </p><div> {{ $user->name }}</div>
                                 </td>
                             </tr>
                             <tr>
-                                <td><p class="font-weight-bold">{{ __('message.email')}}</p> <div> {{ $admin->email }}</div>
+                                <td><p class="font-weight-bold">{{ __('message.email')}}</p> <div> {{ $user->email }}</div>
                                 </td>
                             </tr>
                             <tr>
-                                <td><p class="font-weight-bold">{{ __('message.date_created')}}</p> <div> {{ $admin->created_at }}</div>
+                                <td><p class="font-weight-bold">{{ __('message.date_created')}}</p> <div> {{ $user->created_at }}</div>
                                 </td>
                             </tr>
                             <tr>
-                                <td><p class="font-weight-bold">{{ __('message.date_updated')}}</p> <div> {{ $admin->updated_at }}</div>
+                                <td><p class="font-weight-bold">{{ __('message.date_updated')}}</p> <div> {{ $user->updated_at }}</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p class="font-weight-bold">Roles</p> 
+                                    {{ Form::select('_role', $all_roles_in_database, $user->roles->pluck('name'), ['class' => 'select2 form-control', 'multiple' => 'multiple', 'disable']) }}<br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p class="font-weight-bold">Permission</p> 
+                                    {{ Form::select('_role', $all_permissions_in_database, $user->getAllPermissions()->pluck('name'), ['class' => ' select2 form-control', 'multiple' => 'multiple', 'disable']) }}<br>
                                 </td>
                             </tr>
                         </tbody>
@@ -65,4 +69,10 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    $(".select2").select2({disabled:'readonly'});
+    
+</script>
 @endsection

@@ -32,5 +32,6 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('importExportView', 'CSVController@importExportView')->middleware(['role:super-admin']);
         Route::post('import', 'CSVController@import')->name('import')->middleware(['role:super-admin']);
         Route::resource('admins', 'AdminController')->middleware(['role:super-admin']);
+        Route::resource('role', 'RoleController')->middleware(['role:super-admin']);
     });
 });

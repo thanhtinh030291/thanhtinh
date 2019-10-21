@@ -57,7 +57,7 @@ class ClaimPolicy
         if ($user->can('edit form claim')) {
             return true;
         }
-        return $user->id == $claim->created_user;
+        return $user->id === $claim->created_user;
     }
 
     /**
@@ -69,7 +69,10 @@ class ClaimPolicy
      */
     public function delete(User $user, Claim $claim)
     {
-        return $user->id == $claim->created_user;
+        if ($user->can('delete form claim')) {
+            return true;
+        }
+        return $user->id === $claim->created_user;
     }
 
     /**

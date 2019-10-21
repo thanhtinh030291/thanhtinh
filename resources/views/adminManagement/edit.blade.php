@@ -34,6 +34,7 @@ $max = Config::get('constants.minMaxLength.max');
                     {{ Form::label('role','Role', array('class' => 'labelas')) }}<span class="text-danger">*</span>
                     {{ Form::select('_role', $all_roles_in_database, $user->roles->pluck('name'), ['class' => 'select2 form-control', 'multiple' => 'multiple', 'name'=>'_role[]']) }}<br>
                     
+                   
 
                     <!-- Add update Button -->
                     <div class="form-group">
@@ -51,33 +52,6 @@ $max = Config::get('constants.minMaxLength.max');
 
 @section('scripts')
 <script>
-    $.fn.hasExtension = function (exts) {
-        return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test($(this).val());
-    }
-
-    $(document).ready(function () {
-        let fileSize;
-        $('.profile_image').bind('change', function () {
-            fileSize = this.files[0].size;
-        });
-
-        $('#frmUpdateStaff').submit(function () {
-            if($('.profile_image').val()=='')
-            {
-                return true;
-            }
-
-            if (!$('.profile_image').hasExtension(['.jpg', '.jpeg', '.png', '.jpe'])) {
-                alert('The profile image must be a file of type: jpeg, jpg, png, jpe.');
-                return false;
-            }
-
-            if (fileSize / 1024 / 1024 > 2) {
-                alert('The profile image may not be greater than 2048 kilobytes.');
-                return false;
-            }
-        });
-    });
-
+   
 </script>
 @endsection

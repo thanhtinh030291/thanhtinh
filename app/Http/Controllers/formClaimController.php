@@ -20,23 +20,33 @@ use SimilarText\Finder;
 use Illuminate\Support\Facades\Route;
 class formClaimController extends Controller
 {
-    public function __construct()
+
+    public function callAction($method, $parameters)
     {
         $prefix = (request()->segments())[1];
         $action = explode('@',Route::getCurrentRoute()->getActionName())[1];
         switch ($action) {
+            case 'update':
             case 'edit':
-            $id = ((request()->route()->parameters)[$prefix]);
-            $data = Claim::findOrFail($id);
-            $user = Auth::user();
-            dump($id, $user, 'iii' );
-            //dump($user->can('update', $data));
+                $id = ((request()->route()->parameters)[$prefix]);
+                $data = Claim::findOrFail($id);
+                $user = Auth::user();
+                if($user->cannot('update', $data)){
+                    return abort(403,__('message.not_have_role'));
+                }
                 break;
-            
+            case 'destroy':
+                $id = ((request()->route()->parameters)[$prefix]);
+                $data = Claim::findOrFail($id);
+                $user = Auth::user();
+                if($user->cannot('delete', $data)){
+                    return abort(403,__('message.not_have_role'));
+                }
+            break;
             default:
-                # code...
                 break;
         }
+        return parent::callAction($method, $parameters);
     }
     /**
      * Display a listing of the resource.
@@ -175,7 +185,6 @@ class formClaimController extends Controller
     {
         $data = Claim::findOrFail($id);
         $user = Auth::user();
-        dd($user->can('update', $data));
         $listReasonInject = ListReasonInject::pluck('name', 'id');
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage = [];

@@ -36,7 +36,8 @@ return [
     'password' => 'Password',
     'add' => 'Add',
     'new_items_reject' => 'New Items Reject',
-
+    'not_have_role' => 'User does not have the right roles',
+    'id' => 'ID',
 
     //Claim
     'add_claim' => 'claim was successfully created',
@@ -118,4 +119,7 @@ return [
     'staff_view' => 'Staff View',
     'staff_edit' => 'Staff Edit',
     'staff_reg_info' => 'Registered Information',
+
+    //role_management
+    'role_management' => 'Roles Management',
 ];

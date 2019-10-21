@@ -70,9 +70,13 @@
                                 <td>{{ $data->updated_at }}</td>
                                 <td style = "width : 15%" class='text-center'>
                                     <a class="btn btn-primary" href='{{url("admin/form_claim/$data->id")}}'>{{__('message.view')}}</a>
-                                    <a class="btn btn-success" href='{{url("admin/form_claim/$data->id/edit")}}'>{{__('message.edit')}}</a>
-                                    <button type="button" class="btn btn-danger btn-delete" data-url="{{ route('form_claim.destroy', $data->id) }}"
+                                    @can('update', $data)
+                                        <a class="btn btn-success" href='{{url("admin/form_claim/$data->id/edit")}}' @can('update', $data) @endcan>{{__('message.edit')}}</a>
+                                    @endcan
+                                    @can('delete', $data)
+                                        <button type="button" class="btn btn-danger btn-delete" data-url="{{ route('form_claim.destroy', $data->id) }}"
                                         data-toggle="modal" data-target="#deleteConfirmModal">{{__('message.delete')}}</button>
+                                    @endcan
                                 </td>
                             </tr>
                         </tbody>

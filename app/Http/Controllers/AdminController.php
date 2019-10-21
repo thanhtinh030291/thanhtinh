@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Role;
+use App\Permission;
 use App\Http\Requests\AdminRequest;
 use Auth;
 use Config;
@@ -90,9 +91,10 @@ class AdminController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show($id) {
-		$admin = User::findOrFail($id);
+		$user = User::findOrFail($id);
 		$all_roles_in_database = Role::all()->pluck('name','name');
-		return view('adminManagement.show', compact('admin'));
+		$all_permissions_in_database = Permission::all()->pluck('name','name');
+		return view('adminManagement.show', compact('user', 'all_roles_in_database', 'all_permissions_in_database' ));
 	}
 
 	/**
@@ -103,7 +105,6 @@ class AdminController extends Controller {
 	 */
 	public function edit($id) {
 		$user = User::with('roles')->findOrFail($id);
-		dd($user->getAllPermissions());
 		$all_roles_in_database = Role::all()->pluck('name','name');
 		return view('adminManagement.edit', compact('user', 'all_roles_in_database'));
 	}
@@ -116,35 +117,11 @@ class AdminController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(AdminRequest $request, $id) {
-		$upLoadPath = Config::get('constants.uploadDirectory.User');
-		$upLoadPathResize = Config::get('constants.uploadDirectory.userResize');
-		$thumbNail = Config::get('constants.uploadDirectory.thumbNail');
-		$widthThumbNail = Config::get('constants.uploadDirectory.widthThumbNail');
-		$widthProfile = Config::get('constants.uploadDirectory.widthProfile');
 		$request->validated();
 		$dataNew = $request->except('profile_image', '_method', '_token');
-		$newImage = request()->profile_image;
 
-		// handle file upload
-		if ($newImage) {
-			//get file name with extension
-			$fileNameWithExt = $newImage->getClientOriginalName();
-			$fileNameToStore = time() . $fileNameWithExt;
-			$newImage->storeAs($upLoadPath, $fileNameToStore);
-			$thumbNailPath = public_path($upLoadPathResize . '/' . $fileNameToStore);
-			$image = Image::make($thumbNailPath)->resize($widthProfile, NULL, function ($constraint) {$constraint->aspectRatio();})->encode('jpg');
-			$store = Storage::put($upLoadPath . '/' . $fileNameToStore, $image->__toString());
-			$imageThumbNail = Image::make($thumbNailPath)->resize($widthThumbNail, NULL, function ($constraint) {$constraint->aspectRatio();})->encode('jpg');
-			$storeThumbNail = Storage::put($thumbNail . '/' . $fileNameToStore, $imageThumbNail->__toString());
-		}
-		$admin = User::findOrFail($id);
-		if ($newImage) {
-			Storage::delete($upLoadPath . '/' . $admin->profile_image);
-			Storage::delete($thumbNail . '/' . $admin->profile_image);
-			$dataNew['profile_image'] = $fileNameToStore;
-		}
-
-		User::updateOrCreate(['id' => $id], $dataNew);
+		$user = User::updateOrCreate(['id' => $id], $dataNew);
+		$user->syncRoles($request->_role);
 		$request->session()->flash('status', __('message.update_account'));
 		return redirect('/admin/admins');
 	}
