@@ -18,7 +18,7 @@
 <br>
 <div class="row">
     <div class="col-md-12">
-        <form action="{{ url('admin/list_reason_inject') }}" method="GET" class="form-horizontal" >
+        <form action="{{ url('admin/product') }}" method="GET" class="form-horizontal" >
             <div class="card">
                 <div class="card-header">
                     <label  class="font-weight-bold" for="searchmail"> {{ __('message.search')}}</label>

@@ -21,17 +21,18 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/home', 'HomeController@index')->name('home');
         
 
-        Route::resource('form_claim', 'formClaimController');
-        Route::post('/search', 'formClaimController@searchFullText')->name('search');
-        Route::post('/search2', 'formClaimController@searchFullText2')->name('search2');
+        Route::resource('claim', 'ClaimController');
+        Route::post('/search', 'ClaimController@searchFullText')->name('search');
+        Route::post('/search2', 'ClaimController@searchFullText2')->name('search2');
 
         Route::resource('list_reason_inject', 'ListReasonInjectController');
-
         Route::resource('product', 'ProductController');
+        Route::resource('term', 'TermController');
 
-        Route::get('importExportView', 'CSVController@importExportView')->middleware(['role:super-admin']);
-        Route::post('import', 'CSVController@import')->name('import')->middleware(['role:super-admin']);
-        Route::resource('admins', 'AdminController')->middleware(['role:super-admin']);
-        Route::resource('role', 'RoleController')->middleware(['role:super-admin']);
+        Route::get('importExportView', 'CSVController@importExportView')->middleware(['role:Admin']);
+        Route::post('import', 'CSVController@import')->name('import')->middleware(['role:Admin']);
+        Route::resource('admins', 'AdminController')->middleware(['role:Admin']);
+        Route::resource('role', 'RoleController')->middleware(['role:Admin']);
+        Route::resource('permission', 'PermissionController')->middleware(['role:Admin']);
     });
 });

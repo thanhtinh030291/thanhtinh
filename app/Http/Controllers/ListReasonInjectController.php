@@ -7,6 +7,7 @@ use App\Http\Requests\reasonInjectRequest;
 use App\ListReasonInject;
 use App\User;
 use Auth;
+use Illuminate\Support\Arr;
 
 class ListReasonInjectController extends Controller
 {
@@ -29,7 +30,7 @@ class ListReasonInjectController extends Controller
         //pagination result
         $data['limit_list'] = config('constants.limit_list');
         $data['limit'] = $request->get('limit');
-        $per_page = !empty($data['limit']) ? $data['limit'] : array_first($data['limit_list']);
+        $per_page = !empty($data['limit']) ? $data['limit'] : Arr::first($data['limit_list']);
         $data['listReasonInject']  = $listReasonInject->paginate($per_page);
         
         return view('listReasonInjectManagement.index', $data);

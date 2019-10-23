@@ -1,5 +1,5 @@
 @extends('layouts.admin.master')
-@section('title', __('message.detail_ticket_category'))
+@section('title', __('message.detail_role'))
 @section('stylesheets')
     <link href="{{ asset('css/fileinput.css') }}" media="all" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/jquery-ui.min.css') }}">
@@ -7,10 +7,10 @@
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
-    'title'       => __('message.detail_reason_inject'),
-    'parent_url'  => route('list_reason_inject.index'),
-    'parent_name' => __('message.detail_reason_inject'),
-    'page_name'   => __('message.detail_reason_inject'),
+    'title'       => __('message.detail_role'),
+    'parent_url'  => route('role.index'),
+    'parent_name' => __('message.detail_role'),
+    'page_name'   => __('message.detail_role'),
 ])
 <div class="row">
     <div class="col-md-12">
@@ -30,28 +30,11 @@
                         </tr>
                         <tr>
                             <td>
-                                <p class="font-weight-bold">{{ __('message.account_create') }}
-                                <div> {{ $userCreated }}</div>
+                                {{ Form::label('_permissions', __('message.permissions'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
+                                {{ Form::select('_permissions', $all_permissions_in_database, $permissions, ['class' => ' select2 form-control', 'multiple' => 'multiple' , 'name' => '_permissions[]' ]) }}<br>
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                <p class="font-weight-bold">{{ __('message.account_edit') }}
-                                <div> {{ $userUpdated }}</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p class="font-weight-bold">{{ __('message.date_created') }}
-                                <div> {{ $data->created_at }}</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p class="font-updated_at-bold">{{ __('message.date_updated') }}
-                                <div> {{ $data->updated_at }}</div>
-                            </td>
-                        </tr>
+        
                     </tbody>
                 </table>
                 </div>
@@ -62,4 +45,10 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    $(".select2").select2({disabled:'readonly'});
+    
+</script>
 @endsection

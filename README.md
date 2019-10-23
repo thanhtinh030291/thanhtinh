@@ -102,3 +102,12 @@ STRIPE_SECRET=sk_test_o23x3ThagWF8AMAHPIXNIE9e00IMyhMhrv
 # Step 9 -  Setup Script crontab
 crontab -e
  * * * * * php /var/www/html/tos_admin/artisan schedule:run >> /dev/null 2>&1
+
+# Step 10 - Setup Police 
+php artisan make:policy PostPolicy --model=Post
+...
+
+# step 11 - create permission 
+php artisan auth:permission claim
+php artisan auth:permission product
+php artisan auth:permission term

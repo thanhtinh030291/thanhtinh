@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\User;
 use App\Claim;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use App\Http\Traits\PoliceTrait;
 
 class ClaimPolicy
 {
@@ -19,7 +18,9 @@ class ClaimPolicy
      */
     public function viewAny(User $user)
     {
-        return true;
+        if ($user->can('view_claim')) {
+            return true;
+        }
     }
 
     /**
@@ -31,7 +32,11 @@ class ClaimPolicy
      */
     public function view(User $user, Claim $claim)
     {
-        return true;
+        
+        if ($user->can('view_claim')) {
+            return true;
+        }
+        
     }
 
     /**
@@ -42,7 +47,9 @@ class ClaimPolicy
      */
     public function create(User $user)
     {
-        return true;
+        if ($user->can('add_claim')) {
+            return true;
+        }
     }
 
     /**
@@ -54,7 +61,7 @@ class ClaimPolicy
      */
     public function update(User $user, Claim $claim)
     {
-        if ($user->can('edit form claim')) {
+        if ($user->can('edit_claim')) {
             return true;
         }
         return $user->id === $claim->created_user;
@@ -69,7 +76,7 @@ class ClaimPolicy
      */
     public function delete(User $user, Claim $claim)
     {
-        if ($user->can('delete form claim')) {
+        if ($user->can('delete_claim')) {
             return true;
         }
         return $user->id === $claim->created_user;
@@ -84,7 +91,7 @@ class ClaimPolicy
      */
     public function restore(User $user, Claim $claim)
     {
-        //
+        
     }
 
     /**
@@ -96,6 +103,6 @@ class ClaimPolicy
      */
     public function forceDelete(User $user, Claim $claim)
     {
-        //
+        
     }
 }

@@ -1,9 +1,14 @@
 <?php
 
 namespace App\Providers;
-
-use Illuminate\Support\Facades\Gate;
+use App\Claim;
+use App\Policies\ClaimPolicy;
+use App\Product;
+use App\Policies\ProductPolicy;
+use App\Term;
+use App\Policies\TermPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -14,7 +19,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Model' => 'App\Policies\ModelPolicy',
-        App\Claim::class => App\Policies\ClaimPolicy::class
+        Claim::class => ClaimPolicy::class,
+        Product::class => ProductPolicy::class,
+        Term::class => TermPolicy::class,
+
     ];
 
     /**
@@ -25,9 +33,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-        
-        Gate::before(function ($user, $ability) {
-            return $user->hasRole('super-admin') ? true : null;
-        });
+
+        //
     }
 }

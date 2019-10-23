@@ -1,16 +1,16 @@
 @extends('layouts.admin.master')
-@section('title', __('message.list_reason_inject'))
+@section('title', __('message.role_management'))
 @section('stylesheets')
     <link href="{{ asset('css/condition_advance.css') }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
-    'title'       => __('message.list_reason_inject'),
-    'page_name'   => __('message.list_reason_inject'),
+    'title'       => __('message.role_management'),
+    'page_name'   => __('message.role_management'),
 ])
 <div class="row">
     <div class="col-md-12">
-        <a class="btn btn-primary pull-right" href="{{ url('admin/list_reason_inject/create') }}">
+        <a class="btn btn-primary pull-right" href="{{ url('admin/role/create') }}">
             {{ __('message.create')}}
         </a>
     </div>
@@ -29,18 +29,6 @@
                             {{ Form::label('name_en', __('message.name'), ['class' => 'labelas']) }}
                             {{ Form::text('name', $search_params['name'], ['class' => 'form-control']) }}
                         </div>
-                        {{-- <div class="col-md-6">
-                            {{ Form::label('created_user', __('message.account_create'), ['class' => 'labelas']) }}
-                            {{ Form::select('created_user', $admin_list, $search_params['created_user'], ['id' => 'created_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
-                            {{ Form::label('created_at', __('message.date_created'), ['class' => 'labelas']) }}
-                            {{ Form::text('created_at', $search_params['created_at'], ['class' => 'form-control datepicker']) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ Form::label('updated_user', __('message.account_edit'), ['class' => 'labelas']) }}
-                            {{ Form::select('updated_user', $admin_list, $search_params['updated_user'], ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
-                            {{ Form::label('updated_at', __('message.date_updated'), ['class' => 'labelas']) }}
-                            {{ Form::text('updated_at', $search_params['updated_at'], ['class' => 'form-control datepicker']) }}
-                        </div> --}}
                     </div>
                     <br>
                     <button type="submit" class="btn btn-info">{{ __('message.search') }}</button>
@@ -68,8 +56,7 @@
                         <thead>
                             <tr>
                                 <th>{{ __('message.name')}}</th>
-                                <th>{{ __('message.account_create')}}</th>
-                                <th>{{ __('message.account_edit')}}</th>
+                                
                                 <th>{{ __('message.date_created')}}</th>
                                 <th>{{ __('message.date_updated')}}</th>
                                 <th class='text-center control_btn'>{{ 
@@ -83,15 +70,13 @@
                             <tr>
                                 <!-- ticket info -->
                                 <td>{{ $value->name }}</td>
-                                <td>{{ $admin_list[$value->created_user] }}</td>
-                                <td>{{ $admin_list[$value->updated_user] }}</td>
                                 <td>{{ $value->created_at }}</td>
                                 <td>{{ $value->updated_at }}</td>
                                 <td class='text-center'>
                                     <!-- control -->
-                                    <a class="btn btn-primary" href='{{ url("admin/list_reason_inject/$value->id") }}'>{{ __('message.view') }}</a>
-                                    <a class="btn btn-success" href='{{ url("admin/list_reason_inject/$value->id/edit") }}'>{{ __('message.edit') }}</a>
-                                    <button type="button" class="btn btn-danger btn-delete" data-url="{{ route('list_reason_inject.destroy', $value->id) }}"
+                                    <a class="btn btn-primary" href='{{ url("admin/role/$value->id") }}'>{{ __('message.view') }}</a>
+                                    <a class="btn btn-success" href='{{ url("admin/role/$value->id/edit") }}'>{{ __('message.edit') }}</a>
+                                    <button type="button" class="btn btn-danger btn-delete" data-url="{{ route('role.destroy', $value->id) }}"
                                         data-toggle="modal" data-target="#deleteConfirmModal">{{ __('message.delete') }}</button>
                                 </td>
                             </tr>
@@ -99,7 +84,7 @@
                         @endforeach
                     </table>
                 </div>
-                {{ $listReasonInject->appends($search_params)->links() }}
+                {{ $data->appends($search_params)->links() }}
                 @endif
             </div>
         </div>
@@ -107,8 +92,8 @@
 </div>
 
 @include('layouts.admin.partials.delete_model', [
-    'title'           => __('message.delete_reason_inject_warning'),
-    'confirm_message' => __('message.delete_reason_inject_confirm'),
+    'title'           => __('message.delete_warning'),
+    'confirm_message' => __('message.delete_confirm'),
 ])
 
 @endsection

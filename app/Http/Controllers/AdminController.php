@@ -51,7 +51,7 @@ class AdminController extends Controller {
 			if ($created_at != NULL) {
 				$query->where('created_at', '>=', date($created_at . ' 00:00:00'))->where('created_at', '<=', date($created_at . ' 23:59:59'));
 			}
-			$query->where('id', '!=', '1');
+			
 		})->paginate($itemPerPage);
 
 		return view('adminManagement.index', compact('admins', 'email', 'name', 'status', 'created_at'));

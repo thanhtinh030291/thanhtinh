@@ -6,9 +6,16 @@ use Auth;
 use App\Product;
 use App\Http\Requests\reasonInjectRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+
 
 class ProductController extends Controller
 {
+    //use Authorizable;
+    public function __construct()
+    {
+        $this->authorizeResource(Product::class);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -28,7 +35,7 @@ class ProductController extends Controller
         //pagination result
         $data['limit_list'] = config('constants.limit_list');
         $data['limit'] = $request->get('limit');
-        $per_page = !empty($data['limit']) ? $data['limit'] : array_first($data['limit_list']);
+        $per_page = !empty($data['limit']) ? $data['limit'] : Arr::first($data['limit_list']);
         $data['data']  = $Product->paginate($per_page);
         
         return view('productManagement.index', $data);
@@ -69,9 +76,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        $data = Product::findOrFail($id);
+        $data = $product;
         $userCreated = $data->userCreated->name;
         $userUpdated = $data->userUpdated->name;
         return view('productManagement.detail', compact('data', 'userCreated', 'userUpdated'));
@@ -83,9 +90,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Product $product)
     {
-        $data = Product::findOrFail($id);
+        $data = $product;
         return view('productManagement.edit', compact('data'));
     }
 
@@ -96,12 +103,12 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(reasonInjectRequest $request, $id)
+    public function update(reasonInjectRequest $request, Product $product)
     {
         $data = $request->except([]);
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
-        Product::updateOrCreate(['id' => $id], $data);
+        Product::updateOrCreate(['id' => $product->id], $data);
 
         $request->session()->flash('status', __('message.reason_inject_update_success')); 
         return redirect('/admin/product');
@@ -113,9 +120,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        $data = Product::findOrFail($id);
+        $data = $product;
         $data->delete();
         return redirect('/admin/product')->with('status', __('message.reason_inject_delete_success'));
     }

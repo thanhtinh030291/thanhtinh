@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends BaseModel
+class Role extends \Spatie\Permission\Models\Role
 {
     protected $table    = 'roles';
     protected $guarded  = ['id'];

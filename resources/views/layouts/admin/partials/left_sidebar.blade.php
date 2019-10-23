@@ -12,9 +12,9 @@
                         <i class="fa fa-fw fa-ticket"></i> <span> {{__('message.claim_management')}} </span>
                     </a>
                     <ul class="list-unstyled">
-                        <li class="{{ setActive('admin/form_claim') }}"> 
-                            <a class="{{ setActive('admin/form_claim') }}"
-                            href="{{ url('admin/form_claim') }}"><span> {{ __('message.form_claim_orc')}}</span></a>
+                        <li class="{{ setActive('admin/claim') }}"> 
+                            <a class="{{ setActive('admin/claim') }}"
+                            href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_orc')}}</span></a>
                         </li>
                         <li class="{{ setActive('admin/list_reason_inject') }}"> 
                             <a class="{{ setActive('admin/list_reason_inject') }}"
@@ -24,9 +24,13 @@
                             <a class="{{ setActive('admin/product') }}"
                             href="{{ url('admin/product') }}"><span> {{ __('message.product')}}</span></a>
                         </li>
+                        <li class="{{ setActive('admin/term') }}"> 
+                            <a class="{{ setActive('admin/term') }}"
+                            href="{{ url('admin/term') }}"><span> {{ __('message.term')}}</span></a>
+                        </li>
                     </ul>
                 </li>
-                @role('super-admin')
+                @role('Admin')
                 <li class="submenu">
                     <a href="#">
                         <i class="fa fa-cogs" aria-hidden="true"></i> <span> System Management </span>

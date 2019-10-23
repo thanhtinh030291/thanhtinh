@@ -38,6 +38,11 @@ return [
     'new_items_reject' => 'New Items Reject',
     'not_have_role' => 'User does not have the right roles',
     'id' => 'ID',
+    'update_success' => 'Updated successful',
+    'delete_success' => 'Delete successful',
+    'create_success' => 'Create successful',
+    'delete_confirm' => 'Do you want to delete this ?',
+    'delete_warning' => 'Delete confirmation!',
 
     //Claim
     'add_claim' => 'claim was successfully created',
@@ -122,4 +127,21 @@ return [
 
     //role_management
     'role_management' => 'Roles Management',
+    'create_role' => 'Create  Role',
+    'detail_role' => 'Detail  Role',
+    'edit_role' => 'Edit Role',
+    'role' => 'Role',
+    'permissions' => 'Permissions',
+
+    //term
+    'term' => 'Term of insurance',
+    'create_term' => 'Create  Term of insurance',
+    'detail_term' => 'Detail  Term of insurance',
+    'edit_term' => 'Edit  Term of insurance',
+    'term_update_success' => ' Term of insurance was successfully updated',
+    'term_delete_success' => ' Term of insurance was successfully deleted',
+    'term_create_success' => ' Term of insurance was successfully created',
+    'term_confirm' => 'Do you want to delete this Term of insurance ?',
+    'term_warning' => 'Delete confirmation!',
+    'description' => 'Description',
 ];

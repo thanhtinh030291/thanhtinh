@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\reasonInjectRequest;
-use App\Role;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use App\User;
 use Auth;
+use Illuminate\Support\Arr;
 
 class RoleController extends Controller
 {
@@ -20,12 +21,12 @@ class RoleController extends Controller
         $data['search_params'] = [
             'name' => $request->get('name'),
         ];
-        $listReasonInject = Role::findByParams($data['search_params'])->orderBy('id', 'desc');
+        $listReasonInject = Role::where('name','LIKE' , '%' .$data['search_params']['name'] . '%')->orderBy('id', 'desc');
         $data['admin_list'] = User::getListIncharge();
         //pagination result
         $data['limit_list'] = config('constants.limit_list');
         $data['limit'] = $request->get('limit');
-        $per_page = !empty($data['limit']) ? $data['limit'] : array_first($data['limit_list']);
+        $per_page = !empty($data['limit']) ? $data['limit'] : Arr::first($data['limit_list']);
         $data['data']  = $listReasonInject->paginate($per_page);
         
         return view('roleManagement.index', $data);
@@ -38,7 +39,8 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('listReasonInjectManagement.create');
+        $all_permissions_in_database = Permission::all()->pluck('name','name');
+        return view('roleManagement.create', compact('all_permissions_in_database'));
     }
 
     /**
@@ -47,17 +49,15 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(reasonInjectRequest $request)
+    public function store(Request $request)
     {
         $userId = Auth::User()->id;
         $data = $request->except([]);
-        $data['created_user'] = $userId;
-        $data['updated_user'] = $userId;
-
-        ListReasonInject::create($data);
-        $request->session()->flash('status', __('message.reason_inject_create_success')); 
+        $newdata = Role::create($data);
+        $newdata->givePermissionTo($request->_permissions); 
+        $request->session()->flash('status', __('message.create_success')); 
         
-        return redirect('/admin/list_reason_inject');
+        return redirect('/admin/role');
     }
 
     /**
@@ -68,10 +68,12 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        $data = ListReasonInject::findOrFail($id);
-        $userCreated = $data->userCreated->name;
-        $userUpdated = $data->userUpdated->name;
-        return view('listReasonInjectManagement.detail', compact('data', 'userCreated', 'userUpdated'));
+        $data = Role::findOrFail($id);
+        $permissions = $data->permissions()->pluck('name','name');
+        
+        $all_permissions_in_database = Permission::all()->pluck('name','name');
+
+        return view('roleManagement.detail', compact('data', 'permissions', 'all_permissions_in_database'));
     }
 
     /**
@@ -82,8 +84,10 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $data = ListReasonInject::findOrFail($id);
-        return view('listReasonInjectManagement.edit', compact('data'));
+        $data = Role::findOrFail($id);
+        $permissions = $data->permissions()->pluck('id');
+        $all_permissions_in_database = Permission::all()->pluck('name','id');
+        return view('roleManagement.edit', compact('data', 'permissions', 'all_permissions_in_database'));
     }
 
     /**
@@ -93,15 +97,14 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(reasonInjectRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $data = $request->except([]);
-        $userId = Auth::User()->id;
-        $data['updated_user'] = $userId;
-        ListReasonInject::updateOrCreate(['id' => $id], $data);
+        $role = Role::updateOrCreate(['id' => $id], $data);
+        $role->permissions()->sync($request->_permissions);
 
-        $request->session()->flash('status', __('message.reason_inject_update_success')); 
-        return redirect('/admin/list_reason_inject');
+        $request->session()->flash('status', __('message.update_success')); 
+        return redirect('/admin/role');
     }
 
     /**
@@ -112,8 +115,8 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        $data = ListReasonInject::findOrFail($id);
+        $data = Role::findOrFail($id);
         $data->delete();
-        return redirect('/admin/list_reason_inject')->with('status', __('message.reason_inject_delete_success'));
+        return redirect('/admin/role')->with('status', __('message.delete_success'));
     }
 }
