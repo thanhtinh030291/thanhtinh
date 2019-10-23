@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\reasonInjectRequest;
 use App\ListReasonInject;
 use App\User;
+use App\Term;
 use Auth;
 use Illuminate\Support\Arr;
 
@@ -43,7 +44,8 @@ class ListReasonInjectController extends Controller
      */
     public function create()
     {
-        return view('listReasonInjectManagement.create');
+        $listTerm = Term::pluck('name','id');
+        return view('listReasonInjectManagement.create', compact('listTerm'));
     }
 
     /**

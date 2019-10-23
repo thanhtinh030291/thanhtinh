@@ -21,6 +21,11 @@
                     {{ Form::label('name', __('message.name'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
                     {{ Form::text('name', old('name'), [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
 
+                    {{ Form::label('term', __('message.term'), array('class' => 'labelas')) }} 
+                    {{ Form::select('term', $listTerm, old('term'), ['class' => ' select2 form-control', 'placeholder' => 'None']) }}<br>
+
+                    {{ Form::label('template_reject', __('message.remark')) }}
+                    {{ Form::textarea('template_reject', old('template_reject'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}
                 <div class="text-center tour-button">
                     <a class="btn btnt btn-secondary" href="{{url('admin/list_reason_inject')}}">
                         {{ __('message.back')}}
@@ -36,7 +41,7 @@
 @endsection
 
 @section('scripts')
-
-<script src="{{ asset('js/multi_lang.js') }}"></script>
+<script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('js/tinymce.js') }}"></script>
 
 @endsection
