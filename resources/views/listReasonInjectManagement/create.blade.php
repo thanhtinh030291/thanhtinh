@@ -25,7 +25,7 @@
                     {{ Form::select('term', $listTerm, old('term'), ['class' => ' select2 form-control', 'placeholder' => 'None']) }}<br>
 
                     {{ Form::label('template_reject', __('message.remark')) }}
-                    {{ Form::textarea('template_reject', old('template_reject'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}
+                    {{ Form::textarea('template_reject', old('template_reject'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>
                 <div class="text-center tour-button">
                     <a class="btn btnt btn-secondary" href="{{url('admin/list_reason_inject')}}">
                         {{ __('message.back')}}

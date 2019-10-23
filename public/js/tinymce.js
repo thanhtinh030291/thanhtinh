@@ -90,7 +90,7 @@ var config2 = {
             text: "Example",
             icon: false,
             onclick: function() {
-                editor.insertContent("<br><b class = 'text-danger'>[##Datdsdse##]</b>&nbsp;");
+                editor.insertContent("<br>Chi phí &nbsp;<b class = 'text-danger'>[##nameItem##]</b>&nbsp; . (<b class = 'text-danger'>[##amountItem##]</b> đồng)  , không được thanh toán do thuộc điều khoản loại trừ mục 3.6 Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe.");
             }
         });
     }
