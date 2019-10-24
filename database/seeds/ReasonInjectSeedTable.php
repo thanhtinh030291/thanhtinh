@@ -12,7 +12,7 @@ class ReasonInjectSeedTable extends Seeder
     public function run()
     {
         $now = date("Y-m-d H:i:s");
-        DB::table('list_reason_inject')->insert([
+        DB::table('reason_Reject')->insert([
             [
                 'name' => 'Diagnosis is not covered by the policy',
                 'created_user' => 1,

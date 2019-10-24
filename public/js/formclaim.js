@@ -293,10 +293,11 @@ function addInputItem(){
     clone = clone.replace("_content_default", "_content["+count+"]");
     clone = clone.replace("_amount_default", "_amount["+count+"]");
     clone = clone.replace("_reasonInject_default", "_reasonInject["+count+"]");
+    clone = clone.replace('template_default', "template_"+count);
     $("#empty_item").before(clone);
     $('input[name="_content['+count+']"]').attr({"required": "true", 'data-id': count, 'id': '_content'+count, 'onclick':"setIdPaste(this)"});
     $('input[name="_amount['+count+']"]').attr("required", "true");
-    $('select[name="_reasonInject['+count+']"]').addClass('select2');
+    $('select[name="_reasonInject['+count+']"]').addClass('select2').attr('data-id', count);
     $('.select2').select2();
     count++;
 }
@@ -306,6 +307,42 @@ function addValueItem(content, amount, reasonInject, count, idItem = ""){
     $('select[name="_reasonInject['+count+']"]').val(reasonInject).change();
     $('input[name="_idItem['+count+']"]').val(idItem);
 }
+// ajax template
+function template(e){
+    var id = e.dataset.id;
+    var container = $("#template_"+id);
+    $.ajax({
+        url: '/admin/template',
+        type: 'POST',
+        context: e,
+        data: {'search' : e.value},
+    })
+    .done(function(res) {
+        if(res.status == 'success'){
+                container.empty();
+                container.append(replaceTemplace(res.data, id));
+                loadDatepicker();
+        }else{
+                container.empty();
+        }
+    })
+}
+
+// replace template 
+    function replaceTemplace(str , id = null){
+        var result = str.replace(/\[##Text##\]/g,'<input type="text" class="form-control text-template p-1" required />');
+        result = result.replace(/\[##Date##\]/g,'<input type="text" class="form-control date-template datepicker p-1" required />');
+        var nameItem = $('input[name="_content['+id+']"]').val() ;
+        result = result.replace(/\[##nameItem##\]/g,'<input type="text" class="form-control text-template p-1" value="'+nameItem+'" required readonly/>');
+        var amountItem = $('input[name="_amount['+id+']"]').val() ;
+        result = result.replace(/\[##amountItem##\]/g,'<input type="text" class="form-control text-template p-1" value="'+amountItem+'" required readonly/>');
+        return result;
+    }
+
+    function binding2Input(e , idElement){
+        $('#'+idElement).val(e.value);
+    }
+
 
 //set get  idPaste 
 var idPaste ;

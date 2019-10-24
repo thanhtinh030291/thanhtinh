@@ -39,7 +39,7 @@
                 </table>
                 </div>
                 <a class="btn btn-secondary" 
-                    href="{{ url('admin/list_reason_inject') }}">{{ __('message.back')}}</a>
+                    href="{{ url('admin/reason_reject') }}">{{ __('message.back')}}</a>
                 <br>
             </div>
         </div>

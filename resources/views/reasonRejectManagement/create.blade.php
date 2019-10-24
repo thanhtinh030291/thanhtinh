@@ -1,6 +1,6 @@
 
 @extends('layouts.admin.master')
-@section('title', __('message.create_ticket_category'))
+@section('title', __('message.create_reason_inject'))
 @section('stylesheets')
 <link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
 <link href="{{ asset('css/multi_lang.css') }}" media="all" rel="stylesheet" type="text/css"/>
@@ -8,26 +8,26 @@
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
     'title'       => __('message.create_reason_inject'),
-    'parent_url'  => route('list_reason_inject.index'),
-    'parent_name' => __('message.list_reason_inject'),
+    'parent_url'  => route('reason_reject.index'),
+    'parent_name' => __('message.reason_reject'),
     'page_name'   => __('message.create_reason_inject'),
 ])
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                {{ Form::open(array('url' => 'admin/list_reason_inject', 'method' => 'post' ,'class'=>'form-horizontal')) }}
+                {{ Form::open(array('url' => 'admin/reason_reject', 'method' => 'post' ,'class'=>'form-horizontal')) }}
                 
                     {{ Form::label('name', __('message.name'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
                     {{ Form::text('name', old('name'), [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
 
                     {{ Form::label('term', __('message.term'), array('class' => 'labelas')) }} 
-                    {{ Form::select('term', $listTerm, old('term'), ['class' => ' select2 form-control', 'placeholder' => 'None']) }}<br>
+                    {{ Form::select('term_id', $listTerm, old('term_id'), ['class' => ' select2 form-control', 'placeholder' => 'None']) }}<br>
 
-                    {{ Form::label('template_reject', __('message.remark')) }}
-                    {{ Form::textarea('template_reject', old('template_reject'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>
+                    {{ Form::label('template', __('message.template')) }}
+                    {{ Form::textarea('template', old('template'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>
                 <div class="text-center tour-button">
-                    <a class="btn btnt btn-secondary" href="{{url('admin/list_reason_inject')}}">
+                    <a class="btn btnt btn-secondary" href="{{url('admin/reason_reject')}}">
                         {{ __('message.back')}}
                     </a>
                     <button type="submit" class="btn btnt btn-danger center-block"> {{__('message.save')}}</button> <br>

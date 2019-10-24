@@ -3,11 +3,11 @@
 namespace App;
 use Schema;
 
-class ListReasonInject extends BaseModel
+class ReasonReject extends BaseModel
 {
-    protected $table    = 'list_reason_inject';
+    protected $table    = 'reason_reject';
     protected $guarded  = ['id'];
-    protected static $table_static = 'list_reason_inject';
+    protected static $table_static = 'reason_reject';
     protected $dates = ['deleted_at'];
     
 

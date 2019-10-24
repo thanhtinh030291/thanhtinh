@@ -67,11 +67,11 @@ $totalAmount = 0;
             <div class="card-body">
                 @foreach ($items as $data)
                     @php
-                        if($data->list_reason_inject_id){
+                        if($data->reason_reject_id){
                             $sum += removeFormatPrice($data->amount);
                         
                     @endphp
-                        <h5 class="text-danger font-weight-bold"> - Chi phí " {{$data->content}} " ( {{$data->amount}} ) không được thanh toán do thuộc điều khoản " {{data_get($listReasonInject, $data->list_reason_inject_id, "")}} " .
+                        <h5 class="text-danger font-weight-bold"> - Chi phí " {{$data->content}} " ( {{$data->amount}} ) không được thanh toán do thuộc điều khoản " {{data_get($listReasonReject, $data->reason_reject_id, "")}} " .
                         </h5>
                     @php
                         }
@@ -115,13 +115,13 @@ $totalAmount = 0;
                                 @endphp
                                 <td>
                                     <label class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input " disabled readonly {{ $data->list_reason_inject_id ? "" : 'checked' }}>
+                                        <input type="checkbox" class="custom-control-input " disabled readonly {{ $data->reason_reject_id ? "" : 'checked' }}>
                                         <span class="custom-control-indicator"></span>
                                     </label>
                                 </td>
                                 <td>
-                                    @if($data->list_reason_inject_id)
-                                        <p class="text-danger font-weight-bold">{{ $data->list_reason_inject->name}}</p>
+                                    @if($data->reason_reject_id)
+                                        <p class="text-danger font-weight-bold">{{ $data->reason_reject->name}}</p>
                                     @endif
                                 </td>
                             </tr>

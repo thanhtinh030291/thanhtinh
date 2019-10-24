@@ -71,14 +71,14 @@ return [
     'code_claim' => 'Code Claim',
     'letter' => 'Letter',
 
-    // list_reason_inject
-    'list_reason_inject' => 'List Reason Inject',
-    'create_reason_inject' => 'Create Reason Inject',
-    'detail_reason_inject' => 'Detail Reason Inject',
-    'edit_reason_inject' => 'Edit Reason Inject',
-    'reason_inject_update_success' => 'Reason inject was successfully updated',
-    'reason_inject_delete_success' => 'Reason inject was successfully deleted',
-    'reason_inject_create_success' => 'Reason inject was successfully created',
+    // reason_reject
+    'reason_reject' => 'Reason Reject',
+    'create_reason_inject' => 'Create Reason Reject',
+    'detail_reason_inject' => 'Detail Reason Reject',
+    'edit_reason_inject' => 'Edit Reason Reject',
+    'reason_inject_update_success' => 'Reason Reject was successfully updated',
+    'reason_inject_delete_success' => 'Reason Reject was successfully deleted',
+    'reason_inject_create_success' => 'Reason Reject was successfully created',
     'delete_reason_inject_confirm' => 'Do you want to delete this Reason ?',
     'delete_reason_inject_warning' => 'Delete confirmation!',
     'content' => 'Content',
@@ -86,7 +86,7 @@ return [
     'quantity'   => 'Quantity',
     'amount'   => 'Amount',
     'status'   => 'Status',
-    'reason_reject' => 'Reason Reject',
+    'template' => 'Template',
 
     //account
     'account_create' => 'User Create',

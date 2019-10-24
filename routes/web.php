@@ -24,8 +24,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('claim', 'ClaimController');
         Route::post('/search', 'ClaimController@searchFullText')->name('search');
         Route::post('/search2', 'ClaimController@searchFullText2')->name('search2');
+        Route::post('/template', 'ClaimController@template')->name('template');
 
-        Route::resource('list_reason_inject', 'ListReasonInjectController');
+        Route::resource('reason_reject', 'ReasonRejectController');
         Route::resource('product', 'ProductController');
         Route::resource('term', 'TermController');
 

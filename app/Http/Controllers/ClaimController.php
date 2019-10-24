@@ -13,7 +13,7 @@ use App\User;
 use App\Product;
 use DB;
 use Auth;
-use App\ListReasonInject;
+use App\ReasonReject;
 use App\Http\Requests\formClaimRequest;
 use Illuminate\Support\Facades\Log;
 use SimilarText\Finder;
@@ -52,8 +52,8 @@ class ClaimController extends Controller
      */
     public function create()
     {
-        $listReasonInject = ListReasonInject::pluck('name', 'id');
-        return view('claimManagement.create', compact('listReasonInject'));
+        $listReasonReject = ReasonReject::pluck('name', 'id');
+        return view('claimManagement.create', compact('listReasonReject'));
     }
 
     /**
@@ -93,7 +93,7 @@ class ClaimController extends Controller
                 $dataItems[] = new ItemOfClaim([
                     'content' => data_get($value, $fieldSelect['content'], ""),
                     'amount' => data_get($value, $fieldSelect['amount'], 0),
-                    'list_reason_inject_id' => data_get($reason, $key),
+                    'reason_reject_id' => data_get($reason, $key),
                     'created_user' => $userId,
                     'updated_user' => $userId,
                 ]);
@@ -109,7 +109,7 @@ class ClaimController extends Controller
                 $dataItems[] = new ItemOfClaim([
                     'content' => $value,
                     'amount' => data_get($rowAmount, $key, 0),
-                    'list_reason_inject_id' => data_get($reasonInject, $key),
+                    'reason_reject_id' => data_get($reasonInject, $key),
                     'created_user' => $userId,
                     'updated_user' => $userId,
                 ]);
@@ -146,11 +146,11 @@ class ClaimController extends Controller
         $admin_list = User::getListIncharge();
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
-        $listReasonInject = ListReasonInject::pluck('name', 'id');
+        $listReasonReject = ReasonReject::pluck('name', 'id');
         $items = $data->item_of_claim;
 
 
-        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonInject']));
+        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject']));
     }
 
     /**
@@ -163,7 +163,7 @@ class ClaimController extends Controller
     {
         $data = $claim;
         $user = Auth::user();
-        $listReasonInject = ListReasonInject::pluck('name', 'id');
+        $listReasonReject = ReasonReject::pluck('name', 'id');
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage = [];
         $previewConfig = [];
@@ -175,7 +175,7 @@ class ClaimController extends Controller
             $previewConfig[]['key'] = $data->url_file;
         }
         //dd($data->item_of_claim->pluck('content'));
-        return view('claimManagement.edit', compact(['data', 'dataImage', 'previewConfig', 'listReasonInject']));
+        return view('claimManagement.edit', compact(['data', 'dataImage', 'previewConfig', 'listReasonReject']));
     }
 
     /**
@@ -200,7 +200,7 @@ class ClaimController extends Controller
                         if ($value == null) {
                             $dataItemNew[] = [
                                 'claim_id' => $claim->id,
-                                'list_reason_inject_id' => $request->_reasonInject[$key],
+                                'reason_reject_id' => $request->_reasonInject[$key],
                                 'content' => $request->_content[$key],
                                 'amount' => $request->_amount[$key],
                                 'created_user' => $userId,
@@ -209,7 +209,7 @@ class ClaimController extends Controller
                         } else {
                             $keynew = $key - 1;
                             $data->item_of_claim[$keynew]->updated_user = $userId;
-                            $data->item_of_claim[$keynew]->list_reason_inject_id = $request->_reasonInject[$key];
+                            $data->item_of_claim[$keynew]->reason_reject_id = $request->_reasonInject[$key];
                             $data->item_of_claim[$keynew]->content = $request->_content[$key];
                             $data->item_of_claim[$keynew]->amount = $request->_amount[$key];
                         }
@@ -277,6 +277,18 @@ class ClaimController extends Controller
             $data = Product::FullTextSearch('name', $request->search)->pluck('name')->toArray();
             if(isset($data)){
                 $res = ['status' => 'success', 'data' => $data];
+            }
+        }
+        return response()->json($res, 200);
+    }
+
+    public function template(Request $request)
+    {
+        $res = ['status' => 'error'];
+        if ($request->search != '') {
+            $data = ReasonReject::findOrFail($request->search);
+            if(isset($data)){
+                $res = ['status' => 'success', 'data' => $data->template];
             }
         }
         return response()->json($res, 200);

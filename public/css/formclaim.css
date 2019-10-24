@@ -86,3 +86,13 @@
     width: 20px;
     height: 20px;
 }
+.text-template {
+    display: inline !important;
+    width: 80px !important;
+
+}
+.date-template {
+    display: inline !important;
+    width: 100px !important;
+    
+}

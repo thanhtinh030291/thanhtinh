@@ -1,16 +1,16 @@
 @extends('layouts.admin.master')
-@section('title', __('message.list_reason_inject'))
+@section('title', __('message.reason_reject'))
 @section('stylesheets')
     <link href="{{ asset('css/condition_advance.css') }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
-    'title'       => __('message.list_reason_inject'),
-    'page_name'   => __('message.list_reason_inject'),
+    'title'       => __('message.reason_reject'),
+    'page_name'   => __('message.reason_reject'),
 ])
 <div class="row">
     <div class="col-md-12">
-        <a class="btn btn-primary pull-right" href="{{ url('admin/list_reason_inject/create') }}">
+        <a class="btn btn-primary pull-right" href="{{ url('admin/reason_reject/create') }}">
             {{ __('message.create')}}
         </a>
     </div>
@@ -18,7 +18,7 @@
 <br>
 <div class="row">
     <div class="col-md-12">
-        <form action="{{ url('admin/list_reason_inject') }}" method="GET" class="form-horizontal" >
+        <form action="{{ url('admin/reason_reject') }}" method="GET" class="form-horizontal" >
             <div class="card">
                 <div class="card-header">
                     <label  class="font-weight-bold" for="searchmail"> {{ __('message.search')}}</label>
@@ -47,7 +47,7 @@
                     <button type="button" id="clearForm" class="btn btn-default">{{ __('message.reset') }}</button>
                 </div>
             </div>
-            @include('layouts.admin.partials.condition_advance', ['limit_list' => $limit_list, 'limit' => $limit, 'list' => $listReasonInject, 'urlPost' => route('list_reason_inject.index'), 'search_params' => $search_params])
+            @include('layouts.admin.partials.condition_advance', ['limit_list' => $limit_list, 'limit' => $limit, 'list' => $data, 'urlPost' => route('reason_reject.index'), 'search_params' => $search_params])
         </form>
     </div>
 </div>
@@ -56,12 +56,12 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                @if (count($listReasonInject) > 0)
-                {{ $listReasonInject->appends($search_params)->links() }}
+                @if (count($data) > 0)
+                {{ $data->appends($search_params)->links() }}
                 @endif
             </div>
             <div class="card-body">
-                @if (count($listReasonInject) > 0)
+                @if (count($data) > 0)
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <!-- Table Headings -->
@@ -78,20 +78,20 @@
                             </tr>
                         </thead>
                         <!-- Table Body -->
-                        @foreach ($listReasonInject as $reasonInject)
+                        @foreach ($data as $value)
                         <tbody>
                             <tr>
                                 <!-- ticket info -->
-                                <td>{{ $reasonInject->name }}</td>
-                                <td>{{ $admin_list[$reasonInject->created_user] }}</td>
-                                <td>{{ $admin_list[$reasonInject->updated_user] }}</td>
-                                <td>{{ $reasonInject->created_at }}</td>
-                                <td>{{ $reasonInject->updated_at }}</td>
+                                <td>{{ $value->name }}</td>
+                                <td>{{ $admin_list[$value->created_user] }}</td>
+                                <td>{{ $admin_list[$value->updated_user] }}</td>
+                                <td>{{ $value->created_at }}</td>
+                                <td>{{ $value->updated_at }}</td>
                                 <td class='text-center'>
                                     <!-- control -->
-                                    <a class="btn btn-primary" href='{{ url("admin/list_reason_inject/$reasonInject->id") }}'>{{ __('message.view') }}</a>
-                                    <a class="btn btn-success" href='{{ url("admin/list_reason_inject/$reasonInject->id/edit") }}'>{{ __('message.edit') }}</a>
-                                    <button type="button" class="btn btn-danger btn-delete" data-url="{{ route('list_reason_inject.destroy', $reasonInject->id) }}"
+                                    <a class="btn btn-primary" href='{{ url("admin/reason_reject/$value->id") }}'>{{ __('message.view') }}</a>
+                                    <a class="btn btn-success" href='{{ url("admin/reason_reject/$value->id/edit") }}'>{{ __('message.edit') }}</a>
+                                    <button type="button" class="btn btn-danger btn-delete" data-url="{{ route('reason_reject.destroy', $value->id) }}"
                                         data-toggle="modal" data-target="#deleteConfirmModal">{{ __('message.delete') }}</button>
                                 </td>
                             </tr>
@@ -99,7 +99,7 @@
                         @endforeach
                     </table>
                 </div>
-                {{ $listReasonInject->appends($search_params)->links() }}
+                {{ $data->appends($search_params)->links() }}
                 @endif
             </div>
         </div>

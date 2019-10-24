@@ -22,13 +22,13 @@ class RoleController extends Controller
         $data['search_params'] = [
             'name' => $request->get('name'),
         ];
-        $listReasonInject = Role::where('name','LIKE' , '%' .$data['search_params']['name'] . '%')->orderBy('id', 'desc');
+        $listData = Role::where('name','LIKE' , '%' .$data['search_params']['name'] . '%')->orderBy('id', 'desc');
         $data['admin_list'] = User::getListIncharge();
         //pagination result
         $data['limit_list'] = config('constants.limit_list');
         $data['limit'] = $request->get('limit');
         $per_page = !empty($data['limit']) ? $data['limit'] : Arr::first($data['limit_list']);
-        $data['data']  = $listReasonInject->paginate($per_page);
+        $data['data']  = $listData->paginate($per_page);
         
         return view('roleManagement.index', $data);
     }

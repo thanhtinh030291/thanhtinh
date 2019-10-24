@@ -53,7 +53,7 @@
                     <div class="col-md-4">
                         <div class="row">
                             <div  class='col-md-11'>
-                                {{ Form::select('_sel', $listReasonInject, old('_sel'), array( 'id'=>'select-inject-default','class' => 'select2 labelas')) }}
+                                {{ Form::select('_sel', $listReasonReject, old('_sel'), array( 'id'=>'select-inject-default','class' => 'select2 labelas')) }}
                             </div>
                             <button type="button" onclick="clickGo()" class="btn btn-secondar col-md-1">GO</button>
                         </div>
@@ -76,38 +76,9 @@
                 </div>
                 <div class="row ">
                     <div class="card table-responsive col-md-9"  style="max-height:450px">
-                        <table id="season_price_tbl" class="table table-striped header-fixed">
-                            <thead>
-                                <tr>
-                                    <th>{{ __('message.content')}}</th>
-                                    <th>{{ __('message.amount')}}</th>
-                                    <th>{{ __('message.reason_reject')}}</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr id="empty_item" style="display: none;">
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr id="clone_item" style="display: none">
-                                    <td>{{ Form::text('_content_default', null, ['class' => 'form-control', 'onkeydown'=>'search2(this)' ]) }}</td>
-                                    <td style="width:180px">
-                                        {{ Form::text('_amount_default', null, ['class' => 'item-price form-control']) }}
-                                    </td>
-                                    <td style="width:480px">
-                                        <div style="width:480px">
-                                            {{ Form::select('_reasonInject_default', $listReasonInject,null, ['class' => ' form-control ' ,'placeholder' => 'Not Reject']) }}
-                                        </div>
-                                    </td>
-                                    <td style="width:80px">
-                                        <button type="button"class="delete_btn btn btn-danger  p-0">&#x2613;</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        @include('layouts.admin.form_reject', [
+                            'listReasonReject'   => $listReasonReject,
+                        ])
                     </div>
                     <div class="card col-md-3">
                         <div class="card-body"> 
@@ -144,7 +115,7 @@
         </div>
         <div class="modal-body">
                 
-            {{ Form::select('_selectReason', $listReasonInject, old('_selectReason'), [ 'id' => 'select-reason', 'class' => 'select2', 'required', 'placeholder' => __('message.please_select')]) }}
+            {{ Form::select('_selectReason', $listReasonReject, old('_selectReason'), [ 'id' => 'select-reason', 'class' => 'select2', 'required', 'placeholder' => __('message.please_select')]) }}
             {{ Form::hidden('_idrow', null , ['id' => 'id_row']) }}
             
         </div>

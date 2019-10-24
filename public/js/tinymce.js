@@ -55,7 +55,7 @@ var editor_config = {
 var config2 = {
     selector: "textarea",
     height: 500,
-    toolbar: "nameItem | amountItem | Date | Example | insertfile undo redo | paste | copy",
+    toolbar: "nameItem | amountItem | Date | Text | Example | insertfile undo redo | paste | copy",
     plugins: "wordcount",
     menubar: false,
     content_css: [
@@ -86,11 +86,18 @@ var config2 = {
                 editor.insertContent("&nbsp;<b class = 'text-danger'>[##Date##]</b>&nbsp;");
             }
         });
+        editor.addButton("Text", {
+            text: "Text",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;<b class = 'text-danger'>[##Text##]</b>&nbsp;");
+            }
+        });
         editor.addButton("Example", {
             text: "Example",
             icon: false,
             onclick: function() {
-                editor.insertContent("<br>Chi phí &nbsp;<b class = 'text-danger'>[##nameItem##]</b>&nbsp; . (<b class = 'text-danger'>[##amountItem##]</b> đồng)  , không được thanh toán do thuộc điều khoản loại trừ mục 3.6 Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe.");
+                editor.insertContent("<br>Chi phí &nbsp;<b class = 'text-danger'>[##nameItem##]</b>&nbsp; từ ngày &nbsp;<b class = 'text-danger'>[##Date##]</b>&nbsp; đến &nbsp;<b class = 'text-danger'>[##Date##]</b>&nbsp; là &nbsp;<b class = 'text-danger'>[##amountItem##]</b>&nbsp; , tuy nhiên công ty Bảo hiểm Dai-ichi Life Việt Nam từ chối chi trả &nbsp;<b class = 'text-danger'>[##Text##]</b>&nbsp; đồng do vượt mức quyền lợi tối đa( &nbsp;<b class = 'text-danger'>[##Text##]</b>&nbsp; đồng/ ngày x &nbsp;<b class = 'text-danger'>[##Text##]</b>&nbsp; = &nbsp;<b class = 'text-danger'>[##Text##]</b>&nbsp; đồng).");
             }
         });
     }

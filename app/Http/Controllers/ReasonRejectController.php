@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\reasonInjectRequest;
-use App\ListReasonInject;
+use App\ReasonReject;
 use App\User;
 use App\Term;
 use Auth;
 use Illuminate\Support\Arr;
 
-class ListReasonInjectController extends Controller
+class ReasonRejectController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -26,15 +26,15 @@ class ListReasonInjectController extends Controller
             // 'updated_user' => $request->get('updated_user'),
             // 'updated_at' => $request->get('updated_at'),
         ];
-        $listReasonInject = ListReasonInject::findByParams($data['search_params'])->orderBy('id', 'desc');
+        $listData = ReasonReject::findByParams($data['search_params'])->orderBy('id', 'desc');
         $data['admin_list'] = User::getListIncharge();
         //pagination result
         $data['limit_list'] = config('constants.limit_list');
         $data['limit'] = $request->get('limit');
         $per_page = !empty($data['limit']) ? $data['limit'] : Arr::first($data['limit_list']);
-        $data['listReasonInject']  = $listReasonInject->paginate($per_page);
+        $data['data']  = $listData->paginate($per_page);
         
-        return view('listReasonInjectManagement.index', $data);
+        return view('reasonRejectManagement.index', $data);
     }
 
     /**
@@ -45,7 +45,7 @@ class ListReasonInjectController extends Controller
     public function create()
     {
         $listTerm = Term::pluck('name','id');
-        return view('listReasonInjectManagement.create', compact('listTerm'));
+        return view('reasonRejectManagement.create', compact('listTerm'));
     }
 
     /**
@@ -61,10 +61,10 @@ class ListReasonInjectController extends Controller
         $data['created_user'] = $userId;
         $data['updated_user'] = $userId;
 
-        ListReasonInject::create($data);
+        ReasonReject::create($data);
         $request->session()->flash('status', __('message.reason_inject_create_success')); 
         
-        return redirect('/admin/list_reason_inject');
+        return redirect('/admin/reason_reject');
     }
 
     /**
@@ -73,12 +73,12 @@ class ListReasonInjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ReasonReject $reasonReject)
     {
-        $data = ListReasonInject::findOrFail($id);
+        $data = $reasonReject;
         $userCreated = $data->userCreated->name;
         $userUpdated = $data->userUpdated->name;
-        return view('listReasonInjectManagement.detail', compact('data', 'userCreated', 'userUpdated'));
+        return view('reasonRejectManagement.detail', compact('data', 'userCreated', 'userUpdated'));
     }
 
     /**
@@ -87,10 +87,11 @@ class ListReasonInjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(ReasonReject $reasonReject)
     {
-        $data = ListReasonInject::findOrFail($id);
-        return view('listReasonInjectManagement.edit', compact('data'));
+        $data = $reasonReject;
+        $listTerm = Term::pluck('name','id');
+        return view('reasonRejectManagement.edit', compact('data', 'listTerm'));
     }
 
     /**
@@ -105,10 +106,10 @@ class ListReasonInjectController extends Controller
         $data = $request->except([]);
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
-        ListReasonInject::updateOrCreate(['id' => $id], $data);
+        ReasonReject::updateOrCreate(['id' => $id], $data);
 
         $request->session()->flash('status', __('message.reason_inject_update_success')); 
-        return redirect('/admin/list_reason_inject');
+        return redirect('/admin/reason_reject');
     }
 
     /**
@@ -119,8 +120,8 @@ class ListReasonInjectController extends Controller
      */
     public function destroy($id)
     {
-        $data = ListReasonInject::findOrFail($id);
+        $data = ReasonReject::findOrFail($id);
         $data->delete();
-        return redirect('/admin/list_reason_inject')->with('status', __('message.reason_inject_delete_success'));
+        return redirect('/admin/reason_reject')->with('status', __('message.reason_inject_delete_success'));
     }
 }

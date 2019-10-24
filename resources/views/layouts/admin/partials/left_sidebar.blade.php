@@ -16,9 +16,9 @@
                             <a class="{{ setActive('admin/claim') }}"
                             href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_orc')}}</span></a>
                         </li>
-                        <li class="{{ setActive('admin/list_reason_inject') }}"> 
-                            <a class="{{ setActive('admin/list_reason_inject') }}"
-                            href="{{ url('admin/list_reason_inject') }}"><span> {{ __('message.list_reason_inject')}}</span></a>
+                        <li class="{{ setActive('admin/reason_reject') }}"> 
+                            <a class="{{ setActive('admin/reason_reject') }}"
+                            href="{{ url('admin/reason_reject') }}"><span> {{ __('message.reason_reject')}}</span></a>
                         </li>
                         <li class="{{ setActive('admin/product') }}"> 
                             <a class="{{ setActive('admin/product') }}"

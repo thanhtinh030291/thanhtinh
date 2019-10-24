@@ -1,5 +1,5 @@
 @extends('layouts.admin.master')
-@section('title', __('message.detail_ticket_category'))
+@section('title', __('message.detail_reason_inject'))
 @section('stylesheets')
     <link href="{{ asset('css/fileinput.css') }}" media="all" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/jquery-ui.min.css') }}">
@@ -8,7 +8,7 @@
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
     'title'       => __('message.detail_reason_inject'),
-    'parent_url'  => route('list_reason_inject.index'),
+    'parent_url'  => route('reason_reject.index'),
     'parent_name' => __('message.detail_reason_inject'),
     'page_name'   => __('message.detail_reason_inject'),
 ])
@@ -56,7 +56,7 @@
                 </table>
                 </div>
                 <a class="btn btn-secondary" 
-                    href="{{ url('admin/list_reason_inject') }}">{{ __('message.back')}}</a>
+                    href="{{ url('admin/reason_reject') }}">{{ __('message.back')}}</a>
                 <br>
             </div>
         </div>

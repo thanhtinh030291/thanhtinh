@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateListReasonInjectTable extends Migration
+class CreateReasonRejectTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class CreateListReasonInjectTable extends Migration
      */
     public function up()
     {
-        Schema::create('list_reason_inject', function (Blueprint $table) {
+        Schema::create('reason_reject', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 500);
+            $table->integer('term_id')->nullable();
+            $table->longText('template');
             $table->integer('created_user');
             $table->integer('updated_user');
             $table->timestamps();
@@ -31,6 +33,6 @@ class CreateListReasonInjectTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('list_reason_inject');
+        Schema::dropIfExists('reason_reject');
     }
 }

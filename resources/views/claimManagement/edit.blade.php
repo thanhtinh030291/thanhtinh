@@ -43,38 +43,9 @@
                         </div>
                         <div class="row">
                             <div class="card table-responsive col-md-9"  style="max-height:450px">
-                                <table id="season_price_tbl" class="table table-striped header-fixed">
-                                    <thead>
-                                        <tr>
-                                            <th>{{ __('message.content')}}</th>
-                                            <th>{{ __('message.amount')}}</th>
-                                            <th>{{ __('message.reason_reject')}}</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr id="empty_item" style="display: none;">
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr id="clone_item" style="display: none">
-                                            <td>{{ Form::text('_content_default', null, ['class' => 'form-control', 'onkeydown'=>'search2(this)' ]) }}</td>
-                                            <td style="width:180px">
-                                                {{ Form::text('_amount_default', null, ['class' => 'item-price form-control']) }}
-                                            </td>
-                                            <td style="width:480px">
-                                                <div style="width:480px">
-                                                    {{ Form::select('_reasonInject_default', $listReasonInject,null, ['class' => ' form-control ', 'placeholder' => 'Not Reject']) }}
-                                                </div>
-                                            </td>
-                                            <td style="width:80px">
-                                                <button type="button"class="delete_btn btn btn-danger  p-0">&#x2613;</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                @include('layouts.admin.form_reject', [
+                                    'listReasonReject'   => $listReasonReject,
+                                ])
                             </div>
                             <div class="card col-md-3">
                                 <div class="card-body"> 
@@ -133,7 +104,7 @@ $(document).on('ready', function() {
     var amount = @json(old('_amount'));
     amount = amount ? amount : @json($data->item_of_claim->pluck('amount'));
     var reasonInject = @json(old('_reasonInject'));
-    reasonInject = reasonInject ? reasonInject : @json($data->item_of_claim->pluck('list_reason_inject_id'));
+    reasonInject = reasonInject ? reasonInject : @json($data->item_of_claim->pluck('reason_reject_id'));
     var idItem = @json(old('_idItem'));
     idItem = idItem ? idItem : @json($data->item_of_claim->pluck('id'));
     if(content != null){
