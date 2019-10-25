@@ -294,6 +294,8 @@ function addInputItem(){
     clone = clone.replace("_amount_default", "_amount["+count+"]");
     clone = clone.replace("_reasonInject_default", "_reasonInject["+count+"]");
     clone = clone.replace('template_default', "template_"+count);
+    clone = clone.replace('nameItem_defautl', "nameItem_"+count);
+    clone = clone.replace('amountItem_defautl', "amountItem_"+count);
     $("#empty_item").before(clone);
     $('input[name="_content['+count+']"]').attr({"required": "true", 'data-id': count, 'id': '_content'+count, 'onclick':"setIdPaste(this)"});
     $('input[name="_amount['+count+']"]').attr("required", "true");
@@ -330,17 +332,17 @@ function template(e){
 
 // replace template 
     function replaceTemplace(str , id = null){
-        var result = str.replace(/\[##Text##\]/g,'<input type="text" class="form-control text-template p-1" required />');
-        result = result.replace(/\[##Date##\]/g,'<input type="text" class="form-control date-template datepicker p-1" required />');
+        var result = str.replace(/\[##Text##\]/g,'<input type="text" name="_parameters['+id+'][]" class="form-control text-template p-1" required />');
+        result = result.replace(/\[##Date##\]/g,'<input type="text" name="_parameters['+id+'][]" class="form-control date-template datepicker p-1" required />');
         var nameItem = $('input[name="_content['+id+']"]').val() ;
-        result = result.replace(/\[##nameItem##\]/g,'<input type="text" class="form-control text-template p-1" value="'+nameItem+'" required readonly/>');
+        result = result.replace(/\[##nameItem##\]/g,'<input type="text" name="_parameters['+id+'][]" class="nameItem_'+id+' form-control text-template p-1" value="'+nameItem+'" required readonly/>');
         var amountItem = $('input[name="_amount['+id+']"]').val() ;
-        result = result.replace(/\[##amountItem##\]/g,'<input type="text" class="form-control text-template p-1" value="'+amountItem+'" required readonly/>');
+        result = result.replace(/\[##amountItem##\]/g,'<input type="text" name="_parameters['+id+'][]" class="amountItem_'+id+' form-control text-template p-1" value="'+amountItem+'" required readonly/>');
         return result;
     }
 
-    function binding2Input(e , idElement){
-        $('#'+idElement).val(e.value);
+    function binding2Input(e , classElement){
+        $('.'+classElement).val(e.value);
     }
 
 
