@@ -15,13 +15,13 @@
             <td></td>
         </tr>
         <tr id="clone_item" style="display: none">
-            <td style="width:230px">{{ Form::text('_content_default', null, ['class' => 'form-control p-1 ', 'onkeydown'=>'search2(this)', 'onchange' => 'binding2Input(this, "nameItem_defautl")' ]) }}</td>
+            <td style="width:230px">{{ Form::text('_content_default', null, ['class' => 'form-control p-1 ',  'onkeydown'=>'search2(this)', 'onchange' => 'binding2Input(this, "nameItem_defautl")' ]) }}</td>
             <td style="width:130px">
-                {{ Form::text('_amount_default', null, ['class' => 'item-price form-control p-1', 'onchange' => 'binding2Input(this, "amountItem_defautl")']) }}
+                {{ Form::text('_amount_default', null, ['class' => 'item-price form-control p-1',  'onchange' => 'binding2Input(this, "amountItem_defautl")']) }}
             </td>
             <td style="width:280px">
                 <div style="width:280px">
-                    {{ Form::select('_reasonInject_default', $listReasonReject,null, ['class' => ' form-control' ,'placeholder' => 'Not Reject' , 'onchange' => 'template(this)']) }}
+                    {{ Form::select('_reasonInject_default', $listReasonReject,null, ['class' => ' form-control' ,'placeholder' => 'Not Reject' , 'onchange' => 'template(this, "template_idElement", "table2")']) }}
                 </div>
             </td>
             

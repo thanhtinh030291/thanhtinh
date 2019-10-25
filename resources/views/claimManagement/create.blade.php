@@ -40,6 +40,7 @@
                     </div>
                 </div>
                 <div class="row mt-5">
+                    <button type="button" class=" btn btn-success" onclick="shortenTable()">Shorten the table</button>
                     <div class="table-responsive" id="dvExcel" style="max-height:450px" >
                     </div>
                 </div>
@@ -104,31 +105,11 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
-<div id="confirmModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-        <div class="modal-header">
-            <h4 class="modal-title">Reason For Inject</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <div class="modal-body">
-                
-            {{ Form::select('_selectReason', $listReasonReject, old('_selectReason'), [ 'id' => 'select-reason', 'class' => 'select2', 'required', 'placeholder' => __('message.please_select')]) }}
-            {{ Form::hidden('_idrow', null , ['id' => 'id_row']) }}
-            
-        </div>
-        <div class="modal-footer">
-                <button class="btn btn-danger" id = 'btn-save-comfirm'>{{ __('message.yes')}} </button>
-                <button type="button" class="btn btn-secondary btn-cancel-delete" 
-                    data-dismiss="modal">{{ __('message.no') }}</button>
-        </div>
-        </div>
-    </div>
+<!-- clone  -->
+<div id='clone-select-reject' style = "display:block">
+    {{ Form::select('_selectReason', $listReasonReject, old('_selectReason'), [ 'class' => 'form-control' , 'style' => 'width:230px', 'required', 'placeholder' => 'Not Reject' , 'onchange' => 'template(this,"resuft_template_default","table1")']) }}        
 </div>
 @endsection
-
 @section('scripts')
     <script src="{{asset('js/fileinput.js')}}"></script>
     <script src="{{asset('js/papaparse.min.js')}}"></script>
@@ -140,10 +121,10 @@
     <script src="{{ asset('js/clipboard.js') }}"></script>
     <script type="text/javascript">
         function arrayToTable(tableData) {
-            var table = $('<table class="table table-primary table-hover"></table>');
+            var table = $('<table class="table table-striped header-fixed"></table>');
             //option select field
             var arrOption = @json(config('constants.field_select'));
-            var selectOption = '<select name = "_column[]" class="select2 form-control select_field">';
+            var selectOption = '<select name = "_column[]" class="form-control select_field">';
             selectOption += '<option value="" selected >---X---</option>';
             $.each(arrOption, function (index, value) {
                 selectOption += '<option value="'+index+'" >'+value+'</option>';
@@ -153,35 +134,42 @@
             $(tableData).each(function (i, rowData) {
                 var row = $('<tr></tr>');
                 if(i == 0){
-                    row.append('<th>Action</th>')
+                    row.append("<th></th>")
+                        .append('<th>Reason Reject</th>')
+                        .append('<th>Template</th>')
+
                 }else{
-                    row.append($('<td class="row pl-0 pr-0 m-0" style = "width : 170px"></td>')
-                        .append($('<input class = "checkbox_class col-md-2 resize-checkbox" type="checkbox"  data-id = "'+i+'" />'))
-                        .append($('<button type="button" class=" col-md-3 delete_row_btn btn p-0 btn-danger" data-toggle="tooltip" title="Delete this row in the table!" >&#x2613;</button>'))
-                        .append($('<div class="col-md-5 p-0"></div>')
-                            .append($('<label class="custom-control custom-checkbox"></label>')
-                                    .append($('<input type="checkbox" id = "inputReject'+i+'" class="custom-control-input reject" data-id = "'+i+'" onchange="clickInject(this)" checked name = "_checkbox['+i+']" value = "1">'))
-                                    .append($('<span class="custom-control-indicator"></span>'))
-                            )
-                        )
-                        .append($('<button id="btnConfirm'+i+'" data-id = "'+i+'" type="button" class=" col-md-2 btn btn-primary p-0 btnConfirm"  data-toggle="modal" data-target="#confirmModal" title="please enter reason for rejection!"  data-popover="popover" data-content="none" style = "display: none" ><i class="fa fa-comments" aria-hidden="true"></i></button>'))
-                        .append($('<input type="hidden"  id="reason'+i+'"  name = "_reason['+i+']"  >'))
+                    row.append($('<td class="row pl-0 pr-0 m-0" style = "width : 80px"></td>')
+                        .append($('<input class = "checkbox_class col-md-6 resize-checkbox" type="checkbox"  data-id = "'+i+'" />'))
+                        .append($('<button type="button" class=" col-md-6 delete_row_btn btn p-0 btn-danger" data-toggle="tooltip" title="Delete this row in the table!" >&#x2613;</button>'))
+                    );
+                    var cloneSelect = $("#clone-select-reject").clone().html();
+                    cloneSelect = cloneSelect.replace('resuft_template_default', "resuft_template_"+i);
+
+                    row.append(
+                        $('<td></td>')
+                            .append($("<div style='width:250px'></div>").append($(cloneSelect).addClass('select2')))
+                    );
+                   
+                    row.append(
+                        $('<td><div style="max-width: 380px" id="resuft_template_'+i+'"></div></td>')
                     );
                 }
                 $(rowData).each(function (j, cellData) {
                     cellData = cellData  ? cellData : ""; 
                     if(i != 0){
-                        row.append($('<td><input class ="form-control" name = "_row['+i+'][]" value = "'+cellData+'" /></td>'));
+                        row.append($('<td><input class ="form-control" name = "_row['+i+'][]" data-id= "'+i+'" value = "'+cellData+'" /></td>'));
                     }else{
                         row.append($('<th></th>')
                             .append($(selectOption).attr('id', j))
-                            .append($('<input name = "_row['+i+'][]" data-id= "'+j+'" value = "'+cellData+'" class ="p-1 h5 bg-info" readonly />'))
+                            .append($('<input name = "_row['+i+'][]" data-id= "'+j+'" value = "'+cellData+'" class ="p-1 bg-info" readonly />'))
                         );
                     }
                     
                 });
                 table.append(row);
             });
+            
             return table;
         } 
     </script>
@@ -234,7 +222,20 @@
             var optionSelected = $("option:selected", this);
             var valueSelected = this.value;
             var id = $(this).attr('id');
-            var col = parseInt(id) + 2;
+            var col = parseInt(id) + 4;
+            switch (valueSelected) {
+                case 'content':
+                    $("th").removeClass("colContent");
+                    $(this).closest('th').addClass('colContent');
+                    break;
+                case 'amount':
+                    $("th").removeClass("colAmount");
+                    $(this).closest('th').addClass('colAmount');
+                    break;
+                default:
+                    $(this).closest('th').removeClass("colContent").removeClass("colAmount");
+                    break;
+            }
             var arrElement = $("tr td:nth-child("+col+") input");
             checkValueCol(valueSelected, arrElement);
         });        

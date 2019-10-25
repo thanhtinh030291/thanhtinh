@@ -101,6 +101,7 @@ function btnScan(){
     }else{
         $( "#dvExcel" ).empty();
         excelToHtml(fileCSV);
+        
     } 
 }
 
@@ -181,13 +182,13 @@ function excelToHtml(file) {
         },
         complete: function()
         {
-            
         }
     });
 };
 function completeFn(results)
 {
     $('#dvExcel').append(arrayToTable(results.data));
+    $('.select2').select2();
 }
 
 // check form
@@ -287,18 +288,27 @@ $(document).on("click", ".delete_btn", function(){
 //add input item
 var count = 1;
 function addInputItem(){
-    var clone =  '<tr id="row-'+count+'">';
+    let clone =  '<tr id="row-'+count+'">';
     clone += '<input name = "_idItem['+count+']" type="hidden" >';
     clone +=  $("#clone_item").clone().html() + '</tr>';
+    //repalace name
     clone = clone.replace("_content_default", "_content["+count+"]");
     clone = clone.replace("_amount_default", "_amount["+count+"]");
     clone = clone.replace("_reasonInject_default", "_reasonInject["+count+"]");
+    // div template id
     clone = clone.replace('template_default', "template_"+count);
+    // parameter in function
     clone = clone.replace('nameItem_defautl', "nameItem_"+count);
     clone = clone.replace('amountItem_defautl', "amountItem_"+count);
+    clone = clone.replace('template_idElement', "template_"+count);
+    // id
+    clone = clone.replace('table2_name_default', "table2_name_"+count);
+    clone = clone.replace('table2_amount_default', "table2_amount_"+count);
+    
+    
     $("#empty_item").before(clone);
-    $('input[name="_content['+count+']"]').attr({"required": "true", 'data-id': count, 'id': '_content'+count, 'onclick':"setIdPaste(this)"});
-    $('input[name="_amount['+count+']"]').attr("required", "true");
+    $('input[name="_content['+count+']"]').attr({"required": "true", 'data-id': count, 'id': 'table2_name_'+count, 'onclick':"setIdPaste(this)"});
+    $('input[name="_amount['+count+']"]').attr({"required": "true", 'id': 'table2_amount_'+count});
     $('select[name="_reasonInject['+count+']"]').addClass('select2').attr('data-id', count);
     $('.select2').select2();
     count++;
@@ -310,9 +320,10 @@ function addValueItem(content, amount, reasonInject, count, idItem = ""){
     $('input[name="_idItem['+count+']"]').val(idItem);
 }
 // ajax template
-function template(e){
+function template(e , idElement , table){
+
     var id = e.dataset.id;
-    var container = $("#template_"+id);
+    var container = $("#"+idElement);
     $.ajax({
         url: '/admin/template',
         type: 'POST',
@@ -322,7 +333,7 @@ function template(e){
     .done(function(res) {
         if(res.status == 'success'){
                 container.empty();
-                container.append(replaceTemplace(res.data, id));
+                container.append(replaceTemplace(res.data, id ,table));
                 loadDatepicker();
         }else{
                 container.empty();
@@ -331,12 +342,12 @@ function template(e){
 }
 
 // replace template 
-    function replaceTemplace(str , id = null){
+    function replaceTemplace(str , id = null , table = ""){
         var result = str.replace(/\[##Text##\]/g,'<input type="text" name="_parameters['+id+'][]" class="form-control text-template p-1" required />');
         result = result.replace(/\[##Date##\]/g,'<input type="text" name="_parameters['+id+'][]" class="form-control date-template datepicker p-1" required />');
-        var nameItem = $('input[name="_content['+id+']"]').val() ;
+        var nameItem = $('#'+table+'_name_'+id).val() ;
         result = result.replace(/\[##nameItem##\]/g,'<input type="text" name="_parameters['+id+'][]" class="nameItem_'+id+' form-control text-template p-1" value="'+nameItem+'" required readonly/>');
-        var amountItem = $('input[name="_amount['+id+']"]').val() ;
+        var amountItem = $('#'+table+'_amount_'+id).val() ;
         result = result.replace(/\[##amountItem##\]/g,'<input type="text" name="_parameters['+id+'][]" class="amountItem_'+id+' form-control text-template p-1" value="'+amountItem+'" required readonly/>');
         return result;
     }
@@ -344,7 +355,27 @@ function template(e){
     function binding2Input(e , classElement){
         $('.'+classElement).val(e.value);
     }
+// shortenTable
 
+function shortenTable(){
+    if($('#dvExcel tr:nth-child(1) .colContent').length > 0 && $('#dvExcel tr:nth-child(1) .colAmount').length > 0){
+        var arrRemove = [];
+        $('#dvExcel tr:nth-child(1) th').each(function (num) {
+            if ($(this).hasClass('colContent') || $(this).hasClass('colAmount') || num == 0 || num == 1 || num == 2 ) {
+            }else{
+                //$('#dvExcel table tr').find('td:eq('+num+'),th:eq('+num+')').remove();
+                arrRemove.push('td:eq('+num+')');
+                arrRemove.push('th:eq('+num+')');
+            }
+        });
+        var strRemove = arrRemove.join();
+        $('#dvExcel table tr').find(strRemove).remove();
+    }else{
+        alert('Please choice a column as "content" & "amount" ');
+    }
+    
+    
+}
 
 //set get  idPaste 
 var idPaste ;
