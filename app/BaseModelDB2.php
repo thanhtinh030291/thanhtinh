@@ -2,10 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Yajra\Oci8\Eloquent\OracleEloquent as Eloquent;
 
-class BaseModelDB2 extends Model
+class BaseModelDB2 extends Eloquent
 {
-    protected $connection = 'mysql2';
+    protected $connection = 'oracle';
 
 }
