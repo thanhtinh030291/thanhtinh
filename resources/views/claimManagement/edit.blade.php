@@ -113,6 +113,19 @@ $(document).on('ready', function() {
             addValueItem(content[index],amount[index],reasonInject[index],count-1,idItem[index]);
         });
     }
+    var table2_parameters = @json(old('table2_parameters')? array_values(old('table2_parameters')) : old('table2_parameters')) ;
+    table2_parameters = table2_parameters ? table2_parameters : @json($data->item_of_claim->pluck('parameters'));
+    if(table2_parameters != null){
+        setTimeout(function(){
+            $.each(table2_parameters, function (index, value) {
+                var i = parseInt(index)+1;
+                var el = $('input[name="table2_parameters['+i+'][]"]');
+                $.each(el, function (index2, value2) {
+                    $(this).val(value[index2]);
+                });
+            });
+        },200);
+    }
 });
 </script>
 

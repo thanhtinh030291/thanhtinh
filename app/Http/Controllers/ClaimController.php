@@ -66,7 +66,7 @@ class ClaimController extends Controller
     {
         
         $file = $request->file;
-        $dataNew = $request->except(['file','file2']);
+        $dataNew = $request->except(['file','file2','table2_parameters', 'table1_parameters']);
         $userId = Auth::User()->id;
         $dirUpload = Config::get('constants.formClaimUpload');
         
@@ -94,6 +94,7 @@ class ClaimController extends Controller
                     'content' => data_get($value, $fieldSelect['content'], ""),
                     'amount' => data_get($value, $fieldSelect['amount'], 0),
                     'reason_reject_id' => data_get($reason, $key),
+                    'parameters' => data_get($request->table1_parameters, $key),
                     'created_user' => $userId,
                     'updated_user' => $userId,
                 ]);
@@ -110,13 +111,14 @@ class ClaimController extends Controller
                     'content' => $value,
                     'amount' => data_get($rowAmount, $key, 0),
                     'reason_reject_id' => data_get($reasonInject, $key),
+                    'parameters' => data_get($request->table2_parameters, $key),true,
                     'created_user' => $userId,
                     'updated_user' => $userId,
                 ]);
             }
         }
         
-
+        
         //
         try {
             DB::beginTransaction();
@@ -124,6 +126,7 @@ class ClaimController extends Controller
             $claim->item_of_claim()->saveMany($dataItems);
 
             DB::commit();
+            
             $request->session()->flash('status', __('message.add_claim'));
             return redirect('/admin/claim');
         } catch (Exception $e) {
@@ -185,12 +188,12 @@ class ClaimController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Claim $claim)
+    public function update(formClaimRequest $request, Claim $claim)
     {
         $data = $claim;
         $userId = Auth::User()->id;
         $dataUpdate = $request;
-        $dataUpdate = $dataUpdate->except([]);
+        $dataUpdate = $dataUpdate->except(['table2_parameters']);
         try {
             DB::beginTransaction();
             if (Claim::updateOrCreate(['id' => $claim->id], $dataUpdate)) {
@@ -203,6 +206,7 @@ class ClaimController extends Controller
                                 'reason_reject_id' => $request->_reasonInject[$key],
                                 'content' => $request->_content[$key],
                                 'amount' => $request->_amount[$key],
+                                'parameters' => data_get($request->table1_parameters, $key),
                                 'created_user' => $userId,
                                 'updated_user' => $userId,
                             ];
@@ -211,6 +215,7 @@ class ClaimController extends Controller
                             $data->item_of_claim[$keynew]->updated_user = $userId;
                             $data->item_of_claim[$keynew]->reason_reject_id = $request->_reasonInject[$key];
                             $data->item_of_claim[$keynew]->content = $request->_content[$key];
+                            $data->item_of_claim[$keynew]->parameters = data_get($request->table2_parameters, $key);
                             $data->item_of_claim[$keynew]->amount = $request->_amount[$key];
                         }
                     }

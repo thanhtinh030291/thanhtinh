@@ -199,13 +199,12 @@ function checkValueCol(value, arrElemt){
     switch (value) {
         case 'amount':
             {   
-                if (value == 'amount'){
-                    arrElemt.addClass("item-amount");
-                } 
+                arrElemt.addClass("item-amount");
                 arrElemt.addClass("item-price");
                 arrElemt.val().replace(/[.]/g,",");
                 var arrayElement = document.getElementsByClassName('item-price');
                 $.each(arrayElement, function (index, value) {
+                    $(this).attr({'id' : 'table1_amount_'+value.dataset.id, 'onchange': "binding2Input(this, 'table1_amountItem_"+value.dataset.id+"')"});
                     var st = $(this).val().replace(/[.]/g, ",");
                     st = st.toLowerCase();
                     st = st.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ|o/gi, '0');
@@ -225,6 +224,7 @@ function checkValueCol(value, arrElemt){
                 arrElemt.addClass("item-content");
                 $('.result').empty();
                 $.each(arrElemt, function (index, value) {
+                    $(this).attr({'id': 'table1_name_'+value.dataset.id, 'onchange': "binding2Input(this, 'table1_nameItem_"+value.dataset.id+"')"});
                     if ($(this).val() == '') {
                         
                     } else {
@@ -298,8 +298,8 @@ function addInputItem(){
     // div template id
     clone = clone.replace('template_default', "template_"+count);
     // parameter in function
-    clone = clone.replace('nameItem_defautl', "nameItem_"+count);
-    clone = clone.replace('amountItem_defautl', "amountItem_"+count);
+    clone = clone.replace('nameItem_defautl', "table2_nameItem_"+count);
+    clone = clone.replace('amountItem_defautl', "table2_amountItem_"+count);
     clone = clone.replace('template_idElement', "template_"+count);
     // id
     clone = clone.replace('table2_name_default', "table2_name_"+count);
@@ -343,12 +343,12 @@ function template(e , idElement , table){
 
 // replace template 
     function replaceTemplace(str , id = null , table = ""){
-        var result = str.replace(/\[##Text##\]/g,'<input type="text" name="_parameters['+id+'][]" class="form-control text-template p-1" required />');
-        result = result.replace(/\[##Date##\]/g,'<input type="text" name="_parameters['+id+'][]" class="form-control date-template datepicker p-1" required />');
+        var result = str.replace(/\[##Text##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control text-template p-1" required />');
+        result = result.replace(/\[##Date##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control date-template datepicker p-1" required />');
         var nameItem = $('#'+table+'_name_'+id).val() ;
-        result = result.replace(/\[##nameItem##\]/g,'<input type="text" name="_parameters['+id+'][]" class="nameItem_'+id+' form-control text-template p-1" value="'+nameItem+'" required readonly/>');
+        result = result.replace(/\[##nameItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_nameItem_'+id+' form-control text-template p-1" value="'+nameItem+'" required readonly/>');
         var amountItem = $('#'+table+'_amount_'+id).val() ;
-        result = result.replace(/\[##amountItem##\]/g,'<input type="text" name="_parameters['+id+'][]" class="amountItem_'+id+' form-control text-template p-1" value="'+amountItem+'" required readonly/>');
+        result = result.replace(/\[##amountItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_amountItem_'+id+' form-control text-template p-1" value="'+amountItem+'" required readonly/>');
         return result;
     }
 

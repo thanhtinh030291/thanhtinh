@@ -30,8 +30,11 @@ class formClaimRequest extends FormRequest
             '_column.*' => 'distinct|nullable',
             '_column' => [ new validSelectField()],
             'file'          => 'required_with:_row',
-            'code_claim'      => 'required|unique:claim',
+            'code_claim'      => 'required|numeric|unique:claim',
         ];
+        if ($this->method() != 'POST') {
+            $rules['code_claim'] = 'required|numeric';
+        }
         return $rules;
     }
 }

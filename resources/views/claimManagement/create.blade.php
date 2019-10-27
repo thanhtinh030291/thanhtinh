@@ -107,7 +107,7 @@
 </div>
 <!-- clone  -->
 <div id='clone-select-reject' style = "display:block">
-    {{ Form::select('_selectReason', $listReasonReject, old('_selectReason'), [ 'class' => 'form-control' , 'style' => 'width:230px', 'required', 'placeholder' => 'Not Reject' , 'onchange' => 'template(this,"resuft_template_default","table1")']) }}        
+    {{ Form::select('_selectReason', $listReasonReject, old('_selectReason'), [ 'class' => 'form-control' , 'style' => 'width:230px', 'placeholder' => 'Not Reject', 'data-id' => "data-id-default" , 'onchange' => 'template(this,"resuft_template_default","table1")']) }}        
 </div>
 @endsection
 @section('scripts')
@@ -145,12 +145,12 @@
                     );
                     var cloneSelect = $("#clone-select-reject").clone().html();
                     cloneSelect = cloneSelect.replace('resuft_template_default', "resuft_template_"+i);
-
+                    cloneSelect = cloneSelect.replace('data-id-default', i);
+                    
                     row.append(
                         $('<td></td>')
                             .append($("<div style='width:250px'></div>").append($(cloneSelect).addClass('select2')))
                     );
-                   
                     row.append(
                         $('<td><div style="max-width: 380px" id="resuft_template_'+i+'"></div></td>')
                     );
@@ -251,6 +251,18 @@
                     addInputItem();
                     addValueItem(content[index],amount[index],reasonInject[index],count-1);
                 });
+            }
+            var table2_parameters = @json(old('table2_parameters')? array_values(old('table2_parameters')) : old('table2_parameters')) ;
+            if(table2_parameters != null){
+                setTimeout(function(){
+                    $.each(table2_parameters, function (index, value) {
+                        var i = parseInt(index)+1;
+                        var el = $('input[name="table2_parameters['+i+'][]"]');
+                        $.each(el, function (index2, value2) {
+                            $(this).val(value[index2]);
+                        });
+                    });
+                },200);
             }
         });
     </script>
