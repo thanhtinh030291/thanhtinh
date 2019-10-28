@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-md-6">
                         {{ Form::label('code_claim', __('message.code_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                        {{ Form::text('code_claim', old('code_claim'), array('class' => 'form-control', 'required')) }}
+                        {{ Form::select('code_claim', [], old('code_claim'), array('id'=>'code_claim', 'class' => 'select2 code_claim form-control', 'required')) }}
                         <div id="page">
                             <div id="list-page"></div>
                             <div id="show-page"></div>
@@ -119,6 +119,7 @@
     <script src="{{ asset('js/format-price.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <script src="{{ asset('js/clipboard.js') }}"></script>
+    
     <script type="text/javascript">
         function arrayToTable(tableData) {
             var table = $('<table class="table table-striped header-fixed"></table>');
@@ -175,22 +176,10 @@
     </script>
     <script>
         // add value select to row and change tooltip
-        $(document).on("click", "#btn-save-comfirm", function(){
-            var id = $('#id_row').val();
-            var selectText = $( "select#select-reason option:checked" ).text();
-            var selectValue = $( "select#select-reason option:checked" ).val();
-            $('#reason'+id).val(selectValue);
-            $('#btnConfirm'+id).attr('title', selectText);
-            $('#confirmModal').modal('hide');
-        });
-
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip({
                 customClass: 'tooltip-custom'
             });
-
-            $('[data-popover="popover"]').popover('show');
-
             //add old value
             var old_data_row = @json(old('_row'));
             if(old_data_row != null){
@@ -202,46 +191,13 @@
                     $('#'+index).val(value).change();
                 });
             }
-            var old_data_checkbox = @json(old('_checkbox'));
-            if(old_data_checkbox != null){
-                //mapping checkbox
-                    var change_data_checkbox = [] ; 
-                $.each(old_data_row, function (index, value) {
-                    change_data_checkbox.push(old_data_checkbox[index] ? old_data_checkbox[index] : 0);
-                });
-                //end
-                $(".reject").prop('checked', false);
-                $.each(change_data_checkbox, function (index, value) {
-                    $('#inputReject'+index).prop('checked', value);
-                });
-            }
             
         });
 
-        $(document).on("change", ".select_field", function(e){
-            var optionSelected = $("option:selected", this);
-            var valueSelected = this.value;
-            var id = $(this).attr('id');
-            var col = parseInt(id) + 4;
-            switch (valueSelected) {
-                case 'content':
-                    $("th").removeClass("colContent");
-                    $(this).closest('th').addClass('colContent');
-                    break;
-                case 'amount':
-                    $("th").removeClass("colAmount");
-                    $(this).closest('th').addClass('colAmount');
-                    break;
-                default:
-                    $(this).closest('th').removeClass("colContent").removeClass("colAmount");
-                    break;
-            }
-            var arrElement = $("tr td:nth-child("+col+") input");
-            checkValueCol(valueSelected, arrElement);
-        });        
     </script>
-    // old 
+    
     <script>
+        // old 
         $(document).on('ready', function() {
             var content = @json(old('_content'));
             var amount = @json(old('_amount'));
@@ -283,6 +239,28 @@
                 alert('Please select the region to paste');
             }
         });
-
     </script>
+    <script>
+            //ajax select code
+            $(document).ready(function() {
+                $('.code_claim').select2({          
+                    minimumInputLength: 2,
+                    ajax: {
+                    url: "{{ route('dataAjaxHBSClaim') }}",
+                        dataType: 'json',
+                        data: function (params) {
+                            return {
+                                q: $.trim(params.term)
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data
+                            };
+                        },
+                        cache: true
+                    }
+                });
+            });
+        </script>
 @endsection

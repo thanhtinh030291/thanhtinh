@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\HBS_CL_CLAIM;
 use Illuminate\Http\Request;
-use App\Sale;
+
 
 class HomeController extends Controller
 {
@@ -24,8 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $sale = Sale::all();
-        dd($sale);
+        $data = HBS_CL_CLAIM::with('HBS_CL_LINE')->findOrFail(5026631);
         return view('home');
     }
 }

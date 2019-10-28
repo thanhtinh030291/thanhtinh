@@ -6,20 +6,17 @@ use Illuminate\Http\Request;
 use Exception;
 use Config;
 use Storage;
-use File;
 use App\Claim;
 use App\ItemOfClaim;
 use App\User;
 use App\Product;
+use App\HBS_CL_CLAIM;
 use DB;
 use Auth;
 use App\ReasonReject;
 use App\Http\Requests\formClaimRequest;
 use Illuminate\Support\Facades\Log;
 use SimilarText\Finder;
-use Illuminate\Support\Facades\Route;
-use App\Http\Traits\Authorizable;
-use App\Policies\ClaimPolicy;
 class ClaimController extends Controller
 {
     //use Authorizable;
@@ -297,5 +294,19 @@ class ClaimController extends Controller
             }
         }
         return response()->json($res, 200);
+    }
+
+    public function dataAjaxHBSClaim(Request $request)
+    {
+        
+        $data = [];
+        if($request->has('q')){
+            $search = $request->q;
+            $datas = HBS_CL_CLAIM::where('cl_no','LIKE',"%$search%")
+                    ->select('clam_oid as id', 'cl_no as text')
+                    ->limit(20)->get();
+            return response()->json($datas);
+        }
+        return response()->json($data);
     }
 }

@@ -386,4 +386,25 @@ function setIdPaste(e){
 function removeIdPaste(){
     idPaste = null;
 };
-
+// choice field 
+$(document).on("change", ".select_field", function(e){
+    var optionSelected = $("option:selected", this);
+    var valueSelected = this.value;
+    var id = $(this).attr('id');
+    var col = parseInt(id) + 4;
+    switch (valueSelected) {
+        case 'content':
+            $("th").removeClass("colContent");
+            $(this).closest('th').addClass('colContent');
+            break;
+        case 'amount':
+            $("th").removeClass("colAmount");
+            $(this).closest('th').addClass('colAmount');
+            break;
+        default:
+            $(this).closest('th').removeClass("colContent").removeClass("colAmount");
+            break;
+    }
+    var arrElement = $("tr td:nth-child("+col+") input");
+    checkValueCol(valueSelected, arrElement);
+});

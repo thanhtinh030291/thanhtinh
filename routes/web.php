@@ -35,5 +35,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('admins', 'AdminController')->middleware(['role:Admin']);
         Route::resource('role', 'RoleController')->middleware(['role:Admin']);
         Route::resource('permission', 'PermissionController')->middleware(['role:Admin']);
+
+        //ajax
+        Route::get('/dataAjaxHBSClaim', 'ClaimController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
     });
 });
