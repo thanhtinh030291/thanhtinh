@@ -28,6 +28,10 @@
                             <a class="{{ setActive('admin/term') }}"
                             href="{{ url('admin/term') }}"><span> {{ __('message.term')}}</span></a>
                         </li>
+                        <li class="{{ setActive('admin/letter_template') }}"> 
+                            <a class="{{ setActive('admin/letter_template') }}"
+                            href="{{ url('admin/letter_template') }}"><span> {{ __('message.letter_template')}}</span></a>
+                        </li>
                     </ul>
                 </li>
                 @role('Admin')

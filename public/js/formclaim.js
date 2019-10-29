@@ -408,3 +408,50 @@ $(document).on("change", ".select_field", function(e){
     var arrElement = $("tr td:nth-child("+col+") input");
     checkValueCol(valueSelected, arrElement);
 });
+
+//ajax select code
+$(document).ready(function() {
+    $('.code_claim').select2({          
+        minimumInputLength: 2,
+        ajax: {
+        url: "/admin/dataAjaxHBSClaim",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+    //load info of claim
+    $(document).on("change","#code_claim",function(){
+        resultApplicant(this.value);
+    });
+    $( document ).ready(function() {
+        var id_code = $('#code_claim').val();
+        resultApplicant(id_code);
+    });
+
+    function resultApplicant(value){
+        var container = $("#result_applicant");
+        $.ajax({
+            url: "/admin/loadInfoAjaxHBSClaim",
+            type: 'POST',
+            
+            data: {'search' : value},
+        })
+        .done(function(res) {
+            
+            container.empty();
+            container.append('<p class="card-text">Full-Name: '+res.mbr_last_name +' '+res.mbr_first_name+'</p>')
+            .append('<p class="card-text">Member No: '+ res.mbr_no +'</p>')
+            .append('<p class="card-text">Member Ref No: '+ res.memb_ref_no +'</p>')
+        })
+    }
+});

@@ -11,6 +11,7 @@ use App\ItemOfClaim;
 use App\User;
 use App\Product;
 use App\HBS_CL_CLAIM;
+use App\LetterTemplate;
 use DB;
 use Auth;
 use App\ReasonReject;
@@ -148,9 +149,9 @@ class ClaimController extends Controller
         $dataImage =  $dirStorage . $data->url_file ;
         $listReasonReject = ReasonReject::pluck('name', 'id');
         $items = $data->item_of_claim;
+        $listLetterTemplate = LetterTemplate::pluck('name', 'id');
 
-
-        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject']));
+        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate']));
     }
 
     /**
@@ -174,8 +175,10 @@ class ClaimController extends Controller
             $previewConfig[]['url'] = "/admin/tours/removeImage";
             $previewConfig[]['key'] = $data->url_file;
         }
+        $listCodeClaim = HBS_CL_CLAIM::where('clam_oid', $data->code_claim)->limit(20)->pluck('cl_no', 'clam_oid');
+        
         //dd($data->item_of_claim->pluck('content'));
-        return view('claimManagement.edit', compact(['data', 'dataImage', 'previewConfig', 'listReasonReject']));
+        return view('claimManagement.edit', compact(['data', 'dataImage', 'previewConfig', 'listReasonReject', 'listCodeClaim']));
     }
 
     /**
@@ -295,7 +298,7 @@ class ClaimController extends Controller
         }
         return response()->json($res, 200);
     }
-
+    //ajax load ID claim auto complate 
     public function dataAjaxHBSClaim(Request $request)
     {
         
@@ -309,4 +312,33 @@ class ClaimController extends Controller
         }
         return response()->json($data);
     }
+
+    // jax load info of claim
+    public function loadInfoAjaxHBSClaim(Request $request)
+    {  
+        
+        $data = [];
+        if($request->has('search')){
+            $search = $request->search;
+            $datas = HBS_CL_CLAIM::findOrFail($search)->member;
+            return response()->json($datas);
+        }
+        return response()->json($data);
+    }
+    // export letter
+    public function exportLetter(Request $request){
+       
+        $letter = LetterTemplate::findOrFail($request->letter_template_id);
+        $claim  = Claim::findOrFail($request->claim_id);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::findOrFail($claim->code_claim);
+        $content = $letter->template;
+        $content = str_replace($HBS_CL_CLAIM->applicantName,'[[$applicantName]]', $content);
+        header("Content-Type: application/vnd.msword");
+        header("Expires: 0");//no-cache
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+        header("content-disposition: attachment;filename=sampleword.doc");
+        echo $content;
+    }
+
+
 }

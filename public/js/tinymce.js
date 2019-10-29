@@ -51,9 +51,10 @@ var editor_config = {
         });
     }
 };
+tinymce.init(editor_config);
 
 var config2 = {
-    selector: "textarea",
+    selector: "textarea.editor2",
     height: 500,
     toolbar: "nameItem | amountItem | Date | Text | Example | insertfile undo redo | paste | copy",
     plugins: "wordcount",

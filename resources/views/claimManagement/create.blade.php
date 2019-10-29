@@ -32,6 +32,12 @@
                     <div class="col-md-6">
                         {{ Form::label('code_claim', __('message.code_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
                         {{ Form::select('code_claim', [], old('code_claim'), array('id'=>'code_claim', 'class' => 'select2 code_claim form-control', 'required')) }}
+                        <div class="card">
+                            <h5 class="card-header">Applicant Information</h5>
+                            <div class="card-body" id="result_applicant">
+                                
+                            </div>
+                        </div>
                         <div id="page">
                             <div id="list-page"></div>
                             <div id="show-page"></div>
@@ -240,27 +246,4 @@
             }
         });
     </script>
-    <script>
-            //ajax select code
-            $(document).ready(function() {
-                $('.code_claim').select2({          
-                    minimumInputLength: 2,
-                    ajax: {
-                    url: "{{ route('dataAjaxHBSClaim') }}",
-                        dataType: 'json',
-                        data: function (params) {
-                            return {
-                                q: $.trim(params.term)
-                            };
-                        },
-                        processResults: function (data) {
-                            return {
-                                results: data
-                            };
-                        },
-                        cache: true
-                    }
-                });
-            });
-        </script>
 @endsection

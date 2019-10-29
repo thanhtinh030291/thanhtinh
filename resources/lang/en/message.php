@@ -144,4 +144,11 @@ return [
     'term_confirm' => 'Do you want to delete this Term of insurance ?',
     'term_warning' => 'Delete confirmation!',
     'description' => 'Description',
+
+    //letter_template
+    'letter_template' => 'Letter Template',
+    'create_letter_template' => 'Create Letter Template',
+    'detail_letter_template' => 'Detail Letter Template',
+    'edit_letter_template' => 'Edit Letter Template',
+    'template' => 'Template',
 ];

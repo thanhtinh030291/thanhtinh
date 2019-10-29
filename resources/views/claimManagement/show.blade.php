@@ -27,6 +27,21 @@ $totalAmount = 0;
                         <a href="{{$dataImage}}" download>
                             <img src="{{ asset('images/download-button.png') }}"  width="160" height="80">
                         </a>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Export Letter</h5>
+                                <p class="card-text"></p>
+                                {{ Form::open(array('url' => '/admin/exportLetter', 'method' => 'POST')) }}
+                                    {{ Form::hidden('claim_id', $data->id ) }}
+
+                                    {{ Form::label('letter_template_id', __('message.letter_template'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
+                                    {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'code_claim', 'class' => 'select2 form-control', 'required')) }}
+                                    {{ Form::submit( 'Go Export Letter', ['class' => 'mt-3 btn btn-info']) }}
+
+                                {{ Form::close() }}
+                
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <div class="row">
@@ -49,7 +64,7 @@ $totalAmount = 0;
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center mt-3">
                     <a class="btn btn-secondary btnt" href="{{url('admin/claim')}}">{{ __('message.back')}}</a>
                 </div>
                 <!-- End file image -->

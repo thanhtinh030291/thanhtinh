@@ -25,10 +25,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/search', 'ClaimController@searchFullText')->name('search');
         Route::post('/search2', 'ClaimController@searchFullText2')->name('search2');
         Route::post('/template', 'ClaimController@template')->name('template');
+        Route::post('/exportLetter','ClaimController@exportLetter')->name('exportLetter');
 
         Route::resource('reason_reject', 'ReasonRejectController');
         Route::resource('product', 'ProductController');
         Route::resource('term', 'TermController');
+        Route::resource('letter_template', 'LetterTemplateController');
 
         Route::get('importExportView', 'CSVController@importExportView')->middleware(['role:Admin']);
         Route::post('import', 'CSVController@import')->name('import')->middleware(['role:Admin']);
@@ -38,5 +40,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         //ajax
         Route::get('/dataAjaxHBSClaim', 'ClaimController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
+        Route::post('/loadInfoAjaxHBSClaim', 'ClaimController@loadInfoAjaxHBSClaim')->name('loadInfoAjaxHBSClaim');
+        
     });
 });

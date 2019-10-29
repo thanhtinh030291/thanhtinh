@@ -30,8 +30,14 @@
                             </div>
                             <div class="col-md-6">
                                 {{ Form::label('code_claim', __('message.code_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                                {{ Form::text('code_claim', $data->code_claim, array('class' => 'form-control', 'required')) }}
+                                {{ Form::select('code_claim',$listCodeClaim,$data->code_claim, array('class' => 'select2 code_claim form-control', 'required')) }}
+                                <div class="card">
+                                    <h5 class="card-header">Applicant Information</h5>
+                                    <div class="card-body" id="result_applicant">
+                                </div>
+                        </div>
                             </div>
+
                         </div>
                         <div class="row">
                             <div class="col-sm-2 col-form-label ">
