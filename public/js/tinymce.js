@@ -10,7 +10,10 @@ var editor_config = {
         "emoticons template paste textcolor colorpicker textpattern"
     ],
     toolbar:
-        "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+          
+            ["insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+            "applicantName | IOPDiag | PRefNo"]
+        ,
     relative_urls: false,
     file_browser_callback: function(field_name, url, type, win) {
         var x =
@@ -42,17 +45,31 @@ var editor_config = {
         });
     },
     setup: function(editor) {
-        editor.addButton("mybutton", {
-            text: "My button",
+        editor.addButton("applicantName", {
+            text: "Applicant Name",
             icon: false,
             onclick: function() {
-                editor.insertContent("&nbsp;<b>It's my button!</b>&nbsp;");
+                editor.insertContent("&nbsp;[[$applicantName]]&nbsp;");
+            }
+        });
+        editor.addButton("IOPDiag", {
+            text: "IOPDiag",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$IOPDiag]]&nbsp;");
+            }
+        });
+        editor.addButton("PRefNo", {
+            text: "PRefNo",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$PRefNo]]&nbsp;");
             }
         });
     }
 };
 tinymce.init(editor_config);
-
+////type 2
 var config2 = {
     selector: "textarea.editor2",
     height: 500,
