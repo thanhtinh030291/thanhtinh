@@ -122,3 +122,15 @@ function array_shift_assoc( &$arr ){
     unset( $arr[ key( $arr ) ] );
     return $val; 
 }
+
+
+function getVNLetterDate() {
+    $letter =  Carbon\Carbon::now();
+    $letter = $letter->addDays(2);
+    if ($letter->isWeekday(6)) {
+        $letter = $letter->addDays(2);
+    } else if ($letter->isWeekday(0)) {
+        $letter = $letter->addDays(1);
+    }
+    return $letter->toDateString();
+}

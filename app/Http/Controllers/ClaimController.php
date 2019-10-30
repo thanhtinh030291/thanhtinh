@@ -18,6 +18,7 @@ use App\ReasonReject;
 use App\Http\Requests\formClaimRequest;
 use Illuminate\Support\Facades\Log;
 use SimilarText\Finder;
+use Carbon\Carbon;
 class ClaimController extends Controller
 {
     //use Authorizable;
@@ -330,15 +331,47 @@ class ClaimController extends Controller
        
         $letter = LetterTemplate::findOrFail($request->letter_template_id);
         $claim  = Claim::findOrFail($request->claim_id);
-        $HBS_CL_CLAIM = HBS_CL_CLAIM::findOrFail($claim->code_claim);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+
+        $IOPDiag = [];
+        foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $key => $value) {
+            
+            switch ($value->PD_BEN_HEAD->scma_oid_ben_type) {
+                case 'BENEFIT_TYPE_OP':
+                    $IOPDiag[] = 'quyền lợi điều trị ngoại trú cho chẩn đoán “'.$value->RT_DIAGNOSIS->diag_desc_vn .'” từ '.Carbon::parse($value->incur_date_from)->toDateString().' đến '.Carbon::parse($value->incur_date_to)->toDateString().' tại '.$value->prov_name;
+                    break;
+                case 'BENEFIT_TYPE_IP':
+                    $IOPDiag[] = 'quyền lợi điều trị nội trú cho chẩn đoán “'.$value->RT_DIAGNOSIS->diag_desc_vn .'” từ '.Carbon::parse($value->incur_date_from)->toDateString().' đến '.Carbon::parse($value->incur_date_to)->toDateString().' tại '.$value->prov_name;
+                    break;
+                default:
+
+                    break;
+            }
+        }
+        $IOPDiag = implode('và', $IOPDiag);
+
+        $police = $HBS_CL_CLAIM->Police;
+        $policyHolder = $HBS_CL_CLAIM->policyHolder;
+        //dd($HBS_CL_CLAIM);
+        
         $content = $letter->template;
-        $content = str_replace($HBS_CL_CLAIM->applicantName,'[[$applicantName]]', $content);
+        $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
+        $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
+        $content = str_replace('[[$PRefNo]]', $police->pocy_ref_no, $content);
+        $content = str_replace('[[$PhName]]', $policyHolder->poho_name_1, $content);
+        $content = str_replace('[[$memberNameCap]]', strtoupper($HBS_CL_CLAIM->applicantName), $content);
+        $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
+        $content = str_replace('[[$pstAmt]]', $HBS_CL_CLAIM->sumPresAmt, $content);
+        $content = str_replace('[[$apvAmt]]', $HBS_CL_CLAIM->sumAppAmt, $content);
+
+
+
+        
         header("Content-Type: application/vnd.msword");
         header("Expires: 0");//no-cache
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
         header("content-disposition: attachment;filename=sampleword.doc");
         echo $content;
     }
-
 
 }

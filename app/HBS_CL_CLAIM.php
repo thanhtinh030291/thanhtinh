@@ -25,15 +25,50 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         return null;
     }
 
+    public function getPoliceAttribute()
+    {
+        $fisrtClLine = $this->HBS_CL_LINE->first();
+        if($fisrtClLine){
+            $popl_oid = $fisrtClLine->popl_oid;
+            return HBS_MR_POLICY_PLAN::with('MR_POLICY')->findOrFail($popl_oid)->MR_POLICY;
+        }
+        return null;
+    }
+
     public function getApplicantNameAttribute(){
         return $this->member->mbr_last_name ." " . $this->member->mbr_first_name;
     }
 
     public function getPayMethodAttribute(){
+        
+        return $this->policyHolder->scma_oid_cl_pay_method;
+    }
+
+    public function getPolicyHolderAttribute(){
         $poho_oid = $this->member->poho_oid;
-        return HBS_MR_POLICYHOLDER::findOrFail($poho_oid)->scma_oid_cl_pay_method;
+        return HBS_MR_POLICYHOLDER::findOrFail($poho_oid);
+    }
+
+    public function getSumPresAmtAttribute(){
+        $clLines = $this->HBS_CL_LINE->toArray();
+        $sum = array_sum(array_column($clLines,'pres_amt'));
+        return $sum;
+    }
+
+    public function getSumAppAmtAttribute(){
+        $clLines = $this->HBS_CL_LINE->toArray();
+        $sum = array_sum(array_column($clLines,'app_amt'));
+        return $sum;
+    }
+
+    //show RT_DIAGNOSIS
+    public function scopeIOPDiag($query){
+        $condition = function ($q) {
+            $q->with('RT_DIAGNOSIS');
+            $q->with('PD_BEN_HEAD');
+        };
+        return $query->with(['HBS_CL_LINE' => $condition]);
     }
     
-
 
 }

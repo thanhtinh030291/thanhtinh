@@ -386,6 +386,17 @@ function setIdPaste(e){
 function removeIdPaste(){
     idPaste = null;
 };
+//copy text to content
+var clipboard = new ClipboardJS('.btn');
+clipboard.on('success', function(e) {
+    if(idPaste){
+        $("#table2_name_"+idPaste).val(e.text);
+        removeIdPaste();
+    }
+    else{
+        alert('Please select the region to paste');
+    }
+});
 // choice field 
 $(document).on("change", ".select_field", function(e){
     var optionSelected = $("option:selected", this);
@@ -435,7 +446,9 @@ $(document).ready(function() {
     });
     $( document ).ready(function() {
         var id_code = $('#code_claim').val();
-        resultApplicant(id_code);
+        if(id_code != null){
+            resultApplicant(id_code);
+        }
     });
 
     function resultApplicant(value){

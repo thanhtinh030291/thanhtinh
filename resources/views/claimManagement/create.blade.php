@@ -121,10 +121,10 @@
     <script src="{{asset('js/papaparse.min.js')}}"></script>
     <script src="{{asset('js/popper.min.js')}}" ></script>
     <script src="{{ asset('js/tiff.min.js') }}"></script>
-    <script src="{{asset('js/formclaim.js')}}"></script>
     <script src="{{ asset('js/format-price.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <script src="{{ asset('js/clipboard.js') }}"></script>
+    <script src="{{asset('js/formclaim.js')}}"></script>
     
     <script type="text/javascript">
         function arrayToTable(tableData) {
@@ -235,15 +235,6 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        var clipboard = new ClipboardJS('.btn');
-        clipboard.on('success', function(e) {
-            if(idPaste){
-                $("#_content"+idPaste).val(e.text);
-                removeIdPaste();
-            }
-            else{
-                alert('Please select the region to paste');
-            }
-        });
+        
     </script>
 @endsection
