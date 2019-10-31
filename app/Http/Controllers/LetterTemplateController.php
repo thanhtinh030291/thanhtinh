@@ -62,9 +62,9 @@ class LetterTemplateController extends Controller
         $data['updated_user'] = $userId;
 
         LetterTemplate::create($data);
-        $request->session()->flash('status', __('message.reason_inject_create_success')); 
+        $request->session()->flash('status', __('message.create_success')); 
         
-        return redirect('/admin/reason_reject');
+        return redirect('/admin/letter_template');
     }
 
     /**
@@ -108,8 +108,8 @@ class LetterTemplateController extends Controller
         $data['updated_user'] = $userId;
         LetterTemplate::updateOrCreate(['id' => $id], $data);
 
-        $request->session()->flash('status', __('message.reason_inject_update_success')); 
-        return redirect('/admin/reason_reject');
+        $request->session()->flash('status', __('message.update_success')); 
+        return redirect('/admin/letter_template');
     }
 
     /**
@@ -122,6 +122,6 @@ class LetterTemplateController extends Controller
     {
         $data = LetterTemplate::findOrFail($id);
         $data->delete();
-        return redirect('/admin/reason_reject')->with('status', __('message.reason_inject_delete_success'));
+        return redirect('/admin/letter_template')->with('status', __('message.delete_success'));
     }
 }
