@@ -12,7 +12,7 @@ var editor_config = {
     toolbar:
           
             ["insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
-            "applicantName | IOPDiag | PRefNo"]
+            "applicantName | IOPDiag | PRefNo | PhName | PRefNo | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | "]
         ,
     relative_urls: false,
     file_browser_callback: function(field_name, url, type, win) {
@@ -66,9 +66,74 @@ var editor_config = {
                 editor.insertContent("&nbsp;[[$PRefNo]]&nbsp;");
             }
         });
+        editor.addButton("PhName", {
+            text: "PhName",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$PhName]]&nbsp;");
+            }
+        });
+        editor.addButton("memberNameCap", {
+            text: "memberNameCap",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$memberNameCap]]&nbsp;");
+            }
+        });
+
+        editor.addButton("ltrDate", {
+            text: "ltrDate",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$ltrDate]]&nbsp;");
+            }
+        });
+
+        editor.addButton("pstAmt", {
+            text: "pstAmt",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$pstAmt]]&nbsp;");
+            }
+        });
+
+        editor.addButton("apvAmt", {
+            text: "apvAmt",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$apvAmt]]&nbsp;");
+            }
+        });
+
+        editor.addButton("payMethod", {
+            text: "payMethod",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$payMethod]]&nbsp;");
+            }
+        });
+
+        editor.addButton("deniedAmt", {
+            text: "deniedAmt",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$deniedAmt]]&nbsp;");
+            }
+        });
+
+        editor.addButton("CSRRemark", {
+            text: "CSRRemark",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$CSRRemark]]&nbsp;");
+            }
+        });
+
+        
     }
 };
 tinymce.init(editor_config);
+
 ////type 2
 var config2 = {
     selector: "textarea.editor2",

@@ -354,7 +354,23 @@ class ClaimController extends Controller
 
         $police = $HBS_CL_CLAIM->Police;
         $policyHolder = $HBS_CL_CLAIM->policyHolder;
-        //dd($HBS_CL_CLAIM);
+        $payMethod = '';
+        
+        switch ($HBS_CL_CLAIM->payMethod) {
+            case 'CL_PAY_METHOD_TT':
+                $payMethod = 'chuyển khoản vào tài khoản của '. $HBS_CL_CLAIM->member->bank_name .', số TK: '. $HBS_CL_CLAIM->member->cl_pay_acct_no.' tại Ngân hàng '.$HBS_CL_CLAIM->member->bank_name.
+                ', '.$HBS_CL_CLAIM->member->cl_pay_bank_branch.', '. $HBS_CL_CLAIM->member->cl_pay_bank_city .' (Quý khách vui lòng kiểm tra tài khoản nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán).';
+                break;
+            case 'CL_PAY_METHOD_CA':
+                $payMethod = 'nhận tiền bằng CMND của '.$HBS_CL_CLAIM->member->cash_beneficiary_name .', số CMND: '.$HBS_CL_CLAIM->member->cash_id_passport_no.', ngày cấp:  
+                '.$HBS_CL_CLAIM->member->cash_id_passport_date_of_issue.', nơi cấp: '. $HBS_CL_CLAIM->member->cash_id_passport_date_of_issue .'; tại '.$HBS_CL_CLAIM->member->cash_bank_name.', '.$HBS_CL_CLAIM->member->cash_bank_branch.', '.$HBS_CL_CLAIM->member->cash_bank_city.' (Quý khách vui lòng mang theo CMND đến Ngân hàng nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán).';
+                break;
+            case 'CL_PAY_METHOD_CQ':
+                $payMethod ="nhận tiền mặt tại Pacific Cross Vietnam, Lầu 16, Tháp B, Tòa nhà Royal Centre, 235 Nguyễn Văn Cừ, Phường Nguyễn Cư Trinh, Quận 1, TP. HCM (Quý khách vui lòng mang theo CMND đến Văn phòng nhận tiền từ Thứ Hai đến Thứ Sáu hàng tuần sau 1 ngày làm việc kể từ ngày chấp nhận thanh toán).";
+                break;
+            default:
+                break;
+        }
         
         $content = $letter->template;
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
@@ -363,10 +379,10 @@ class ClaimController extends Controller
         $content = str_replace('[[$PhName]]', $policyHolder->poho_name_1, $content);
         $content = str_replace('[[$memberNameCap]]', strtoupper($HBS_CL_CLAIM->applicantName), $content);
         $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
-        $content = str_replace('[[$pstAmt]]', $HBS_CL_CLAIM->sumPresAmt, $content);
-        $content = str_replace('[[$apvAmt]]', $HBS_CL_CLAIM->sumAppAmt, $content);
-
-
+        $content = str_replace('[[$pstAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt), $content);
+        $content = str_replace('[[$apvAmt]]', formatPrice($HBS_CL_CLAIM->sumAppAmt), $content);
+        $content = str_replace('[[$payMethod]]', $payMethod, $content);
+        $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $HBS_CL_CLAIM->sumAppAmt) , $content);
 
         
         header("Content-Type: application/vnd.msword");
