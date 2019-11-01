@@ -256,6 +256,8 @@ class ClaimController extends Controller
         $data = $claim;
         $dirUpload = Config::get('constants.formClaimUpload');
         Storage::delete($dirUpload . $data->url_file);
+        $data->item_of_claim()->delete();
+        $data->delete();
         return redirect('/admin/claim')->with('status', __('message.delete_claim'));
     }
 

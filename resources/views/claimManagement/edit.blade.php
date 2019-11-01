@@ -30,7 +30,7 @@
                             </div>
                             <div class="col-md-6">
                                 {{ Form::label('code_claim', __('message.code_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                                {{ Form::select('code_claim',$listCodeClaim,$data->code_claim, array('class' => 'select2 code_claim form-control', 'required')) }}
+                                {{ Form::select('code_claim',$listCodeClaim,$data->code_claim, array('class' => 'code_claim form-control', 'required')) }}
                                 <div class="card">
                                     <h5 class="card-header">Applicant Information</h5>
                                     <div class="card-body" id="result_applicant">
@@ -83,10 +83,10 @@
 <script src="{{asset('js/papaparse.min.js')}}"></script>
 <script src="{{asset('js/popper.min.js')}}" ></script>
 <script src="{{ asset('js/tiff.min.js') }}"></script>
-<script src="{{asset('js/formclaim.js')}}"></script>
 <script src="{{ asset('js/format-price.js') }}"></script>
 <script src="{{ asset('js/jquery-ui.js') }}"></script>
 <script src="{{ asset('js/clipboard.js') }}"></script>
+<script src="{{asset('js/formclaim.js')}}"></script>
 <script>
 var dataImage = @json($dataImage);
 var previewConfig = @json($previewConfig);

@@ -4,9 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ItemOfClaim extends Model {
+class ItemOfClaim extends BaseModel {
     protected $table   = 'item_of_claim';
     protected $guarded = ['id'];
+    protected $dates = ['deleted_at'];
     protected $casts   = [
         'parameters' => 'array',
     ];

@@ -424,6 +424,8 @@ $(document).on("change", ".select_field", function(e){
 $(document).ready(function() {
     $('.code_claim').select2({          
         minimumInputLength: 2,
+        
+       
         ajax: {
         url: "/admin/dataAjaxHBSClaim",
             dataType: 'json',
