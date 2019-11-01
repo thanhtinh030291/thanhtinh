@@ -20,5 +20,9 @@ class ReasonReject extends BaseModel
     {
         return $this->hasOne('App\User', 'id', 'created_user');
     }
+    public function term()
+    {
+        return $this->hasOne('App\Term', 'id', 'term_id');
+    }
 
 }

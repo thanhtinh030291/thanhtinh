@@ -22,4 +22,16 @@ class Claim extends BaseModel
         return $imageName;
     }
 
+    public function scopeItemClaimReject($query)
+    {
+        $conditionTerm = function ($q) {
+           
+            $q->with('term');
+        };
+        $condition = function ($q) use ($conditionTerm) {
+            $q->whereNotNull('reason_reject_id');
+            $q->with(['reason_reject'=>$conditionTerm]);
+        };
+        return $query->with(['item_of_claim' => $condition]);
+    }
 }

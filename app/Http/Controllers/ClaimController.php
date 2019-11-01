@@ -19,6 +19,7 @@ use App\Http\Requests\formClaimRequest;
 use Illuminate\Support\Facades\Log;
 use SimilarText\Finder;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 class ClaimController extends Controller
 {
     //use Authorizable;
@@ -232,7 +233,7 @@ class ClaimController extends Controller
                     $dataDel->delete();
                 } // update and create new tour_set
                 DB::commit();
-                $request->session()->flash('status', __('message.update_transport'));
+                $request->session()->flash('status', __('message.update_claim'));
             }
             return redirect('/admin/claim');
         } catch (Exception $e) {
@@ -329,10 +330,10 @@ class ClaimController extends Controller
         return response()->json($data);
     }
     // export letter
-    public function exportLetter(Request $request){
-       
+    public function exportLetter(Request $request){ 
         $letter = LetterTemplate::findOrFail($request->letter_template_id);
-        $claim  = Claim::findOrFail($request->claim_id);
+        
+        $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
 
         $IOPDiag = [];
@@ -350,12 +351,12 @@ class ClaimController extends Controller
                     break;
             }
         }
-        $IOPDiag = implode('và', $IOPDiag);
+        $IOPDiag = implode(' và ', $IOPDiag);
 
         $police = $HBS_CL_CLAIM->Police;
         $policyHolder = $HBS_CL_CLAIM->policyHolder;
         $payMethod = '';
-        
+    
         switch ($HBS_CL_CLAIM->payMethod) {
             case 'CL_PAY_METHOD_TT':
                 $payMethod = 'chuyển khoản vào tài khoản của '. $HBS_CL_CLAIM->member->bank_name .', số TK: '. $HBS_CL_CLAIM->member->cl_pay_acct_no.' tại Ngân hàng '.$HBS_CL_CLAIM->member->bank_name.
@@ -372,6 +373,19 @@ class ClaimController extends Controller
                 break;
         }
         
+        $CSRRemark = [];
+        $TermRemark = [];
+        
+        $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
+        foreach ($claim->item_of_claim as $key => $value) {
+            $tempale = $value->reason_reject->template; 
+            foreach ( $arrKeyRep as $key2 => $value2) {
+                $tempale = str_replace($value2, '$parameter', $tempale);
+            };
+            $TermRemark[] = $value->reason_reject->term->fullTextTerm;
+            $CSRRemark[] = Str::replaceArray('$parameter', $value->parameters, $tempale);
+        }
+        
         $content = $letter->template;
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
@@ -383,13 +397,21 @@ class ClaimController extends Controller
         $content = str_replace('[[$apvAmt]]', formatPrice($HBS_CL_CLAIM->sumAppAmt), $content);
         $content = str_replace('[[$payMethod]]', $payMethod, $content);
         $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $HBS_CL_CLAIM->sumAppAmt) , $content);
-
+        $content = str_replace('[[$CSRRemark]]', implode(' ',$CSRRemark) , $content);
+        $content = str_replace('[[$TermRemark]]', implode(' ',array_unique($TermRemark)) , $content);
         
-        header("Content-Type: application/vnd.msword");
+        
+        header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
         header("Expires: 0");//no-cache
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
         header("content-disposition: attachment;filename=sampleword.doc");
+        echo "<html>";
+      
+        echo "<body>";
         echo $content;
+        echo "</body>";
+        echo "</html>";
+        
     }
 
 }

@@ -19,4 +19,8 @@ class Term extends BaseModel
     {
         return $this->hasOne('App\User', 'id', 'created_user');
     }
+
+    public function getFullTextTermAttribute(){
+        return $this->name ." : ". $this->description;
+    }
 }

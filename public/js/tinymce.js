@@ -12,7 +12,7 @@ var editor_config = {
     toolbar:
           
             ["insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
-            "applicantName | IOPDiag | PRefNo | PhName | PRefNo | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | "]
+            "applicantName | IOPDiag | PRefNo | PhName | PRefNo | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | TermRemark"]
         ,
     relative_urls: false,
     file_browser_callback: function(field_name, url, type, win) {
@@ -129,6 +129,13 @@ var editor_config = {
             }
         });
 
+        editor.addButton("TermRemark", {
+            text: "TermRemark",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$CSRRemark]]&nbsp;");
+            }
+        });
         
     }
 };
