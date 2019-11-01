@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-md-6">
                         {{ Form::label('code_claim', __('message.code_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                        {{ Form::select('code_claim', [], old('code_claim'), array('id'=>'code_claim', 'class' => 'select2 code_claim form-control', 'required')) }}
+                        {{ Form::select('code_claim', [], old('code_claim'), array('id'=>'code_claim', 'class' => 'code_claim form-control', 'required')) }}
                         <div class="card">
                             <h5 class="card-header">Applicant Information</h5>
                             <div class="card-body" id="result_applicant">

@@ -420,12 +420,11 @@ $(document).on("change", ".select_field", function(e){
     checkValueCol(valueSelected, arrElement);
 });
 
+
 //ajax select code
-$(document).ready(function() {
+$(window).load(function() {
     $('.code_claim').select2({          
         minimumInputLength: 2,
-        
-       
         ajax: {
         url: "/admin/dataAjaxHBSClaim",
             dataType: 'json',
