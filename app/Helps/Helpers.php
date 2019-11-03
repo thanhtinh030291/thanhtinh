@@ -134,3 +134,31 @@ function getVNLetterDate() {
     }
     return $letter->toDateString();
 }
+
+function dateConvertToString($date = null) 
+    { 
+    try {
+        $_s = strtotime(date("Y-m-d H:i:s")) - strtotime($date);
+        if(round($_s / (60*60*24)) >= 1)
+        {
+            // to day
+            $rs_date = round($_s / (60*60*24)) . " day ago";
+        }
+        else
+        {
+            if(round($_s / (60*60)) >= 1)
+            {
+                // to hours
+                $rs_date = round($_s / (60*60)) . " hours ago";
+            }
+            else
+            {
+                // to minutes
+                $rs_date = round($_s / 60) . " minutes ago";
+            }
+        }   
+    } catch (\Exception $e) {
+        $rs_date = null;
+    }
+    return $rs_date;
+}

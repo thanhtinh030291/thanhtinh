@@ -15,6 +15,7 @@ class TermController extends Controller
     public function __construct()
     {
         $this->authorizeResource(Term::class);
+        parent::__construct();
     }
     /**
      * Display a listing of the resource.

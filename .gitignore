@@ -1,5 +1,6 @@
 /.svn
 /node_modules
+/nodejs/node_modules
 /public/hot
 /public/storage
 /storage/*.key

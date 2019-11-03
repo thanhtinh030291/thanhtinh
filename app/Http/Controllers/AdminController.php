@@ -28,6 +28,7 @@ class AdminController extends Controller {
 		// 	}
 
 		// });
+		parent::__construct();
 	}
 	public function index(Request $request) {
 

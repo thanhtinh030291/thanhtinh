@@ -11,10 +11,12 @@ use Illuminate\Support\Arr;
 
 class ProductController extends Controller
 {
+    
     //use Authorizable;
     public function __construct()
     {
         $this->authorizeResource(Product::class);
+        parent::__construct();
     }
     /**
      * Display a listing of the resource.

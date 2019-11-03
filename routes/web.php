@@ -14,13 +14,19 @@
 Route::get('/', function () {
     return redirect('login');
 });
+Route::get('/test', function () {
+    return view('pusherManagement/showNotification');
+});
+
+
+Route::post('/postMessage', 'SendMessageController@sendMessage')->name('postMessage');
 
 Auth::routes();
 Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware' => ['auth']], function(){
         Route::get('/home', 'HomeController@index')->name('home');
         
-
+        Route::get('/chats', 'chatController@index')->name('chat.index');
         Route::resource('claim', 'ClaimController');
         Route::post('/search', 'ClaimController@searchFullText')->name('search');
         Route::post('/search2', 'ClaimController@searchFullText2')->name('search2');

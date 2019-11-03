@@ -7,6 +7,42 @@
 
     <nav class="navbar-custom">
         <ul class="list-inline float-right mb-0">
+            <li class="list-inline-item dropdown notif dropdown-notifications">
+                <a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown">
+                    <i data-count="{{count($messages)}}" class="fa fa-envelope notification-icon text-warning"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right profile-dropdown">
+                    <div class="dropdown-toolbar">
+                        <div class="dropdown-toolbar-actions">
+                            <a href="#">Mark all as read</a>
+                        </div>
+                    <h3 class="dropdown-toolbar-title">Notifications (<span class="notif-count">{{count($messages)}}</span>)</h3>
+                    </div>
+                    <ul class="dropdown-menu-notifi">
+                        @foreach ($messages as $item)
+                            <li class="notification active">
+                                <div class="media">
+                                    <div class="media-left">
+                                    <div class="media-object">
+                                        <img src="https://api.adorable.io/avatars/71/`+avatar+`.png" class="img-circle" alt="50x50" style="width: 50px; height: 50px;">
+                                    </div>
+                                    </div>
+                                    <div class="media-body">
+                                    <strong class="notification-title">{{$item->userFrom->email}}</strong>
+                                    <p class="notification-desc">{{$item->message}}</p>
+                                    <div class="notification-meta">
+                                        <small class="timestamp">{{dateConvertToString($item->created_at)}}</small>
+                                    </div>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <div class="dropdown-footer text-center">
+                        <a href="#">View All</a>
+                    </div>
+                </div>
+            </li>
             <li class="list-inline-item dropdown notif">
                 <a class="nav-link dropdown-toggle nav-user" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                     <img src="{{asset('images/avatars/admin.png')}}" alt="Profile image" class="avatar-rounded">
@@ -27,6 +63,7 @@
                     </form>
                 </div>
             </li>
+            
         </ul>
 
         <ul class="list-inline menu-left mb-0">

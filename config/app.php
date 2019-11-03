@@ -177,6 +177,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Yajra\Oci8\Oci8ServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class
     ],
 
     /*

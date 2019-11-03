@@ -12,6 +12,10 @@ use Illuminate\Support\Arr;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
     /**
      * Display a listing of the resource.
      *

@@ -26,6 +26,7 @@ class ClaimController extends Controller
     public function __construct()
     {
         $this->authorizeResource(Claim::class);
+        parent::__construct();
     }
     /**
      * Display a listing of the resource.

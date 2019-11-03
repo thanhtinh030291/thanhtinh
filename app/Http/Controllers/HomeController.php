@@ -1,8 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\HBS_CL_CLAIM;
 use Illuminate\Http\Request;
+use App\User;
+use Auth;
+use App\Claim;
+use Carbon\Carbon;
+use Redis;
 
 
 class HomeController extends Controller
@@ -14,7 +18,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        
+        parent::__construct();
     }
 
     /**
@@ -24,7 +28,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $data = HBS_CL_CLAIM::with('HBS_CL_LINE')->findOrFail(5026631);
-        return view('home');
+        
+        $Ipclient = \Request::getClientIp(true);
+        $listUser = User::whereNotIn('id',[Auth::User()->id])->pluck('email', 'id');
+        $user = Auth::user()  ;
+        $latestMessages = $user->messagesReceiver10;
+        //dd($latestMessages);
+        $sentMessages = $user->messagesSent10;
+        $sumMember = User::count();
+        $sumClaim  = Claim::count();
+        $sumClaimToDate = Claim::whereDate('created_at', Carbon::today())->count();
+        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient'));
     }
 }

@@ -43,4 +43,31 @@ class User extends Authenticatable
     {
         return self::orderBy('id', 'desc')->pluck('name', 'id');
     }
+    public function messagesSent()
+    {
+    return $this->hasMany('App\Message', 'user_from', 'id');
+    }
+
+    public function messagesReceiver()
+    {
+    return $this->hasMany('App\Message', 'user_to', 'id');
+    }
+
+    public function getMessagesReceiverAttribute()
+    {
+        $messages = $this->messagesReceiver()->with("userFrom")->where('is_read', 0)->latest()->get();
+        return $messages;
+    }
+
+    public function getMessagesReceiver10Attribute()
+    {
+        $messages = $this->messagesReceiver()->with("userFrom")->latest()->limit(10)->get();
+        return $messages;
+    }
+
+    public function getMessagesSent10Attribute()
+    {
+        $messages = $this->messagesSent()->latest()->limit(10)->get();
+        return $messages;
+    }
 }

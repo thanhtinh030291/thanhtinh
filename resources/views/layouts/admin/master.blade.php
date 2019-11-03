@@ -25,7 +25,8 @@
 	<link href="{{asset('plugins/datetimepicker/css/daterangepicker.css')}}" rel="stylesheet" />
     <link href="{{asset('css/select2.min.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{asset('css/select2_optimize.css')}}" rel="stylesheet" type="text/css" />
-
+    <link href="{{asset('css/bootstrap-notifications.css')}}" rel="stylesheet" type="text/css" />
+    
     @yield('stylesheets')
 
 </head>
@@ -33,7 +34,10 @@
 <body class="adminbody">
     <div id="main">
         <!-- top bar navigation -->
-        @include('layouts.admin.partials.top_bar_navigation')
+        @include('layouts.admin.partials.top_bar_navigation',[
+            'messages' => $messages,
+            
+        ])
         <!-- End Navigation -->
         <!-- Left Sidebar -->
         @include('layouts.admin.partials.left_sidebar')
@@ -71,12 +75,17 @@
     <script src="{{asset('js/daterangepicker.js')}}"></script>
     <!-- App js -->
     <script src="{{asset('js/pikeadmin.js')}}"></script>
-    <script src="{{asset('js/main.js')}}"></script>
+    <script src="{{asset('js/pusher.min.js')}}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
+    <script src="{{asset('js/main.js')}}"></script>
+    
     <script>
         $(document).ready(function(){
             $('.select2').select2();
+            pusher("{{config('broadcasting.connections.pusher.key')}}","{{config('broadcasting.connections.pusher.options.cluster')}}", "{{ Auth::user()->id }}");
         });
+        
     </script>
     <!-- BEGIN Java Script for this page -->
     @yield('scripts')
