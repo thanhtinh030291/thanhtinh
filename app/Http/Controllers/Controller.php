@@ -20,9 +20,12 @@ class Controller extends BaseController
         
         $this->middleware(function ($request, $next) {
             $user = Auth::user()  ;
-            $messages = $user->messagesReceiver;
-          
-            View::share('messages', $messages);
+           
+            if($user){
+                $messages = $user->messagesReceiver;
+                View::share('messages', $messages);
+            }
+            
             return $next($request);
         });
         

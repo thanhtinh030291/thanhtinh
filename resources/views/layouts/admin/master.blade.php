@@ -8,7 +8,8 @@
     <meta name="description" content="{{ config('app.name') }}">
     <meta name="author" content="{{ config('app.name') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    <meta name="ws_url" content="http://localhost:3000/">
+    <meta name="user_id" content="{{ Auth::id() }}">
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{asset('images/favicon.ico')}}">
 
@@ -78,12 +79,14 @@
     <script src="{{asset('js/pusher.min.js')}}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
+    <script src="{{asset('js/notifi.js')}}"></script>
     <script src="{{asset('js/main.js')}}"></script>
+    
     
     <script>
         $(document).ready(function(){
             $('.select2').select2();
-            pusher("{{config('broadcasting.connections.pusher.key')}}","{{config('broadcasting.connections.pusher.options.cluster')}}", "{{ Auth::user()->id }}");
+            //pusher("{{config('broadcasting.connections.pusher.key')}}","{{config('broadcasting.connections.pusher.options.cluster')}}", "{{ Auth::user()->id }}");
         });
         
     </script>

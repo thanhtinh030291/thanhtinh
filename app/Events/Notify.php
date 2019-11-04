@@ -36,6 +36,7 @@ class Notify
     public function broadcastOn()
     {
         //return new PrivateChannel('channel-name');
-        return new PrivateChannel('user.'.$this->users);
+        //return new PrivateChannel('private-user.'.$this->users);
+        return new PrivateChannel('chat-room');
     }
 }

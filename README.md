@@ -92,11 +92,11 @@ client_secret =QylCuB6B0IequyszusNbFuKY
 redirect =http://ec2-52-197-98-206.ap-northeast-1.compute.amazonaws.com/auth/google/callback
 
 ```
-# Step 8  -  Setup Stripe API (payment)
-* add in file .env
+# Step 8  -  Start Node JS Server
+* Go to project directory using Terminal / CMD Open nodejs folder
 ```
-STRIPE_KEY=pk_test_gsVrC06MifPH0wFbzHhI0LMN00F1UMNbQP
-STRIPE_SECRET=sk_test_o23x3ThagWF8AMAHPIXNIE9e00IMyhMhrv
+export NODE_ENV=dev
+npm start
 
 ```
 # Step 9 -  Setup Script crontab
@@ -111,3 +111,14 @@ php artisan make:policy PostPolicy --model=Post
 php artisan auth:permission claim
 php artisan auth:permission product
 php artisan auth:permission term
+
+# step 12 - pusher notifition
+add to .env
+PUSHER_APP_KEY=778c463afa5314725eda
+PUSHER_APP_SECRET=2f138838a645af01ad3c
+PUSHER_APP_ID=891772
+PUSHER_APP_CLUSTER=ap1
+
+
+appId: a640ac782552e93f
+key: efaa761e84c08024d437f370eaa2a564
