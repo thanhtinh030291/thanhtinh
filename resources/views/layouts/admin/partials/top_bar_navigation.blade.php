@@ -14,7 +14,7 @@
                 <div class="dropdown-menu dropdown-menu-right profile-dropdown">
                     <div class="dropdown-toolbar">
                         <div class="dropdown-toolbar-actions">
-                            <a href="#">Mark all as read</a>
+                            <a href="#" onclick="readAllMessages()">Mark all as read</a>
                         </div>
                     <h3 class="dropdown-toolbar-title">Notifications (<span class="notif-count">{{count($messages)}}</span>)</h3>
                     </div>

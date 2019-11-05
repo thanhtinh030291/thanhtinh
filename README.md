@@ -122,3 +122,5 @@ PUSHER_APP_CLUSTER=ap1
 
 appId: a640ac782552e93f
 key: efaa761e84c08024d437f370eaa2a564
+
+redis-cli monitor

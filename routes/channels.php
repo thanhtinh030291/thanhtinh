@@ -17,6 +17,7 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
 // Broadcast::channel('private-user.{toUserId}', function ($user, $toUserId) {
 //     return $user->id == $toUserId;
 // });chat-room
-Broadcast::channel('chat-room', function ($user) {
-    return (int) $user->id < 3;
+Broadcast::channel('user.{toUserId}', function ($user, $toUserId) {
+    return $user->id == $toUserId;
+    
 });

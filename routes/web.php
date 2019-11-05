@@ -27,6 +27,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/home', 'HomeController@index')->name('home');
         
         Route::get('/chats', 'chatController@index')->name('chat.index');
+        Route::post('/read_all_messages', 'SendMessageController@readAll')->name('readAll');
+
         Route::resource('claim', 'ClaimController');
         Route::post('/search', 'ClaimController@searchFullText')->name('search');
         Route::post('/search2', 'ClaimController@searchFullText2')->name('search2');

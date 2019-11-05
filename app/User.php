@@ -58,7 +58,7 @@ class User extends Authenticatable
         $messages = $this->messagesReceiver()->with("userFrom")->where('is_read', 0)->latest()->get();
         return $messages;
     }
-
+    
     public function getMessagesReceiver10Attribute()
     {
         $messages = $this->messagesReceiver()->with("userFrom")->latest()->limit(10)->get();
@@ -70,4 +70,6 @@ class User extends Authenticatable
         $messages = $this->messagesSent()->latest()->limit(10)->get();
         return $messages;
     }
+
+    
 }

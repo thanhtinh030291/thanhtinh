@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Notify
+class Notify implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $title;
@@ -28,6 +28,9 @@ class Notify
         $this->user = $data['user'];
     }
 
+    // public function broadcastAs(){
+    //     return 'private-user'.$this->user;
+    // }
     /**
      * Get the channels the event should broadcast on.
      *ss
@@ -37,6 +40,6 @@ class Notify
     {
         //return new PrivateChannel('channel-name');
         //return new PrivateChannel('private-user.'.$this->users);
-        return new PrivateChannel('chat-room');
+        return new Channel('user.'. $this->user);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Pusher\Pusher;
 use Auth;
+use App\Message;
 use App\Events\Notify;
 
 class SendMessageController extends Controller
@@ -17,6 +18,7 @@ class SendMessageController extends Controller
     {
         return view('pusherManagement/send_mesage');
     }
+
     public function sendMessage(Request $request)
     {
         $request->validate([
@@ -33,19 +35,14 @@ class SendMessageController extends Controller
         $data['content'] = $request->input('content');
         $data['user'] = $request->input('user');
         
-        // $pusher = new Pusher(
-        //     config('broadcasting.connections.pusher.key'),
-        //     config('broadcasting.connections.pusher.secret'),
-        //     config('broadcasting.connections.pusher.app_id'),
-        //     config('broadcasting.connections.pusher.options')
-        // );
-        
-        // //dd(config('broadcasting.connections.pusher'));
-        // $pusher->trigger('Notify', 'send-message-'.$data['user'], $data);
         
         event(new Notify($data));
-
-
         return redirect('/admin/home/');
+    }
+
+    public function readAll(Request $request){
+        
+        $user = Auth::user();
+        Message::where('is_read' , 0)->where('user_to',$user->id)->update(['is_read' => 1]);
     }
 }

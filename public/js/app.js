@@ -31564,7 +31564,7 @@ if (token) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\pacific_project\ClaimOCR\resources\assets\js\app.js */"./resources/assets/js/app.js");
+module.exports = __webpack_require__(/*! /Users/thanhtinh/Sites/thanhtinh/resources/assets/js/app.js */"./resources/assets/js/app.js");
 
 
 /***/ })

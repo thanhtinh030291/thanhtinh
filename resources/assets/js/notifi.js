@@ -10,9 +10,10 @@ window.Echo = new Echo({
     host: `${window.location.hostname}:9090`
 });
 
-window.Echo.private('chat-room')
+window.Echo.channel('user.'+USER_ID)
     .listen('Notify', (e) => {
         console.log(e);
+        pusher(e);
         //$('#content').append(`<div class="well">${e.message}</div>`);
     });
 
