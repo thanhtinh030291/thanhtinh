@@ -93,8 +93,11 @@ redirect =http://ec2-52-197-98-206.ap-northeast-1.compute.amazonaws.com/auth/goo
 
 ```
 # Step 8  -  Start Node JS Server
-* Go to project directory using Terminal / CMD Open nodejs folder
+* Go to project directory using Terminal / CMD Open 
 ```
+sudo yum install nodejs
+npm install
+
 export NODE_ENV=dev
 npm start
 
@@ -123,4 +126,3 @@ PUSHER_APP_CLUSTER=ap1
 appId: a640ac782552e93f
 key: efaa761e84c08024d437f370eaa2a564
 
-redis-cli monitor

@@ -7,7 +7,7 @@ window.io = require('socket.io-client');
 window.Echo = new Echo({
     namespace: 'App.Events',
     broadcaster: 'socket.io',
-    host: `${window.location.hostname}:9090`
+    host: `node.${window.location.hostname}`
 });
 
 window.Echo.channel('user.'+USER_ID)

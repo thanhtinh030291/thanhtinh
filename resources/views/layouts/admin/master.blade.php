@@ -79,7 +79,7 @@
     <script src="{{asset('js/pusher.min.js')}}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
-    <script src="//{{Request::getHost()}}:9090/socket.io/socket.io.js"></script>
+    <script src="http://node.{{Request::getHost()}}/socket.io/socket.io.js"></script>
     <script src="{{asset('js/notifi.js')}}"></script>
     <script src="{{asset('js/main.js')}}"></script>
     
