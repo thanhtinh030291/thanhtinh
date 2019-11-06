@@ -20,7 +20,10 @@
         "pusher/pusher-php-server": "^4.1",
         "rap2hpoutre/similar-text-finder": "^1.1",
         "spatie/laravel-permission": "^3.2",
-        "yajra/laravel-oci8": "^6.0"
+        "yajra/laravel-oci8": "^6.0",
+        "infyomlabs/laravel-generator": "6.0.x-dev",
+        "infyomlabs/adminlte-templates": "6.0.x-dev",
+        "infyomlabs/generator-builder": "dev-master"
     },
     "require-dev": {
         "facade/ignition": "^1.4",
