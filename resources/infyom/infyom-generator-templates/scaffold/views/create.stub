@@ -1,21 +1,21 @@
-@extends('layouts.app')
-
+@extends('layouts.admin.master')
+@section('title', '$MODEL_NAME_HUMAN$')
+@section('stylesheets')
+<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
+@endsection
 @section('content')
-    <section class="content-header">
-        <h1>
-            $MODEL_NAME_HUMAN$
-        </h1>
-    </section>
-    <div class="content">
-        @include('adminlte-templates::common.errors')
-        <div class="box box-primary">
-
-            <div class="box-body">
-                <div class="row">
+    @include('layouts.admin.breadcrumb_index', [
+        'title'       => '$MODEL_NAME_HUMAN$',
+        'parent_url'  => route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index'),
+        'parent_name' => '$MODEL_NAME_PLURAL_HUMAN$',
+        'page_name'   =>  '$MODEL_NAME_HUMAN$',
+    ])
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
                     {!! Form::open(['route' => '$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.store'$FILES$]) !!}
-
                         @include('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.fields')
-
                     {!! Form::close() !!}
                 </div>
             </div>

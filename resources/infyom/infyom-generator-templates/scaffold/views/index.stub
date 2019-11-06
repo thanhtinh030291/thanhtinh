@@ -18,7 +18,7 @@
     <br>
     <div class="row">
         <div class="col-md-12">
-            <form action="{{ url('admin/product') }}" method="GET" class="form-horizontal" >
+            <form action="{!! route('$ROUTE_NAMED_PREFIX$$MODEL_NAME_PLURAL_CAMEL$.index') !!}" method="GET" class="form-horizontal" >
                 <div class="card">
                     <div class="card-header">
                         <label  class="font-weight-bold" for="searchmail"> {{ __('message.search')}}</label>
@@ -57,7 +57,7 @@
                     @endif
                 </div>
                 <div class="card-body">
-                    @if (count($data) > 0)
+                    @if (count($$MODEL_NAME_PLURAL_CAMEL$) > 0)
                         <div class="table-responsive">
                             @include('$VIEW_PREFIX$$MODEL_NAME_PLURAL_SNAKE$.table')
                         </div>

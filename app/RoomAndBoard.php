@@ -8,26 +8,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Class RoomAndBoard
  * @package App
- * @version November 5, 2019, 5:15 pm UTC
+ * @version November 6, 2019, 7:25 am UTC
  *
- * @property integer name
- * @property integer code_claim
+ * @property string name
+ * @property string code_claim
  * @property string time_start
  * @property string time_end
  * @property integer created_user
  * @property integer updated_user
  */
-class RoomAndBoard extends Model
+class RoomAndBoard extends BaseModel
 {
     use SoftDeletes;
 
     public $table = 'room_and_boards';
+    protected static $table_static = 'room_and_boards';
     
-
+    
     protected $dates = ['deleted_at'];
 
-
-
+    
+    
     public $fillable = [
         'name',
         'code_claim',
@@ -44,8 +45,8 @@ class RoomAndBoard extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'name' => 'integer',
-        'code_claim' => 'integer',
+        'name' => 'string',
+        'code_claim' => 'string',
         'time_start' => 'datetime',
         'time_end' => 'datetime',
         'created_user' => 'integer',

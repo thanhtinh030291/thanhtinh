@@ -13,7 +13,7 @@
     },
     {
         "name": "name",
-        "dbType": "increments",
+        "dbType": "text",
         "htmlType": "text",
         "validations": "",
         "searchable": true,
@@ -25,7 +25,7 @@
     },
     {
         "name": "code_claim",
-        "dbType": "increments",
+        "dbType": "text",
         "htmlType": "select,",
         "validations": "",
         "searchable": true,
@@ -91,7 +91,7 @@
         "searchable": true,
         "fillable": true,
         "primary": false,
-        "inForm": true,
+        "inForm": false,
         "inIndex": true,
         "inView": true
     },
@@ -103,7 +103,7 @@
         "searchable": true,
         "fillable": true,
         "primary": false,
-        "inForm": true,
+        "inForm": false,
         "inIndex": true,
         "inView": true
     }

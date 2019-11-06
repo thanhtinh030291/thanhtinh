@@ -4,20 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateRoomAndBoardRequest;
 use App\Http\Requests\UpdateRoomAndBoardRequest;
-use App\Repositories\RoomAndBoardRepository;
-use App\Http\Controllers\AppBaseController;
+use App\RoomAndBoard;
+use Auth;
+use App\User;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
+use Illuminate\Support\Arr;
 
-class RoomAndBoardController extends AppBaseController
+class RoomAndBoardController extends Controller
 {
     /** @var  RoomAndBoardRepository */
     private $roomAndBoardRepository;
 
-    public function __construct(RoomAndBoardRepository $roomAndBoardRepo)
+    public function __construct()
     {
-        $this->roomAndBoardRepository = $roomAndBoardRepo;
+        //$this->authorizeResource(RoomAndBoard::class);
+        parent::__construct();
     }
 
     /**
@@ -29,10 +32,21 @@ class RoomAndBoardController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $roomAndBoards = $this->roomAndBoardRepository->all();
+        $search_params = [
+            'created_user' => $request->get('created_user'),
+            'created_at' => $request->get('created_at'),
+            'updated_user' => $request->get('updated_user'),
+            'updated_at' => $request->get('updated_at'),
+        ];
+        $admin_list = User::getListIncharge();
+        $limit_list = config('constants.limit_list');
+        $limit = $request->get('limit');
+        $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
 
-        return view('room_and_boards.index')
-            ->with('roomAndBoards', $roomAndBoards);
+        $roomAndBoards =  RoomAndBoard::findByParams($search_params)->orderBy('id', 'desc');
+        $roomAndBoards  = $roomAndBoards->paginate($per_page);
+
+        return view('room_and_boards.index', compact('search_params', 'admin_list', 'limit', 'limit_list', 'roomAndBoards' ));           
     }
 
     /**
@@ -54,11 +68,13 @@ class RoomAndBoardController extends AppBaseController
      */
     public function store(CreateRoomAndBoardRequest $request)
     {
-        $input = $request->all();
+        $userId = Auth::User()->id;
+        $data = $request->except([]);
+        $data['created_user'] = $userId;
+        $data['updated_user'] = $userId;
 
-        $roomAndBoard = $this->roomAndBoardRepository->create($input);
-
-        Flash::success('Room And Board saved successfully.');
+        RoomAndBoard::create($data);
+        $request->session()->flash('status', 'Room And Board saved successfully.');
 
         return redirect(route('roomAndBoards.index'));
     }
@@ -70,17 +86,10 @@ class RoomAndBoardController extends AppBaseController
      *
      * @return Response
      */
-    public function show($id)
+    public function show(RoomAndBoard $roomAndBoard)
     {
-        $roomAndBoard = $this->roomAndBoardRepository->find($id);
-
-        if (empty($roomAndBoard)) {
-            Flash::error('Room And Board not found');
-
-            return redirect(route('roomAndBoards.index'));
-        }
-
-        return view('room_and_boards.show')->with('roomAndBoard', $roomAndBoard);
+        
+        return view('room_and_boards.show', compact('roomAndBoard'));
     }
 
     /**
@@ -90,17 +99,10 @@ class RoomAndBoardController extends AppBaseController
      *
      * @return Response
      */
-    public function edit($id)
+    public function edit(RoomAndBoard $roomAndBoard)
     {
-        $roomAndBoard = $this->roomAndBoardRepository->find($id);
-
-        if (empty($roomAndBoard)) {
-            Flash::error('Room And Board not found');
-
-            return redirect(route('roomAndBoards.index'));
-        }
-
-        return view('room_and_boards.edit')->with('roomAndBoard', $roomAndBoard);
+        
+        return view('room_and_boards.edit',  compact('roomAndBoard'));
     }
 
     /**
@@ -111,20 +113,14 @@ class RoomAndBoardController extends AppBaseController
      *
      * @return Response
      */
-    public function update($id, UpdateRoomAndBoardRequest $request)
+    public function update(RoomAndBoard $roomAndBoard, UpdateRoomAndBoardRequest $request)
     {
-        $roomAndBoard = $this->roomAndBoardRepository->find($id);
+        $data = $request->except([]);
+        $userId = Auth::User()->id;
+        $data['updated_user'] = $userId;
+        Product::updateOrCreate(['id' => $roomAndBoard->id], $data);
 
-        if (empty($roomAndBoard)) {
-            Flash::error('Room And Board not found');
-
-            return redirect(route('roomAndBoards.index'));
-        }
-
-        $roomAndBoard = $this->roomAndBoardRepository->update($request->all(), $id);
-
-        Flash::success('Room And Board updated successfully.');
-
+        $request->session()->flash('status', 'Room And Board updated successfully.'); 
         return redirect(route('roomAndBoards.index'));
     }
 
@@ -137,20 +133,9 @@ class RoomAndBoardController extends AppBaseController
      *
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(RoomAndBoard $roomAndBoard)
     {
-        $roomAndBoard = $this->roomAndBoardRepository->find($id);
-
-        if (empty($roomAndBoard)) {
-            Flash::error('Room And Board not found');
-
-            return redirect(route('roomAndBoards.index'));
-        }
-
-        $this->roomAndBoardRepository->delete($id);
-
-        Flash::success('Room And Board deleted successfully.');
-
-        return redirect(route('roomAndBoards.index'));
+        $roomAndBoard->delete();
+        return redirect(route('roomAndBoards.index'))->with('status', 'Room And Board deleted successfully.');
     }
 }

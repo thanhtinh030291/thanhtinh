@@ -22,18 +22,6 @@
     {!! Form::text('time_end', null, ['class' => 'form-control']) !!}
 </div>
 
-<!-- Created User Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('created_user', 'Created User:') !!}
-    {!! Form::text('created_user', null, ['class' => 'form-control']) !!}
-</div>
-
-<!-- Updated User Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('updated_user', 'Updated User:') !!}
-    {!! Form::text('updated_user', null, ['class' => 'form-control']) !!}
-</div>
-
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
     {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}

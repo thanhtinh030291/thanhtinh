@@ -23,9 +23,9 @@
                 <td>
                     {!! Form::open(['route' => ['roomAndBoards.destroy', $roomAndBoard->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>
-                        <a href="{!! route('roomAndBoards.show', [$roomAndBoard->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
-                        <a href="{!! route('roomAndBoards.edit', [$roomAndBoard->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
-                        {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
+                        <a href="{!! route('roomAndBoards.show', [$roomAndBoard->id]) !!}" class='btn btn-success btn-xs'><i class="fa fa-eye"></i></a>
+                        <a href="{!! route('roomAndBoards.edit', [$roomAndBoard->id]) !!}" class='btn btn-primary btn-xs'><i class="fa fa-pencil-square-o"></i></a>
+                        {!! Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
                     </div>
                     {!! Form::close() !!}
                 </td>

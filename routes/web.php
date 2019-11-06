@@ -73,8 +73,43 @@ Route::post(
 )->name('io_generator_builder_generate_from_file');
 
 
+Route::resource('roomAndBoards', 'RoomAndBoardController');
 
+Route::resource('roomAndBoards', 'RoomAndBoardController');
 
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+Route::resource('roomAndBoards', 'RoomAndBoardController');
 
 Route::resource('roomAndBoards', 'RoomAndBoardController');
 
