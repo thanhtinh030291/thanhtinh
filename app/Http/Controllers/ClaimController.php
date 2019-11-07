@@ -303,33 +303,8 @@ class ClaimController extends Controller
         }
         return response()->json($res, 200);
     }
-    //ajax load ID claim auto complate 
-    public function dataAjaxHBSClaim(Request $request)
-    {
-        
-        $data = [];
-        if($request->has('q')){
-            $search = $request->q;
-            $datas = HBS_CL_CLAIM::where('cl_no','LIKE',"%$search%")
-                    ->select('clam_oid as id', 'cl_no as text')
-                    ->limit(20)->get();
-            return response()->json($datas);
-        }
-        return response()->json($data);
-    }
 
-    // jax load info of claim
-    public function loadInfoAjaxHBSClaim(Request $request)
-    {  
-        
-        $data = [];
-        if($request->has('search')){
-            $search = $request->search;
-            $datas = HBS_CL_CLAIM::findOrFail($search)->member;
-            return response()->json($datas);
-        }
-        return response()->json($data);
-    }
+
     // export letter
     public function exportLetter(Request $request){ 
         $letter = LetterTemplate::findOrFail($request->letter_template_id);

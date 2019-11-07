@@ -662,7 +662,7 @@
                     "email": "me@mitul.me"
                 }
             ],
-            "description": "AdminLTE templates for InfyOm Laravel Generator",
+            "description": "AdminLTE templates for Pacific-Cross",
             "keywords": [
                 "AdminLTE",
                 "bootstrap",
@@ -707,7 +707,7 @@
                     "email": "me@mitul.me"
                 }
             ],
-            "description": "InfyOm Laravel Generator GUI Builder",
+            "description": "Pacific-Cross GUI Builder",
             "keywords": [
                 "api",
                 "builder",
@@ -769,7 +769,7 @@
                     "email": "me@mitul.me"
                 }
             ],
-            "description": "InfyOm Laravel Generator",
+            "description": "Pacific-Cross",
             "keywords": [
                 "api",
                 "crud",

@@ -47,8 +47,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('permission', 'PermissionController')->middleware(['role:Admin']);
 
         //ajax
-        Route::get('/dataAjaxHBSClaim', 'ClaimController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
-        Route::post('/loadInfoAjaxHBSClaim', 'ClaimController@loadInfoAjaxHBSClaim')->name('loadInfoAjaxHBSClaim');
+        Route::get('/dataAjaxHBSClaim', 'AjaxCommonController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
+        Route::post('/loadInfoAjaxHBSClaim', 'AjaxCommonController@loadInfoAjaxHBSClaim')->name('loadInfoAjaxHBSClaim');
 
         Route::resource('roomAndBoards', 'RoomAndBoardController');
         
@@ -73,44 +73,3 @@ Route::post(
 )->name('io_generator_builder_generate_from_file');
 
 
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');
-
-Route::resource('roomAndBoards', 'RoomAndBoardController');

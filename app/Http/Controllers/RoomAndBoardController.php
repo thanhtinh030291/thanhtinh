@@ -15,8 +15,7 @@ use Illuminate\Support\Arr;
 class RoomAndBoardController extends Controller
 {
     /** @var  RoomAndBoardRepository */
-    private $roomAndBoardRepository;
-
+    
     public function __construct()
     {
         //$this->authorizeResource(RoomAndBoard::class);
@@ -56,6 +55,7 @@ class RoomAndBoardController extends Controller
      */
     public function create()
     {
+        
         return view('room_and_boards.create');
     }
 

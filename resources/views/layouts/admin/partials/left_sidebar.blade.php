@@ -34,6 +34,18 @@
                         </li>
                     </ul>
                 </li>
+                {{-- tool Support --}}
+                <li class="submenu">
+                    <a href="#">
+                        <i class="fa fa-calculator" aria-hidden="true"></i> <span> Tool Support </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li class="{{ setActive('admin/roomAndBoards') }}"> 
+                            <a class="{{ setActive('admin/roomAndBoards') }}"
+                            href="{{ url('admin/roomAndBoards') }}"><span> Room & Board</span></a>
+                        </li>
+                    </ul>
+                </li>
                 @role('Admin')
                 <li class="submenu">
                     <a href="#">
