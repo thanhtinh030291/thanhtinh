@@ -17,8 +17,22 @@ function loadDatepicker() {
         }
     });
 }
+
+function loadDateTimePicker() {
+    $(".datetimepicker").daterangepicker({
+        timePicker: true,
+        timePicker24Hour: true,
+        timePickerIncrement: 1,
+        locale: {
+            format: 'MM/DD/YYYY HH:mm'
+        }
+    });
+    
+}
+
 $(document).ready(function() {
     loadDatepicker();
+    loadDateTimePicker();
 });
 
 function pusher(data){
