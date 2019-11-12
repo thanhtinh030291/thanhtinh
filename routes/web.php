@@ -52,6 +52,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::get('/dataAjaxHBSClaimRB', 'AjaxCommonController@dataAjaxHBSClaimRB')->name('dataAjaxHBSClaimRB');
         Route::post('/loadInfoAjaxHBSClaimRB', 'AjaxCommonController@loadInfoAjaxHBSClaimRB')->name('loadInfoAjaxHBSClaimRB');
+        Route::post('/checkRoomBoard', 'AjaxCommonController@checkRoomBoard')->name('checkRoomBoard');
 
         Route::resource('roomAndBoards', 'RoomAndBoardController');
         

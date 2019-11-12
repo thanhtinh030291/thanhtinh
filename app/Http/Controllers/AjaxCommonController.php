@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\HBS_CL_CLAIM;
+use App\HBS_MR_POLICY_PLAN;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -73,12 +74,31 @@ class AjaxCommonController extends Controller
             };
             $condition = function($q) use ($conditionBenHead){
                 $q->whereHas('PD_BEN_HEAD', $conditionBenHead);
+                $q->where('scma_oid_cl_line_status','!=','CL_LINE_STATUS_RV');
             };
-            $data2 = HBS_CL_CLAIM::with(['HBS_CL_LINE' => $condition])->findOrFail($search)->HBS_CL_LINE;
+            $data2 = HBS_CL_CLAIM::with(['HBS_CL_LINE' => $condition])->findOrFail($search)->HBS_CL_LINE->toArray();
+            foreach ($data2 as $key => $value) {
+                $incurDate = Carbon::parse($value['incur_date_from'])->format('d/m/Y') .' 00:00 - '. Carbon::parse($value['incur_date_to'])->format('d/m/Y') . " 23:59";
+                $data2[$key]['incur_date'] = $incurDate;
+            }
             $data['HBS_CL_CLAIM'] = $datas;
             $data['HBS_CL_LINE'] = $data2;
-            
             return response()->json($data);
+        }
+        return response()->json($data);
+    }
+
+    // checkRoomBoard
+    public function checkRoomBoard(Request $request){
+        $data = [];
+        if($request->has('search')){
+            $search = $request->search;
+            $condition = function($q) {
+                $q->with('PD_PLAN_LIMIT');
+            };
+            $datas = HBS_MR_POLICY_PLAN::with(['PD_PLAN' => $condition])->findOrFail($search);
+            //dd($datas->PD_PLAN->PD_PLAN_LIMIT->toArray());
+            return response()->json($datas->PD_PLAN->PD_PLAN_LIMIT);
         }
         return response()->json($data);
     }

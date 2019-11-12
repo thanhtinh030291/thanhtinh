@@ -125,9 +125,7 @@ class ClaimController extends Controller
             DB::beginTransaction();
             $claim = Claim::create($dataNew);
             $claim->item_of_claim()->saveMany($dataItems);
-
             DB::commit();
-            
             $request->session()->flash('status', __('message.add_claim'));
             return redirect('/admin/claim');
         } catch (Exception $e) {

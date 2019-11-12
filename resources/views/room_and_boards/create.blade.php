@@ -26,17 +26,6 @@
                             {{ Form::select('code_claim', [], old('code_claim'), array('id'=>'code_claim', 'class' => 'code_claim form-control', 'required')) }}
                         </div>
                         
-                        <!-- Time Start Field -->
-                        <div class="form-group col-md-12">
-                            {!! Form::label('time_start', 'Time Start:') !!}
-                            {!! Form::text('time_start', null, ['class' => 'datetimepicker form-control']) !!}
-                        </div>
-                        
-                        <!-- Time End Field -->
-                        <div class="form-group col-md-12">
-                            {!! Form::label('time_end', 'Time End:') !!}
-                            {!! Form::text('time_end', null, ['class' => 'datetimepicker form-control']) !!}
-                        </div>
                         
                         <!-- Submit Field -->
                         <div class="form-group col-sm-12">
@@ -79,19 +68,20 @@
                         <td></td>
                     </tr>
                     <tr id="clone_item" style="display: none;">
-                        <td style="width:130px">{{ Form::text('line_no_default', null, ['class' => 'form-control p-1 '  ]) }}</td>
+                        <td style="width:100px">{{ Form::text('line_no_default', null, ['class' => 'form-control p-1 '  ]) }}</td>
                         <td style="width:330px">
                             {{ Form::text('prov_name_default', null, ['class' => 'item-price form-control p-1']) }}
-                        </td style="width:20px">
-                        <td>
+                        </td>
+                        <td style="width:150px">
                             {{ Form::text('pres_amt_default', null, ['class' => 'item-price form-control p-1']) }}
                         </td>
-                        <td style="width:380px">
-                            <div style="width:380px">
+                        <td style="width:310px">
+                            <div style="width:310px">
                                 {{ Form::text('incur_date_default', null ,  ['class' => 'datetimepicker form-control' ,'placeholder' => 'Not Reject' ]) }}
                             </div>
                         </td>
                         <td>
+                            <button class="btn btn-success" id="btn_check_default" type="button" onclick="checkRoomBoard(this);">Check</button>
                             <div class="row">
                                 <div class="col-md-11" id ="template_default" >None</div>
                             </div>
@@ -147,14 +137,14 @@
                 })
                 .done(function(res) {
                     container.empty();
-                    var tinh = $("#empty_item").closest('tbody').hasClass('claim_line');
-                    console.log(tinh);
+                    $('.claim_line').remove();
+                    
                     container.append('<p class="card-text">Full-Name: '+res.HBS_CL_CLAIM.mbr_last_name +' '+res.HBS_CL_CLAIM.mbr_first_name+'</p>')
                     .append('<p class="card-text">Member No: '+ res.HBS_CL_CLAIM.mbr_no +'</p>')
                     .append('<p class="card-text">Member Ref No: '+ res.HBS_CL_CLAIM.memb_ref_no +'</p>');
                     $.each( res.HBS_CL_LINE, function(i, obj) {
-    
-                        addInputItem(obj.line_no , obj.prov_name , obj.pres_amt, '' );
+                        // obj.incur_date 
+                        addInputItem(obj.line_no , obj.prov_name , obj.pres_amt, obj.incur_date, obj.popl_oid);
                     });
                     loadDateTimePicker();
                 })
@@ -164,7 +154,7 @@
     </script>
     <script>
         var count = 1;
-        function addInputItem(line_no = null , prov_name = null , pres_amt = null , incur_date = null){
+        function addInputItem(line_no = null , prov_name = null , pres_amt = null , incur_date = null , popl_oid = null){
             let clone =  '<tr class = "claim_line" id="row-'+count+'">';
             clone += '<input name = "_idItem['+count+']" type="hidden" >';
             clone +=  $("#clone_item").clone().html() + '</tr>';
@@ -174,17 +164,34 @@
             clone = clone.replace("pres_amt_default", "_pres_amt["+count+"]");
             clone = clone.replace("incur_date_default", "_incur_date["+count+"]");
 
+            //replace id
+            clone = clone.replace("btn_check_default", "btn_check_"+count);
+            clone = clone.replace("template_default", "template_"+count);
+
             $("#empty_item").before(clone);
             //
             $('input[name="_line_no['+count+']"]').val(line_no);
             $('input[name="_prov_name['+count+']"]').val(prov_name);
             $('input[name="_pres_amt['+count+']"]').val(pres_amt);
             $('input[name="_incur_date['+count+']"]').val(incur_date);
-            
+            $("#btn_check_"+count).attr('data-popl_oid', popl_oid);
             count++;
         }
     </script>
     <script type="text/javascript">
+        function checkRoomBoard(e){
+            var popl_oid = e.dataset.popl_oid;
+            console.log(popl_oid);
+            $.ajax({
+                    url: "/admin/checkRoomBoard",
+                    type: 'POST',
+                    data: {'search' : popl_oid},
+                })
+                .done(function(res) {
+                   
+                })
+        }
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

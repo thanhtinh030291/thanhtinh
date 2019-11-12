@@ -24,7 +24,7 @@ function loadDateTimePicker() {
         timePicker24Hour: true,
         timePickerIncrement: 1,
         locale: {
-            format: 'MM/DD/YYYY HH:mm'
+            format: 'DD/MM/YYYY HH:mm'
         }
     });
     
