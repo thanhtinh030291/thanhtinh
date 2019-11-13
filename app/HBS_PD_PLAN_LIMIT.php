@@ -12,4 +12,10 @@ class HBS_PD_PLAN_LIMIT extends BaseModelDB2
     {
         return $this->belongsTo('App\HBS_PD_PLAN', 'plan_oid', 'plan_oid');
     }
+
+
+    public function PD_BEN_HEAD()
+    {
+        return $this->belongsToMany('App\HBS_PD_BEN_HEAD','pd_plan_benefit', 'plli_oid', 'behd_oid');
+    }
 }

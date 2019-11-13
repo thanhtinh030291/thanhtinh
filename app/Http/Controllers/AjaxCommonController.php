@@ -93,12 +93,21 @@ class AjaxCommonController extends Controller
         $data = [];
         if($request->has('search')){
             $search = $request->search;
-            $condition = function($q) {
-                $q->with('PD_PLAN_LIMIT');
+            $conditionHasBenHead = function($q) {
+                $q->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP');
+                $q->where('ben_head', 'RB');
             };
-            $datas = HBS_MR_POLICY_PLAN::with(['PD_PLAN' => $condition])->findOrFail($search);
-            //dd($datas->PD_PLAN->PD_PLAN_LIMIT->toArray());
-            return response()->json($datas->PD_PLAN->PD_PLAN_LIMIT);
+
+            $conditionPlanLimit = function($q) use ($conditionHasBenHead){
+                $q->whereHas('PD_BEN_HEAD',$conditionHasBenHead);
+            };
+
+            $condition = function($q) use ($conditionPlanLimit){
+                $q->with(['PD_PLAN_LIMIT' => $conditionPlanLimit]);
+            };
+            $datas = HBS_MR_POLICY_PLAN::with(['PD_PLAN' => $condition])
+            ->findOrFail($search);
+            return response()->json($datas->PD_PLAN->PD_PLAN_LIMIT[0]);
         }
         return response()->json($data);
     }

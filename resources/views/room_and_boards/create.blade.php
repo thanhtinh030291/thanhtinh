@@ -82,21 +82,46 @@
                         </td>
                         <td>
                             <button class="btn btn-success" id="btn_check_default" type="button" onclick="checkRoomBoard(this);">Check</button>
-                            <div class="row">
-                                <div class="col-md-11" id ="template_default" >None</div>
-                            </div>
+                            <div class="row" id ="template_default" >None</div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
+    {{-- // template info --}}
+    <div id="template_info" class="row" style="display:none">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Policy Plan</h5>
+                
+                    <p class="card-text">Amt/Day: $amt_day</p>
+                    <p class="card-text">Amt/Hours: $amt_hour</p>
+                    <p class="card-text">Day/Dis/Yr: $day_dis_yr</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Results after check</h5>
+                    <p class="card-text">Total Hours At Room&Board: $total_hour</p>
+                    <p class="card-text">Approve Amount (Max): $approve_max</p>
+                    <p class="card-text">Approve Amount: $approve_amount</p>
+                    <p class="card-text" style ="display:none">Reject Amount: $reject_amount</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 
 @section('scripts')
+    <script src="{{ asset('js/format-price.js') }}"></script>
     <script>
         //ajax select code
+        
         $(window).load(function() {
             $('.code_claim').select2({          
                 minimumInputLength: 2,
@@ -175,20 +200,60 @@
             $('input[name="_pres_amt['+count+']"]').val(pres_amt);
             $('input[name="_incur_date['+count+']"]').val(incur_date);
             $("#btn_check_"+count).attr('data-popl_oid', popl_oid);
+            $("#btn_check_"+count).attr('data-id', count);
+            $("#btn_check_"+count).attr('data-pres_amt', pres_amt);
             count++;
         }
     </script>
     <script type="text/javascript">
+        function diff_hours(dt2, dt1) 
+        {
+            var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+            diff /= (60 * 60);
+            return Math.abs(Math.round(diff));
+        }
+        function change_format_date(dt) 
+        {
+            var split = dt.split("/")
+            return split[1] +"/"+split[0] + "/"+ split[2];
+        }
+
         function checkRoomBoard(e){
             var popl_oid = e.dataset.popl_oid;
-            console.log(popl_oid);
+            var id = e.dataset.id;
+            var pres_amt = e.dataset.pres_amt;
+            var container = $("#template_"+id);
             $.ajax({
                     url: "/admin/checkRoomBoard",
                     type: 'POST',
                     data: {'search' : popl_oid},
                 })
                 .done(function(res) {
-                   
+                    container.empty();
+                    var dateInput = $('input[name="_incur_date['+id+']"]').val();
+                    var splitDateTime = dateInput.split("-");
+                    dt1 = new Date(change_format_date(splitDateTime[0]));
+                    dt2 = new Date(change_format_date(splitDateTime[1]));
+                    var diffHours = diff_hours(dt1, dt2);
+                    
+                    clone =  $("#template_info").clone().html();
+                    clone = clone.replace("$amt_day", formatPrice(res.amt_day));
+                    clone = clone.replace("$amt_hour", formatPrice(res.amt_day/24));
+                    clone = clone.replace("$day_dis_yr", res.day_dis_yr);
+                    clone = clone.replace("$total_hour", diffHours);
+                    clone = clone.replace("$approve_max", formatPrice(diffHours*res.amt_day/24));
+                    var approve_amount = 0;
+                    if(res.amt_day <= diffHours*res.amt_day/24){
+                        approve_amount = pres_amt;
+                    }else{
+                        approve_amount = diffHours*res.amt_day/24;
+                        var reject_amount =  res.pres_amt - approve_amount;
+                        clone = clone.replace("$reject_amount", formatPrice(reject_amount));
+                        clone = clone.replace("display:none", " ");
+                    }
+                    clone = clone.replace("$approve_amount", formatPrice(approve_amount));
+                    
+                    container.append(clone);
                 })
         }
 
