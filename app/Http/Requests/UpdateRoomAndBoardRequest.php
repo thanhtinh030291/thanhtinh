@@ -15,7 +15,9 @@ class UpdateRoomAndBoardRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return [
+            'name' => 'bail|min:8|max:500|required',
+        ];
     }
 
     /**

@@ -162,3 +162,20 @@ function dateConvertToString($date = null)
     }
     return $rs_date;
 }
+
+// return start , end hours from daterangepickker
+
+function getHourStartEnd($text){
+    //24/10/2014 00:00 - 30/10/2014 23:59
+    $text = '24/10/2014 00:00 - 30/10/2014 23:59';
+    $start = trim(explode('-', $text)[0]);
+    $end = trim(explode('-', $text)[1]);
+
+ 
+return [
+        'date_start' =>  explode(' ', $start)[0],
+        'hours_start' =>  explode(' ', $start)[1],
+        'date_end' =>  explode(' ', $end)[0],
+        'hours_end' =>  explode(' ', $end)[1],
+    ];
+}

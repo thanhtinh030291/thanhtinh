@@ -449,6 +449,7 @@ $(window).load(function() {
         var id_code = $('#code_claim').val();
         if(id_code != null){
             resultApplicant(id_code);
+            
         }
     });
 

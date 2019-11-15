@@ -9,6 +9,7 @@ use App\User;
 use Auth;
 use Illuminate\Support\Arr;
 
+
 class RoleController extends Controller
 {
     public function __construct()

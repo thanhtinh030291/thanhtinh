@@ -19,8 +19,7 @@ class CreateRoomAndBoardsTable extends Migration
             $table->increments('id');
             $table->text('name');
             $table->text('code_claim');
-            $table->dateTime('time_start');
-            $table->dateTime('time_end');
+            $table->longText('line_rb')->nullable();
             $table->integer('created_user');
             $table->integer('updated_user');
             $table->timestamps();

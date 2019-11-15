@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateRoomAndBoardRequest;
 use App\Http\Requests\UpdateRoomAndBoardRequest;
 use App\RoomAndBoard;
+use App\HBS_CL_CLAIM;
 use Auth;
 use App\User;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class RoomAndBoardController extends Controller
      */
     public function create()
     {
-        
+
         return view('room_and_boards.create');
     }
 
@@ -72,7 +73,11 @@ class RoomAndBoardController extends Controller
         $data = $request->except([]);
         $data['created_user'] = $userId;
         $data['updated_user'] = $userId;
-
+        $incur_date = $request->_incur_date;
+        foreach ($incur_date as $key => $value) {
+            $rp = getHourStartEnd($value);
+            $data['line_rb'][] = ['hours_start' => $rp['hours_start'] , 'hours_end' =>  $rp['hours_end'] ];
+        }
         RoomAndBoard::create($data);
         $request->session()->flash('status', 'Room And Board saved successfully.');
 
@@ -88,8 +93,8 @@ class RoomAndBoardController extends Controller
      */
     public function show(RoomAndBoard $roomAndBoard)
     {
-        
-        return view('room_and_boards.show', compact('roomAndBoard'));
+        $listCodeClaim = HBS_CL_CLAIM::where('clam_oid', $roomAndBoard->code_claim)->limit(20)->pluck('cl_no', 'clam_oid');
+        return view('room_and_boards.show', compact('roomAndBoard', 'listCodeClaim'));
     }
 
     /**
@@ -101,8 +106,9 @@ class RoomAndBoardController extends Controller
      */
     public function edit(RoomAndBoard $roomAndBoard)
     {
-        
-        return view('room_and_boards.edit',  compact('roomAndBoard'));
+
+        $listCodeClaim = HBS_CL_CLAIM::where('clam_oid', $roomAndBoard->code_claim)->limit(20)->pluck('cl_no', 'clam_oid');
+        return view('room_and_boards.edit',  compact('roomAndBoard', 'listCodeClaim'));
     }
 
     /**
@@ -118,7 +124,12 @@ class RoomAndBoardController extends Controller
         $data = $request->except([]);
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
-        Product::updateOrCreate(['id' => $roomAndBoard->id], $data);
+        $incur_date = $request->_incur_date;
+        foreach ($incur_date as $key => $value) {
+            $rp = getHourStartEnd($value);
+            $data['line_rb'][] = ['hours_start' => $rp['hours_start'] , 'hours_end' =>  $rp['hours_end'] ];
+        }
+        RoomAndBoard::updateOrCreate(['id' => $roomAndBoard->id], $data);
 
         $request->session()->flash('status', 'Room And Board updated successfully.'); 
         return redirect(route('roomAndBoards.index'));

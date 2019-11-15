@@ -4,8 +4,8 @@
             <tr>
                 <th>Name</th>
         <th>Code Claim</th>
-        <th>Time Start</th>
-        <th>Time End</th>
+        <th>{{ __('message.date_created')}}</th>
+        <th> {{__('message.date_updated')}}</th>
         <th>Created User</th>
         <th>Updated User</th>
                 <th colspan="3">Action</th>
@@ -16,10 +16,10 @@
             <tr>
                 <td>{!! $roomAndBoard->name !!}</td>
             <td>{!! $roomAndBoard->code_claim !!}</td>
-            <td>{!! $roomAndBoard->time_start !!}</td>
-            <td>{!! $roomAndBoard->time_end !!}</td>
-            <td>{!! $roomAndBoard->created_user !!}</td>
-            <td>{!! $roomAndBoard->updated_user !!}</td>
+            <td>{!! $roomAndBoard->created_at !!}</td>
+            <td>{!! $roomAndBoard->updated_at !!}</td>
+            <td>{!! $admin_list[$roomAndBoard->created_user] !!}</td>
+            <td>{!! $admin_list[$roomAndBoard->updated_user] !!}</td>
                 <td>
                     {!! Form::open(['route' => ['roomAndBoards.destroy', $roomAndBoard->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>

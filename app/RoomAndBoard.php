@@ -23,35 +23,25 @@ class RoomAndBoard extends BaseModel
 
     public $table = 'room_and_boards';
     protected static $table_static = 'room_and_boards';
-    
+    protected $guarded = ['id'];
+    protected $casts = [
+        'line_rb'  => 'array',
+    ];
+    protected function castAttribute($key, $value)
+    {
+        if ($this->getCastType($key) == 'array' && is_null($value)) {
+            return [];
+        }
+        return parent::castAttribute($key, $value);
+    }
     
     protected $dates = ['deleted_at'];
 
     
     
-    public $fillable = [
-        'name',
-        'code_claim',
-        'time_start',
-        'time_end',
-        'created_user',
-        'updated_user'
-    ];
+    
 
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'id' => 'integer',
-        'name' => 'string',
-        'code_claim' => 'string',
-        'time_start' => 'datetime',
-        'time_end' => 'datetime',
-        'created_user' => 'integer',
-        'updated_user' => 'integer'
-    ];
+    
 
     /**
      * Validation rules

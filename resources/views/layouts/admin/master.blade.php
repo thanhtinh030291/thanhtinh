@@ -33,6 +33,7 @@
 </head>
 
 <body class="adminbody">
+    <div class="loader"></div>
     <div id="main">
         <!-- top bar navigation -->
         @include('layouts.admin.partials.top_bar_navigation',[
@@ -86,6 +87,9 @@
     
     
     <script>
+        $(window).on("load", function() {
+            $(".loader").fadeOut("slow");
+        });
         $(document).ready(function(){
             $('.select2').select2();
             //pusher("{{config('broadcasting.connections.pusher.key')}}","{{config('broadcasting.connections.pusher.options.cluster')}}", "{{ Auth::user()->id }}");
