@@ -113,7 +113,7 @@
 </div>
 <!-- clone  -->
 <div id='clone-select-reject' style = "display:block">
-    {{ Form::select('_selectReason', $listReasonReject, old('_selectReason'), [ 'class' => 'form-control' , 'style' => 'width:230px', 'placeholder' => 'Not Reject', 'data-id' => "data-id-default" , 'onchange' => 'template(this,"resuft_template_default","table1")']) }}        
+    {{ Form::select('_selectReason_default', $listReasonReject, old('_selectReason'), [ 'id' => 'selectReason_default', 'class' => 'form-control' , 'style' => 'width:230px', 'placeholder' => 'Not Reject', 'data-id' => "data-id-default" , 'onchange' => 'template(this,"resuft_template_default","table1")']) }}        
 </div>
 @endsection
 @section('scripts')
@@ -153,6 +153,9 @@
                     var cloneSelect = $("#clone-select-reject").clone().html();
                     cloneSelect = cloneSelect.replace('resuft_template_default', "resuft_template_"+i);
                     cloneSelect = cloneSelect.replace('data-id-default', i);
+                    cloneSelect = cloneSelect.replace('selectReason_default', "selectReason_" + i); // change id
+                    cloneSelect = cloneSelect.replace('_selectReason_default', "_selectReason["+i+"]"); // change name
+                    
                     
                     row.append(
                         $('<td></td>')

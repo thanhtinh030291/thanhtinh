@@ -89,7 +89,7 @@ class ClaimController extends Controller
             $rowData = $request->_row;
             array_shift_assoc($rowData);
             $rowCheck = $request->_checkbox;
-            $reason = $request->_reason;
+            $reason = $request->_selectReason;
             foreach ($rowData as $key => $value) {
                 $dataItems[] = new ItemOfClaim([
                     'content' => data_get($value, $fieldSelect['content'], ""),
@@ -101,7 +101,6 @@ class ClaimController extends Controller
                 ]);
             }
         }
-
         // GET value add item
         if($request->_content){
             $rowContent = $request->_content;
@@ -351,15 +350,18 @@ class ClaimController extends Controller
         $TermRemark = [];
         
         $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
+        $arrDistinctReason = $claim->item_of_claim->pluck('reason_reject_id')->unique();
         foreach ($claim->item_of_claim as $key => $value) {
             $tempale = $value->reason_reject->template; 
             foreach ( $arrKeyRep as $key2 => $value2) {
                 $tempale = str_replace($value2, '$parameter', $tempale);
             };
-            $TermRemark[] = $value->reason_reject->term->fullTextTerm;
             $CSRRemark[] = Str::replaceArray('$parameter', $value->parameters, $tempale);
+            $TermRemark[] = $value->reason_reject->term->fullTextTerm;
+            
         }
-        
+        //merge line 
+        //preg_match_all('/\[begin\].*\[end\]/U', $str, $matches);
         $content = $letter->template;
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
@@ -379,8 +381,7 @@ class ClaimController extends Controller
         header("Expires: 0");//no-cache
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
         header("content-disposition: attachment;filename=sampleword.doc");
-        echo "<html>";
-      
+        echo "<html>";      
         echo "<body>";
         echo $content;
         echo "</body>";

@@ -36,11 +36,8 @@ function clickGo(){
     var arrElementcheck = $('.checkbox_class');
     $.each(arrElementcheck, function (index, value) {
         var id = value.dataset.id;
-        if(value.checked){
-            $('#btnConfirm'+id).show();
-            $('#btnConfirm'+id).attr("title",text);
-            $('#inputReject'+id).prop("checked", false);
-            $('#reason'+id).val(valueSelect);
+        if(value.checked){           
+            $('#selectReason_'+id).val(valueSelect).change();
         }
     });
     $('.checkbox_class, .form-check-input').attr('checked', false);
