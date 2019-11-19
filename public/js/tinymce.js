@@ -141,11 +141,12 @@ var editor_config = {
 };
 tinymce.init(editor_config);
 
+
 ////type 2
 var config2 = {
     selector: "textarea.editor2",
     height: 500,
-    toolbar: "nameItem | amountItem | Date | Text | Example | insertfile undo redo | paste | copy",
+    toolbar: "nameItem | amountItem | Date | Text | Begin | End | Example | insertfile undo redo | paste | copy",
     plugins: "wordcount",
     menubar: false,
     content_css: [
@@ -181,6 +182,20 @@ var config2 = {
             icon: false,
             onclick: function() {
                 editor.insertContent("&nbsp;<b class = 'text-danger'>[##Text##]</b>&nbsp;");
+            }
+        });
+        editor.addButton("Begin", {
+            text: "Begin",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;<b class = 'text-danger'>[Begin]</b>&nbsp;");
+            }
+        });
+        editor.addButton("End", {
+            text: "End",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;<b class = 'text-danger'>[End]</b>&nbsp;");
             }
         });
         editor.addButton("Example", {

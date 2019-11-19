@@ -350,14 +350,53 @@ class ClaimController extends Controller
         $TermRemark = [];
         
         $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
-        $arrDistinctReason = $claim->item_of_claim->pluck('reason_reject_id')->unique();
-        foreach ($claim->item_of_claim as $key => $value) {
-            $tempale = $value->reason_reject->template; 
-            foreach ( $arrKeyRep as $key2 => $value2) {
-                $tempale = str_replace($value2, '$parameter', $tempale);
-            };
-            $CSRRemark[] = Str::replaceArray('$parameter', $value->parameters, $tempale);
-            $TermRemark[] = $value->reason_reject->term->fullTextTerm;
+        $itemOfClaim = $claim->item_of_claim->groupBy('reason_reject_id');
+        $templateHaveMeger = [];
+        foreach ($itemOfClaim as $key => $value) {
+            $template = $value[0]->reason_reject->template;
+            $TermRemark[] = $value[0]->reason_reject->term->fullTextTerm;
+            if (!preg_match('/\[Begin\].*\[End\]/U', $template)){
+                foreach ($value as $keyItem => $item) {
+                    $template_new = $template;
+                    foreach ( $arrKeyRep as $key2 => $value2) {
+                        $template_new = str_replace($value2, '$parameter', $template_new);
+                    };
+                    $CSRRemark[] = Str::replaceArray('$parameter', $item->parameters, $template_new);
+                }
+            }else{
+                preg_match_all('/\[Begin\].*\[End\]/U', $template, $matches);
+                $template_new = preg_replace('/\[Begin\].*\[End\]/U' , '$arrParameter' , $template );
+                $arrMatche = [];
+                foreach ($value as $keyItem => $item) {
+                    foreach ($matches[0] as $keyMatche => $valueMatche) {
+                        foreach ( $arrKeyRep as $key2 => $value2) {
+                            $valueMatche = str_replace($value2, '$parameter', $valueMatche);
+                        };
+                        $arrMatche[$keyMatche][] =  Str::replaceArray('$parameter', $item->parameters, $valueMatche);
+                    }
+                }
+                // array to string 
+                $arr_str = [];
+                foreach ($arrMatche as $key => $value) {
+                    $arr_str[] = preg_replace('/\[Begin\]|\[End\]/', ' ', implode("; ", $value));
+                }
+
+                $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
+            }
+
+            
+            // $tempale = $value->reason_reject->template;
+            // if(!preg_match('/\[begin\].*\[end\]/U', $tempale)){
+            //     foreach ( $arrKeyRep as $key2 => $value2) {
+            //         $tempale = str_replace($value2, '$parameter', $tempale);
+            //     };
+            //     $CSRRemark[] = Str::replaceArray('$parameter', $value->parameters, $tempale);
+            //     $TermRemark[] = $value->reason_reject->term->fullTextTerm;
+            // }else{
+
+            //     $CSRRemark['merge_'.$value->reason_reject_id][] = Str::replaceArray('$parameter', $value->parameters, $tempale);
+            // }
+            
             
         }
         //merge line 
