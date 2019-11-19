@@ -34,7 +34,7 @@ $max = Config::get('constants.minMaxLength.max');
                 {{ Form::email('email', old('email'), ['class' => 'form-control', 'placeholder'=>__('message.enter_staff_email'), 'maxlength' => "100", 'required']) }}<br>
 
                 {{ Form::label('password',__('message.password'), array('class' => 'labelas')) }}<span class="text-danger">*</span>
-                {{ Form::text('password', old('password'), ['class' => 'form-control', 'placeholder'=>__('message.enter_staff_password'), 'minlength' => $min, 'maxlength' => $max, 'required']) }}<br>
+                {{ Form::password('password',  ['type' => 'password','class' => 'form-control', 'placeholder'=>__('message.enter_staff_password'), 'minlength' => $min, 'maxlength' => $max, 'required']) }}<br>
 
                 {{ Form::label('role','Role', array('class' => 'labelas')) }}<span class="text-danger">*</span>
                 {{ Form::select('_role', $all_roles_in_database,old('_role'), ['class' => 'select2 form-control', 'multiple' => 'multiple', 'name'=>'_role[]']) }}<br>
