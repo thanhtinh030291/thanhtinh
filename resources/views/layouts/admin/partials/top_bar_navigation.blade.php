@@ -7,6 +7,11 @@
 
     <nav class="navbar-custom">
         <ul class="list-inline float-right mb-0">
+            <li class="list-inline-item dropdown notif">
+                <a class="nav-link" href="/docs" role="button" aria-haspopup="false" aria-expanded="false">
+                    Documents
+                </a>
+            </li>
             <li class="list-inline-item dropdown notif dropdown-notifications">
                 <a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown">
                     <i data-count="{{count($messages)}}" class="fa fa-envelope notification-icon text-warning"></i>

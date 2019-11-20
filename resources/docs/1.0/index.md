@@ -1,0 +1,6 @@
+- ## Get Started
+    - [Overview](/{{route}}/{{version}}/overview)
+    - [deverlop install (IT)](/{{route}}/{{version}}/install)
+    - [Login System](/{{route}}/{{version}}/login)
+    - [Forgot Password](/{{route}}/{{version}}/forgetpw)
+    - [Guide OCR with ABBBY](/{{route}}/{{version}}/guide_ocr_abbyy)
