@@ -346,6 +346,8 @@ function template(e , idElement , table){
         result = result.replace(/\[##nameItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_nameItem_'+id+' form-control text-template p-1" value="'+nameItem+'" required readonly/>');
         var amountItem = $('#'+table+'_amount_'+id).val() ;
         result = result.replace(/\[##amountItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_amountItem_'+id+' form-control text-template p-1" value="'+amountItem+'" required readonly/>');
+        result = result.replace(/\[Begin\]|\[End\]/g,'');
+
         return result;
     }
 

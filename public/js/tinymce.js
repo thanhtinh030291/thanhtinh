@@ -133,7 +133,7 @@ var editor_config = {
             text: "TermRemark",
             icon: false,
             onclick: function() {
-                editor.insertContent("&nbsp;[[$CSRRemark]]&nbsp;");
+                editor.insertContent("&nbsp;[[$TermRemark]]&nbsp;");
             }
         });
         
