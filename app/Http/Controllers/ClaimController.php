@@ -337,7 +337,7 @@ class ClaimController extends Controller
     public function previewLetter(Request $request){
         
         $content = $this->letter($request->letter_template_id , $request->claim_id);
-        return response()->json($content);
+        return response()->json(htmlentities($content));
     }
 
     // export letter

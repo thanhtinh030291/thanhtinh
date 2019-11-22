@@ -200,7 +200,7 @@ $totalAmount = 0;
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                {{ Form::textarea('template', old('template'), ['id' => 'template_reject', 'class' => 'form-control editor_default']) }}<br>
+                {{ Form::textarea('template', old('template'), ['id' => 'preview_letter', 'class' => 'form-control editor_default']) }}<br>
             </div>
             <div class="modal-footer">
                 <form id="form_delete" action="#" method="POST">
@@ -235,7 +235,7 @@ $totalAmount = 0;
         data: {'claim_id' : claim_id , 'letter_template_id' : letter_template_id },
         })
         .done(function(res) {
-            
+           $("#preview_letter").val(res);
         })
        
     }
