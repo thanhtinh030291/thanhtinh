@@ -16,8 +16,8 @@
             <div class="card">
                 <div class="card-body">
                         <div class="form-group col-md-12">
-                            {!! Form::label('name', 'Name:') !!}
-                            {!! Form::text('name', null, ['class' => 'form-control']) !!}
+                            {!! Form::label('name', 'Name:') !!}<span class="text-danger">*</span>
+                            {!! Form::text('name', null, ['class' => 'form-control', 'required']) !!}
                         </div>
                         
                         <!-- Code Claim Field -->

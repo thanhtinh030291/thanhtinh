@@ -20,6 +20,12 @@ return[
         'content' => 'Content',
         'amount' => 'Amount',
     ],
-    'percentSelect' => 70
+    'percentSelect' => 70,
+
+    'statusExport' => [
+        'new' => 0,
+        'approve' => 1,
+        'dis_approve' => 2,
+    ]
     
 ];

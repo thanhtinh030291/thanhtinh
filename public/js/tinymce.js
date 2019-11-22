@@ -208,3 +208,20 @@ var config2 = {
     }
 };
 tinymce.init(config2);
+
+//default
+var config3 = {
+    selector: "textarea.editor_default",
+    height: 500,
+    toolbar: " insertfile undo redo | paste | copy",
+    plugins: "wordcount",
+    menubar: false,
+    content_css: [
+        "//fonts.googleapis.com/css?family=Lato:300,300i,400,400i",
+        "//www.tinymce.com/css/codepen.min.css",
+        'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'
+    ],
+
+    
+};
+tinymce.init(config3);

@@ -33,7 +33,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/search', 'ClaimController@searchFullText')->name('search');
         Route::post('/search2', 'ClaimController@searchFullText2')->name('search2');
         Route::post('/template', 'ClaimController@template')->name('template');
+        Route::post('/requestLetter','ClaimController@requestLetter')->name('requestLetter');
         Route::post('/exportLetter','ClaimController@exportLetter')->name('exportLetter');
+        Route::post('/previewLetter','ClaimController@previewLetter')->name('previewLetter');
 
         Route::resource('reason_reject', 'ReasonRejectController');
         Route::resource('product', 'ProductController');

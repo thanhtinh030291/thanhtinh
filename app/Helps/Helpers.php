@@ -167,7 +167,7 @@ function dateConvertToString($date = null)
 
 function getHourStartEnd($text){
     //24/10/2014 00:00 - 30/10/2014 23:59
-    $text = '24/10/2014 00:00 - 30/10/2014 23:59';
+    
     $start = trim(explode('-', $text)[0]);
     $end = trim(explode('-', $text)[1]);
 

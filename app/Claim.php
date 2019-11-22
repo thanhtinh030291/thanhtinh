@@ -9,6 +9,11 @@ class Claim extends BaseModel
     protected static $table_static = 'claim';
     protected $dates = ['deleted_at'];
     
+    
+    public function export_letter()
+    {
+        return $this->hasMany('App\ExportLetter', 'claim_id');
+    }
 
     public function item_of_claim()
     {

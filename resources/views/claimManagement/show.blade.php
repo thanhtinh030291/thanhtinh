@@ -29,14 +29,14 @@ $totalAmount = 0;
                         </a>
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Export Letter</h5>
+                                <h5 class="card-title">Request letter</h5>
                                 <p class="card-text"></p>
-                                {{ Form::open(array('url' => '/admin/exportLetter', 'method' => 'POST')) }}
+                                {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
                                     {{ Form::hidden('claim_id', $data->id ) }}
 
                                     {{ Form::label('letter_template_id', __('message.letter_template'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
                                     {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'code_claim', 'class' => 'select2 form-control', 'required')) }}
-                                    {{ Form::submit( 'Go Export Letter', ['class' => 'mt-3 btn btn-info']) }}
+                                    {{ Form::submit( 'Send Letter', ['class' => 'mt-3 btn btn-info']) }}
 
                                 {{ Form::close() }}
                 
@@ -80,15 +80,49 @@ $totalAmount = 0;
                     <label  class="font-weight-bold" for="letter">{{__('message.letter')}}</label>
             </div> 
             <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name Letter</th>
+                            <th>{{ __('message.account_create')}}</th>
+                            <th>{{ __('message.date_created')}}</th>
+                            <th class='text-center'>{{ __('message.control')}}</th>
+                        </tr>
+                    </thead>
+                    
+                    @foreach ($data->export_letter as $item)
+                        <tr id="empty_item" >
+                            <td>{{$item->letter_template->name}}</td>
+                            <td>{{$item->userCreated->name}}</td>
+                            <td>{{ $item->created_at }}</td>
+                            <td>
+                                {{ Form::open(array('url' => '/admin/exportLetter', 'method' => 'POST')) }}
+                                    {{ Form::hidden('claim_id', $data->id ) }}
+                                    {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
+                                <div class='btn-group'>
+                                    {!! Form::button('<i class="fa fa-eye-slash"></i> Preview', ['data-toggle' => "modal" ,  
+                                        'data-target' => "#previewModal",
+                                        'type' => 'button', 
+                                        'class' => 'btn btn-success btn-xs' , 
+                                        'onclick' => 'preview(this);',
+                                        'data-claim_id' => $data->id,
+                                        'data-letter_template_id' => $item->letter_template->id
+                                        ]) 
+                                    !!}
+                                    {!! Form::button('<i class="fa fa-print"></i> Print', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
+                                </div>
+                                {!! Form::close() !!}
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
+                
+
+                {{-- //calculate --}}
                 @foreach ($items as $data)
                     @php
                         if($data->reason_reject_id){
                             $sum += removeFormatPrice($data->amount);
-                        
-                    @endphp
-                        <h5 class="text-danger font-weight-bold"> - Chi phí " {{$data->content}} " ( {{$data->amount}} ) không được thanh toán do thuộc điều khoản " {{data_get($listReasonReject, $data->reason_reject_id, "")}} " .
-                        </h5>
-                    @php
                         }
                     @endphp
                 @endforeach
@@ -155,6 +189,32 @@ $totalAmount = 0;
         </div>
     </div>
 </div>
+
+{{-- Modal --}}
+<div id="previewModal" class="modal fade bd-example-modal-lg" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Preview</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                {{ Form::textarea('template', old('template'), ['id' => 'template_reject', 'class' => 'form-control editor_default']) }}<br>
+            </div>
+            <div class="modal-footer">
+                <form id="form_delete" action="#" method="POST">
+                    {{ csrf_field() }}
+                    {{ method_field('DELETE') }}
+                    <button class="btn btn-danger">{{ __('message.yes')}} </button>
+                    <button type="button" class="btn btn-secondary btn-cancel-delete" 
+                        data-dismiss="modal">{{ __('message.no') }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+    
 @endsection
 
 @section('scripts')
@@ -162,4 +222,22 @@ $totalAmount = 0;
 <script src="{{ asset('js/format-price.js') }}"></script>
 <script src="{{ asset('js/jquery-ui.js') }}"></script>
 <script src="{{asset('js/popper.min.js')}}" ></script>
+<script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('js/tinymce.js') }}"></script>
+<script>
+    function preview(e){
+        var claim_id =  e.dataset.claim_id;
+        var letter_template_id = e.dataset.letter_template_id;
+        $.ajax({
+        url: '/admin/previewLetter',
+        type: 'POST',
+        context: e,
+        data: {'claim_id' : claim_id , 'letter_template_id' : letter_template_id },
+        })
+        .done(function(res) {
+            
+        })
+       
+    }
+</script>
 @endsection

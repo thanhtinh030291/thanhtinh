@@ -22,12 +22,13 @@
 ```
 ![image](/images/docs/claim3.png)
 
+```
 B6 : Delete unnecessary items
-B7 : click button "Shorten the table "
-
+B7 : Choice reason reject
+```
 # Validation
 ```
-Name : required and max 500 character
-
+File ORC : required if there is at least 1 row
+Code Claim : required 
 ```
 

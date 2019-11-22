@@ -8,6 +8,7 @@ use Config;
 use Storage;
 use App\Claim;
 use App\ItemOfClaim;
+use App\ExportLetter;
 use App\User;
 use App\Product;
 use App\HBS_CL_CLAIM;
@@ -144,6 +145,7 @@ class ClaimController extends Controller
     public function show(Claim $claim)
     {
         $data = $claim;
+        //dd($data->export_letter);
         $admin_list = User::getListIncharge();
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
@@ -301,12 +303,48 @@ class ClaimController extends Controller
         return response()->json($res, 200);
     }
 
+    //request Letter
+    public function requestLetter(Request $request){
+        if (ExportLetter::where('claim_id', $request->claim_id)->where('letter_template_id', $request->letter_template_id)->exists()) {
+            return redirect('/admin/claim/'. $request->claim_id )->with('errorStatus', 'letter already exists');
+        }
+        $userId = Auth::User()->id;    
+        $data = [
+            'claim_id' => $request->claim_id,
+            'letter_template_id' => $request->letter_template_id,
+            'status' => config('constants.statusExport.new'),
+            'created_user' => $userId,
+            'updated_user' => $userId,
+        ] ;
+        ExportLetter::create($data);
+        return redirect('/admin/claim/'. $request->claim_id )->with('Status', 'Letter was successfully created');
+    }
+
+    public function exportLetter(Request $request){
+        $content = $this->letter($request->letter_template_id , $request->claim_id);
+        header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        header("Expires: 0");//no-cache
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+        header("content-disposition: attachment;filename=sampleword.doc");
+        echo "<html>";      
+        echo "<body>";
+        echo $content;
+        echo "</body>";
+        echo "</html>";
+    }
+
+    //ajax 
+    public function previewLetter(Request $request){
+        
+        $content = $this->letter($request->letter_template_id , $request->claim_id);
+        return response()->json($content);
+    }
 
     // export letter
-    public function exportLetter(Request $request){ 
-        $letter = LetterTemplate::findOrFail($request->letter_template_id);
+    public function letter($letter_template_id , $claim_id){ 
+        $letter = LetterTemplate::findOrFail($letter_template_id);
         
-        $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
+        $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
 
         $IOPDiag = [];
@@ -384,20 +422,6 @@ class ClaimController extends Controller
                 $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
             }
 
-            
-            // $tempale = $value->reason_reject->template;
-            // if(!preg_match('/\[begin\].*\[end\]/U', $tempale)){
-            //     foreach ( $arrKeyRep as $key2 => $value2) {
-            //         $tempale = str_replace($value2, '$parameter', $tempale);
-            //     };
-            //     $CSRRemark[] = Str::replaceArray('$parameter', $value->parameters, $tempale);
-            //     $TermRemark[] = $value->reason_reject->term->fullTextTerm;
-            // }else{
-
-            //     $CSRRemark['merge_'.$value->reason_reject_id][] = Str::replaceArray('$parameter', $value->parameters, $tempale);
-            // }
-            
-            
         }
         //merge line 
         //preg_match_all('/\[begin\].*\[end\]/U', $str, $matches);
@@ -415,16 +439,8 @@ class ClaimController extends Controller
         $content = str_replace('[[$CSRRemark]]', implode(' ',$CSRRemark) , $content);
         $content = str_replace('[[$TermRemark]]', implode(' ',array_unique($TermRemark)) , $content);
         
-        
-        header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-        header("Expires: 0");//no-cache
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
-        header("content-disposition: attachment;filename=sampleword.doc");
-        echo "<html>";      
-        echo "<body>";
-        echo $content;
-        echo "</body>";
-        echo "</html>";
+        return $content;
+       
         
     }
 
