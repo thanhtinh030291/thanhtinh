@@ -211,17 +211,41 @@ tinymce.init(config2);
 
 //default
 var config3 = {
+    language: "en",
+    path_absolute : "/",
     selector: "textarea.editor_default",
-    height: 500,
-    toolbar: " insertfile undo redo | paste | copy",
-    plugins: "wordcount",
-    menubar: false,
-    content_css: [
-        "//fonts.googleapis.com/css?family=Lato:300,300i,400,400i",
-        "//www.tinymce.com/css/codepen.min.css",
-        'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'
+    branding: false,
+    plugins: [
+    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+    "searchreplace wordcount visualblocks visualchars code fullscreen",
+    "insertdatetime media nonbreaking save table contextmenu directionality",
+    "emoticons template paste textcolor colorpicker textpattern",
     ],
+    toolbar: ["insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+            "Note"
+            ],
+    relative_urls: false,
+    height: 500,
+    file_browser_callback : function(field_name, url, type, win) {
+    var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+    var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
 
-    
+    var cmsURL = editor_config.path_absolute + 'laravel-filemanager?field_name=' + field_name;
+    if (type == 'image') {
+        cmsURL = cmsURL + "&type=Images";
+    } else {
+        cmsURL = cmsURL + "&type=Files";
+    }
+    },
+    setup: function(editor) {
+        editor.addButton("Note", {
+            text: "Note",
+            icon: false,
+            onclick: function() {
+                editor.insertContent('&nbsp;<div style="width:340px ; border: 3px solid red; color:red ; background-color: #d4d4d4"> Enter text here...</div> &nbsp;');
+            }
+        });
+        
+    }
 };
 tinymce.init(config3);

@@ -36,6 +36,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/requestLetter','ClaimController@requestLetter')->name('requestLetter');
         Route::post('/exportLetter','ClaimController@exportLetter')->name('exportLetter');
         Route::post('/previewLetter','ClaimController@previewLetter')->name('previewLetter');
+        Route::post('/changeStatus','ClaimController@changeStatus')->name('changeStatus');
 
         Route::resource('reason_reject', 'ReasonRejectController');
         Route::resource('product', 'ProductController');

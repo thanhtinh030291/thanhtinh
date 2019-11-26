@@ -24,8 +24,15 @@ return[
 
     'statusExport' => [
         'new' => 0,
-        'approve' => 1,
+        'approved' => 1,
         'dis_approve' => 2,
+        'repair_completed' => 3
+    ],
+    'statusExportText' => [
+        0 => "New",
+        1 => 'Approved',
+        2 => 'Dis Approved',
+        3 => 'Repair Completed'
     ]
     
 ];

@@ -261,6 +261,29 @@ class ClaimController extends Controller
         $data->delete();
         return redirect('/admin/claim')->with('status', __('message.delete_claim'));
     }
+    // change
+    public function changeStatus(Request $request)
+    {
+        
+        $claim_id = $request->claim_id;
+        $id = $request->id;
+        $user = Auth::User();
+        $export_letter = ExportLetter::findOrFail($id);
+        $export_letter->status = $request->status;
+        if($export_letter->note == null){
+            $data = [];
+        }else{
+            $data = $export_letter->note;
+        }
+        array_push($data ,
+                                        [  'user' => $user->id,
+                                            'created_at' => Carbon::now()->toDateTimeString(),
+                                            'note' => $request->template
+                                        ]);
+        $export_letter->note = $data;        
+        $export_letter->save();        
+        return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
+    }
 
     public function searchFullText(Request $request)
     {
@@ -337,8 +360,9 @@ class ClaimController extends Controller
     public function previewLetter(Request $request){
         
         $content = $this->letter($request->letter_template_id , $request->claim_id);
-        return response()->json(htmlentities($content));
+        return response()->json(mb_convert_encoding($content, 'UTF-8', 'UTF-8'));
     }
+
 
     // export letter
     public function letter($letter_template_id , $claim_id){ 
@@ -440,7 +464,6 @@ class ClaimController extends Controller
         $content = str_replace('[[$TermRemark]]', implode(' ',array_unique($TermRemark)) , $content);
         
         return $content;
-       
         
     }
 

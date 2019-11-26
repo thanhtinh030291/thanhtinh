@@ -86,6 +86,8 @@ $totalAmount = 0;
                             <th>Name Letter</th>
                             <th>{{ __('message.account_create')}}</th>
                             <th>{{ __('message.date_created')}}</th>
+                            <th>Status</th>
+                            <th>Note</th>
                             <th class='text-center'>{{ __('message.control')}}</th>
                         </tr>
                     </thead>
@@ -95,6 +97,27 @@ $totalAmount = 0;
                             <td>{{$item->letter_template->name}}</td>
                             <td>{{$item->userCreated->name}}</td>
                             <td>{{ $item->created_at }}</td>
+                            <td>
+                                {{ data_get(config('constants.statusExportText'),  $item->status , "none") }}
+                            </td>
+                            <td>
+                                @foreach ($item->note as $note)
+                                    <div class="form-group">
+                                        {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$note['user']], ['data-toggle' => "modal" ,  
+                                        'data-target' => "#noteModal",
+                                        'type' => 'button', 
+                                        'class' => 'btn btn-success btn-xs' , 
+                                        'onclick' => 'note(this);',
+                                        'data-claim_id' => $data->id,
+                                        'data-note' => $note['note'],
+                                        'data-status' => $item->status,
+                                        'data-id' => $item->id
+                                        ]) !!}
+                                        {{$note['created_at']}}
+                                    </div>
+                                @endforeach
+
+                            </td>
                             <td>
                                 {{ Form::open(array('url' => '/admin/exportLetter', 'method' => 'POST')) }}
                                     {{ Form::hidden('claim_id', $data->id ) }}
@@ -106,7 +129,9 @@ $totalAmount = 0;
                                         'class' => 'btn btn-success btn-xs' , 
                                         'onclick' => 'preview(this);',
                                         'data-claim_id' => $data->id,
-                                        'data-letter_template_id' => $item->letter_template->id
+                                        'data-letter_template_id' => $item->letter_template->id,
+                                        'data-status' => $item->status,
+                                        'data-id' => $item->id
                                         ]) 
                                     !!}
                                     {!! Form::button('<i class="fa fa-print"></i> Print', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
@@ -190,27 +215,57 @@ $totalAmount = 0;
     </div>
 </div>
 
-{{-- Modal --}}
+{{-- Modal preview--}}
 <div id="previewModal" class="modal fade bd-example-modal-lg" role="dialog">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Preview</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                {{ Form::textarea('template', old('template'), ['id' => 'preview_letter', 'class' => 'form-control editor_default']) }}<br>
-            </div>
-            <div class="modal-footer">
-                <form id="form_delete" action="#" method="POST">
-                    {{ csrf_field() }}
-                    {{ method_field('DELETE') }}
-                    <button class="btn btn-danger">{{ __('message.yes')}} </button>
-                    <button type="button" class="btn btn-secondary btn-cancel-delete" 
-                        data-dismiss="modal">{{ __('message.no') }}</button>
-                </form>
-            </div>
+            {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
+                {{ Form::hidden('id', null ,['id' => 'export_letter_id']) }}
+                {{ Form::hidden('claim_id', null ,['id' => 'ex_claim_id']) }}
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Preview</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    {{ Form::textarea('template', old('template'), ['id' => 'preview_letter', 'class' => 'form-control editor_default']) }}<br>
+                </div>
+                <div class="modal-footer">
+                    {{ Form::select('status', config('constants.statusExportText'), null, ['id' => 'status_letter', 'class' => 'form-control editor_default', ]) }}<br>
+                    
+                        <button class="btn btn-danger">{{ __('message.yes')}} </button>
+                        <button type="button" class="btn btn-secondary btn-cancel-delete" 
+                            data-dismiss="modal">{{ __('message.no') }}</button>
+                </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
+
+{{-- Modal note--}}
+<div id="noteModal" class="modal fade bd-example-modal-lg" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
+                
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Note</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    {{ Form::textarea('template', old('template'), ['id' => 'note_letter', 'class' => 'form-control editor_default']) }}<br>
+                </div>
+                <div class="modal-footer">
+                    {{-- {{ Form::select('status', config('constants.statusExportText'), null, ['id' => 'status_letter', 'class' => 'form-control editor_default', ]) }}<br> --}}
+                    
+                        {{-- <button class="btn btn-danger">{{ __('message.yes')}} </button> --}}
+                        <button type="button" class="btn btn-secondary btn-cancel-delete" 
+                            data-dismiss="modal">{{ __('message.no') }}</button>
+                </div>
+            {!! Form::close() !!}
         </div>
     </div>
 </div>
@@ -226,8 +281,16 @@ $totalAmount = 0;
 <script src="{{ asset('js/tinymce.js') }}"></script>
 <script>
     function preview(e){
+        $(".loader").show();
         var claim_id =  e.dataset.claim_id;
         var letter_template_id = e.dataset.letter_template_id;
+        var status = e.dataset.status;
+        var id = e.dataset.id;
+        $('#status_letter').val(status).change();
+        $('#export_letter_id').val(id);
+        $('#ex_claim_id').val(claim_id);
+        
+        tinymce.get("preview_letter").setContent("");
         $.ajax({
         url: '/admin/previewLetter',
         type: 'POST',
@@ -235,9 +298,22 @@ $totalAmount = 0;
         data: {'claim_id' : claim_id , 'letter_template_id' : letter_template_id },
         })
         .done(function(res) {
-           $("#preview_letter").val(res);
+            tinymce.get("preview_letter").setContent(res);
+            $(".loader").fadeOut("slow");
         })
-       
+    }
+
+    function note(e){
+        var claim_id =  e.dataset.claim_id;
+        var letter_template_id = e.dataset.letter_template_id;
+        var status = e.dataset.status;
+        var id = e.dataset.id;
+        var note = e.dataset.note;
+        $('#status_letter').val(status).change();
+        $('#export_letter_id').val(id);
+        $('#ex_claim_id').val(claim_id);
+        
+        tinymce.get("note_letter").setContent(note);
     }
 </script>
 @endsection
