@@ -12,7 +12,7 @@ var editor_config = {
     toolbar:
           
             ["insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
-            "applicantName | IOPDiag | PRefNo | PhName | PRefNo | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | TermRemark"]
+            "applicantName | IOPDiag | PRefNo | PhName | PRefNo | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | TermRemark | tableInfoPayment"]
         ,
     relative_urls: false,
     file_browser_callback: function(field_name, url, type, win) {
@@ -134,6 +134,14 @@ var editor_config = {
             icon: false,
             onclick: function() {
                 editor.insertContent("&nbsp;[[$TermRemark]]&nbsp;");
+            }
+        });
+        
+        editor.addButton("tableInfoPayment", {
+            text: "tableInfoPayment",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$tableInfoPayment]]&nbsp;");
             }
         });
         
