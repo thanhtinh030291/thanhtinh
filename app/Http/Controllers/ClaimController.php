@@ -370,52 +370,23 @@ class ClaimController extends Controller
         
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+
         $IOPDiag = IOPDiag($HBS_CL_CLAIM);
+
         $police = $HBS_CL_CLAIM->Police;
+
         $policyHolder = $HBS_CL_CLAIM->policyHolder;
+
         $payMethod = payMethod($HBS_CL_CLAIM);
-        
-        $CSRRemark = [];
-        $TermRemark = [];
-        
-        $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
-        $itemOfClaim = $claim->item_of_claim->groupBy('reason_reject_id');
-        $templateHaveMeger = [];
-        foreach ($itemOfClaim as $key => $value) {
-            $template = $value[0]->reason_reject->template;
-            $TermRemark[] = $value[0]->reason_reject->term->fullTextTerm;
-            if (!preg_match('/\[Begin\].*\[End\]/U', $template)){
-                foreach ($value as $keyItem => $item) {
-                    $template_new = $template;
-                    foreach ( $arrKeyRep as $key2 => $value2) {
-                        $template_new = str_replace($value2, '$parameter', $template_new);
-                    };
-                    $CSRRemark[] = Str::replaceArray('$parameter', $item->parameters, $template_new);
-                }
-            }else{
-                preg_match_all('/\[Begin\].*\[End\]/U', $template, $matches);
-                $template_new = preg_replace('/\[Begin\].*\[End\]/U' , '$arrParameter' , $template );
-                $arrMatche = [];
-                foreach ($value as $keyItem => $item) {
-                    foreach ($matches[0] as $keyMatche => $valueMatche) {
-                        foreach ( $arrKeyRep as $key2 => $value2) {
-                            $valueMatche = str_replace($value2, '$parameter', $valueMatche);
-                        };
-                        $arrMatche[$keyMatche][] =  Str::replaceArray('$parameter', $item->parameters, $valueMatche);
-                    }
-                }
-                // array to string 
-                $arr_str = [];
-                foreach ($arrMatche as $key => $value) {
-                    $arr_str[] = preg_replace('/\[Begin\]|\[End\]/', ' ', implode("; ", $value));
-                }
 
-                $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
-            }
+        $CSRRemark_TermRemark = CSRRemark_TermRemark($claim);
+        
+        $CSRRemark = $CSRRemark_TermRemark['CSRRemark'];
+        $TermRemark = $CSRRemark_TermRemark['TermRemark'];
 
-        }
-        //merge line 
-        //preg_match_all('/\[begin\].*\[end\]/U', $str, $matches);
+        $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);
+ 
+       
         $content = $letter->template;
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
@@ -427,11 +398,312 @@ class ClaimController extends Controller
         $content = str_replace('[[$apvAmt]]', formatPrice($HBS_CL_CLAIM->sumAppAmt), $content);
         $content = str_replace('[[$payMethod]]', $payMethod, $content);
         $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $HBS_CL_CLAIM->sumAppAmt) , $content);
-        $content = str_replace('[[$CSRRemark]]', implode(' ',$CSRRemark) , $content);
-        $content = str_replace('[[$TermRemark]]', implode(' ',array_unique($TermRemark)) , $content);
+        if($CSRRemark){
+            $content = str_replace('[[$CSRRemark]]', implode(' ',$CSRRemark) , $content);
+            $content = str_replace('[[$TermRemark]]', implode(' ',array_unique($TermRemark)) , $content);
+        }
         
+        
+        $content = str_replace('[[$tableInfoPayment]]', $tableInfo , $content);
         return $content;
         
     }
 
+    function tableInfoPayment($HBS_CL_CLAIM){
+      
+        $html = '<table style=" border: 1px solid black; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid black">Quyền lợi</th>
+                            <th style="border: 1px solid black">Giới hạn thanh toán</th>
+                            <th style="border: 1px solid black">Số tiền yêu cầu bồi thường (Căn cứ trên chứng từ hợp lệ) </th>
+                            <th style="border: 1px solid black">Số tiền thanh toán</th>
+                        </tr>
+                    <thead>';
+        $IP = [];
+        $OP = [];
+        $DT = [];
+        foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $keyCL_LINE => $valueCL_LINE) {
+            switch ($valueCL_LINE->PD_BEN_HEAD->scma_oid_ben_type) {
+                case 'BENEFIT_TYPE_DT':
+                    $DT[] = $valueCL_LINE;
+                    break;
+                case 'BENEFIT_TYPE_OP':
+                    $OP[] = $valueCL_LINE;
+                    break;
+                default:
+                    $IP[] = $valueCL_LINE;
+                    break;
+            }
+        }
+        $html .= '<tbody>';
+            // nội trú
+        foreach ($IP as $key => $value) {
+
+            $content =config('constants.content_ip.'.$value->PD_BEN_HEAD->ben_head);
+            $range_pay = "";
+            $limit = $this->getlimitIP($value);
+            switch ($value->PD_BEN_HEAD->ben_head) {
+                case 'ANES':
+                case 'OPR':
+                case 'SUR':
+                    $range_pay = " Tối đa ".$limit['amt']." cho mỗi Bệnh tật/Thương tật, mỗi cuộc phẫu thuật";
+                    break;
+                case 'HSP':
+                case 'HVIS':
+                case 'IMIS':
+                case 'PORX':
+                case 'POSH':
+                case 'LAMB':
+                    $range_pay = " Tối đa ".$limit['amt']." cho mỗi Bệnh tật/Thương tật, mỗi năm";
+                    break;
+                case 'RB':
+                case 'EXTB':
+                case 'ICU':
+                case 'HNUR':
+                    $range_pay = " Tối đa ".$limit['amt']." cho mỗi Bệnh tật/Thương tật, mỗi năm";
+                    break;
+                default:
+                    $range_pay = " Tối đa ".$limit['amt'];
+                    break;
+            }
+            $html .=    '<tr>
+                            <td style="border: 1px solid black; font-weight:bold;"><ins>Nội Trú</ins></td>
+                            <td style="border: 1px solid black">Mỗi bệnh /thương tật <br> '.$value->RT_DIAGNOSIS->diag_desc_vn.'</td>
+                            <td style="border: 1px solid black"></td>
+                            <td style="border: 1px solid black"></td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black">'.$content.'</td>
+                            <td style="border: 1px solid black">'.$range_pay.'</td>
+                            <td style="border: 1px solid black">'.$value->pres_amt.'</td>
+                            <td style="border: 1px solid black">'.$value->app_amt.'</td>
+                        </tr>
+                        ';
+        }
+        // ngoại trú
+        foreach ($OP as $key => $value) {
+            $content =config('constants.content_op.'.$value->PD_BEN_HEAD->ben_head);
+            $limit = $this->getlimitOP($value);
+            //dd($limit);
+            $content_limit = "";
+            switch ($value->PD_BEN_HEAD->ben_head) {
+                case 'OVRX':
+                case 'OV':
+                case 'RX':
+                    $content_limit = "Từ trên ".$limit['amt_from']." đến tối đa ". $limit['amt_to'] ." mỗi lần thăm khám";
+                    break;
+                
+                default:
+                    $content_limit = "Tối đa ".$limit['amt_from']." mỗi năm";
+                    break;
+            }
+            if($key == 0){
+                
+                $html .= '<tr>
+                            <td style="border: 1px solid black; font-weight:bold;"><ins>Ngoại Trú</ins></td>
+                            <td style="border: 1px solid black">Tối đa  '.$limit['amt_yr'].' mỗi năm</td>
+                            <td style="border: 1px solid black"></td>
+                            <td style="border: 1px solid black"></td>
+                        </tr>';
+            }
+            $html .=    '<tr>
+                            <td style="border: 1px solid black">'.$value->RT_DIAGNOSIS->diag_desc_vn.'<br>'.$content.'</td>
+                            <td style="border: 1px solid black">'.$content_limit.'</td>
+                            <td style="border: 1px solid black">'.$value->pres_amt.'</td>
+                            <td style="border: 1px solid black">'.$value->app_amt.'</td>
+                        </tr>';
+        }
+
+        // rang
+        foreach ($DT as $key => $value) {
+            $limit = $this->getlimitDT($value);
+            if($key == 0){
+                
+                $html .= '<tr>
+                            <td style="border: 1px solid black; font-weight:bold;"><ins>Răng</ins></td>
+                            <td style="border: 1px solid black">Tối đa  '.$limit['amt_yr'].' mỗi năm</td>
+                            <td style="border: 1px solid black"></td>
+                            <td style="border: 1px solid black"></td>
+                        </tr>';
+            }
+            $html .=    '<tr>
+                            <td style="border: 1px solid black">Chi phí điều trị nha khoa '.$value->RT_DIAGNOSIS->diag_desc_vn.'</td>
+                            <td style="border: 1px solid black">Từ trên '.$limit['amt'].' mỗi lần thăm khám</td>
+                            <td style="border: 1px solid black">'.$value->pres_amt.'</td>
+                            <td style="border: 1px solid black">'.$value->app_amt.'</td>
+                        </tr>';
+        }
+
+
+        $html .= '</tbody>';
+        $html .= '</table>';
+        return $html;
+    }
+
+    function getlimitOP($value){
+        $ben_head = $value->PD_BEN_HEAD->ben_head;
+        $data= [];
+        $data['amt_from'] = 0;
+        foreach ($value->MR_POLICY_PLAN->PD_PLAN->PD_PLAN_LIMIT as $keyt => $valuet) {
+            if($valuet->limit_type == 'T'){
+                $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_OP');
+                if( $array->count() > 0){
+                
+                    $data['amt_yr'] = $valuet->amt_yr == null ? 0 : $valuet->amt_yr;
+                }
+            }
+            
+            if($ben_head == 'OVRX'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_OP')->where('ben_head', 'OVRX');
+                    
+                    if( $array->count() > 0){
+                        //dd($valuet);
+                        $data['amt_from'] = $valuet->deduct_amt_vis == null ? 0 :  $valuet->deduct_amt_vis;
+                        $data['amt_to'] = $valuet->amt_vis == null ? 0 :  $valuet->amt_vis;
+                    }
+                }
+            }else{
+                if ($valuet->limit_type == 'CH') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_OP')->whereIn('ben_head', ['ACUP', 'BSET', 'CGP', 'CMED', 'HERB', 'HLIS', 'HMEO', 'HYNO', 'OSTE']);
+                    if( $array->count() > 0){
+                        
+                        $data['amt_from'] = $data['amt_from'] >= $valuet->amt_yr ? $data['amt_from'] :  $valuet->amt_yr;
+                    }
+                }
+            }
+        }
+    
+        return $data;
+    }
+    
+    function getlimitDT($value){
+        $ben_head = $value->PD_BEN_HEAD->ben_head;
+        $data= [];
+        $data['amt_from'] = 0;
+        foreach ($value->MR_POLICY_PLAN->PD_PLAN->PD_PLAN_LIMIT as $keyt => $valuet) {
+            if($valuet->limit_type == 'T'){
+                $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_DT');
+                if( $array->count() > 0){
+                    $data['amt_yr'] = $valuet->amt_yr == null ? 0 : $valuet->amt_yr;
+                    $data['amt'] = $valuet->amt_vis == null ? 0 : $valuet->amt_vis;
+                }
+            }
+            
+        }
+    
+        return $data;
+    }
+
+    function getlimitIP($value){
+        $ben_head = $value->PD_BEN_HEAD->ben_head;
+        $data= [];
+        $data['amt'] = 0;
+        foreach ($value->MR_POLICY_PLAN->PD_PLAN->PD_PLAN_LIMIT as $keyt => $valuet) {
+            if($ben_head == 'ANES' || $ben_head == 'OPR' || $ben_head == 'SUR'){
+                if ($valuet->limit_type == 'CH') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->whereIn('ben_head', ['ANES', 'OPR', 'SUR']);
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $data['amt'] >= $valuet->amt_dis_vis ? $data['amt'] :  $valuet->amt_dis_vis;
+                    }
+                }
+            }
+            if($ben_head == 'HSP' || $ben_head == 'HVIS' || $ben_head == 'IMIS' || $ben_head == 'POSH' || $ben_head == 'PORX'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head','IMIS');
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] =  $valuet->amt_dis_yr;
+                    }
+                }
+            }
+
+            if($ben_head == 'RB'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head','RB');
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $valuet->amt_day;
+                    }
+                }
+            }
+
+            if($ben_head == 'EXTB'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head','EXTB');
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $valuet->amt_day;
+                    }
+                }
+            }
+
+            if($ben_head == 'HNUR'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head','HNUR');
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $valuet->amt_day;
+                    }
+                }
+            }
+
+            if($ben_head == 'ER'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head','ER');
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $valuet->amt_dis_yr;
+                    }
+                }
+            }
+
+            if($ben_head == 'LAMB'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head','LAMB');
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $valuet->amt_dis_yr;
+                    }
+                }
+            }
+
+            if($ben_head == 'DON' || $ben_head == 'REC'){
+                if ($valuet->limit_type == 'CH') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->whereIn('ben_head',['DON', 'REC']);
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $data['amt'] >= $valuet->amt_life ? $data['amt'] :  $valuet->amt_life;
+                    }
+                }
+            }
+
+            if($ben_head == 'CHEMO' || $ben_head == 'RADIA'){
+                if ($valuet->limit_type == 'CH') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->whereIn('ben_head',['CHEMO', 'RADIA']);
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $data['amt'] >= $valuet->amt_dis_yr ? $data['amt'] :  $valuet->amt_dis_yr;
+                    }
+                }
+            }
+
+            if($ben_head == 'TDAM'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head','TDAM');
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $valuet->amt_dis_yr;
+                    }
+                }
+            }
+        }
+    
+        return $data;
+    }
 }
+
+
+

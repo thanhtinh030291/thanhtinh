@@ -63,9 +63,21 @@ class HBS_CL_CLAIM extends  BaseModelDB2
 
     //show RT_DIAGNOSIS
     public function scopeIOPDiag($query){
-        $condition = function ($q) {
+        $conditionPlanLimit = function($q){
+            $q->with('PD_BEN_HEAD');
+        };
+
+        $conditionPD = function($q) use ($conditionPlanLimit){
+            $q->with(['PD_PLAN_LIMIT' => $conditionPlanLimit]);
+        };
+        $conditionPL = function($q) use ($conditionPD){
+            $q->with(['PD_PLAN' => $conditionPD]);
+        };
+        $condition = function ($q) use ($conditionPL){
             $q->with('RT_DIAGNOSIS');
             $q->with('PD_BEN_HEAD');
+            $q->with(['MR_POLICY_PLAN'=>$conditionPL]);
+            $q->where('REV_DATE', null);
         };
         return $query->with(['HBS_CL_LINE' => $condition]);
     }

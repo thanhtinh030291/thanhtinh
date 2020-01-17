@@ -33,6 +33,53 @@ return[
         1 => 'Approved',
         2 => 'Dis Approved',
         3 => 'Repair Completed'
-    ]
+    ],
+    'content_ip' => [
+        'ANES' => 'Chi phí phẫu thuật ',
+        'OPR' => 'Chi phí phẫu thuật ',
+        'SUR' => 'Chi phí phẫu thuật',
+
+        'HSP' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'HVIS' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'IMIS' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'PORX' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'POSH' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+
+        'RB' => 'Tiền phòng và ăn uống',
+
+        'EXTB' => 'Giường cho người thân',
+
+        'ICU' => 'Khoa chăm sóc đặc biệt',
+
+        'HNUR' => 'Điều dưỡng tại nhà',
+
+        'ER' => 'Điều trị tại phòng cấp cứu do tai nạn',
+
+        'LAMB' => 'Chi phí xe cấp cứu',
+
+        'DON' => 'Cấy ghép bộ phận',
+        'REC' => 'Cấy ghép bộ phận',
+
+        'CHEMO'  => 'Điều trị ung thư',
+        'RADIA'  => 'Điều trị ung thư',
+
+        'TDAM' => 'Điều trị tổn thương răng do tai nạn',
+        
+    ],
+    'content_op' => [
+        'OVRX' => 'Quyền lợi ngoại trú',
+        'OV' => 'Quyền lợi ngoại trú',
+        'RX' => 'Quyền lợi ngoại trú',
+
+        'ACUP' => 'Y hoc thay thế',
+        'BSET' => 'Y hoc thay thế',
+        'CGP' => 'Y hoc thay thế',
+        'CMED' => 'Y hoc thay thế',
+        'HERB' => 'Y hoc thay thế',
+        'HLIS' => 'Y hoc thay thế',
+        'HMEO' => 'Y hoc thay thế',
+        'HYNO' => 'Y hoc thay thế',
+        'OSTE' => 'Y hoc thay thế'
+    ],
     
 ];
