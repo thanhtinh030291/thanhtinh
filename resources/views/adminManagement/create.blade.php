@@ -36,6 +36,8 @@ $max = Config::get('constants.minMaxLength.max');
                 {{ Form::label('password',__('message.password'), array('class' => 'labelas')) }}<span class="text-danger">*</span>
                 {{ Form::password('password',  ['type' => 'password','class' => 'form-control', 'placeholder'=>__('message.enter_staff_password'), 'minlength' => $min, 'maxlength' => $max, 'required']) }}<br>
 
+                <input type="button" class="button" value="Generate password" onClick="generate();" tabindex="2"><br>
+
                 {{ Form::label('role','Role', array('class' => 'labelas')) }}<span class="text-danger">*</span>
                 {{ Form::select('_role', $all_roles_in_database,old('_role'), ['class' => 'select2 form-control', 'multiple' => 'multiple', 'name'=>'_role[]']) }}<br>
                 
@@ -51,5 +53,21 @@ $max = Config::get('constants.minMaxLength.max');
 @endsection
 
 @section('scripts')
+<script>
+    function randomPassword(length) {
+    var chars = "abcdefghijklmnopqrstuvwxyz!@#$%&*()<>ABCDEFGHIJKLMNOP1234567890";
+    var pass = "";
+    for (var x = 0; x < length; x++) {
+        var i = Math.floor(Math.random() * chars.length);
+        pass += chars.charAt(i);
+    }
+    return pass;
+}
+
+function generate() {
+    var ram = randomPassword(8)
+    $("#password").val(ram);
+}
+</script>
 
 @endsection

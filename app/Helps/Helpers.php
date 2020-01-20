@@ -14,7 +14,7 @@ function sendEmail($user_send, $data , $template , $subject)
             'data' => $data 
         ], function ($mail) use ($user_send, $app_name, $app_email, $subject) {
             $mail->from($app_email, $app_name)
-                ->to($user_send->email, $user_send->company_name)
+                ->to($user_send->email, $user_send->name)
                 ->subject($subject);
         }
     );

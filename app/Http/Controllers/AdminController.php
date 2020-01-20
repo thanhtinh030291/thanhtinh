@@ -11,6 +11,8 @@ use Config;
 use Illuminate\Http\Request;
 use Image;
 use Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller {
 	/**
@@ -78,11 +80,25 @@ class AdminController extends Controller {
 		$dataNew = $request->except([]);
 		
 		$dataNew['password'] = bcrypt($dataNew['password']);
-		if ($user = User::Create($dataNew)) {
+		try {
+            DB::beginTransaction();
+			$user = User::Create($dataNew);
 			$user->assignRole($request->_role);
+			$data['password'] =$request->password;
+			$data['user'] = $user;
+			sendEmail($user, $data, 'templateEmail.registerAcountTemplate' , 'Thông Tin Đăng Nhập Hệ Thống Claim Assistant');
+			DB::commit();
 			$request->session()->flash('status', __('message.add_account'));
 			return redirect('/admin/admins/');
-		}
+		} catch (Exception $e) {
+			Log::error(generateLogMsg($e));
+            DB::rollback(); $request->session()->flash(
+                'errorStatus', 
+                __('message.update_fail')
+            );
+            return redirect('/admin/admins/')->withInput();
+        }
+		
 	}
 
 	/**
@@ -134,13 +150,7 @@ class AdminController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy($id) {
-		$upLoadPath = Config::get('constants.uploadDirectory.User');
-		$thumbNail = Config::get('constants.uploadDirectory.thumbNail');
 		$admin = User::findOrFail($id);
-		if ($admin->profile_image != 'noimage.jpg') {
-			Storage::delete($upLoadPath . '/' . $admin->profile_image);
-			Storage::delete($thumbNail . '/' . $admin->profile_image);
-		}
 		$admin->delete();
 		return redirect('/admin/admins')->with('status', __('message.delete_account'));
 	}

@@ -1,5 +1,8 @@
 <?php
 return[
+    'appName' => 'Claim Assistant',
+    'appEmail' => env('MAIL_FROM_ADDRESS', 'admin@pacificcross.com.vn'),
+    'appLogo'     => "/images/logo.png",
     'formClaimUpload'   => '/public/formClaim/',
     'formClaimStorage'  => '/storage/formClaim/',
     'formClaimSelect'   => '/public/formClaimSelect/',
