@@ -224,7 +224,7 @@ function payMethod($HBS_CL_CLAIM){
                                 <p>Tên người thụ hưởng: '.$name_reciever.'</p>
                             </td>
                             <td style="border: 1px solid black; width: 350px;">
-                                <p>Tên người thụ hưởng: '.$info_reciever.'</p>
+                                <p>'.$info_reciever.'</p>
                             </td>
                         </tr>
                         <tr>
