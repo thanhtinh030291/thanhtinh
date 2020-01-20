@@ -20,7 +20,7 @@ class CreateItemOfClaimTable extends Migration
             $table->integer('status')->default('1');
             $table->integer('claim_id')->nullable();
             $table->integer('reason_reject_id')->nullable();
-            $table->json('parameters')->nullable();
+            $table->longText('parameters')->nullable();
             $table->integer('created_user');
             $table->integer('updated_user');
             $table->timestamps();
