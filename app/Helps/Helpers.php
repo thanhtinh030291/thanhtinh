@@ -191,7 +191,7 @@ function payMethod($HBS_CL_CLAIM){
     $notify = "";
     switch ($HBS_CL_CLAIM->payMethod) {
         case 'CL_PAY_METHOD_TT':
-            $name_reciever = $HBS_CL_CLAIM->member->bank_name;
+            $name_reciever = $HBS_CL_CLAIM->member->cl_pay_acct_name;
             $info_reciever = 'Số tài khoản: '.$HBS_CL_CLAIM->member->cl_pay_acct_no.' Tại ngân hàng '.$HBS_CL_CLAIM->member->bank_name.
             ', '.$HBS_CL_CLAIM->member->cl_pay_bank_branch.', '. $HBS_CL_CLAIM->member->cl_pay_bank_city;
             $banking = $HBS_CL_CLAIM->member->bank_name.', '.$HBS_CL_CLAIM->member->cl_pay_bank_branch.', '. $HBS_CL_CLAIM->member->cl_pay_bank_city;
@@ -229,8 +229,7 @@ function payMethod($HBS_CL_CLAIM){
                         </tr>
                         <tr>
                             <td style="border: 1px solid black" colspan="2">
-                                <p>Tên và địa chỉ Ngân hàng:</p>
-                                <p>'.$banking.'</p>
+                                <p>Tên và địa chỉ Ngân hàng: '.$banking.'</p>
                             </td>
                         </tr>
                         <tr>
