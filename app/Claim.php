@@ -8,7 +8,6 @@ class Claim extends BaseModel
     protected $table = 'claim';
     protected static $table_static = 'claim';
     protected $dates = ['deleted_at'];
-    protected $fillable =['id' , 'code_claim', 'created_user'];
     
     
     public function export_letter()

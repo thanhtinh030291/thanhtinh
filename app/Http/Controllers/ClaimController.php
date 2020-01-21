@@ -123,6 +123,7 @@ class ClaimController extends Controller
         //
         try {
             DB::beginTransaction();
+            
             $claim = Claim::create($dataNew);
             $claim->item_of_claim()->saveMany($dataItems);
             DB::commit();
