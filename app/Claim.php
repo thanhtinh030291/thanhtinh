@@ -8,6 +8,7 @@ class Claim extends BaseModel
     protected $table = 'claim';
     protected static $table_static = 'claim';
     protected $dates = ['deleted_at'];
+    protected $fillable =['id' , 'code_claim', 'created_user'];
     
     
     public function export_letter()
@@ -20,6 +21,11 @@ class Claim extends BaseModel
         return $this->hasMany('App\ItemOfClaim', 'claim_id');
     }
 
+    public function getCodeClaimHBSAttribute()
+    {
+        $data = HBS_CL_CLAIM::findOrFail($this->code_claim);
+        return $data->cl_no;
+    }
 
     public static function storeFile($file ,  $dirUpload){
         $imageName = time() . md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
@@ -30,7 +36,7 @@ class Claim extends BaseModel
     public function scopeItemClaimReject($query)
     {
         $conditionTerm = function ($q) {
-           
+
             $q->with('term');
         };
         $condition = function ($q) use ($conditionTerm) {

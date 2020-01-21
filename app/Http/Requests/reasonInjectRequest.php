@@ -24,7 +24,7 @@ class reasonInjectRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'bail|min:8|max:500|required',
+            'name' => 'bail|min:2|max:500|required',
         ];
     }
 }

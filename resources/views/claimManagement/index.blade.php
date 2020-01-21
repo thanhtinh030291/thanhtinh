@@ -63,7 +63,7 @@
                         @foreach ($datas as $data)
                         <tbody>
                             <tr>
-                                <td>{{$data->code_claim}}</td>
+                                <td>{{$data->codeClaimHBS}}</td>
                                 <td>{{ $admin_list[$data->created_user] }}</td>
                                 <td>{{ $admin_list[$data->updated_user] }}</td>
                                 <td>{{ $data->created_at }}</td>

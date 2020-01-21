@@ -311,9 +311,8 @@ function CSRRemark_TermRemark($claim){
             $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
         }
         return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $TermRemark];
-
     }
 
-
+    
 }
 
