@@ -46,6 +46,11 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         
     }
 
+    public function getMemberNameCapAttribute(){
+        return $this->member->mbr_last_name ." " . $this->member->mbr_first_name;
+    }
+
+
     public function getPayMethodAttribute(){
         
         return $this->policyHolder->scma_oid_cl_pay_method;

@@ -393,7 +393,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
         $content = str_replace('[[$PRefNo]]', $police->pocy_ref_no, $content);
         $content = str_replace('[[$PhName]]', $policyHolder->poho_name_1, $content);
-        $content = str_replace('[[$memberNameCap]]', strtoupper($HBS_CL_CLAIM->applicantName), $content);
+        $content = str_replace('[[$memberNameCap]]', strtoupper($HBS_CL_CLAIM->memberNameCap), $content);
         $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
         $content = str_replace('[[$pstAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt), $content);
         $content = str_replace('[[$apvAmt]]', formatPrice($HBS_CL_CLAIM->sumAppAmt), $content);
