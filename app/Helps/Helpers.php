@@ -192,8 +192,7 @@ function payMethod($HBS_CL_CLAIM){
     switch ($HBS_CL_CLAIM->payMethod) {
         case 'CL_PAY_METHOD_TT':
             $name_reciever = $HBS_CL_CLAIM->member->cl_pay_acct_name;
-            $info_reciever = 'Số tài khoản: '.$HBS_CL_CLAIM->member->cl_pay_acct_no.' Tại ngân hàng '.$HBS_CL_CLAIM->member->bank_name.
-            ', '.$HBS_CL_CLAIM->member->cl_pay_bank_branch.', '. $HBS_CL_CLAIM->member->cl_pay_bank_city;
+            $info_reciever = 'Số tài khoản: '.$HBS_CL_CLAIM->member->cl_pay_acct_no;
             $banking = $HBS_CL_CLAIM->member->bank_name.', '.$HBS_CL_CLAIM->member->cl_pay_bank_branch.', '. $HBS_CL_CLAIM->member->cl_pay_bank_city;
             $notify = "Quý khách vui lòng kiểm tra tài khoản nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán.";
             break;
@@ -310,9 +309,9 @@ function CSRRemark_TermRemark($claim){
 
             $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
         }
-        return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $TermRemark];
+       
     }
-
+    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $TermRemark];
     
 }
 

@@ -386,8 +386,7 @@ class ClaimController extends Controller
         $TermRemark = $CSRRemark_TermRemark['TermRemark'];
 
         $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);
- 
-       
+
         $content = $letter->template;
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
