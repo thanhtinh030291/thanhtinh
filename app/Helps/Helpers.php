@@ -296,9 +296,9 @@ function CSRRemark_TermRemark($claim){
             foreach ($value as $keyItem => $item) {
                 foreach ($matches[0] as $keyMatche => $valueMatche) {
                     foreach ( $arrKeyRep as $key2 => $value2) {
-                        $valueMatche = str_replace($value2, '$parameter', $valueMatche);
+                        $valueMatche = str_replace( $value2, '$parameter', $valueMatche);
                     };
-                    $arrMatche[$keyMatche][] =  Str::replaceArray('$parameter', $item->parameters, $valueMatche);
+                    $arrMatche[$keyMatche][] =  Str::replaceArray('$parameter', preg_replace('/(,)/', '.', $item->parameters), $valueMatche);
                 }
             }
             // array to string 
@@ -309,7 +309,6 @@ function CSRRemark_TermRemark($claim){
 
             $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
         }
-       
     }
     return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $TermRemark];
     
