@@ -371,7 +371,7 @@ class ClaimController extends Controller
         
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-
+        
         $IOPDiag = IOPDiag($HBS_CL_CLAIM);
 
         $police = $HBS_CL_CLAIM->Police;
@@ -384,6 +384,7 @@ class ClaimController extends Controller
         
         $CSRRemark = $CSRRemark_TermRemark['CSRRemark'];
         $TermRemark = $CSRRemark_TermRemark['TermRemark'];
+        
 
         $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);
 

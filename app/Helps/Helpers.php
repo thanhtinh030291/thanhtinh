@@ -274,6 +274,7 @@ function IOPDiag($HBS_CL_CLAIM){
 function CSRRemark_TermRemark($claim){
     $CSRRemark = [];
     $TermRemark = [];
+    $hasTerm3 = false;
     
     $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
     $itemOfClaim = $claim->item_of_claim->groupBy('reason_reject_id');
@@ -281,6 +282,11 @@ function CSRRemark_TermRemark($claim){
     foreach ($itemOfClaim as $key => $value) {
         $template = $value[0]->reason_reject->template;
         $TermRemark[] = $value[0]->reason_reject->term->fullTextTerm;
+
+        preg_match('/3.*/', $value[0]->reason_reject->term->name , $matches_term, PREG_OFFSET_CAPTURE);
+        if($matches_term){
+            $hasTerm3 = true;
+        }
         if (!preg_match('/\[Begin\].*\[End\]/U', $template)){
             foreach ($value as $keyItem => $item) {
                 $template_new = $template;
@@ -309,6 +315,11 @@ function CSRRemark_TermRemark($claim){
 
             $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
         }
+    }
+    if($hasTerm3){
+        array_unshift($TermRemark, "Quý khách vui lòng tham khảo Điều 3_Các quy định loại trừ trách nhiệm bảo hiểm của Quy tắc và điều khoản bảo hiểm Chăm sóc sức khỏe: “Dai-ichi Life Việt Nam sẽ không thanh toán quyền lợi điều trị nội trú và điều trị ngoại trú theo quy định tại Điều 2 của Quy tắc, Điều khoản sản phẩm bổ sung này nếu việc điều trị Bệnh tật/Thương tật của Người được bảo hiểm thuộc bất kỳ trường hợp hoặc sự việc nào sau đây”: <br> ");
+    }else{
+        array_unshift($TermRemark, "Quý khách vui lòng tham khảo Các Định nghĩa của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe: <br> ");
     }
     return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $TermRemark];
     
