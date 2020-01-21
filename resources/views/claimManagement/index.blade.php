@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="col-md-12">                           
                             {{ Form::label('name', __('message.id_claim'), array('class' => 'labelas')) }}
-                            {{ Form::text('code_claim',$finder['code_claim'], ['class' => 'form-control']) }} <br/>                          
+                            {{ Form::select('code_claim',[], $finder['code_claim'], ['class' => 'code_claim form-control']) }} <br/>                          
                         </div>
                     </div>
                     <br>
@@ -103,9 +103,55 @@
 <script src="{{asset('js/lengthchange.js')}}"></script>
 <script src="{{asset('js/jquery.imgareaselect.pack.js')}}"></script>
 <script>
-    $(document).ready(function () {
-        $('#imageSelect').imgAreaSelect({ x1: 120, y1: 90, x2: 280, y2: 210 });
+    //ajax select code
+$(window).load(function() {
+    $('.code_claim').select2({          
+        minimumInputLength: 2,
+        ajax: {
+        url: "/admin/dataAjaxHBSClaim",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
     });
+    //load info of claim
+    $(document).on("change","#code_claim",function(){
+        resultApplicant(this.value);
+    });
+    $( document ).ready(function() {
+        var id_code = $('#code_claim').val();
+        if(id_code != null){
+            resultApplicant(id_code);
+            
+        }
+    });
+
+    function resultApplicant(value){
+        var container = $("#result_applicant");
+        $.ajax({
+            url: "/admin/loadInfoAjaxHBSClaim",
+            type: 'POST',
+            
+            data: {'search' : value},
+        })
+        .done(function(res) {
+            
+            container.empty();
+            container.append('<p class="card-text">Full-Name: '+res.mbr_last_name +' '+res.mbr_first_name+'</p>')
+            .append('<p class="card-text">Member No: '+ res.mbr_no +'</p>')
+            .append('<p class="card-text">Member Ref No: '+ res.memb_ref_no +'</p>')
+        })
+    }
+});
 </script>
 
 @endsection
