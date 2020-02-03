@@ -41,8 +41,12 @@ class ClaimController extends Controller
         $admin_list = User::getListIncharge();
         $finder = [
             'code_claim' => $request->code_claim,
+            'created_user' => $request->created_user,
+            'created_at' => $request->created_at,
+            'updated_user' => $request->updated_user,
+            'updated_at' => $request->updated_at,
         ];
-        $datas = Claim::where('code_claim', 'like', '%' . $finder['code_claim'] . '%')->orderBy('id', 'desc')->paginate($itemPerPage);
+        $datas = Claim::findByParams($finder)->orderBy('id', 'desc')->paginate($itemPerPage);
         return view('claimManagement.index', compact('finder', 'datas', 'admin_list'));
     }
     
