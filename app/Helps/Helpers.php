@@ -265,7 +265,7 @@ function IOPDiag($HBS_CL_CLAIM){
                     break;
             }
         }
-    $IOPDiag = implode('<br>', $IOPDiag);
+    $IOPDiag = implode('<br>', array_unique($IOPDiag));
     return $IOPDiag;
 }
 
