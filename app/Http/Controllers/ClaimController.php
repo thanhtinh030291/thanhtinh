@@ -349,14 +349,14 @@ class ClaimController extends Controller
     }
 
     public function exportLetter(Request $request){
-        $content = $this->letter($request->letter_template_id , $request->claim_id);
+        $data = $this->letter($request->letter_template_id , $request->claim_id);
         header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
         header("Expires: 0");//no-cache
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
-        header("content-disposition: attachment;filename=sampleword.doc");
+        header("content-disposition: attachment;filename={$data['namefile']}.doc");
         echo "<html>";      
         echo "<body>";
-        echo $content;
+        echo $data['content'];
         echo "</body>";
         echo "</html>";
     }
@@ -364,18 +364,17 @@ class ClaimController extends Controller
     //ajax 
     public function previewLetter(Request $request){
         
-        $content = $this->letter($request->letter_template_id , $request->claim_id);
-        return response()->json(mb_convert_encoding($content, 'UTF-8', 'UTF-8'));
+        $data = $this->letter($request->letter_template_id , $request->claim_id);
+        return response()->json(mb_convert_encoding($data['content'], 'UTF-8', 'UTF-8'));
     }
 
 
     // export letter
     public function letter($letter_template_id , $claim_id){ 
         $letter = LetterTemplate::findOrFail($letter_template_id);
-        
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        
+        $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->applicantName}", '-');
         $IOPDiag = IOPDiag($HBS_CL_CLAIM);
 
         $police = $HBS_CL_CLAIM->Police;
@@ -410,7 +409,7 @@ class ClaimController extends Controller
         
         
         $content = str_replace('[[$tableInfoPayment]]', $tableInfo , $content);
-        return $content;
+        return ['content' => $content , 'namefile' => $namefile];
         
     }
 
@@ -479,7 +478,7 @@ class ClaimController extends Controller
                     break;
             }
             $html .=    '<tr>
-                            <td style="border: 1px solid black; font-weight:bold;"><ins>Nội Trú</ins></td>
+                            <td style="border: 1px solid black; font-weight:bold;">Nội Trú</td>
                             <td style="border: 1px solid black">Mỗi bệnh /thương tật <br> '.$value->RT_DIAGNOSIS->diag_desc_vn.'</td>
                             <td style="border: 1px solid black"></td>
                             <td style="border: 1px solid black"></td>
@@ -514,7 +513,7 @@ class ClaimController extends Controller
             if($key == 0){
                 
                 $html .= '<tr>
-                            <td style="border: 1px solid black; font-weight:bold;"><ins>Ngoại Trú</ins></td>
+                            <td style="border: 1px solid black; font-weight:bold;">Ngoại Trú</td>
                             <td style="border: 1px solid black">Tối đa  '.formatPrice($limit['amt_yr']).' mỗi năm</td>
                             <td style="border: 1px solid black"></td>
                             <td style="border: 1px solid black"></td>
@@ -536,7 +535,7 @@ class ClaimController extends Controller
             if($key == 0){
                 
                 $html .= '<tr>
-                            <td style="border: 1px solid black; font-weight:bold;"><ins>Răng</ins></td>
+                            <td style="border: 1px solid black; font-weight:bold;">Răng</td>
                             <td style="border: 1px solid black">Tối đa  '.formatPrice($limit['amt_yr']).' mỗi năm</td>
                             <td style="border: 1px solid black"></td>
                             <td style="border: 1px solid black"></td>

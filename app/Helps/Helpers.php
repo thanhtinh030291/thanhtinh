@@ -216,7 +216,7 @@ function payMethod($HBS_CL_CLAIM){
             $notify = "Số tiền trên được thanh toán cho quý khách bằng hình thức thanh toán đóng phí hợp đồng ". $HBS_CL_CLAIM->Police->pocy_ref_no ;
             break;
     }
-    $payMethod =    '<table style="height: 80px; width: 712px; border: 1px solid black; border-collapse: collapse;">
+    $payMethod =    '<table style=" border: 1px solid black; border-collapse: collapse;">
                         <tbody>
                         <tr>
                             <td style="border: 1px solid black; width: 350px;">
