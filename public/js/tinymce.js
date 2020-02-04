@@ -3,6 +3,8 @@ var editor_config = {
     path_absolute: "/",
     selector: "textarea.editor",
     branding: false,
+    
+    fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
     plugins: [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",
@@ -11,7 +13,7 @@ var editor_config = {
     ],
     toolbar:
           
-            ["insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+            ["insertfile undo redo | styleselect | bold italic sizeselect fontselect fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
             "applicantName | IOPDiag | PRefNo | PhName | PRefNo | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | TermRemark | tableInfoPayment"]
         ,
     relative_urls: false,
@@ -229,7 +231,7 @@ var config3 = {
     "insertdatetime media nonbreaking save table contextmenu directionality",
     "emoticons template paste textcolor colorpicker textpattern",
     ],
-    toolbar: ["insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+    toolbar: ["insertfile undo redo | styleselect | bold italic sizeselect fontselect fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
             "Note"
             ],
     relative_urls: false,
