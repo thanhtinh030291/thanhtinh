@@ -74,10 +74,8 @@ class RoomAndBoardController extends Controller
         $data['created_user'] = $userId;
         $data['updated_user'] = $userId;
         $incur_date = $request->_incur_date;
-        dump($incur_date);
         foreach ($incur_date as $key => $value) {
             $rp = getHourStartEnd($value);
-            dd($rp);
             $data['line_rb'][] = ['hours_start' => $rp['hours_start'] , 'hours_end' =>  $rp['hours_end'] ];
         }
         RoomAndBoard::create($data);
