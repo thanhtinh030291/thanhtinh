@@ -281,12 +281,16 @@ function CSRRemark_TermRemark($claim){
     $templateHaveMeger = [];
     foreach ($itemOfClaim as $key => $value) {
         $template = $value[0]->reason_reject->template;
-        $TermRemark[] = $value[0]->reason_reject->term->fullTextTerm;
-
-        preg_match('/3.*/', $value[0]->reason_reject->term->name , $matches_term, PREG_OFFSET_CAPTURE);
-        if($matches_term){
-            $hasTerm3 = true;
+        if(isset($value[0]->reason_reject->term->fullTextTerm)){
+            $TermRemark[] = $value[0]->reason_reject->term->fullTextTerm;
+            preg_match('/3.*/', $value[0]->reason_reject->term->name , $matches_term, PREG_OFFSET_CAPTURE);
+            if($matches_term){
+                $hasTerm3 = true;
+            }
         }
+        
+
+        
         if (!preg_match('/\[Begin\].*\[End\]/U', $template)){
             foreach ($value as $keyItem => $item) {
                 $template_new = $template;
@@ -312,7 +316,6 @@ function CSRRemark_TermRemark($claim){
             foreach ($arrMatche as $key => $value) {
                 $arr_str[] = preg_replace('/\[Begin\]|\[End\]/', ' ', implode("; ", $value));
             }
-
             $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
         }
     }
