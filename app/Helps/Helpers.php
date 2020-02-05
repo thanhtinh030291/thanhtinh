@@ -189,6 +189,7 @@ function payMethod($HBS_CL_CLAIM){
     $info_reciever = "";
     $banking = "";
     $notify = "";
+    //dd($HBS_CL_CLAIM->payMethod);
     switch ($HBS_CL_CLAIM->payMethod) {
         case 'CL_PAY_METHOD_TT':
             $name_reciever = $HBS_CL_CLAIM->member->cl_pay_acct_name;

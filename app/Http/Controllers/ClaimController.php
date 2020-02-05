@@ -416,7 +416,14 @@ class ClaimController extends Controller
     function tableInfoPayment($HBS_CL_CLAIM){
         $sum_pre_amt = 0;
         $sum_app_amt = 0;
-        $html = '<table style=" border: 1px solid black; border-collapse: collapse;">
+        $html = '
+        <style type="text/css">
+            table { page-break-inside:auto }
+            tr    { page-break-inside:avoid; page-break-after:auto }
+            thead { display:table-header-group }
+            tfoot { display:table-footer-group }
+        </style>
+                <table style=" border: 1px solid black; border-collapse: collapse;">
                     <thead>
                         <tr>
                             <th style="border: 1px solid black" rowspan="2">Quyền lợi</th>
@@ -486,8 +493,8 @@ class ClaimController extends Controller
                         <tr>
                             <td style="border: 1px solid black">'.$content.'</td>
                             <td style="border: 1px solid black">'.$range_pay.'</td>
-                            <td style="border: 1px solid black">'.formatPrice($value->pres_amt).'</td>
-                            <td style="border: 1px solid black">'.formatPrice($value->app_amt).'</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
+                            <td style="border: 1px solid black ; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
                         </tr>
                         ';
             $sum_pre_amt += $value->pres_amt;
@@ -522,8 +529,8 @@ class ClaimController extends Controller
             $html .=    '<tr>
                             <td style="border: 1px solid black">'.$content.'</td>
                             <td style="border: 1px solid black">'.$content_limit.'</td>
-                            <td style="border: 1px solid black">'.formatPrice($value->pres_amt).'</td>
-                            <td style="border: 1px solid black">'.formatPrice($value->app_amt).'</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
                         </tr>';
             $sum_pre_amt += $value->pres_amt;
             $sum_app_amt += $value->app_amt;
@@ -544,8 +551,8 @@ class ClaimController extends Controller
             $html .=    '<tr>
                             <td style="border: 1px solid black">Chi phí điều trị nha khoa '.$value->RT_DIAGNOSIS->diag_desc_vn.'</td>
                             <td style="border: 1px solid black">Từ trên '.formatPrice($limit['amt']).' mỗi lần thăm khám</td>
-                            <td style="border: 1px solid black">'.formatPrice($value->pres_amt).'</td>
-                            <td style="border: 1px solid black">'.formatPrice($value->app_amt).'</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
                         </tr>';
             $sum_pre_amt += $value->pres_amt;
             $sum_app_amt += $value->app_amt;
@@ -553,8 +560,8 @@ class ClaimController extends Controller
             $html .=    '<tr>
                             <th style="border: 1px solid black" colspan="2">Tổng cộng:</th>
                             
-                            <td style="border: 1px solid black">'.formatPrice($sum_pre_amt).'</td>
-                            <td style="border: 1px solid black">'.formatPrice($sum_app_amt).'</td>
+                            <th style="border: 1px solid black">'.formatPrice($sum_pre_amt).'</th>
+                            <th style="border: 1px solid black">'.formatPrice($sum_app_amt).'</th>
                         </tr>';
 
         $html .= '</tbody>';
