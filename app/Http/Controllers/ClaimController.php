@@ -479,7 +479,7 @@ class ClaimController extends Controller
             }
             $html .=    '<tr>
                             <td style="border: 1px solid black; font-weight:bold;">Nội Trú</td>
-                            <td style="border: 1px solid black">Mỗi bệnh /thương tật <br> '.$value->RT_DIAGNOSIS->diag_desc_vn.'</td>
+                            <td style="border: 1px solid black">Mỗi bệnh /thương tật </td>
                             <td style="border: 1px solid black"></td>
                             <td style="border: 1px solid black"></td>
                         </tr>
@@ -520,7 +520,7 @@ class ClaimController extends Controller
                         </tr>';
             }
             $html .=    '<tr>
-                            <td style="border: 1px solid black">'.$value->RT_DIAGNOSIS->diag_desc_vn.'<br>'.$content.'</td>
+                            <td style="border: 1px solid black">'.$content.'</td>
                             <td style="border: 1px solid black">'.$content_limit.'</td>
                             <td style="border: 1px solid black">'.formatPrice($value->pres_amt).'</td>
                             <td style="border: 1px solid black">'.formatPrice($value->app_amt).'</td>
