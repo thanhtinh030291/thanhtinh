@@ -250,15 +250,15 @@ function IOPDiag($HBS_CL_CLAIM){
                 case 'BENEFIT_TYPE_OP':
                     $from_date = Carbon\Carbon::parse($value->incur_date_from)->format('d/m/Y');
                     $to_date = Carbon\Carbon::parse($value->incur_date_to)->format('d/m/Y');
-                    $IOPDiag[] = "- Chẩn đoán: " . $value->RT_DIAGNOSIS->diag_desc_vn ." <br>
+                    $IOPDiag[] = "Chẩn đoán: " . $value->RT_DIAGNOSIS->diag_desc_vn ." <br>
                                 Ngày khám: $from_date tại ". $value->prov_name . ".";
 
                     break;
                 case 'BENEFIT_TYPE_IP':
                     $from_date = Carbon\Carbon::parse($value->incur_date_from)->format('d/m/Y');
                     $to_date = Carbon\Carbon::parse($value->incur_date_to)->format('d/m/Y');
-                    $IOPDiag[] = "- Chẩn đoán: ". $value->RT_DIAGNOSIS->diag_desc_vn ." <br>
-                            Ngày nhập viện: $from_date , ngày xuất viện :  $to_date tại ". $value->prov_name. ".";
+                    $IOPDiag[] = "Chẩn đoán: ". $value->RT_DIAGNOSIS->diag_desc_vn ." <br>
+                            Ngày nhập viện: $from_date, ngày xuất viện:  $to_date tại ". $value->prov_name. ".";
                     break;
                 default:
 
