@@ -38,15 +38,15 @@ return[
         3 => 'Repair Completed'
     ],
     'content_ip' => [
-        'ANES' => 'Chi phí phẫu thuật ',
-        'OPR' => 'Chi phí phẫu thuật ',
+        'ANES' => 'Chi phí phẫu thuật',
+        'OPR' => 'Chi phí phẫu thuật',
         'SUR' => 'Chi phí phẫu thuật',
 
-        'HSP' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
-        'HVIS' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
-        'IMIS' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
-        'PORX' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
-        'POSH' => 'Các chi phí nội trú khác , Điều trị trước và sau khi nằm viện ,Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'HSP' => 'Các chi phí nội trú khác, Điều trị trước và sau khi nằm viện, Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'HVIS' => 'Các chi phí nội trú khác, Điều trị trước và sau khi nằm viện, Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'IMIS' => 'Các chi phí nội trú khác, Điều trị trước và sau khi nằm viện, Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'PORX' => 'Các chi phí nội trú khác, Điều trị trước và sau khi nằm viện, Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
+        'POSH' => 'Các chi phí nội trú khác, Điều trị trước và sau khi nằm viện, Phí khám bệnh hằng ngày của Bác sĩ/Bác sĩ chuyên khoa',
 
         'RB' => 'Tiền phòng và ăn uống',
 

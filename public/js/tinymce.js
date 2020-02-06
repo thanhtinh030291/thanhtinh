@@ -4,7 +4,7 @@ var editor_config = {
     selector: "textarea.editor",
     branding: false,
     
-    fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
+    fontsize_formats: "8pt 10pt 11pt 12pt 14pt 18pt 24pt 36pt",
     plugins: [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",

@@ -189,7 +189,7 @@ function payMethod($HBS_CL_CLAIM){
     $info_reciever = "";
     $banking = "";
     $notify = "";
-    //dd($HBS_CL_CLAIM->payMethod);
+   
     switch ($HBS_CL_CLAIM->payMethod) {
         case 'CL_PAY_METHOD_TT':
             $name_reciever = $HBS_CL_CLAIM->member->cl_pay_acct_name;
@@ -200,7 +200,7 @@ function payMethod($HBS_CL_CLAIM){
         case 'CL_PAY_METHOD_CA':
             $name_reciever = $HBS_CL_CLAIM->member->cash_beneficiary_name;
             $info_reciever = "CMND/Căn cước công dân: " .$HBS_CL_CLAIM->member->cash_id_passport_no.', ngày cấp:  
-            '.$HBS_CL_CLAIM->member->cash_id_passport_date_of_issue.', nơi cấp: '. $HBS_CL_CLAIM->member->cash_id_passport_date_of_issue;
+            '.Carbon\Carbon::parse($HBS_CL_CLAIM->member->cash_id_passport_date_of_issue)->format('d/m/Y').', nơi cấp: '. $HBS_CL_CLAIM->member->cash_id_passport_issue_place;
             $banking = $HBS_CL_CLAIM->member->cash_bank_name.', '.$HBS_CL_CLAIM->member->cash_bank_branch.', '.$HBS_CL_CLAIM->member->cash_bank_city ;
             $notify = "Quý khách vui lòng mang theo CMND đến Ngân hàng nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán";
             break;
