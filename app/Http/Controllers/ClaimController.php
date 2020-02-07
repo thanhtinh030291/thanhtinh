@@ -478,7 +478,11 @@ class ClaimController extends Controller
                 case 'EXTB':
                 case 'ICU':
                 case 'HNUR':
-                    $range_pay = " Tối đa ".formatPrice($limit['amt'])." cho mỗi Bệnh tật/Thương tật, mỗi năm";
+                    $range_pay = " Tối đa ".formatPrice($limit['amt'])." mỗi ngày";
+                    break;
+                case 'ER':
+                case 'TDAM':
+                    $range_pay = " Tối đa ".formatPrice($limit['amt'])."  cho mỗi Tai nạn, mỗi năm";
                     break;
                 default:
                     $range_pay = " Tối đa ".formatPrice($limit['amt']);
