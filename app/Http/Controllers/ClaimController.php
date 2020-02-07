@@ -374,7 +374,7 @@ class ClaimController extends Controller
         $letter = LetterTemplate::findOrFail($letter_template_id);
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->applicantName}", '-');
+        $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
         $IOPDiag = IOPDiag($HBS_CL_CLAIM);
 
         $police = $HBS_CL_CLAIM->Police;
@@ -418,10 +418,10 @@ class ClaimController extends Controller
         $sum_app_amt = 0;
         $html = '
         <style type="text/css">
-            table { page-break-inside:auto }
-            tr    { page-break-inside:avoid; page-break-after:auto }
-            thead { display:table-header-group }
-            tfoot { display:table-footer-group }
+            table { page-break-inside:auto ; font-size: 11pt; font-family: arial, helvetica, sans-serif;}
+            tr    { page-break-inside:avoid; page-break-after:auto ; font-size: 11pt; font-family: arial, helvetica, sans-serif;}
+            thead { display:table-header-group ; font-size: 11pt; font-family: arial, helvetica, sans-serif;}
+            tfoot { display:table-footer-group ; font-size: 11pt; font-family: arial, helvetica, sans-serif;}
         </style>
                 <table style=" border: 1px solid black; border-collapse: collapse;">
                     <thead>
