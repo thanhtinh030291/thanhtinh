@@ -55,11 +55,12 @@ class ReasonRejectPolicy
      * Determine whether the user can update the terms.
      *
      * @param  \App\User  $user
-     * @param  \App\Term  $terms
+     * @param  \App\ReasonReject $reasonReject
      * @return mixed
      */
     public function update(User $user, ReasonReject $reasonReject)
     {
+        
         if ($user->can('add_reason_reject')) {
             return true;
         }

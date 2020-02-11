@@ -106,12 +106,12 @@ class LetterTemplateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(reasonInjectRequest $request, $id)
+    public function update(reasonInjectRequest $request, LetterTemplate $letterTemplate)
     {
         $data = $request->except([]);
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
-        LetterTemplate::updateOrCreate(['id' => $id], $data);
+        LetterTemplate::updateOrCreate(['id' => $letterTemplate->id], $data);
 
         $request->session()->flash('status', __('message.update_success')); 
         return redirect('/admin/letter_template');
