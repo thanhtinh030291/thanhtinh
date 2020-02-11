@@ -376,7 +376,7 @@ class ClaimController extends Controller
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
         $IOPDiag = IOPDiag($HBS_CL_CLAIM);
-
+        $benefitOfClaim = benefitOfClaim($HBS_CL_CLAIM);
         $police = $HBS_CL_CLAIM->Police;
 
         $policyHolder = $HBS_CL_CLAIM->policyHolder;
@@ -393,6 +393,7 @@ class ClaimController extends Controller
 
         $content = $letter->template;
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
+        $content = str_replace('[[$benefitOfClaim]]', $benefitOfClaim , $content);
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
         $content = str_replace('[[$PRefNo]]', $police->pocy_ref_no, $content);
         $content = str_replace('[[$PhName]]', $policyHolder->poho_name_1, $content);

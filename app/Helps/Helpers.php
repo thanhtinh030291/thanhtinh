@@ -270,6 +270,29 @@ function IOPDiag($HBS_CL_CLAIM){
     return $IOPDiag;
 }
 
+// print letter benefitOfClaim
+
+function benefitOfClaim($HBS_CL_CLAIM){
+   
+    $benefitOfClaim = [];
+        foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $key => $value) {
+            switch ($value->PD_BEN_HEAD->scma_oid_ben_type) {
+                case 'BENEFIT_TYPE_DT':
+                    $benefitOfClaim[] = 'chăm sóc răng';
+                    break;
+                case 'BENEFIT_TYPE_OP':
+                    $benefitOfClaim[] = 'ngoại trú';
+                    break;
+                default:
+                    $benefitOfClaim[] = 'nội trú';
+                    break;
+            }
+        }
+    $benefitOfClaim = implode(', ', array_unique($benefitOfClaim));
+    return $benefitOfClaim;
+}
+
+
 // print CRRMArk AND TERM
 
 function CSRRemark_TermRemark($claim){
