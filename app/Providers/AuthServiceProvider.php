@@ -9,6 +9,8 @@ use App\Term;
 use App\Policies\TermPolicy;
 use App\ReasonReject;
 use App\Policies\ReasonRejectPolicy;
+use App\LetterTemplate;
+use App\Policies\LetterTemplatePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -25,6 +27,7 @@ class AuthServiceProvider extends ServiceProvider
         Product::class => ProductPolicy::class,
         Term::class => TermPolicy::class,
         ReasonReject::class => ReasonRejectPolicy::class,
+        LetterTemplate::class => LetterTemplatePolicy::class,
     ];
 
     /**

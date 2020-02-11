@@ -14,6 +14,7 @@ class LetterTemplateController extends Controller
 {
     public function __construct()
     {
+        $this->authorizeResource(LetterTemplate::class);
         parent::__construct();
     }
     /**
