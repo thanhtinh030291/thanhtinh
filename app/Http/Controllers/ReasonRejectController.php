@@ -15,7 +15,7 @@ class ReasonRejectController extends Controller
     
     public function __construct()
     {
-       
+        $this->authorizeResource(ReasonReject::class);
         parent::__construct();
     }
     /**

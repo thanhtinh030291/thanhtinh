@@ -403,8 +403,8 @@ class ClaimController extends Controller
         $content = str_replace('[[$payMethod]]', $payMethod, $content);
         $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $HBS_CL_CLAIM->sumAppAmt) , $content);
         if($CSRRemark){
-            $content = str_replace('[[$CSRRemark]]', implode(' ',$CSRRemark) , $content);
-            $content = str_replace('[[$TermRemark]]', implode(' ',array_unique($TermRemark)) , $content);
+            $content = str_replace('[[$CSRRemark]]', implode('<br>',$CSRRemark) , $content);
+            $content = str_replace('[[$TermRemark]]', implode('<br>',array_unique($TermRemark)) , $content);
         }
         
         
