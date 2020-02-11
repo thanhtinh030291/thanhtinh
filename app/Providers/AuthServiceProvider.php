@@ -24,7 +24,7 @@ class AuthServiceProvider extends ServiceProvider
         Claim::class => ClaimPolicy::class,
         Product::class => ProductPolicy::class,
         Term::class => TermPolicy::class,
-        
+        ReasonReject::class => ReasonRejectPolicy::class,
     ];
 
     /**
