@@ -450,60 +450,64 @@ class ClaimController extends Controller
                     $OP[] = $valueCL_LINE;
                     break;
                 default:
-                    $IP[] = $valueCL_LINE;
+                    $dateic = Carbon::parse($valueCL_LINE->incur_date_from)->format('dmy');
+                    $hopital = Str::slug($valueCL_LINE->prov_name,'-');
+                    $IP["$dateic-$hopital"][] = $valueCL_LINE;
                     break;
             }
         }
         $html .= '<tbody>';
             // nội trú
-        foreach ($IP as $key => $value) {
-
-            $content =config('constants.content_ip.'.$value->PD_BEN_HEAD->ben_head);
-            $range_pay = "";
-            $limit = $this->getlimitIP($value);
-            switch ($value->PD_BEN_HEAD->ben_head) {
-                case 'ANES':
-                case 'OPR':
-                case 'SUR':
-                    $range_pay = " Tối đa ".formatPrice($limit['amt'])." cho mỗi Bệnh tật/Thương tật, mỗi cuộc phẫu thuật";
-                    break;
-                case 'HSP':
-                case 'HVIS':
-                case 'IMIS':
-                case 'PORX':
-                case 'POSH':
-                case 'LAMB':
-                    $range_pay = " Tối đa ".formatPrice($limit['amt'])." cho mỗi Bệnh tật/Thương tật, mỗi năm";
-                    break;
-                case 'RB':
-                case 'EXTB':
-                case 'ICU':
-                case 'HNUR':
-                    $range_pay = " Tối đa ".formatPrice($limit['amt'])." mỗi ngày";
-                    break;
-                case 'ER':
-                case 'TDAM':
-                    $range_pay = " Tối đa ".formatPrice($limit['amt'])."  cho mỗi Tai nạn, mỗi năm";
-                    break;
-                default:
-                    $range_pay = " Tối đa ".formatPrice($limit['amt']);
-                    break;
+        foreach ($IP as $keyIP => $valueIP) {
+            $html .= '<tr>
+                    <td style="border: 1px solid black; font-weight:bold;">Nội Trú</td>
+                    <td style="border: 1px solid black">Mỗi bệnh /thương tật </td>
+                    <td style="border: 1px solid black"></td>
+                    <td style="border: 1px solid black"></td>
+                </tr>';
+            foreach ($valueIP as $key => $value) {
+                $content =config('constants.content_ip.'.$value->PD_BEN_HEAD->ben_head);
+                $range_pay = "";
+                $limit = $this->getlimitIP($value);
+                switch ($value->PD_BEN_HEAD->ben_head) {
+                    case 'ANES':
+                    case 'OPR':
+                    case 'SUR':
+                        $range_pay = " Tối đa ".formatPrice($limit['amt'])." cho mỗi Bệnh tật/Thương tật, mỗi cuộc phẫu thuật";
+                        break;
+                    case 'HSP':
+                    case 'HVIS':
+                    case 'IMIS':
+                    case 'PORX':
+                    case 'POSH':
+                    case 'LAMB':
+                        $range_pay = " Tối đa ".formatPrice($limit['amt'])." cho mỗi Bệnh tật/Thương tật, mỗi năm";
+                        break;
+                    case 'RB':
+                    case 'EXTB':
+                    case 'ICU':
+                    case 'HNUR':
+                        $range_pay = " Tối đa ".formatPrice($limit['amt'])." mỗi ngày";
+                        break;
+                    case 'ER':
+                    case 'TDAM':
+                        $range_pay = " Tối đa ".formatPrice($limit['amt'])."  cho mỗi Tai nạn, mỗi năm";
+                        break;
+                    default:
+                        $range_pay = " Tối đa ".formatPrice($limit['amt']);
+                        break;
+                }
+                $html .=    '
+                            <tr>
+                                <td style="border: 1px solid black">'.$content.'</td>
+                                <td style="border: 1px solid black">'.$range_pay.'</td>
+                                <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
+                                <td style="border: 1px solid black ; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
+                            </tr>
+                            ';
+                $sum_pre_amt += $value->pres_amt;
+                $sum_app_amt += $value->app_amt;
             }
-            $html .=    '<tr>
-                            <td style="border: 1px solid black; font-weight:bold;">Nội Trú</td>
-                            <td style="border: 1px solid black">Mỗi bệnh /thương tật </td>
-                            <td style="border: 1px solid black"></td>
-                            <td style="border: 1px solid black"></td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid black">'.$content.'</td>
-                            <td style="border: 1px solid black">'.$range_pay.'</td>
-                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
-                            <td style="border: 1px solid black ; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
-                        </tr>
-                        ';
-            $sum_pre_amt += $value->pres_amt;
-            $sum_app_amt += $value->app_amt;
         }
         // ngoại trú
         foreach ($OP as $key => $value) {
