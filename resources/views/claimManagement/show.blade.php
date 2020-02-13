@@ -48,6 +48,12 @@ $totalAmount = 0;
                             {{ Form::label('type',  __('message.id_claim'), array('class' => 'col-md-4')) }}
                             {{ Form::label('type', $data->code_claim , array('class' => 'col-md-8')) }}
 
+                            {{ Form::label('type',  'Claim Code', array('class' => 'col-md-4')) }}
+                            {{ Form::label('type', $data->code_claim_show , array('class' => 'col-md-8')) }}
+
+                            {{ Form::label('type',  'Barcode', array('class' => 'col-md-4')) }}
+                            {{ Form::label('type', $data->barcode , array('class' => 'col-md-8')) }}
+
                             {{ Form::label('type',  __('message.account_create'), array('class' => 'col-md-4')) }}
                             {{ Form::label('type', $admin_list[$data->updated_user] , array('class' => 'col-md-8')) }} 
 
@@ -83,22 +89,70 @@ $totalAmount = 0;
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Name Letter</th>
-                            <th>{{ __('message.account_create')}}</th>
-                            <th>{{ __('message.date_created')}}</th>
+                            <th>User Create</th>
+                            <th>Created At</th>
                             <th>Status</th>
-                            <th>Note</th>
+                            <th>Note QC</th>
+                            <th>Wait for the check</th>
+                            
                             <th class='text-center'>{{ __('message.control')}}</th>
                         </tr>
                     </thead>
                     
                     @foreach ($data->export_letter as $item)
                         <tr id="empty_item" >
+                            <td>{{$item->id}}</td>
                             <td>{{$item->letter_template->name}}</td>
                             <td>{{$item->userCreated->name}}</td>
                             <td>{{ $item->created_at }}</td>
                             <td>
-                                {{ data_get(config('constants.statusExportText'),  $item->status , "none") }}
+                                
+                                @switch($item->status)
+                                    @case(config('constants.statusExportValue.New'))
+                                        <h4 class="p-0 text-success">{{ data_get(config('constants.statusExportText'),  $item->status) }} </h4>
+                                    @break
+
+                                    @case(config('constants.statusExportValue.Approved'))
+                                        <h4 class="p-0 text-primary">{{ data_get(config('constants.statusExportText'),  $item->status) }} </h4>
+                                    @break
+
+                                    @case(config('constants.statusExportValue.Dis_Approved'))
+                                        <h4 class="p-0 text-danger">{{ data_get(config('constants.statusExportText'),  $item->status) }} </h4>
+                                    @break
+                                        
+                                    @default
+                                        <h4 class="p-0 text-warning">{{ data_get(config('constants.statusExportText'),  $item->status) }} </h4>
+                                @endswitch
+
+                                @if ($item->status == config('constants.statusExportValue.Approved'))
+                                    @if($item->wait)
+                                        {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$item->wait['user']], ['data-toggle' => "modal" ,  
+                                        'data-target' => "#approvedModal",
+                                        'type' => 'button', 
+                                        'class' => 'btn btn-success btn-xs' , 
+                                        'onclick' => 'approved(this);',
+                                        'data-claim_id' => $data->id,
+                                        'data-note' => $item->approve['data'],
+                                        'data-status' => $item->status,
+                                        'data-id' => $item->id
+                                        ]) !!}
+                                        <br>
+                                        {{$item->approve['created_at']}}
+                                        
+                                        {!! Form::button('Add Note', ['data-toggle' => "modal" ,  
+                                        'data-target' => "#noteMantisModal",
+                                        'type' => 'button', 
+                                        'class' => 'btn btn-success btn-xs' , 
+                                        'onclick' => 'approved(this);',
+                                        'data-claim_id' => $data->id,
+                                        'data-note' => $item->approve['data'],
+                                        'data-status' => $item->status,
+                                        'data-id' => $item->id
+                                        ]) !!}
+                                    @endif
+                                @endif
                             </td>
                             <td>
                                 @foreach ($item->note as $note)
@@ -106,24 +160,43 @@ $totalAmount = 0;
                                         {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$note['user']], ['data-toggle' => "modal" ,  
                                         'data-target' => "#noteModal",
                                         'type' => 'button', 
-                                        'class' => 'btn btn-success btn-xs' , 
+                                        'class' => 'btn btn-danger btn-xs' , 
                                         'onclick' => 'note(this);',
                                         'data-claim_id' => $data->id,
-                                        'data-note' => $note['note'],
+                                        'data-note' => $note['data'],
                                         'data-status' => $item->status,
                                         'data-id' => $item->id
                                         ]) !!}
+                                        <br>
                                         {{$note['created_at']}}
                                     </div>
                                 @endforeach
 
                             </td>
                             <td>
+                                @if ($item->status == config('constants.statusExportValue.New') || $item->status == config('constants.statusExportValue.Repair_Completed'))
+                                    @if($item->wait)
+                                        {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$item->wait['user']], ['data-toggle' => "modal" ,  
+                                        'data-target' => "#noteModal",
+                                        'type' => 'button', 
+                                        'class' => 'btn btn-success btn-xs' , 
+                                        'onclick' => 'note(this);',
+                                        'data-claim_id' => $data->id,
+                                        'data-note' => $item->wait['data'],
+                                        'data-status' => $item->status,
+                                        'data-id' => $item->id
+                                        ]) !!}
+                                        <br>
+                                        {{$item->wait['created_at']}}
+                                    @endif
+                                @endif
+                            </td>
+                            <td>
                                 {{ Form::open(array('url' => '/admin/exportLetter', 'method' => 'POST')) }}
                                     {{ Form::hidden('claim_id', $data->id ) }}
                                     {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
                                 <div class='btn-group'>
-                                    {!! Form::button('<i class="fa fa-eye-slash"></i> Preview', ['data-toggle' => "modal" ,  
+                                    {!! Form::button('<i class="fa fa-eye-slash"></i>', ['data-toggle' => "modal" ,  
                                         'data-target' => "#previewModal",
                                         'type' => 'button', 
                                         'class' => 'btn btn-success btn-xs' , 
@@ -134,7 +207,7 @@ $totalAmount = 0;
                                         'data-id' => $item->id
                                         ]) 
                                     !!}
-                                    {!! Form::button('<i class="fa fa-print"></i> Print', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
+                                    {!! Form::button('<i class="fa fa-print"></i>', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
                                 </div>
                                 {!! Form::close() !!}
                             </td>
@@ -221,8 +294,8 @@ $totalAmount = 0;
         <!-- Modal content-->
         <div class="modal-content">
             {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
-                {{ Form::hidden('id', null ,['id' => 'export_letter_id']) }}
-                {{ Form::hidden('claim_id', null ,['id' => 'ex_claim_id']) }}
+                {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
+                {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
 
                 <div class="modal-header">
                     <h4 class="modal-title">Preview</h4>
@@ -232,7 +305,7 @@ $totalAmount = 0;
                     {{ Form::textarea('template', old('template'), ['id' => 'preview_letter', 'class' => 'form-control editor_default']) }}<br>
                 </div>
                 <div class="modal-footer">
-                    {{ Form::select('status', config('constants.statusExportText'), null, ['id' => 'status_letter', 'class' => 'form-control editor_default', ]) }}<br>
+                    {{ Form::select('status', $listStatus, null, [ 'class' => 'status_letter form-control editor_default', ]) }}<br>
                     
                         <button class="btn btn-danger">{{ __('message.yes')}} </button>
                         <button type="button" class="btn btn-secondary btn-cancel-delete" 
@@ -249,7 +322,8 @@ $totalAmount = 0;
         <!-- Modal content-->
         <div class="modal-content">
             {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
-                
+                {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
+                {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
 
                 <div class="modal-header">
                     <h4 class="modal-title">Note</h4>
@@ -259,9 +333,9 @@ $totalAmount = 0;
                     {{ Form::textarea('template', old('template'), ['id' => 'note_letter', 'class' => 'form-control editor_default']) }}<br>
                 </div>
                 <div class="modal-footer">
-                    {{-- {{ Form::select('status', config('constants.statusExportText'), null, ['id' => 'status_letter', 'class' => 'form-control editor_default', ]) }}<br> --}}
+                   {{ Form::select('status', $listStatus, null, [ 'class' => 'status_letter form-control editor_default', ]) }}<br>
                     
-                        {{-- <button class="btn btn-danger">{{ __('message.yes')}} </button> --}}
+                        <button class="btn btn-danger">{{ __('message.yes')}} </button> 
                         <button type="button" class="btn btn-secondary btn-cancel-delete" 
                             data-dismiss="modal">{{ __('message.no') }}</button>
                 </div>
@@ -270,7 +344,74 @@ $totalAmount = 0;
     </div>
 </div>
     
+{{-- Modal approved--}}
+<div id="approvedModal" class="modal fade bd-example-modal-lg" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
+                {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
+                {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Approve</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    {{ Form::textarea('template', old('template'), ['id' => 'approve_letter', 'class' => 'form-control editor_default']) }}<br>
+                </div>
+                <div class="modal-footer">
+                </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
+
+
+{{-- Modal add note mantis--}}
+<div id="noteMantisModal" class="modal fade bd-example-modal-lg" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
+                {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
+                {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Add note Mantis</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                                            {{-- table --}}
+                                            <div class="table-responsive">
+                                                <table class="table" id="debitNote-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Select</th>
+                                                            <th>Note ID </th>
+                                                            <th>Decription</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($note_mantis as $value)
+                                                        <tr>
+                                                            <td><input type="radio" name="selectNote" value="{{data_get($value, 'note')}}"></td>
+                                                            <td>{{data_get($value, 'note')}}</td>
+                                                            <td>{{data_get($value, 'description')}}</td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
 @endsection
+
 
 @section('scripts')
 <script src="{{asset('js/fileinput.js')}}"></script>
@@ -286,9 +427,9 @@ $totalAmount = 0;
         var letter_template_id = e.dataset.letter_template_id;
         var status = e.dataset.status;
         var id = e.dataset.id;
-        $('#status_letter').val(status).change();
-        $('#export_letter_id').val(id);
-        $('#ex_claim_id').val(claim_id);
+        $('.status_letter').val(status).change();
+        $('.export_letter_id').val(id);
+        $('.ex_claim_id').val(claim_id);
         
         tinymce.get("preview_letter").setContent("");
         $.ajax({
@@ -309,11 +450,27 @@ $totalAmount = 0;
         var status = e.dataset.status;
         var id = e.dataset.id;
         var note = e.dataset.note;
-        $('#status_letter').val(status).change();
-        $('#export_letter_id').val(id);
-        $('#ex_claim_id').val(claim_id);
+        $('.status_letter').val(status).change();
+        $('.export_letter_id').val(id);
+        $('.ex_claim_id').val(claim_id);
         
         tinymce.get("note_letter").setContent(note);
     }
+
+    function approved(e){
+        
+        var claim_id =  e.dataset.claim_id;
+        var letter_template_id = e.dataset.letter_template_id;
+        var status = e.dataset.status;
+        var id = e.dataset.id;
+        var note = e.dataset.note;
+        console.log(note);
+        $('.status_letter').val(status).change();
+        $('.export_letter_id').val(id);
+        $('.ex_claim_id').val(claim_id);
+        
+        tinymce.get("approve_letter").setContent(note);
+    }
+
 </script>
 @endsection

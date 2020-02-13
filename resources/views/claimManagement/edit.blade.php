@@ -35,6 +35,9 @@
                                     <h5 class="card-header">Applicant Information</h5>
                                     <div class="card-body" id="result_applicant">
                                 </div>
+                                {{ Form::hidden('code_claim_show', $data->code_claim_show, array('class' => 'code_claim_show labelas')) }}
+                                {{ Form::label('barcode', 'barcode', array('class' => 'labelas')) }}
+                                {{ Form::text('barcode', $data->barcode, array('id'=>'barcode', 'class' => 'barcode form-control')) }}
                         </div>
                             </div>
 

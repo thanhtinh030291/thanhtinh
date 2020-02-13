@@ -33,8 +33,8 @@ class AjaxCommonController extends Controller
         $data = [];
         if($request->has('search')){
             $search = $request->search;
-            $datas = HBS_CL_CLAIM::findOrFail($search)->member;
-            return response()->json($datas);
+            $datas = HBS_CL_CLAIM::findOrFail($search);
+            return response()->json(['member' => $datas->member , 'claim' =>$datas ]);
         }
         return response()->json($data);
     }

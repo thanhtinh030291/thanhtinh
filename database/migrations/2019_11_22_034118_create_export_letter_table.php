@@ -18,6 +18,8 @@ class CreateExportLetterTable extends Migration
             $table->integer('claim_id')->nullable();
             $table->integer('letter_template_id')->nullable();
             $table->integer('status')->default('0');
+            $table->longText('approve')->nullable();
+            $table->longText('wait')->nullable();
             $table->longText('note')->nullable();
             $table->integer('created_user');
             $table->integer('updated_user');

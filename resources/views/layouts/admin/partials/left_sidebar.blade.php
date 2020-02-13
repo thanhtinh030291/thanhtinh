@@ -64,6 +64,10 @@
                             <a  class="{{ setActive('admin/role') }}" href="{{ url('admin/role') }}">
                             <span> {{ __('message.role_management')}}</span></a>
                         </li>
+                        <li class="{{ setActive('admin/permiss') }}">
+                            <a  class="{{ setActive('admin/permiss') }}" href="{{ url('admin/permiss') }}">
+                            <span> Permission Managerment</span></a>
+                        </li>
                     </ul>
                 </li>
                 @endrole

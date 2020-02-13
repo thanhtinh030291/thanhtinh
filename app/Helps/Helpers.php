@@ -1,5 +1,22 @@
 <?php
 use Illuminate\Support\Str;
+
+function GetApi($url)
+{
+    $client = new \GuzzleHttp\Client();
+    $request = $client->get($url);
+    $response = $request->getBody();
+    return $response;
+}
+
+
+function PostApi($url,$body) {
+    $client = new \GuzzleHttp\Client();
+    $response = $client->createRequest("POST", $url, ['body'=>$body]);
+    $response = $client->send($response);
+    return $response;
+}
+
 function sendEmail($user_send, $data , $template , $subject)
 {
     if (!data_get($user_send, 'email')) {

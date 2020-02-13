@@ -16,6 +16,8 @@ class CreateClaimTable extends Migration
         Schema::create('claim', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('code_claim');
+            $table->string('code_claim_show')->nullable();;
+            $table->string('barcode')->nullable();            
             $table->string('url_file')->nullable();
             $table->integer('created_user');
             $table->integer('updated_user');

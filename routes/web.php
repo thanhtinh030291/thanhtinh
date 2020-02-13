@@ -30,6 +30,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/read_all_messages', 'SendMessageController@readAll')->name('readAll');
 
         Route::resource('claim', 'ClaimController');
+        Route::get('/claim/barcode/{barcode}', 'ClaimController@barcode_link');
+
         Route::post('/search', 'ClaimController@searchFullText')->name('search');
         Route::post('/search2', 'ClaimController@searchFullText2')->name('search2');
         Route::post('/template', 'ClaimController@template')->name('template');
@@ -47,8 +49,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('importExportView', 'CSVController@importExportView')->middleware(['role:Admin']);
         Route::post('import', 'CSVController@import')->name('import')->middleware(['role:Admin']);
         Route::resource('admins', 'AdminController')->middleware(['role:Admin']);
-        Route::resource('role', 'RoleController')->middleware(['role:Admin']);
-        Route::resource('permission', 'PermissionController')->middleware(['role:Admin']);
+        Route::resource('role', 'PermissionController')->middleware(['role:Admin']);
+        Route::resource('permiss', 'PermissController')->middleware(['role:Admin']);
 
         //ajax
         Route::get('/dataAjaxHBSClaim', 'AjaxCommonController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');

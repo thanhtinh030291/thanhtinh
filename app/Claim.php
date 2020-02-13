@@ -12,7 +12,12 @@ class Claim extends BaseModel
     
     public function export_letter()
     {
-        return $this->hasMany('App\ExportLetter', 'claim_id');
+        return $this->hasMany('App\ExportLetter', 'claim_id')->orderBy('id', 'desc');
+    }
+
+    public function export_letter_last()
+    {
+        return $this->hasOne('App\ExportLetter', 'claim_id')->orderBy('id', 'desc')->latest();
     }
 
     public function item_of_claim()

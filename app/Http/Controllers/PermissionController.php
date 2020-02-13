@@ -10,10 +10,11 @@ use Auth;
 use Illuminate\Support\Arr;
 
 
-class RoleController extends Controller
+class PermissionController extends Controller
 {
     public function __construct()
     {
+        
         parent::__construct();
     }
     /**

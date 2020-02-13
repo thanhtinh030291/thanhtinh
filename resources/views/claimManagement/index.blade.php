@@ -27,17 +27,19 @@
             </div>
             <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">                           
-                            {{ Form::label('name', __('message.id_claim'), array('class' => 'labelas')) }}
-                            {{ Form::select('code_claim',[], $finder['code_claim'], ['class' => 'code_claim form-control']) }} <br/>                          
-                        </div>
+                     
                         <div class="col-md-6">
+                            {{ Form::label('name', __('message.id_claim'), array('class' => 'labelas')) }}
+                            {{ Form::select('code_claim',[], $finder['code_claim'], ['class' => 'code_claim form-control']) }}
                             {{ Form::label('created_user', __('message.account_create'), ['class' => 'labelas']) }}
                             {{ Form::select('created_user', $admin_list, data_get($finder ,'created_user'), ['id' => 'created_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
                             {{ Form::label('created_at', __('message.date_created'), ['class' => 'labelas']) }}
                             {{ Form::text('created_at', data_get($finder,'created_at'), ['class' => 'form-control datepicker']) }}
                         </div>
                         <div class="col-md-6">
+                            {{ Form::label('letter_status', 'Latest Letter status', ['class' => 'labelas']) }}
+                            {{ Form::select('letter_status', config('constants.statusExportText'), data_get($finder, 'letter_status'), ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
+
                             {{ Form::label('updated_user', __('message.account_edit'), ['class' => 'labelas']) }}
                             {{ Form::select('updated_user', $admin_list, data_get($finder, 'updated_user'), ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
                             {{ Form::label('updated_at', __('message.date_updated'), ['class' => 'labelas']) }}
@@ -65,6 +67,7 @@
                         <thead>
                             <tr>
                                 <th>{{ __('message.id_claim')}}</th>
+                                <th>Latest Letter status</th>
                                 <th>{{ __('message.account_create')}}</th>
                                 <th>{{ __('message.account_edit')}}</th>
                                 <th>{{ __('message.date_created')}}</th>
@@ -76,6 +79,26 @@
                         <tbody>
                             <tr>
                                 <td>{{$data->codeClaimHBS}}</td>
+                                <td>
+                                    @if(isset($data->export_letter[0]->status))
+                                        @switch($data->export_letter[0]->status)
+                                            @case(config('constants.statusExportValue.New'))
+                                                <h4 class="p-0 text-success">{{ data_get(config('constants.statusExportText'),  $data->export_letter_last->status) }} </h4>
+                                            @break
+
+                                            @case(config('constants.statusExportValue.Approved'))
+                                                <h4 class="p-0 text-primary">{{ data_get(config('constants.statusExportText'),  $data->export_letter_last->status) }} </h4>
+                                            @break
+
+                                            @case(config('constants.statusExportValue.Dis_Approved'))
+                                                <h4 class="p-0 text-danger">{{ data_get(config('constants.statusExportText'),  $data->export_letter_last->status) }} </h4>
+                                            @break
+                                                
+                                            @default
+                                                <h4 class="p-0 text-warning">{{ data_get(config('constants.statusExportText'),  $data->export_letter_last->status) }} </h4>
+                                        @endswitch
+                                    @endif
+                                </td>
                                 <td>{{ $admin_list[$data->created_user] }}</td>
                                 <td>{{ $admin_list[$data->updated_user] }}</td>
                                 <td>{{ $data->created_at }}</td>

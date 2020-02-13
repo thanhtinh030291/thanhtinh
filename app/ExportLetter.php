@@ -10,6 +10,8 @@ class ExportLetter extends BaseModel
     protected static $table_static = 'export_letter';
     protected $casts = [
         'note'  => 'array',
+        'wait'  => 'array',
+        'approve' => 'array'
     ];
     protected function castAttribute($key, $value)
     {

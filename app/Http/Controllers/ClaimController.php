@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use SimilarText\Finder;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use GuzzleHttp\Client;
 class ClaimController extends Controller
 {
     //use Authorizable;
@@ -45,8 +46,23 @@ class ClaimController extends Controller
             'created_at' => $request->created_at,
             'updated_user' => $request->updated_user,
             'updated_at' => $request->updated_at,
+            'letter_status' => $request->letter_status,
         ];
-        $datas = Claim::findByParams($finder)->orderBy('id', 'desc')->paginate($itemPerPage);
+        $conditionExport = function ($q){
+            $q->select('id','claim_id','status');
+        };
+        $conditionHasExport = function ($q) use ($request){
+            //$q->where('status', $request->letter_status);
+        };
+        $datas = Claim::findByParams($finder)
+        ->with(['export_letter_last' => $conditionExport]);
+        $datas = $datas->orderBy('id', 'desc');
+        if($request->letter_status != null){
+            $datas = $datas->whereHas('export_letter_last', $conditionHasExport)->get()->where('export_letter_last.status', $request->letter_status);
+        }
+
+        $datas = $datas->paginate($itemPerPage);
+        //dd($datas);
         return view('claimManagement.index', compact('finder', 'datas', 'admin_list'));
     }
     
@@ -151,16 +167,41 @@ class ClaimController extends Controller
     {
         $data = $claim;
         //dd($data->export_letter);
+        $user = Auth::user();
         $admin_list = User::getListIncharge();
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
         $listReasonReject = ReasonReject::pluck('name', 'id');
         $items = $data->item_of_claim;
         $listLetterTemplate = LetterTemplate::pluck('name', 'id');
-
-        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate']));
+        try {
+            $note_mantis = collect(json_decode(file_get_contents("http://pacific.com/api/get/{$data->barcode}"), true));
+        } catch (Exception $e) {
+            $note_mantis = [];
+        }
+        $listStatus = [];
+        if($user->hasPermissionTo('change_status_claim')){
+            $listStatus = config('constants.statusExportTextClaim');
+        }
+        if($user->hasPermissionTo('change_status_qc')){
+            $listStatus = config('constants.statusExportTextQC');
+        }
+        if($user->hasAnyPermission('change_status_claim' , 'change_status_qc' )){
+            $listStatus = config('constants.statusExportText');
+        }
+        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate', 'listStatus', 'note_mantis']));
     }
 
+    public function barcode_link($barcode)
+    { 
+        $claim = Claim::where('barcode', $barcode)->first();
+        if($claim){
+            return redirect("admin/claim/{$claim->id}");
+        }else{
+            echo 'Đường dẫn chưa hợp lệ.';
+        }
+        
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -269,23 +310,44 @@ class ClaimController extends Controller
     // change
     public function changeStatus(Request $request)
     {
-        
         $claim_id = $request->claim_id;
         $id = $request->id;
         $user = Auth::User();
         $export_letter = ExportLetter::findOrFail($id);
         $export_letter->status = $request->status;
+        $wail = [];
         if($export_letter->note == null){
             $data = [];
         }else{
             $data = $export_letter->note;
         }
-        array_push($data ,
-                                        [  'user' => $user->id,
-                                            'created_at' => Carbon::now()->toDateTimeString(),
-                                            'note' => $request->template
-                                        ]);
-        $export_letter->note = $data;        
+        
+        switch ($request->status) {
+            case config('constants.statusExportValue.New'):
+            case config('constants.statusExportValue.Repair_Completed'):
+
+                $export_letter->wait = [  'user' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'data' => $request->template
+                ];
+                break;
+            case config('constants.statusExportValue.Approved'):
+                $export_letter->approve = [  'user' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'data' => $request->template
+                ];
+                break;
+            default:
+                
+                array_push($data ,
+                [  'user' => $user->id,
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'data' => $request->template
+                ]);
+                $export_letter->note = $data;
+                break;
+        }
+
         $export_letter->save();        
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
@@ -397,7 +459,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
         $content = str_replace('[[$PRefNo]]', $police->pocy_ref_no, $content);
         $content = str_replace('[[$PhName]]', $policyHolder->poho_name_1, $content);
-        $content = str_replace('[[$memberNameCap]]', strtoupper($HBS_CL_CLAIM->memberNameCap), $content);
+        $content = str_replace('[[$memberNameCap]]', $HBS_CL_CLAIM->memberNameCap, $content);
         $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
         $content = str_replace('[[$pstAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt), $content);
         $content = str_replace('[[$apvAmt]]', formatPrice($HBS_CL_CLAIM->sumAppAmt), $content);

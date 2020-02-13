@@ -10,7 +10,7 @@ use Auth;
 use Illuminate\Support\Arr;
 
 
-class RoleController extends Controller
+class PermissController extends Controller
 {
     public function __construct()
     {
@@ -26,7 +26,7 @@ class RoleController extends Controller
         $data['search_params'] = [
             'name' => $request->get('name'),
         ];
-        $listData = Role::where('name','LIKE' , '%' .$data['search_params']['name'] . '%')->orderBy('id', 'desc');
+        $listData = Permission::where('name','LIKE' , '%' .$data['search_params']['name'] . '%')->orderBy('id', 'desc');
         $data['admin_list'] = User::getListIncharge();
         //pagination result
         $data['limit_list'] = config('constants.limit_list');
@@ -34,7 +34,7 @@ class RoleController extends Controller
         $per_page = !empty($data['limit']) ? $data['limit'] : Arr::first($data['limit_list']);
         $data['data']  = $listData->paginate($per_page);
         
-        return view('roleManagement.index', $data);
+        return view('permissManagement.index', $data);
     }
 
     /**
@@ -44,8 +44,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $all_permissions_in_database = Permission::all()->pluck('name','name');
-        return view('roleManagement.create', compact('all_permissions_in_database'));
+        return view('permissManagement.create');
     }
 
     /**
@@ -58,11 +57,10 @@ class RoleController extends Controller
     {
         $userId = Auth::User()->id;
         $data = $request->except([]);
-        $newdata = Role::create($data);
-        $newdata->givePermissionTo($request->_permissions); 
+        $newdata = Permission::create($data);
         $request->session()->flash('status', __('message.create_success')); 
         
-        return redirect('/admin/role');
+        return redirect('/admin/permiss');
     }
 
     /**
@@ -78,7 +76,7 @@ class RoleController extends Controller
         
         $all_permissions_in_database = Permission::all()->pluck('name','name');
 
-        return view('roleManagement.detail', compact('data', 'permissions', 'all_permissions_in_database'));
+        return view('permissManagement.detail', compact('data', 'permissions', 'all_permissions_in_database'));
     }
 
     /**
@@ -89,10 +87,10 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        $data = Role::findOrFail($id);
-        $permissions = $data->permissions()->pluck('id');
-        $all_permissions_in_database = Permission::all()->pluck('name','id');
-        return view('roleManagement.edit', compact('data', 'permissions', 'all_permissions_in_database'));
+        $data = Permission::findOrFail($id);
+       
+        
+        return view('permissManagement.edit', compact('data'));
     }
 
     /**
@@ -105,11 +103,11 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->except([]);
-        $role = Role::updateOrCreate(['id' => $id], $data);
-        $role->permissions()->sync($request->_permissions);
+        $role = Permission::updateOrCreate(['id' => $id], $data);
+        
 
         $request->session()->flash('status', __('message.update_success')); 
-        return redirect('/admin/role');
+        return redirect('/admin/permiss');
     }
 
     /**
@@ -120,7 +118,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        $data = Role::findOrFail($id);
+        $data = Permission::findOrFail($id);
         $data->delete();
         return redirect('/admin/role')->with('status', __('message.delete_success'));
     }
