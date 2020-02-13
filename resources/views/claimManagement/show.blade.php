@@ -418,8 +418,8 @@ $totalAmount = 0;
 <script src="{{ asset('js/format-price.js') }}"></script>
 <script src="{{ asset('js/jquery-ui.js') }}"></script>
 <script src="{{asset('js/popper.min.js')}}" ></script>
-<script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
-<script src="{{ asset('js/tinymce.js') }}"></script>
+<script src="{{ asset('plugins/ckeditor/ckeditor.js') }}"></script>
+<script src="{{ asset('js/ckeditor.js') }}"></script>
 <script>
     function preview(e){
         $(".loader").show();
@@ -454,7 +454,8 @@ $totalAmount = 0;
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
         
-        tinymce.get("note_letter").setContent(note);
+        //tinymce.get("note_letter").setContent(note);
+        CKEDITOR.instances['note_letter'].setData(note);
     }
 
     function approved(e){
@@ -469,7 +470,8 @@ $totalAmount = 0;
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
         
-        tinymce.get("approve_letter").setContent(note);
+        //tinymce.get("approve_letter").setContent(note);
+        CKEDITOR.instances['approve_letter'].setData(note);
     }
 
 </script>
