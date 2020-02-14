@@ -419,8 +419,8 @@ $totalAmount = 0;
 <script src="{{ asset('js/format-price.js') }}"></script>
 <script src="{{ asset('js/jquery-ui.js') }}"></script>
 <script src="{{asset('js/popper.min.js')}}" ></script>
-<script src="{{ asset('plugins/ckeditor/ckeditor.js') }}"></script>
-<script src="{{ asset('js/ckeditor.js') }}"></script>
+<script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('js/tinymce.js') }}"></script>
 <script>
     function preview(e){
         $(".loader").show();
@@ -431,8 +431,8 @@ $totalAmount = 0;
         $('.status_letter').val(status).change();
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
-        
-        CKEDITOR.instances['preview_letter'].setData("");
+        tinymce.get("preview_letter").setContent("");
+        //CKEDITOR.instances['preview_letter'].setData("");
         $.ajax({
         url: '/admin/previewLetter',
         type: 'POST',
@@ -440,7 +440,8 @@ $totalAmount = 0;
         data: {'claim_id' : claim_id , 'letter_template_id' : letter_template_id },
         })
         .done(function(res) {
-            CKEDITOR.instances['preview_letter'].setData(res);
+            tinymce.get("preview_letter").setContent(res);
+            //CKEDITOR.instances['preview_letter'].setData(res);
             $(".loader").fadeOut("slow");
         })
     }
@@ -455,8 +456,8 @@ $totalAmount = 0;
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
         
-        //tinymce.get("note_letter").setContent(note);
-        CKEDITOR.instances['note_letter'].setData(note);
+        tinymce.get("note_letter").setContent(note);
+        //CKEDITOR.instances['note_letter'].setData(note);
     }
 
     function approved(e){
@@ -471,8 +472,8 @@ $totalAmount = 0;
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
         
-        //tinymce.get("approve_letter").setContent(note);
-        CKEDITOR.instances['approve_letter'].setData(note);
+        tinymce.get("approve_letter").setContent(note);
+        //CKEDITOR.instances['approve_letter'].setData(note);
     }
 
 </script>

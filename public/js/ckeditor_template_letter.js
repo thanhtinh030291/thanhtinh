@@ -18,8 +18,9 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'about', groups: [ 'about' ] }
 	];
 	config.extraPlugins = 'addButton';
+	config.extraPlugins = 'font';
 	config.removePlugins = 'easyimage, cloudservices';
-	config.removeButtons = 'Source,HiddenField,ImageButton,Button,Select,Textarea,TextField,CopyFormatting,RemoveFormat,Link,Unlink,Anchor,Flash,Smiley,Iframe,About';
+	config.removeButtons = 'HiddenField,ImageButton,Button,Select,Textarea,TextField,CopyFormatting,RemoveFormat,Link,Unlink,Anchor,Flash,Smiley,Iframe,About';
 };
 
 CKEDITOR.plugins.add( 'addButton', {

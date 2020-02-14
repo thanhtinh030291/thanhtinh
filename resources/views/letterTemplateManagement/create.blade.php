@@ -40,7 +40,7 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('plugins/ckeditor/ckeditor.js') }}"></script>
-<script src="{{ asset('js/ckeditor.js') }}"></script>
+<script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('js/tinymce.js') }}"></script>
 
 @endsection
