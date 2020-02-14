@@ -4,6 +4,7 @@
 @section('stylesheets')
 <link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
 <link href="{{ asset('css/multi_lang.css') }}" media="all" rel="stylesheet" type="text/css"/>
+<link href="{{ asset('css/ckeditor.css') }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -41,7 +42,7 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
-<script src="{{ asset('js/tinymce.js') }}"></script>
+<script src="{{ asset('plugins/ckeditor/ckeditor.js') }}"></script>
+<script src="{{ asset('js/ckeditor.js') }}"></script>
 
 @endsection

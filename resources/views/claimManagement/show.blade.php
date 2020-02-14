@@ -8,6 +8,7 @@ $totalAmount = 0;
 @section('stylesheets')
     <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('css/ckeditor.css')}}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -431,7 +432,7 @@ $totalAmount = 0;
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
         
-        tinymce.get("preview_letter").setContent("");
+        CKEDITOR.instances['preview_letter'].setData("");
         $.ajax({
         url: '/admin/previewLetter',
         type: 'POST',
@@ -439,7 +440,7 @@ $totalAmount = 0;
         data: {'claim_id' : claim_id , 'letter_template_id' : letter_template_id },
         })
         .done(function(res) {
-            tinymce.get("preview_letter").setContent(res);
+            CKEDITOR.instances['preview_letter'].setData(res);
             $(".loader").fadeOut("slow");
         })
     }
