@@ -186,7 +186,8 @@ class ClaimController extends Controller
         if($user->hasPermissionTo('change_status_qc')){
             $listStatus = config('constants.statusExportTextQC');
         }
-        if($user->hasAnyPermission('change_status_claim' , 'change_status_qc' )){
+        if($user->hasPermissionTo('change_status_claim') && $user->hasPermissionTo('change_status_qc')){
+            
             $listStatus = config('constants.statusExportText');
         }
         return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate', 'listStatus', 'note_mantis']));
