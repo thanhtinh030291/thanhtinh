@@ -174,11 +174,14 @@ class ClaimController extends Controller
         $listReasonReject = ReasonReject::pluck('name', 'id');
         $items = $data->item_of_claim;
         $listLetterTemplate = LetterTemplate::pluck('name', 'id');
+       
         try {
-            $note_mantis = collect(json_decode(file_get_contents("http://pacific.com/api/get/{$data->barcode}"), true));
+            $mantis = GetApiMantic("api/rest/issues/{$data->barcode}");
+            $note_mantis = data_get($mantis,'issues.0.notes',[]);
         } catch (Exception $e) {
             $note_mantis = [];
         }
+        
         $listStatus = [];
         if($user->hasPermissionTo('change_status_claim')){
             $listStatus = config('constants.statusExportTextClaim');
@@ -202,6 +205,15 @@ class ClaimController extends Controller
             echo 'Đường dẫn chưa hợp lệ.';
         }
         
+    }
+
+    public function addNote(Request $request){
+        $dataUpdate = [ 
+            'note_id' => $request->note_id
+        ];
+        ExportLetter::updateOrCreate(['id' => $request->id], $dataUpdate);
+        $request->session()->flash('status', __('message.update_claim'));
+        return redirect('/admin/claim/'.$request->claim_id)->withInput();
     }
     /**
      * Show the form for editing the specified resource.

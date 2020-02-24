@@ -68,6 +68,14 @@
                             <a  class="{{ setActive('admin/permiss') }}" href="{{ url('admin/permiss') }}">
                             <span> Permission Managerment</span></a>
                         </li>
+                        <li class="{{ setActive('admin/roleChangeStatuses') }}">
+                            <a  class="{{ setActive('admin/roleChangeStatuses') }}" href="{{ url('admin/roleChangeStatuses') }}">
+                            <span> List Status Approved</span></a>
+                        </li>
+                        <li class="{{ setActive('admin/levelRoleStatuses') }}">
+                            <a  class="{{ setActive('admin/levelRoleStatuses') }}" href="{{ url('admin/levelRoleStatuses') }}">
+                            <span> List Level Approved</span></a>
+                        </li>
                     </ul>
                 </li>
                 @endrole

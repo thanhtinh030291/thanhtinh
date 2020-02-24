@@ -39,6 +39,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/exportLetter','ClaimController@exportLetter')->name('exportLetter');
         Route::post('/previewLetter','ClaimController@previewLetter')->name('previewLetter');
         Route::post('/changeStatus','ClaimController@changeStatus')->name('changeStatus');
+        Route::post('/addNote','ClaimController@addNote')->name('addNote');
         Route::get('/test/{claim_id}', 'ClaimController@test')->name('test.index');
 
         Route::resource('reason_reject', 'ReasonRejectController');
@@ -51,6 +52,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('admins', 'AdminController')->middleware(['role:Admin']);
         Route::resource('role', 'PermissionController')->middleware(['role:Admin']);
         Route::resource('permiss', 'PermissController')->middleware(['role:Admin']);
+
+        Route::resource('roleChangeStatuses', 'RoleChangeStatusController')->middleware(['role:Admin']);
+        Route::resource('levelRoleStatuses', 'LevelRoleStatusController')->middleware(['role:Admin']);
 
         //ajax
         Route::get('/dataAjaxHBSClaim', 'AjaxCommonController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
@@ -81,5 +85,7 @@ Route::post(
     'generator_builder/generate-from-file',
     '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@generateFromFile'
 )->name('io_generator_builder_generate_from_file');
+
+
 
 

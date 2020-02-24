@@ -141,17 +141,19 @@ $totalAmount = 0;
                                         ]) !!}
                                         <br>
                                         {{$item->approve['created_at']}}
-                                        
-                                        {!! Form::button('Add Note', ['data-toggle' => "modal" ,  
-                                        'data-target' => "#noteMantisModal",
-                                        'type' => 'button', 
-                                        'class' => 'btn btn-success btn-xs' , 
-                                        'onclick' => 'approved(this);',
-                                        'data-claim_id' => $data->id,
-                                        'data-note' => $item->approve['data'],
-                                        'data-status' => $item->status,
-                                        'data-id' => $item->id
-                                        ]) !!}
+                                        <br>
+                                        @if(!$item->note_id)
+                                            {!! Form::button('Add Note', ['data-toggle' => "modal" ,  
+                                            'data-target' => "#noteMantisModal",
+                                            'type' => 'button', 
+                                            'class' => 'btn btn-primary btn-xs' , 
+                                            'onclick' => 'addNote(this);',
+                                            'data-id' => $item->id,
+                                            'data-claim_id' => $data->id,
+                                            ]) !!}
+                                        @else
+                                            Note Id : {{$item->note_id}}
+                                        @endif
                                     @endif
                                 @endif
                             </td>
@@ -374,10 +376,9 @@ $totalAmount = 0;
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
-            {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
+            {{ Form::open(array('url' => '/admin/addNote', 'method' => 'POST')) }}
                 {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
                 {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
-
                 <div class="modal-header">
                     <h4 class="modal-title">Add note Mantis</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -391,14 +392,16 @@ $totalAmount = 0;
                                                             <th>Select</th>
                                                             <th>Note ID </th>
                                                             <th>Decription</th>
+                                                            <th>Reporter</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         @foreach ($note_mantis as $value)
                                                         <tr>
-                                                            <td><input type="radio" name="selectNote" value="{{data_get($value, 'note')}}"></td>
-                                                            <td>{{data_get($value, 'note')}}</td>
-                                                            <td>{{data_get($value, 'description')}}</td>
+                                                            <td><input type="radio" name="note_id" value="{{data_get($value, 'id')}}"></td>
+                                                            <td>{{data_get($value, 'id')}}</td>
+                                                            <td>{{truncate(data_get($value, 'text'),10)}}</td>
+                                                            <td>{{data_get($value, 'reporter.real_name')}}</td>
                                                         </tr>
                                                         @endforeach
                                                     </tbody>
@@ -406,6 +409,9 @@ $totalAmount = 0;
                                             </div>
                 </div>
                 <div class="modal-footer">
+                    <button class="btn btn-danger">{{ __('message.yes')}} </button> 
+                    <button type="button" class="btn btn-secondary btn-cancel-delete" 
+                        data-dismiss="modal">{{ __('message.no') }}</button>
                 </div>
             {!! Form::close() !!}
         </div>
@@ -467,7 +473,6 @@ $totalAmount = 0;
         var status = e.dataset.status;
         var id = e.dataset.id;
         var note = e.dataset.note;
-        console.log(note);
         $('.status_letter').val(status).change();
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
@@ -476,5 +481,12 @@ $totalAmount = 0;
         //CKEDITOR.instances['approve_letter'].setData(note);
     }
 
+    function addNote(e){
+        var id = e.dataset.id;
+        var claim_id =  e.dataset.claim_id;
+        $('.export_letter_id').val(id);
+        $('.ex_claim_id').val(claim_id);
+    
+    }
 </script>
 @endsection

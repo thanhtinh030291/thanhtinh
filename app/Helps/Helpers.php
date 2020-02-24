@@ -1,14 +1,25 @@
 <?php
 use Illuminate\Support\Str;
 
-function GetApi($url)
+function GetApiMantic($url)
 {
-    $client = new \GuzzleHttp\Client();
-    $request = $client->get($url);
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Authorization' => config('constants.token_mantic'),
+    ];
+    $client = new \GuzzleHttp\Client([
+        'headers' => $headers
+    ]);
+    $request = $client->get(config('constants.url_mantic').$url);
     $response = $request->getBody();
-    return $response;
+    return json_decode($response->getContents(), true);
 }
 
+//truncate string
+
+function truncate($string , $limit = 100){
+    return Str::limit($string, $limit);
+}
 
 function PostApi($url,$body) {
     $client = new \GuzzleHttp\Client();

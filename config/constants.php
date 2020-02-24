@@ -99,5 +99,7 @@ return[
         'HYNO' => 'Y hoc thay thế',
         'OSTE' => 'Y hoc thay thế'
     ],
-    
+    'token_mantic' => 'jGPFMpQK5nz5f4PRqARovKXe_W3fUoQC',
+    'url_mantic' => 'http://manticdaichi.com/',
+
 ];

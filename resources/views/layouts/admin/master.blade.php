@@ -75,6 +75,7 @@
     <script src="{{asset('js/jquery.nicescroll.js')}}"></script>
     <script src="{{asset('js/moment.min.js')}}"></script>
     <script src="{{asset('js/daterangepicker.js')}}"></script>
+    <script src="{{asset('js/jquery.cookie.js')}}"></script>
     <!-- App js -->
     <script src="{{asset('js/pikeadmin.js')}}"></script>
     <script src="{{asset('js/pusher.min.js')}}"></script>

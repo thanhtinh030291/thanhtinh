@@ -78,7 +78,7 @@
                         @foreach ($datas as $data)
                         <tbody>
                             <tr>
-                                <td>{{$data->codeClaimHBS}}</td>
+                                <td>{{$data->code_claim_show}}</td>
                                 <td>
                                     @if(isset($data->export_letter[0]->status))
                                         @switch($data->export_letter[0]->status)

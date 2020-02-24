@@ -5,24 +5,42 @@ $(document).ready(function () {
 	$(function () {
 		$(".nicescroll").niceScroll({ cursorcolor: "#858586" });
 	});
+	if (typeof $.cookie('menuleft') === 'undefined'){
+		
+		$.cookie('menuleft', 'open');
+	}
+	
+	if($.cookie('menuleft') == 'open'){
+		$( "#main" ).removeClass( "enlarged" ).addClass( "forced" );
+		$("body").removeClass("adminbody-void").addClass("adminbody");
+	}else{
+		console.log($.cookie('menuleft'));
+		$("#main" ).addClass( "enlarged" ).addClass( "forced" );
+		$("body").removeClass("adminbody").addClass("adminbody-void");
+	}
 });
 
 
 !function ($) {
 	"use strict";
-
 	var Sidemenu = function () {
 		this.$body = $("body"),
 			this.$openLeftBtn = $(".open-left"),
 			this.$menuItem = $("#sidebar-menu a")
 	};
 	Sidemenu.prototype.openLeftBar = function () {
+		
+	
 		$("#main").toggleClass("enlarged");
 		$("#main").addClass("forced");
 
 		if ($("#main").hasClass("enlarged") && $("body").hasClass("adminbody")) {
+			$.cookie('menuleft', 'close');
+			console.log($.cookie('menuleft'));
 			$("body").removeClass("adminbody").addClass("adminbody-void");
 		} else if (!$("#main").hasClass("enlarged") && $("body").hasClass("adminbody-void")) {
+			$.cookie('menuleft', 'open');
+
 			$("body").removeClass("adminbody-void").addClass("adminbody");
 		}
 
