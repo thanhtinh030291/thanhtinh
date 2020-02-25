@@ -2,9 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
-class CreateLevelRoleStatusTable extends Migration
+class CreateTransactionRoleStatusTable extends Migration
 {
 
     /**
@@ -14,16 +13,15 @@ class CreateLevelRoleStatusTable extends Migration
      */
     public function up()
     {
-        Schema::create('level_role_status', function (Blueprint $table) {
+        Schema::create('transaction_role_status', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('name');
-            $table->float('min_amount');
-            $table->float('max_amount');
-            $table->integer('begin_status');
-            $table->integer('end_status');
+            $table->integer('level_role_status_id');
+            $table->integer('current_status');
+            $table->integer('role');
+            $table->integer('to_status');
+            $table->integer('is_deleted')->default('0');
             $table->integer('created_user');
             $table->integer('updated_user');
-            $table->integer('is_deleted')->default('0');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -36,6 +34,6 @@ class CreateLevelRoleStatusTable extends Migration
      */
     public function down()
     {
-        Schema::drop('level_role_status');
+        Schema::drop('transaction_role_status');
     }
 }

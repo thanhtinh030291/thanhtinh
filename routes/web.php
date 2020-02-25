@@ -55,6 +55,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::resource('roleChangeStatuses', 'RoleChangeStatusController')->middleware(['role:Admin']);
         Route::resource('levelRoleStatuses', 'LevelRoleStatusController')->middleware(['role:Admin']);
+        Route::resource('transactionRoleStatuses', 'TransactionRoleStatusController')->middleware(['role:Admin']);
 
         //ajax
         Route::get('/dataAjaxHBSClaim', 'AjaxCommonController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
@@ -89,3 +90,6 @@ Route::post(
 
 
 
+
+
+Route::resource('transactionRoleStatuses', 'TransactionRoleStatusController');

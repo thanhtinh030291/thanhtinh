@@ -162,3 +162,7 @@
     <a href="{!! route('levelRoleStatuses.index') !!}"><i class="fa fa-edit"></i><span>Level Role Statuses</span></a>
 </li>
 
+<li class="{{ Request::is('transactionRoleStatuses*') ? 'active' : '' }}">
+    <a href="{!! route('transactionRoleStatuses.index') !!}"><i class="fa fa-edit"></i><span>Transaction Role Statuses</span></a>
+</li>
+

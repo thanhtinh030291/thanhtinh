@@ -29,35 +29,19 @@ class LevelRoleStatus extends BaseModel
     
     protected $dates = ['deleted_at'];
 
+    protected $guarded  = ['id'];
     
-    
-    public $fillable = [
-        'name',
-        'min_amount',
-        'max_amount',
-        'begin_status',
-        'end_status',
-        'created_user',
-        'updated_user',
-        'is_deleted'
-    ];
+    public function transaction_role_status()
+    {
+        return $this->hasMany('App\TransactionRoleStatus', 'level_role_status_id', 'id');
+    }
 
     /**
      * The attributes that should be casted to native types.
      *
      * @var array
      */
-    protected $casts = [
-        'id' => 'integer',
-        'name' => 'string',
-        'min_amount' => 'integer',
-        'max_amount' => 'integer',
-        'begin_status' => 'integer',
-        'end_status' => 'integer',
-        'created_user' => 'integer',
-        'updated_user' => 'integer',
-        'is_deleted' => 'integer'
-    ];
+    
 
     /**
      * Validation rules
