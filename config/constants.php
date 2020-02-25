@@ -27,31 +27,15 @@ return[
 
     'statusExport' => [
         'new' => 0,
-        'approved' => 1,
-        'dis_approve' => 2,
-        'repair_completed' => 3
+        'edit' => 1,
+        'note_save' => 2,
     ],
     'statusExportText' => [
         '0' => "New",
-        '1' => 'Approved',
-        '2' => 'Dis Approved',
-        '3' => 'Repair Completed'
-    ],
-    'statusExportTextClaim' => [
-        '0' => "New",
-        '3' => 'Repair Completed'
-    ],
-    'statusExportTextQC' => [
-        '1' => 'Approved',
-        '2' => 'Dis Approved',
+        '1' => 'Edit',
+        '2' => 'Note Save',
     ],
     
-    'statusExportValue' => [
-        "New" => 0,
-        'Approved' => 1,
-        'Dis_Approved' => 2,
-        'Repair_Completed' =>3
-    ],
     'content_ip' => [
         'ANES' => 'Chi phí phẫu thuật',
         'OPR' => 'Chi phí phẫu thuật',

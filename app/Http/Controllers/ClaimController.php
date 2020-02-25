@@ -22,6 +22,10 @@ use SimilarText\Finder;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use GuzzleHttp\Client;
+use App\TransactionRoleStatus;
+use App\LevelRoleStatus;
+use App\RoleChangeStatus;
+
 class ClaimController extends Controller
 {
     //use Authorizable;
@@ -166,28 +170,44 @@ class ClaimController extends Controller
     public function show(Claim $claim)
     {
         $data = $claim;
-        //dd($data->export_letter);
         $user = Auth::user();
+        
         $admin_list = User::getListIncharge();
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
         $listReasonReject = ReasonReject::pluck('name', 'id');
         $items = $data->item_of_claim;
         $listLetterTemplate = LetterTemplate::pluck('name', 'id');
-       
-        try {
-            $mantis = GetApiMantic("api/rest/issues/{$data->barcode}");
-            $note_mantis = data_get($mantis,'issues.0.notes',[]);
-        } catch (Exception $e) {
-            $note_mantis = [];
+        
+        $role_id = $user->roles[0]->id;
+        $RoleChangeStatus = RoleChangeStatus::all();
+        $list_status_full = TransactionRoleStatus::all();
+        $list_level = LevelRoleStatus::all();
+        $list_status_ad = RoleChangeStatus::pluck('name','id');
+        $export_letter = $data->export_letter;
+        
+        foreach ($export_letter as $key => $value) {
+            if($role_id != 1){
+                $level = $list_level
+                        ->where('min_amount','<=', data_get($value->info, 'approve_amt') )
+                        ->where('max_amount','>', data_get($value->info, 'approve_amt') )
+                        ->first();
+                $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
+                $list_status =  $list_status_full
+                                ->where('role', $role_id)
+                                ->where('level_role_status_id', $level->id)
+                                ->where('current_status', $curren_status)
+                                ->pluck('id');
+                $list_status = $RoleChangeStatus->whereIn('id' , $list_status)->pluck('name','id');
+                $export_letter[$key]['list_status'] = $list_status;
+            }else{
+                $export_letter[$key]['list_status'] = $list_status_ad;
+            }
+
         }
+
         
-        $listStatus = [];
-        
-            
-            $listStatus = config('constants.statusExportText');
-        
-        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate', 'listStatus', 'note_mantis']));
+        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate' , 'list_status_ad']));
     }
 
     public function barcode_link($barcode)
@@ -322,6 +342,43 @@ class ClaimController extends Controller
         $user = Auth::User();
         $export_letter = ExportLetter::findOrFail($id);
         $export_letter->status = $request->status;
+       
+        // switch ($request->status) {
+        //     case config('constants.statusExportValue.New'):
+        //     case config('constants.statusExportValue.Repair_Completed'):
+
+        //         $export_letter->wait = [  'user' => $user->id,
+        //                 'created_at' => Carbon::now()->toDateTimeString(),
+        //                 'data' => $request->template
+        //         ];
+        //         break;
+        //     case config('constants.statusExportValue.Approved'):
+        //         $export_letter->approve = [  'user' => $user->id,
+        //                 'created_at' => Carbon::now()->toDateTimeString(),
+        //                 'data' => $request->template
+        //         ];
+        //         break;
+        //     default:
+                
+        //         array_push($data ,
+        //         [  'user' => $user->id,
+        //             'created_at' => Carbon::now()->toDateTimeString(),
+        //             'data' => $request->template
+        //         ]);
+        //         $export_letter->note = $data;
+        //         break;
+        // }
+
+        $export_letter->save();        
+        return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
+    }
+    // wait for check
+    public function waitCheck(Request $request)
+    {
+        $claim_id = $request->claim_id;
+        $id = $request->id;
+        $user = Auth::User();
+        $export_letter = ExportLetter::findOrFail($id);        
         $wail = [];
         if($export_letter->note == null){
             $data = [];
@@ -330,16 +387,10 @@ class ClaimController extends Controller
         }
         
         switch ($request->status) {
-            case config('constants.statusExportValue.New'):
-            case config('constants.statusExportValue.Repair_Completed'):
+            case config('constants.statusExport.new'):
+            case config('constants.statusExport.edit'):
 
                 $export_letter->wait = [  'user' => $user->id,
-                        'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => $request->template
-                ];
-                break;
-            case config('constants.statusExportValue.Approved'):
-                $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => $request->template
                 ];
@@ -354,7 +405,6 @@ class ClaimController extends Controller
                 $export_letter->note = $data;
                 break;
         }
-
         $export_letter->save();        
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
@@ -402,16 +452,19 @@ class ClaimController extends Controller
 
     //request Letter
     public function requestLetter(Request $request){
-        if (ExportLetter::where('claim_id', $request->claim_id)->where('letter_template_id', $request->letter_template_id)->exists()) {
-            return redirect('/admin/claim/'. $request->claim_id )->with('errorStatus', 'letter already exists');
-        }
-        $userId = Auth::User()->id;    
+        
+        $userId = Auth::User()->id;
+        $claim = Claim::findOrfail($request->claim_id);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $approve_amt = $HBS_CL_CLAIM->sumAppAmt;
+        
         $data = [
             'claim_id' => $request->claim_id,
             'letter_template_id' => $request->letter_template_id,
             'status' => config('constants.statusExport.new'),
             'created_user' => $userId,
             'updated_user' => $userId,
+            'info' => ['approve_amt' => $approve_amt],
         ] ;
         ExportLetter::create($data);
         return redirect('/admin/claim/'. $request->claim_id )->with('Status', 'Letter was successfully created');

@@ -11,8 +11,10 @@ class ExportLetter extends BaseModel
     protected $casts = [
         'note'  => 'array',
         'wait'  => 'array',
-        'approve' => 'array'
+        'approve' => 'array',
+        'info' => 'array',
     ];
+    
     protected function castAttribute($key, $value)
     {
         if ($this->getCastType($key) == 'array' && is_null($value)) {

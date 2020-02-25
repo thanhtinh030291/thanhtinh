@@ -74,7 +74,8 @@ class TransactionRoleStatusController extends Controller
             $dataDel = TransactionRoleStatus::whereNotIn('id', $array_id_isset)->where('level_role_status_id',$id_level);
             $dataDel->delete();
         }
-        // update 
+        // update
+        $dataItemNew = []; 
         foreach ($request->id as $key => $value) {
             if ($value == null) {
                 $dataItemNew[] = [

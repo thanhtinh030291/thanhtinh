@@ -17,8 +17,8 @@ class CreateLevelRoleStatusTable extends Migration
         Schema::create('level_role_status', function (Blueprint $table) {
             $table->increments('id');
             $table->text('name');
-            $table->float('min_amount');
-            $table->float('max_amount');
+            $table->bigInteger('min_amount');
+            $table->bigInteger('max_amount');
             $table->integer('begin_status');
             $table->integer('end_status');
             $table->integer('created_user');

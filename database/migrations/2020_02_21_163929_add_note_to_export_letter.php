@@ -15,7 +15,7 @@ class AddNoteToExportLetter extends Migration
     {
         Schema::table('export_letter', function (Blueprint $table) {
             //
-            $table->integer('note_id')->nullable();
+            $table->longText('info')->nullable();
         });
     }
 
@@ -27,7 +27,7 @@ class AddNoteToExportLetter extends Migration
     public function down()
     {
         Schema::table('export_letter', function (Blueprint $table) {
-            $table->dropColumn('note_id');
+            $table->dropColumn('info');
         });
     }
 }

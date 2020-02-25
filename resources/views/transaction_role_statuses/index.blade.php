@@ -41,7 +41,7 @@
         clone += '<input name = "id['+count+']" type="hidden" >';
         clone +=  $("#clone_item_"+id).clone().html() + '</tr>';
         //repalace name
-        clone = clone.replace("from_status_default", "from_status["+count+"]");
+        clone = clone.replace("current_status_default", "current_status["+count+"]");
         clone = clone.replace("role_default", "role["+count+"]");
         clone = clone.replace("to_status_default", "to_status["+count+"]");
         // div template id
@@ -50,7 +50,7 @@
     }
 
     function addValueItem(from_status, role, to_status, count, idItem = ""){
-        $('select[name="from_status['+count+']"]').val(from_status).change();
+        $('select[name="current_status['+count+']"]').val(from_status).change();
         $('select[name="role['+count+']"]').val(role).change();
         $('select[name="to_status['+count+']"]').val(to_status).change();
         $('input[name="id['+count+']"]').val(idItem);
@@ -58,9 +58,12 @@
     $(document).on('ready', function() {
         var data = @json($data);
         console.log(data);
-        $.each(data, function( index, value ) {
-            var lv_id = value.id ;
-
+        $.each(data, function( index_data, value_data ) {
+            var lv_id = value_data.id ;
+            $.each(value_data.transaction_role_status, function( index, value ) {
+                addInputItem(lv_id);
+                addValueItem(value.current_status, value.role, value.to_status, count-1, value.id);
+            });
         });
 
         // var id_get = $("#dataget").data('id');

@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\TransactionRoleStatus;
+use App\Rules\validTranstionData;
+use Illuminate\Support\Facades\Request;
 
 class CreateTransactionRoleStatusRequest extends FormRequest
 {
@@ -25,6 +27,13 @@ class CreateTransactionRoleStatusRequest extends FormRequest
      */
     public function rules()
     {
-        return TransactionRoleStatus::$rules;
+        $current_status = Request::get('current_status');
+        $role = Request::get('role');
+        $to_status = Request::get('to_status');
+        $rules = [
+            'level_id' => new validTranstionData($current_status, $role, $to_status)
+        ];
+
+        return $rules;
     }
 }

@@ -10,8 +10,10 @@
     @foreach ($data as $key => $itemLevel)
         <div class="tab-pane fade show {{ $key == 0 ? 'active' : "" }}" id="level_{{$itemLevel->id}}" role="tabpanel" aria-labelledby="level_{{$itemLevel->id}}-tab">
             <br>
-            <p>Min Amount : {{formatPrice($itemLevel->min_amount)}}</p>
-            <p>Max Amount : {{formatPrice($itemLevel->max_amount)}}</p>
+            <p class="font-weight-bold">Min Amount : <span class="text-danger">{{formatPrice($itemLevel->min_amount)}}</span></p>
+            <p class="font-weight-bold">Max Amount : <span class="text-danger">{{formatPrice($itemLevel->max_amount)}}</span></p>
+            <p class="font-weight-bold">Status Begin : <span class="text-success ">{{data_get($list_status,$itemLevel->begin_status)}}</span></p>
+            <p class="font-weight-bold">Status End : <span class="text-success ">{{data_get($list_status,$itemLevel->end_status)}}</span></p>
             <div id="manage-workflow-note-approve" class="form-container">
                 {{ Form::open(array('url' => 'admin/transactionRoleStatuses', 'method' => 'post' ,'class'=>'form-horizontal')) }}
                     {{ Form::hidden('level_id', $itemLevel->id) }}
@@ -42,13 +44,13 @@
                                         </tr>
                                         <tr id="clone_item_{{$itemLevel->id}}" style="display: none;">
                                             <td>
-                                                {{ Form::select('current_status[]',$list_status, null, [ 'class' => 'form-control', 'required']) }}
+                                                {{ Form::select('current_status_default',$list_status, null, [ 'class' => 'form-control', 'required']) }}
                                             </td>
                                             <td>
-                                                {{ Form::select('role[]',$list_role, null, [ 'class' => 'form-control', 'required']) }}
+                                                {{ Form::select('role_default',$list_role, null, [ 'class' => 'form-control', 'required']) }}
                                             </td>
                                             <td>
-                                                {{ Form::select('to_status[]',$list_status, null, [ 'class' => 'form-control', 'required']) }}
+                                                {{ Form::select('to_status_default',$list_status, null, [ 'class' => 'form-control', 'required']) }}
                                             </td>                           
                                             <td>
                                                 <button type="button" class="delete_btn btn btn-danger" style="height : 40px">&#x2613;</button>

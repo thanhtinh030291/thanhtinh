@@ -92,10 +92,10 @@ $totalAmount = 0;
                         <tr>
                             <th>ID</th>
                             <th>Name Letter</th>
-                            <th>User Create</th>
-                            <th>Created At</th>
-                            <th>Status</th>
-                            <th>Note QC</th>
+                            <th>Create By</th>
+                            <th>Current Status</th>
+                            <th>Change Status</th>
+                            <th>Note</th>
                             <th>Wait for the check</th>
                             
                             <th class='text-center'>{{ __('message.control')}}</th>
@@ -106,56 +106,22 @@ $totalAmount = 0;
                         <tr id="empty_item" >
                             <td>{{$item->id}}</td>
                             <td>{{$item->letter_template->name}}</td>
-                            <td>{{$item->userCreated->name}}</td>
-                            <td>{{ $item->created_at }}</td>
                             <td>
-                                
-                                @switch($item->status)
-                                    @case(config('constants.statusExportValue.New'))
-                                        <h4 class="p-0 text-success">{{ data_get(config('constants.statusExportText'),  $item->status) }} </h4>
-                                    @break
-
-                                    @case(config('constants.statusExportValue.Approved'))
-                                        <h4 class="p-0 text-primary">{{ data_get(config('constants.statusExportText'),  $item->status) }} </h4>
-                                    @break
-
-                                    @case(config('constants.statusExportValue.Dis_Approved'))
-                                        <h4 class="p-0 text-danger">{{ data_get(config('constants.statusExportText'),  $item->status) }} </h4>
-                                    @break
-                                        
-                                    @default
-                                        <h4 class="p-0 text-warning">{{ data_get(config('constants.statusExportText'),  $item->status) }} </h4>
-                                @endswitch
-
-                                @if ($item->status == config('constants.statusExportValue.Approved'))
-                                    @if($item->wait)
-                                        {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$item->wait['user']], ['data-toggle' => "modal" ,  
-                                        'data-target' => "#approvedModal",
-                                        'type' => 'button', 
-                                        'class' => 'btn btn-success btn-xs' , 
-                                        'onclick' => 'approved(this);',
-                                        'data-claim_id' => $data->id,
-                                        'data-note' => $item->approve['data'],
-                                        'data-status' => $item->status,
-                                        'data-id' => $item->id
-                                        ]) !!}
-                                        <br>
-                                        {{$item->approve['created_at']}}
-                                        <br>
-                                        @if(!$item->note_id)
-                                            {!! Form::button('Add Note', ['data-toggle' => "modal" ,  
-                                            'data-target' => "#noteMantisModal",
-                                            'type' => 'button', 
-                                            'class' => 'btn btn-primary btn-xs' , 
-                                            'onclick' => 'addNote(this);',
-                                            'data-id' => $item->id,
-                                            'data-claim_id' => $data->id,
-                                            ]) !!}
-                                        @else
-                                            Note Id : {{$item->note_id}}
-                                        @endif
-                                    @endif
-                                @endif
+                                <h6>{{$item->userCreated->name}}</h6>
+                                <span>{{ $item->created_at }}</span>
+                            </td>
+                            <td>
+                                <h5 class="p-0 text-primary">{{ data_get($list_status_ad,  $item->status ,'New') }} </h5>
+                            </td>
+                            <td>
+                                {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST', 'class' => 'form-inline')) }}
+                                    <div>
+                                        {{ Form::hidden('id', $item->id) }}
+                                        {{ Form::hidden('claim_id', $item->claim_id) }}
+                                        {{ Form::select('status', $item->list_status, null, [ 'class' => 'form-control col-md-8', 'placeholder' => 'Select Option']) }}
+                                        {!! Form::button('submit', ['type' => 'submit', 'class' => 'pull-right btn btn-info btn-md col-md-4']) !!}
+                                    </div>
+                                {!! Form::close() !!}
                             </td>
                             <td>
                                 @foreach ($item->note as $note)
@@ -174,11 +140,9 @@ $totalAmount = 0;
                                         {{$note['created_at']}}
                                     </div>
                                 @endforeach
-
                             </td>
                             <td>
-                                @if ($item->status == config('constants.statusExportValue.New') || $item->status == config('constants.statusExportValue.Repair_Completed'))
-                                    @if($item->wait)
+                                @if (isset($item->wait['data']))                                
                                         {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$item->wait['user']], ['data-toggle' => "modal" ,  
                                         'data-target' => "#noteModal",
                                         'type' => 'button', 
@@ -191,7 +155,6 @@ $totalAmount = 0;
                                         ]) !!}
                                         <br>
                                         {{$item->wait['created_at']}}
-                                    @endif
                                 @endif
                             </td>
                             <td>
@@ -296,7 +259,7 @@ $totalAmount = 0;
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
-            {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
+            {{ Form::open(array('url' => '/admin/waitCheck', 'method' => 'POST')) }}
                 {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
                 {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
 
@@ -308,7 +271,7 @@ $totalAmount = 0;
                     {{ Form::textarea('template', old('template'), ['id' => 'preview_letter', 'class' => 'form-control editor_default']) }}<br>
                 </div>
                 <div class="modal-footer">
-                    {{ Form::select('status', $listStatus, null, [ 'class' => 'status_letter form-control editor_default', ]) }}<br>
+                    {{ Form::hidden('status', config('constants.statusExport.new')) }}<br>
                     
                         <button class="btn btn-danger">{{ __('message.yes')}} </button>
                         <button type="button" class="btn btn-secondary btn-cancel-delete" 
@@ -324,7 +287,7 @@ $totalAmount = 0;
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
-            {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
+            {{ Form::open(array('url' => '/admin/waitCheck', 'method' => 'POST')) }}
                 {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
                 {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
 
@@ -336,7 +299,7 @@ $totalAmount = 0;
                     {{ Form::textarea('template', old('template'), ['id' => 'note_letter', 'class' => 'form-control editor_default']) }}<br>
                 </div>
                 <div class="modal-footer">
-                   {{ Form::select('status', $listStatus, null, [ 'class' => 'status_letter form-control editor_default', ]) }}<br>
+                   {{ Form::select('status', config('constants.statusExportText'), null, [ 'class' => 'status_letter form-control editor_default', ]) }}<br>
                     
                         <button class="btn btn-danger">{{ __('message.yes')}} </button> 
                         <button type="button" class="btn btn-secondary btn-cancel-delete" 
@@ -371,52 +334,7 @@ $totalAmount = 0;
 </div>
 
 
-{{-- Modal add note mantis--}}
-<div id="noteMantisModal" class="modal fade bd-example-modal-lg" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
-        <div class="modal-content">
-            {{ Form::open(array('url' => '/admin/addNote', 'method' => 'POST')) }}
-                {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
-                {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
-                <div class="modal-header">
-                    <h4 class="modal-title">Add note Mantis</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                                            {{-- table --}}
-                                            <div class="table-responsive">
-                                                <table class="table" id="debitNote-table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Select</th>
-                                                            <th>Note ID </th>
-                                                            <th>Decription</th>
-                                                            <th>Reporter</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($note_mantis as $value)
-                                                        <tr>
-                                                            <td><input type="radio" name="note_id" value="{{data_get($value, 'id')}}"></td>
-                                                            <td>{{data_get($value, 'id')}}</td>
-                                                            <td>{{truncate(data_get($value, 'text'),10)}}</td>
-                                                            <td>{{data_get($value, 'reporter.real_name')}}</td>
-                                                        </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger">{{ __('message.yes')}} </button> 
-                    <button type="button" class="btn btn-secondary btn-cancel-delete" 
-                        data-dismiss="modal">{{ __('message.no') }}</button>
-                </div>
-            {!! Form::close() !!}
-        </div>
-    </div>
-</div>
+
 @endsection
 
 
