@@ -40,6 +40,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/previewLetter','ClaimController@previewLetter')->name('previewLetter');
         Route::post('/changeStatus','ClaimController@changeStatus')->name('changeStatus');
         Route::post('/waitCheck','ClaimController@waitCheck')->name('waitCheck');
+        Route::post('/sendEtalk','ClaimController@sendEtalk')->name('sendEtalk');
         
         Route::post('/addNote','ClaimController@addNote')->name('addNote');
         Route::get('/test/{claim_id}', 'ClaimController@test')->name('test.index');

@@ -16,6 +16,7 @@ use App\LetterTemplate;
 use Auth;
 use App\ReasonReject;
 use App\Http\Requests\formClaimRequest;
+use App\Http\Requests\sendEtalkRequest;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use SimilarText\Finder;
@@ -53,7 +54,7 @@ class ClaimController extends Controller
             'letter_status' => $request->letter_status,
         ];
         $conditionExport = function ($q){
-            $q->select('id','claim_id','status');
+            $q->select('id','claim_id','status', 'info');
         };
         $conditionHasExport = function ($q) use ($request){
             //$q->where('status', $request->letter_status);
@@ -66,8 +67,8 @@ class ClaimController extends Controller
         }
 
         $datas = $datas->paginate($itemPerPage);
-        //dd($datas);
-        return view('claimManagement.index', compact('finder', 'datas', 'admin_list'));
+        $list_status = RoleChangeStatus::pluck('name','id');
+        return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status'));
     }
     
 
@@ -187,27 +188,30 @@ class ClaimController extends Controller
         $export_letter = $data->export_letter;
         
         foreach ($export_letter as $key => $value) {
+            $level = $list_level
+            ->where('min_amount','<=', data_get($value->info, 'approve_amt') )
+            ->where('max_amount','>', data_get($value->info, 'approve_amt') )
+            ->first();
             if($role_id != 1){
-                $level = $list_level
-                        ->where('min_amount','<=', data_get($value->info, 'approve_amt') )
-                        ->where('max_amount','>', data_get($value->info, 'approve_amt') )
-                        ->first();
                 $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
+               
                 $list_status =  $list_status_full
                                 ->where('role', $role_id)
                                 ->where('level_role_status_id', $level->id)
                                 ->where('current_status', $curren_status)
-                                ->pluck('id');
+                                ->pluck('to_status');
+                               
                 $list_status = $RoleChangeStatus->whereIn('id' , $list_status)->pluck('name','id');
                 $export_letter[$key]['list_status'] = $list_status;
             }else{
                 $export_letter[$key]['list_status'] = $list_status_ad;
             }
+            $export_letter[$key]['end_status'] = $level->end_status;
 
         }
 
         
-        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate' , 'list_status_ad']));
+        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate' , 'list_status_ad', 'user']));
     }
 
     public function barcode_link($barcode)
@@ -342,32 +346,17 @@ class ClaimController extends Controller
         $user = Auth::User();
         $export_letter = ExportLetter::findOrFail($id);
         $export_letter->status = $request->status;
-       
-        // switch ($request->status) {
-        //     case config('constants.statusExportValue.New'):
-        //     case config('constants.statusExportValue.Repair_Completed'):
-
-        //         $export_letter->wait = [  'user' => $user->id,
-        //                 'created_at' => Carbon::now()->toDateTimeString(),
-        //                 'data' => $request->template
-        //         ];
-        //         break;
-        //     case config('constants.statusExportValue.Approved'):
-        //         $export_letter->approve = [  'user' => $user->id,
-        //                 'created_at' => Carbon::now()->toDateTimeString(),
-        //                 'data' => $request->template
-        //         ];
-        //         break;
-        //     default:
-                
-        //         array_push($data ,
-        //         [  'user' => $user->id,
-        //             'created_at' => Carbon::now()->toDateTimeString(),
-        //             'data' => $request->template
-        //         ]);
-        //         $export_letter->note = $data;
-        //         break;
-        // }
+        $list_level = LevelRoleStatus::all();
+        $level = $list_level
+                ->where('min_amount','<=', data_get($export_letter->info, 'approve_amt') )
+                ->where('max_amount','>', data_get($export_letter->info, 'approve_amt') )
+                ->first();
+        if($level->end_status == $request->status){
+            $export_letter->approve = [  'user' => $user->id,
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'data' => data_get($export_letter->wait, "data")
+            ];
+        }
 
         $export_letter->save();        
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
@@ -396,7 +385,6 @@ class ClaimController extends Controller
                 ];
                 break;
             default:
-                
                 array_push($data ,
                 [  'user' => $user->id,
                     'created_at' => Carbon::now()->toDateTimeString(),
@@ -406,6 +394,49 @@ class ClaimController extends Controller
                 break;
         }
         $export_letter->save();        
+        return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
+    }
+    // send Etalk 
+    public function sendEtalk(sendEtalkRequest $request){
+        $claim_id = $request->claim_id;
+        $barcode = $request->barcode;
+        $id = $request->id;
+        $export_letter = ExportLetter::findOrFail($id);
+        $user = Auth::User();
+        $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $namefile = Str::slug("{$export_letter->letter_template->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
+        $body = [
+            'user_email' => $user->email,
+            'issue_id' => $barcode,
+            'text_note' => "Dear DLVN, \n Đính kèm là thư chấp nhận thanh toán. \n Thanks,",
+            'files' => [
+                [
+                    'name' => $namefile.".doc",
+                    "content" => base64_encode(data_get($export_letter->approve, 'data'))
+                ]
+            ]
+        ];
+        try {
+            $res = PostApiMantic('api/rest/plugins/notetypes/issues/add_note_reply_letter/files', $body);
+            $res = json_decode($res->getBody(),true);
+        } catch (Exception $e) {
+
+            $request->session()->flash(
+                'errorStatus', 
+                generateLogMsg($e)
+            );
+            return redirect('/admin/claim/'.$claim_id)->withInput();
+        }
+        if(data_get($res,'status') == 'success'){
+            $data = $export_letter->info;
+            $export_letter->info = [
+                'approve_amt' => $data['approve_amt'],
+                'note' => $res['data']['note']
+            ];
+            $export_letter->save();  
+        
+        }
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
 

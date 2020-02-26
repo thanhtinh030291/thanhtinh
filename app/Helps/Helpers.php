@@ -21,10 +21,16 @@ function truncate($string , $limit = 100){
     return Str::limit($string, $limit);
 }
 
-function PostApi($url,$body) {
-    $client = new \GuzzleHttp\Client();
-    $response = $client->createRequest("POST", $url, ['body'=>$body]);
-    $response = $client->send($response);
+function PostApiMantic($url,$body) {
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Authorization' => config('constants.token_mantic'),
+    ];
+    $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+    $response = $client->request("POST", config('constants.url_mantic').$url , ['form_params'=>$body]);
+
     return $response;
 }
 

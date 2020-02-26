@@ -85,5 +85,6 @@ return[
     ],
     'token_mantic' => 'jGPFMpQK5nz5f4PRqARovKXe_W3fUoQC',
     'url_mantic' => 'http://manticdaichi.com/',
+    'url_cps' => 'http://192.168.0.10/cps_dlvn/index.php/mantis/',
 
 ];

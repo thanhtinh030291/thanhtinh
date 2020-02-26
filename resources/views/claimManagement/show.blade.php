@@ -9,6 +9,11 @@ $totalAmount = 0;
     <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/ckeditor.css')}}" media="all" rel="stylesheet" type="text/css"/>
+    <style>
+        .disableRow {
+            background-color: lightslategrey;
+        }
+    </style>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -92,6 +97,7 @@ $totalAmount = 0;
                         <tr>
                             <th>ID</th>
                             <th>Name Letter</th>
+                            <th>Info</th>
                             <th>Create By</th>
                             <th>Current Status</th>
                             <th>Change Status</th>
@@ -103,9 +109,39 @@ $totalAmount = 0;
                     </thead>
                     
                     @foreach ($data->export_letter as $item)
-                        <tr id="empty_item" >
+                        <tr class = "{{isset($item->info['note']) ? "disableRow" : ""}} " >
                             <td>{{$item->id}}</td>
-                            <td>{{$item->letter_template->name}}</td>
+                            <td>
+                                {{$item->letter_template->name}}
+                                @if($item->status == $item->end_status && !isset($item->info['note']))
+                                {{ Form::open(array('url' => '/admin/sendEtalk', 'method' => 'POST', 'class' => 'form-inline')) }}
+                                    <div>
+                                        {{ Form::hidden('id', $item->id) }}
+                                        {{ Form::hidden('barcode', $data->barcode) }}
+                                        {{ Form::hidden('claim_id', $item->claim_id) }}
+                                        
+                                        {!! Form::button('Send Etalk', 
+                                        [   'type' => 'submit', 
+                                            'class' => 'btn btn-info btn-md' ,
+                                            'onclick'=> 'clickSendEtalk(this)',
+                                            'data-url' => config("constants.url_cps").$data->barcode
+                                        ]) !!}
+                                    </div>
+                                {!! Form::close() !!}
+                                @endif
+
+                                @if(isset($item->info['note']))
+                                    <h6> Added on Etalk</h6>
+                                    <span>Note Id : {{data_get($item->info, "note.id")}}</span><br>
+                                    <a class="btn btn-success btn-xs" href="{{config("constants.url_cps").$data->barcode}}" target="_blank">Link CPS</a>
+                                @endif
+                            </td>
+                            <td>
+                                <p  class = "m-0">Approve AMT : </p> 
+                                <span class="p-1 mb-2 bg-danger text-white   align-middle">{{formatPrice(data_get($item->info,'approve_amt'), ' đ')}} </span>
+                                <p class = "m-0">End Status :  </p> 
+                                <span class="p-1 mb-2 bg-info text-white  align-middle">{{data_get($list_status_ad, $item->end_status)}}</span>
+                            </td>
                             <td>
                                 <h6>{{$item->userCreated->name}}</h6>
                                 <span>{{ $item->created_at }}</span>
@@ -127,10 +163,10 @@ $totalAmount = 0;
                                 @foreach ($item->note as $note)
                                     <div class="form-group">
                                         {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$note['user']], ['data-toggle' => "modal" ,  
-                                        'data-target' => "#noteModal",
+                                        'data-target' => "#viewFileModal",
                                         'type' => 'button', 
                                         'class' => 'btn btn-danger btn-xs' , 
-                                        'onclick' => 'note(this);',
+                                        'onclick' => 'viewFile(this);',
                                         'data-claim_id' => $data->id,
                                         'data-note' => $note['data'],
                                         'data-status' => $item->status,
@@ -144,13 +180,13 @@ $totalAmount = 0;
                             <td>
                                 @if (isset($item->wait['data']))                                
                                         {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$item->wait['user']], ['data-toggle' => "modal" ,  
-                                        'data-target' => "#noteModal",
+                                        'data-target' => "#noteOrEditModal",
                                         'type' => 'button', 
                                         'class' => 'btn btn-success btn-xs' , 
-                                        'onclick' => 'note(this);',
+                                        'onclick' => 'noteOrEdit(this);',
                                         'data-claim_id' => $data->id,
                                         'data-note' => $item->wait['data'],
-                                        'data-status' => $item->status,
+                                        'data-status' => $item->created_user == $user->id ? config('constants.statusExport.edit') : config('constants.statusExport.note_save'),
                                         'data-id' => $item->id
                                         ]) !!}
                                         <br>
@@ -282,8 +318,8 @@ $totalAmount = 0;
     </div>
 </div>
 
-{{-- Modal note--}}
-<div id="noteModal" class="modal fade bd-example-modal-lg" role="dialog">
+{{-- noteOrEditModal--}}
+<div id="noteOrEditModal" class="modal fade bd-example-modal-lg" role="dialog">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
@@ -292,15 +328,14 @@ $totalAmount = 0;
                 {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
 
                 <div class="modal-header">
-                    <h4 class="modal-title">Note</h4>
+                    <h4 class="modal-title">Note of Reject </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     {{ Form::textarea('template', old('template'), ['id' => 'note_letter', 'class' => 'form-control editor_default']) }}<br>
                 </div>
                 <div class="modal-footer">
-                   {{ Form::select('status', config('constants.statusExportText'), null, [ 'class' => 'status_letter form-control editor_default', ]) }}<br>
-                    
+                    {{ Form::hidden('status', config('constants.statusExport.note_save'), ['id' => 'statusSubmit']) }}<br>
                         <button class="btn btn-danger">{{ __('message.yes')}} </button> 
                         <button type="button" class="btn btn-secondary btn-cancel-delete" 
                             data-dismiss="modal">{{ __('message.no') }}</button>
@@ -310,8 +345,8 @@ $totalAmount = 0;
     </div>
 </div>
     
-{{-- Modal approved--}}
-<div id="approvedModal" class="modal fade bd-example-modal-lg" role="dialog">
+{{-- Modal viewFile--}}
+<div id="viewFileModal" class="modal fade bd-example-modal-lg" role="dialog">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
@@ -320,7 +355,7 @@ $totalAmount = 0;
                 {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
 
                 <div class="modal-header">
-                    <h4 class="modal-title">Approve</h4>
+                    <h4 class="modal-title">View</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -370,13 +405,13 @@ $totalAmount = 0;
         })
     }
 
-    function note(e){
+    function noteOrEdit(e){
         var claim_id =  e.dataset.claim_id;
         var letter_template_id = e.dataset.letter_template_id;
         var status = e.dataset.status;
         var id = e.dataset.id;
         var note = e.dataset.note;
-        $('.status_letter').val(status).change();
+        $('#statusSubmit').val(status);
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
         
@@ -384,7 +419,7 @@ $totalAmount = 0;
         //CKEDITOR.instances['note_letter'].setData(note);
     }
 
-    function approved(e){
+    function viewFile(e){
         
         var claim_id =  e.dataset.claim_id;
         var letter_template_id = e.dataset.letter_template_id;
@@ -405,6 +440,13 @@ $totalAmount = 0;
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
     
+    }
+
+    $(".disableRow").find("input,button,textarea,select").attr("disabled", "disabled");
+
+    function clickSendEtalk(e){
+        var url = e.dataset.url;
+        window.open(url);
     }
 </script>
 @endsection

@@ -27,7 +27,6 @@
             </div>
             <div class="card-body">
                     <div class="row">
-                     
                         <div class="col-md-6">
                             {{ Form::label('name', __('message.id_claim'), array('class' => 'labelas')) }}
                             {{ Form::select('code_claim',[], $finder['code_claim'], ['class' => 'code_claim form-control']) }}
@@ -38,7 +37,7 @@
                         </div>
                         <div class="col-md-6">
                             {{ Form::label('letter_status', 'Latest Letter status', ['class' => 'labelas']) }}
-                            {{ Form::select('letter_status', config('constants.statusExportText'), data_get($finder, 'letter_status'), ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
+                            {{ Form::select('letter_status', $list_status, data_get($finder, 'letter_status'), ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
 
                             {{ Form::label('updated_user', __('message.account_edit'), ['class' => 'labelas']) }}
                             {{ Form::select('updated_user', $admin_list, data_get($finder, 'updated_user'), ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
@@ -81,22 +80,8 @@
                                 <td>{{$data->code_claim_show}}</td>
                                 <td>
                                     @if(isset($data->export_letter[0]->status))
-                                        @switch($data->export_letter[0]->status)
-                                            @case(config('constants.statusExportValue.New'))
-                                                <h4 class="p-0 text-success">{{ data_get(config('constants.statusExportText'),  $data->export_letter_last->status) }} </h4>
-                                            @break
-
-                                            @case(config('constants.statusExportValue.Approved'))
-                                                <h4 class="p-0 text-primary">{{ data_get(config('constants.statusExportText'),  $data->export_letter_last->status) }} </h4>
-                                            @break
-
-                                            @case(config('constants.statusExportValue.Dis_Approved'))
-                                                <h4 class="p-0 text-danger">{{ data_get(config('constants.statusExportText'),  $data->export_letter_last->status) }} </h4>
-                                            @break
-                                                
-                                            @default
-                                                <h4 class="p-0 text-warning">{{ data_get(config('constants.statusExportText'),  $data->export_letter_last->status) }} </h4>
-                                        @endswitch
+                                        <h4 class="p-0 text-primary">{{ data_get($list_status,  $data->export_letter_last->status, "New") }} </h4>
+                                        <span class="p-1 mb-2 bg-danger text-white col-md-8  align-middle">{{ formatPrice(data_get($data->export_letter_last->info, "approve_amt"), ' đ') }} </span>
                                     @endif
                                 </td>
                                 <td>{{ $admin_list[$data->created_user] }}</td>
