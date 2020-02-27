@@ -194,13 +194,11 @@ class ClaimController extends Controller
             ->first();
             if($role_id != 1){
                 $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
-               
                 $list_status =  $list_status_full
                                 ->where('role', $role_id)
                                 ->where('level_role_status_id', $level->id)
                                 ->where('current_status', $curren_status)
                                 ->pluck('to_status');
-                               
                 $list_status = $RoleChangeStatus->whereIn('id' , $list_status)->pluck('name','id');
                 $export_letter[$key]['list_status'] = $list_status;
             }else{
@@ -369,30 +367,33 @@ class ClaimController extends Controller
         $user = Auth::User();
         $export_letter = ExportLetter::findOrFail($id);        
         $wail = [];
+
         if($export_letter->note == null){
             $data = [];
         }else{
             $data = $export_letter->note;
         }
-        
-        switch ($request->status) {
-            case config('constants.statusExport.new'):
-            case config('constants.statusExport.edit'):
 
-                $export_letter->wait = [  'user' => $user->id,
-                        'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => $request->template
-                ];
-                break;
-            default:
+        if ($request->save_letter == 'save'){
+            $export_letter->wait = [  'user' => $user->id,
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'data' => $request->template
+            ];
+        }else{
+            $status_change = $request->status_change;
+            $status_change = explode("-",$status_change);
+            if($status_change[1] == 'rejected'){
                 array_push($data ,
                 [  'user' => $user->id,
                     'created_at' => Carbon::now()->toDateTimeString(),
                     'data' => $request->template
                 ]);
                 $export_letter->note = $data;
-                break;
+            }
+            $export_letter->status = $status_change[0];
         }
+        
+
         $export_letter->save();        
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }

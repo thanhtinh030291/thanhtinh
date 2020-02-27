@@ -9,6 +9,7 @@ use App\User;
 use App\Term;
 use Auth;
 use Illuminate\Support\Arr;
+use App\LevelRoleStatus;
 
 class LetterTemplateController extends Controller
 {
@@ -38,8 +39,8 @@ class LetterTemplateController extends Controller
         $data['limit'] = $request->get('limit');
         $per_page = !empty($data['limit']) ? $data['limit'] : Arr::first($data['limit_list']);
         $data['data']  = $listData->paginate($per_page);
-        
-        return view('letterTemplateManagement.index', $data);
+        $list_level = LevelRoleStatus::pluck('name','id');
+        return view('letterTemplateManagement.index', compact('data','list_level'));
     }
 
     /**
@@ -49,8 +50,9 @@ class LetterTemplateController extends Controller
      */
     public function create()
     {
+        $list_level = LevelRoleStatus::pluck('name','id');
         $listTerm = Term::pluck('name','id');
-        return view('letterTemplateManagement.create', compact('listTerm'));
+        return view('letterTemplateManagement.create', compact('listTerm', 'list_level'));
     }
 
     /**
@@ -80,10 +82,11 @@ class LetterTemplateController extends Controller
      */
     public function show(LetterTemplate $letterTemplate)
     {
+        $list_level = LevelRoleStatus::pluck('name','id');
         $data = $letterTemplate;
         $userCreated = $data->userCreated->name;
         $userUpdated = $data->userUpdated->name;
-        return view('letterTemplateManagement.detail', compact('data', 'userCreated', 'userUpdated'));
+        return view('letterTemplateManagement.detail', compact('data', 'userCreated', 'userUpdated', 'list_level'));
     }
 
     /**
@@ -96,7 +99,8 @@ class LetterTemplateController extends Controller
     {
         $data = $letterTemplate;
         $listTerm = Term::pluck('name','id');
-        return view('letterTemplateManagement.edit', compact('data', 'listTerm'));
+        $list_level = LevelRoleStatus::pluck('name','id');
+        return view('letterTemplateManagement.edit', compact('data', 'listTerm','list_level'));
     }
 
     /**

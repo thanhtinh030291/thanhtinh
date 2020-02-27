@@ -100,7 +100,7 @@ $totalAmount = 0;
                             <th>Info</th>
                             <th>Create By</th>
                             <th>Current Status</th>
-                            <th>Change Status</th>
+                            {{-- <th>Change Status</th> --}}
                             <th>Note</th>
                             <th>Wait for the check</th>
                             
@@ -149,7 +149,7 @@ $totalAmount = 0;
                             <td>
                                 <h5 class="p-0 text-primary">{{ data_get($list_status_ad,  $item->status ,'New') }} </h5>
                             </td>
-                            <td>
+                            {{-- <td>
                                 {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST', 'class' => 'form-inline')) }}
                                     <div>
                                         {{ Form::hidden('id', $item->id) }}
@@ -158,24 +158,31 @@ $totalAmount = 0;
                                         {!! Form::button('submit', ['type' => 'submit', 'class' => 'pull-right btn btn-info btn-md col-md-4']) !!}
                                     </div>
                                 {!! Form::close() !!}
-                            </td>
+                            </td> --}}
                             <td>
-                                @foreach ($item->note as $note)
+                                <button href="#collapse{{$item->id}}" class="nav-toggle btn btn-info pull-right p-1">▲</button>
+                                @for ($i = count($item->note)-1; $i >= 0 ; $i--)
+                                    @if($i == count($item->note)-2)
+                                    <div id="collapse{{$item->id}}" style="display:none">
+                                    @endif
                                     <div class="form-group">
-                                        {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$note['user']], ['data-toggle' => "modal" ,  
+                                        {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$item->note[$i]['user']], ['data-toggle' => "modal" ,  
                                         'data-target' => "#viewFileModal",
                                         'type' => 'button', 
                                         'class' => 'btn btn-danger btn-xs' , 
                                         'onclick' => 'viewFile(this);',
                                         'data-claim_id' => $data->id,
-                                        'data-note' => $note['data'],
+                                        'data-note' => $item->note[$i]['data'],
                                         'data-status' => $item->status,
                                         'data-id' => $item->id
                                         ]) !!}
                                         <br>
-                                        {{$note['created_at']}}
+                                        {{$item->note[$i]['created_at']}}
                                     </div>
-                                @endforeach
+                                    @if($i == 0)
+                                    </div>
+                                    @endif
+                                @endfor
                             </td>
                             <td>
                                 @if (isset($item->wait['data']))                                
@@ -187,7 +194,8 @@ $totalAmount = 0;
                                         'data-claim_id' => $data->id,
                                         'data-note' => $item->wait['data'],
                                         'data-status' => $item->created_user == $user->id ? config('constants.statusExport.edit') : config('constants.statusExport.note_save'),
-                                        'data-id' => $item->id
+                                        'data-id' => $item->id,
+                                        'data-liststatus' => json_encode($item->list_status)
                                         ]) !!}
                                         <br>
                                         {{$item->wait['created_at']}}
@@ -309,7 +317,7 @@ $totalAmount = 0;
                 <div class="modal-footer">
                     {{ Form::hidden('status', config('constants.statusExport.new')) }}<br>
                     
-                        <button class="btn btn-danger">{{ __('message.yes')}} </button>
+                        <button class="btn btn-danger" name="save_letter" value="save">{{ __('message.yes')}} </button>
                         <button type="button" class="btn btn-secondary btn-cancel-delete" 
                             data-dismiss="modal">{{ __('message.no') }}</button>
                 </div>
@@ -333,12 +341,23 @@ $totalAmount = 0;
                 </div>
                 <div class="modal-body">
                     {{ Form::textarea('template', old('template'), ['id' => 'note_letter', 'class' => 'form-control editor_default']) }}<br>
-                </div>
-                <div class="modal-footer">
                     {{ Form::hidden('status', config('constants.statusExport.note_save'), ['id' => 'statusSubmit']) }}<br>
-                        <button class="btn btn-danger">{{ __('message.yes')}} </button> 
-                        <button type="button" class="btn btn-secondary btn-cancel-delete" 
-                            data-dismiss="modal">{{ __('message.no') }}</button>
+                    <div class="row">
+                        <div id = 'button_save' class="pull-right">
+                            <button class="btn btn-danger" name="save_letter" value="save"> Save Letter</button> 
+                            <button type="button" class="btn btn-secondary btn-cancel-delete" 
+                                data-dismiss="modal">Close</button>
+                        </div><br>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer bg-info">
+                    <h4 class="modal-title"> Change Status </h4>
+                    <div id='button_items'>
+                    </div>
+                    <div id="button_clone" style="display: none">
+                        <button class="btn btn-secondary m-1" name = 'status_change' value = 'value_default'> text_default </button> 
+                    </div>
                 </div>
             {!! Form::close() !!}
         </div>
@@ -411,12 +430,40 @@ $totalAmount = 0;
         var status = e.dataset.status;
         var id = e.dataset.id;
         var note = e.dataset.note;
-        $('#statusSubmit').val(status);
+        var list_status = e.dataset.liststatus;
+        if(status == {{ config('constants.statusExport.edit')}}){
+            $('#button_save').show();
+        }else{
+            $('#button_save').hide();
+        }
         $('.export_letter_id').val(id);
         $('.ex_claim_id').val(claim_id);
+        $("#button_items").empty();
+        $.each(JSON.parse(list_status), function( index, value ) {
+            var res = value.match(/(Rejected)|(rejected)/g);
+            if(res){
+                addButton(index,value,'rejected');
+            }else{
+                addButton(index,value);
+            }
+        });
+
         
         tinymce.get("note_letter").setContent(note);
         //CKEDITOR.instances['note_letter'].setData(note);
+    }
+
+    function addButton(value,text, type = 'none'){
+        clone =  $("#button_clone").clone().html() ;
+        
+        clone = clone.replace("text_default", text);
+        if(type != 'none'){
+            clone = clone.replace("btn-secondary", 'btn-danger');
+            clone = clone.replace("value_default", value+"-rejected");
+        }else{
+            clone = clone.replace("value_default", value+"-none");
+        }
+        $("#button_items").append(clone);
     }
 
     function viewFile(e){
@@ -442,11 +489,25 @@ $totalAmount = 0;
     
     }
 
-    $(".disableRow").find("input,button,textarea,select").attr("disabled", "disabled");
+    $(".disableRow").find("input,textarea,select").attr("disabled", "disabled");
 
     function clickSendEtalk(e){
         var url = e.dataset.url;
         window.open(url);
     }
+    $(document).ready(function () {
+        $('.nav-toggle').click(function () {
+            var collapse_content_selector = $(this).attr('href');
+            var toggle_switch = $(this);
+            $(collapse_content_selector).toggle(function () {
+                if ($(this).css('display') == 'none') {
+                    toggle_switch.html('▲');
+                } else {
+                    toggle_switch.html('▼');
+                }
+            });
+        });
+
+    });
 </script>
 @endsection
