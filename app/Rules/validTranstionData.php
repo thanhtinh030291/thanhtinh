@@ -45,15 +45,16 @@ class validTranstionData implements Rule {
      */
     public function passes($attribute, $value) {
         $map_array = [];
-        foreach ($this->range_curent_status  as $key => $value) {
-            if($value == $this->range_to_status[$key]){
-                $this->message[] = 'From status & To Status not the same';
+        if ($this->range_curent_status) {
+            foreach ($this->range_curent_status  as $key => $value) {
+                if ($value == $this->range_to_status[$key]) {
+                    $this->message[] = 'From status & To Status not the same';
+                }
+                if (in_array([$value, $this->range_role[$key], $this->range_to_status[$key]], $map_array)) {
+                    $this->message[] = 'there is data duplication';
+                }
+                $map_array[] = [$value, $this->range_role[$key], $this->range_to_status[$key]];
             }
-            if (in_array([$value, $this->range_role[$key], $this->range_to_status[$key]], $map_array)) {
-                $this->message[] = 'there is data duplication';
-            }
-            $map_array[] = [$value, $this->range_role[$key], $this->range_to_status[$key]];
-        
         }
 
         if ($this->message != null) {

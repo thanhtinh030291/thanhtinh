@@ -65,19 +65,16 @@ class TransactionRoleStatusController extends Controller
         $userId = Auth::User()->id;
         $id_level = $request->level_id;
         $data = LevelRoleStatus::findOrFail($id_level);
-        $array_id_isset = array_filter($request->id);
+        $array_id_isset = $request->id ? array_filter($request->id) : [];
         //dell
-        if (!empty($array_id_isset)) {
-            $dataDel = TransactionRoleStatus::whereNotIn('id', $array_id_isset);
+        
+            $dataDel = TransactionRoleStatus::where('level_role_status_id',$id_level);
             $dataDel->delete();
-        }else{
-            $dataDel = TransactionRoleStatus::whereNotIn('id', $array_id_isset)->where('level_role_status_id',$id_level);
-            $dataDel->delete();
-        }
         // update
         $dataItemNew = []; 
-        foreach ($request->id as $key => $value) {
-            if ($value == null) {
+        
+        if($request->id){
+            foreach ($request->id as $key => $value) {
                 $dataItemNew[] = [
                     'level_role_status_id' => $id_level,
                     'current_status' => $request->current_status[$key],
@@ -86,23 +83,13 @@ class TransactionRoleStatusController extends Controller
                     'created_user' => $userId,
                     'updated_user' => $userId,
                 ];
-            } else {
-                $keynew = $key - 1;
-                $data->transaction_role_status[$keynew]->updated_user = $userId;
-                $data->transaction_role_status[$keynew]->current_status = $request->current_status[$key];
-                $data->transaction_role_status[$keynew]->role = $request->role[$key];
-                $data->transaction_role_status[$keynew]->to_status = $request->to_status[$key];
             }
         }
-
         // update
         $data->push();
         // new season price
         $data->transaction_role_status()->createMany($dataItemNew);
-
-
         $request->session()->flash('status', 'Transaction Role Status saved successfully.');
-
         return redirect(route('transactionRoleStatuses.index'));
     }
 

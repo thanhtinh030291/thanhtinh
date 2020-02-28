@@ -39,8 +39,8 @@ class LetterTemplateController extends Controller
         $data['limit'] = $request->get('limit');
         $per_page = !empty($data['limit']) ? $data['limit'] : Arr::first($data['limit_list']);
         $data['data']  = $listData->paginate($per_page);
-        $list_level = LevelRoleStatus::pluck('name','id');
-        return view('letterTemplateManagement.index', compact('data','list_level'));
+        $data['list_level'] = LevelRoleStatus::pluck('name','id');
+        return view('letterTemplateManagement.index', $data);
     }
 
     /**
@@ -67,7 +67,7 @@ class LetterTemplateController extends Controller
         $data = $request->except([]);
         $data['created_user'] = $userId;
         $data['updated_user'] = $userId;
-
+        $data['level'] = $data['level'] ? $data['level'] : 0;
         LetterTemplate::create($data);
         $request->session()->flash('status', __('message.create_success')); 
         
@@ -115,6 +115,7 @@ class LetterTemplateController extends Controller
         $data = $request->except([]);
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
+        $data['level'] = $data['level'] ? $data['level'] : 0;
         LetterTemplate::updateOrCreate(['id' => $letterTemplate->id], $data);
 
         $request->session()->flash('status', __('message.update_success')); 
@@ -127,9 +128,9 @@ class LetterTemplateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(LetterTemplate $letterTemplate)
     {
-        $data = LetterTemplate::findOrFail($id);
+        $data = $letterTemplate;
         $data->delete();
         return redirect('/admin/letter_template')->with('status', __('message.delete_success'));
     }

@@ -188,10 +188,17 @@ class ClaimController extends Controller
         $export_letter = $data->export_letter;
         
         foreach ($export_letter as $key => $value) {
-            $level = $list_level
-            ->where('min_amount','<=', data_get($value->info, 'approve_amt') )
-            ->where('max_amount','>', data_get($value->info, 'approve_amt') )
-            ->first();
+            if($value->letter_template->level != 0){
+                $level = $list_level
+                ->where('id','=', $value->letter_template->level)
+                ->first();
+            }else{
+                $level = $list_level
+                ->where('min_amount','<=', data_get($value->info, 'approve_amt') )
+                ->where('max_amount','>', data_get($value->info, 'approve_amt') )
+                ->first();
+            }
+            
             if($role_id != 1){
                 $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
                 $list_status =  $list_status_full
@@ -337,27 +344,20 @@ class ClaimController extends Controller
         return redirect('/admin/claim')->with('status', __('message.delete_claim'));
     }
     // change
-    public function changeStatus(Request $request)
+    public function getLevel($export_letter, $list_level)
     {
-        $claim_id = $request->claim_id;
-        $id = $request->id;
-        $user = Auth::User();
-        $export_letter = ExportLetter::findOrFail($id);
-        $export_letter->status = $request->status;
-        $list_level = LevelRoleStatus::all();
-        $level = $list_level
-                ->where('min_amount','<=', data_get($export_letter->info, 'approve_amt') )
-                ->where('max_amount','>', data_get($export_letter->info, 'approve_amt') )
-                ->first();
-        if($level->end_status == $request->status){
-            $export_letter->approve = [  'user' => $user->id,
-                    'created_at' => Carbon::now()->toDateTimeString(),
-                    'data' => data_get($export_letter->wait, "data")
-            ];
+        
+        if($export_letter->letter_template->level != 0){
+            $level = $list_level
+            ->where('id','=', $export_letter->letter_template->level)
+            ->first();
+        }else{
+            $level = $list_level
+            ->where('min_amount','<=', data_get($export_letter->info, 'approve_amt') )
+            ->where('max_amount','>', data_get($export_letter->info, 'approve_amt') )
+            ->first();
         }
-
-        $export_letter->save();        
-        return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
+        return $level;
     }
     // wait for check
     public function waitCheck(Request $request)
@@ -391,6 +391,15 @@ class ClaimController extends Controller
                 $export_letter->note = $data;
             }
             $export_letter->status = $status_change[0];
+            $list_level = LevelRoleStatus::all();
+            $level = $this->getLevel($export_letter,$list_level );
+            
+            if($level->end_status == $request->status_change){
+                $export_letter->approve = [  'user' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'data' => data_get($export_letter->wait, "data")
+                ];
+            }
         }
         
 
@@ -410,7 +419,7 @@ class ClaimController extends Controller
         $body = [
             'user_email' => $user->email,
             'issue_id' => $barcode,
-            'text_note' => "Dear DLVN, \n Đính kèm là thư chấp nhận thanh toán. \n Thanks,",
+            'text_note' => "Dear DLVN, \n Đính kèm là thư : '{$export_letter->letter_template->name}' \n Thanks,",
             'files' => [
                 [
                     'name' => $namefile.".doc",
@@ -418,6 +427,7 @@ class ClaimController extends Controller
                 ]
             ]
         ];
+
         try {
             $res = PostApiMantic('api/rest/plugins/notetypes/issues/add_note_reply_letter/files', $body);
             $res = json_decode($res->getBody(),true);

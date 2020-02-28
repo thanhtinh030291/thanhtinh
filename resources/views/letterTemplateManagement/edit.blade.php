@@ -26,6 +26,9 @@ $max = config('constants.minMaxLength.max');
                 {{ Form::label('name', __('message.name'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
                 {{ Form::text('name', $data->name, [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
 
+                {{ Form::label('level', 'Level Checking') }}
+                {{ Form::select('level',$list_level, $data->level, ['id' => 'template_reject', 'class' => 'form-control editor', 'placeholder'=>'Automatic']) }}<br>
+
                 {{ Form::label('template', __('message.template')) }}
                 {{ Form::textarea('template', $data->template, ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>
 

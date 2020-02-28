@@ -23,8 +23,12 @@
                     {{ Form::label('name', __('message.name'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
                     {{ Form::text('name', old('name'), [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
 
+                    {{ Form::label('level', 'Level Checking') }}
+                    {{ Form::select('level',$list_level,old('level'), ['id' => 'template_reject', 'class' => 'form-control editor', 'placeholder'=>'Automatic']) }}<br>
+                    
                     {{ Form::label('template', __('message.template')) }}
                     {{ Form::textarea('template', old('template'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>
+
                 <div class="text-center tour-button">
                     <a class="btn btnt btn-secondary" href="{{url('admin/letter_template')}}">
                         {{ __('message.back')}}

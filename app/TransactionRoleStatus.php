@@ -29,7 +29,6 @@ class TransactionRoleStatus extends BaseModel
     protected $dates = ['deleted_at'];
     protected $guarded = ['id'];
     
-    
     public function level_role_status()
     {
         return $this->belongsTo('App\LevelRoleStatus', 'id', 'level_role_status_id');

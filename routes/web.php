@@ -69,6 +69,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/checkRoomBoard', 'AjaxCommonController@checkRoomBoard')->name('checkRoomBoard');
 
         Route::resource('roomAndBoards', 'RoomAndBoardController');
+
+        Route::get('users/{user}',  'UserController@edit');
+        Route::patch('users/{user}/update','UserController@update');
         
     });
 });

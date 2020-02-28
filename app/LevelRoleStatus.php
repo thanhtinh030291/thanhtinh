@@ -33,7 +33,7 @@ class LevelRoleStatus extends BaseModel
     
     public function transaction_role_status()
     {
-        return $this->hasMany('App\TransactionRoleStatus', 'level_role_status_id', 'id');
+        return $this->hasMany('App\TransactionRoleStatus', 'level_role_status_id', 'id')->orderBy('role')->orderBy('current_status');
     }
 
     /**
