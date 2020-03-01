@@ -9,6 +9,7 @@ $max = config('constants.minMaxLength.max');
 <link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
 <link href="{{ asset('css/multi_lang.css') }}" media="all" rel="stylesheet" type="text/css"/>
 <link href="{{ asset('css/ckeditor.css') }}" media="all" rel="stylesheet" type="text/css"/>
+<link href="{{ asset('css/drawingboard.css') }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -48,7 +49,7 @@ $max = config('constants.minMaxLength.max');
                                                 <div class="card-body">
                                                     
                                                     
-                                                    <form action="#" method="post" enctype="multipart/form-data">
+                                                    {{ Form::open(array('url' => "admin/users/update", 'method' => 'post' ,'files' => true, 'id' => 'drawing-form')) }}
                                     
                                                     <div class="row">	
                                                     
@@ -64,15 +65,29 @@ $max = config('constants.minMaxLength.max');
     
                                                             <div class="col-lg-6">
                                                             <div class="form-group">
-                                                                {{ Form::label('name','E-Mail', array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                                                                {{ Form::text('name', $user->email, [ 'class' => 'form-control ','placeholder' =>'Email', 'required']) }}<br/>
+                                                                {{ Form::label('email','E-Mail', array('class' => 'labelas')) }} <span class="text-danger">*</span>
+                                                                {{ Form::text('email', $user->email, [ 'class' => 'form-control ','placeholder' =>'Email', 'required', 'readonly']) }}<br/>
                                                             </div>
                                                             </div>  
+
+                                                            <div class="col-lg-6">
+                                                                <div class="form-group">
+                                                                    {{ Form::label('signarure','Signarure', array('class' => 'labelas')) }} <span class="text-danger">*</span>
+                                                                    <img alt="image" src="{{url(config('constants.signarureStorage').$user->signarure)}}" />
+                                                                    <br />
+                                                                    {{ Form::file('file_signarure', null, [ 'class' => 'form-control ']) }}<br/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                {{ Form::label('signarure','Creater Signarure', array('class' => 'labelas')) }}
+                                                                <div class="board" id="custom-board-2" style="width : 350px ; height:300px"></div>
+                                                                <input type="hidden" name="image_signarure" value="">
+                                                            </div>
                                                         </div>
                                                         
                                                         <div class="row">
                                                             <div class="col-lg-12">
-                                                            <button type="button" class="btn btn-primary">Edit profile</button>
+                                                            <button type="submit" class="btn btn-primary">Edit profile</button>
                                                             </div>
                                                         </div>
                                                     
@@ -86,9 +101,8 @@ $max = config('constants.minMaxLength.max');
                                                         <div class="m-b-10"></div>
                                                         
                                                         <div id="avatar_image">
-                                                            <img alt="image" style="max-width:100px; height:auto;" src="{{url('images/avatars/admin.png')}}" />
+                                                            <img alt="image" src="{{url(config('constants.avantarStorage').'thumbnail/'.$user->avantar)}}" />
                                                             <br />
-                                                            <i class="fa fa-trash-o fa-fw"></i> <a class="delete_image" href="#">Remove avatar</a>
                                                                         
                                                         </div>  
                                                         <div id="image_deleted_text"></div>                      
@@ -98,13 +112,13 @@ $max = config('constants.minMaxLength.max');
                                                         
                                                         <div class="form-group">
                                                         <label>Change avatar</label> 
-                                                        <input type="file" name="image" class="form-control">
+                                                        {{ Form::file('file_avantar', null, [ 'class' => 'form-control ']) }}<br/>
                                                         </div>
                                                         
                                                     </div>
                                                     </div>								
                                                     
-                                                    </form>										
+                                                </form>										
                                                     
                                     </div>	
                                     <!-- end card-body -->								
@@ -125,7 +139,35 @@ $max = config('constants.minMaxLength.max');
 @section('scripts')
 <script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('js/tinymce.js') }}"></script>
+<script src="{{ asset('js/drawingboard.js') }}"></script>
 <script type="text/javascript">
+var customBoard2 = new DrawingBoard.Board('custom-board-2', {
+	controls: [
+		'Color',
+		{ Size: { type: 'dropdown' } },
+		{ DrawingMode: { filler: false } },
+		'Navigation',
+		'Download'
+	],
+	size: 1,
+	webStorage: 'session',
+	enlargeYourContainer: true
+});
+$('#drawing-form').on('submit', function(e) {
+    //get drawingboard content
+    var img = customBoard2.getImg();
+
+    //we keep drawingboard content only if it's not the 'blank canvas'
+    var imgInput = (customBoard2.blankCanvas == img) ? '' : img;
+
+    //put the drawingboard content in the form field to send it to the server
+    $(this).find('input[name=image_signarure]').val( imgInput );
+
+    //we can also assume that everything goes well server-side
+    //and directly clear webstorage here so that the drawing isn't shown again after form submission
+    //but the best would be to do when the server answers that everything went well
+    customBoard2.clearWebStorage();
+});
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

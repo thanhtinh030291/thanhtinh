@@ -59,6 +59,9 @@
                     </div>
 
                     <!-- item-->
+                    <a class="dropdown-item notify-item" href="{{ route('MyProfile') }}" >
+                        <span>My Profile</span>
+                    </a>
                     <a class="dropdown-item notify-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fa fa-power-off"></i> <span>{{ __('message.logout') }}</span>
                     </a>

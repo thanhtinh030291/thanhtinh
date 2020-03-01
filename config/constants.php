@@ -5,10 +5,14 @@ return[
     'appLogo'     => "/images/logo.png",
     'formClaimUpload'   => '/public/formClaim/',
     'formClaimStorage'  => '/storage/formClaim/',
-    'formClaimSelect'   => '/public/formClaimSelect/',
-    'formClaimSelectStorage'   => '/storage/formClaimSelect/',
-    'formClaimExport'  => '/public/formClaimExport/',
-    'formClaimExportStorage'  => '/storage/formClaimExport/',
+    'avantarUpload' => '/public/avantar/',
+    'avantarStorage' => '/storage/avantar/',
+    'signarureUpload' => '/public/signarure/',
+    'signarureStorage' => '/storage/signarure/',
+
+    
+    
+    
     'paginator' => [
         'itemPerPage' => '10',
     ],

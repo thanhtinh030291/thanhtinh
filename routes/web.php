@@ -70,8 +70,8 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::resource('roomAndBoards', 'RoomAndBoardController');
 
-        Route::get('users/{user}',  'UserController@edit');
-        Route::patch('users/{user}/update','UserController@update');
+        Route::get('users/',  'UserController@edit')->name('MyProfile');
+        Route::post('users/update','UserController@update');
         
     });
 });

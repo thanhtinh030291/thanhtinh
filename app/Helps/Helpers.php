@@ -1,6 +1,29 @@
 <?php
 use Illuminate\Support\Str;
 
+function saveImage($file ,$path, $thumbnail=null){
+    if (!File::exists(storage_path("app".$path)))
+    {
+        File::makeDirectory(storage_path("app".$path), 0777, true, true);
+    }
+    if (!File::exists(storage_path("app".$path."thumbnail/")))
+    {
+        File::makeDirectory(storage_path("app".$path."thumbnail/"), 0777, true, true);
+    }
+    $file_name =  md5($file->getClientOriginalName().time()) . '.' . $file->getClientOriginalExtension();
+        $image = Image::make($file)
+            ->resize(400,null,function ($constraint) {
+                $constraint->aspectRatio();
+                })
+            ->save(storage_path("app".$path) . $file_name);
+        if($thumbnail){
+            $image->resize(90, 90)
+            ->save(storage_path("app".$path."thumbnail/"). $file_name);
+        }
+            
+
+    return $file_name;
+}
 function GetApiMantic($url)
 {
     $headers = [
