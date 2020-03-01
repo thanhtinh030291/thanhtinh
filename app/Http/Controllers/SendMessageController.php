@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Pusher\Pusher;
 use Auth;
+use App\User;
 use App\Message;
 use App\Events\Notify;
+use App\Notifications\PushNotification;
 
 class SendMessageController extends Controller
 {
@@ -26,17 +28,31 @@ class SendMessageController extends Controller
             'content' => 'required'
         ]);
         $user = Auth::user();
+        $options = array(
+            'cluster' => config('constants.PUSHER_APP_CLUSTER'),
+            'encrypted' => true
+        );
+        $data['title'] = $user->name . ' gửi tin cho bạn';
+        $data['content'] = $request->input('content');
+        $data['avantar'] = config('constants.avantarStorage').'thumbnail/'.$user->avantar;
+        $pusher = new Pusher(
+            config('constants.PUSHER_APP_KEY'),
+            config('constants.PUSHER_APP_SECRET'),
+            config('constants.PUSHER_APP_ID'),
+            $options
+        );
         
         $user->messagesSent()->create([
             'user_to' => $request->input('user'),
             'message' => $request->input('content')
         ]);
-        $data['title'] = $user->name;
-        $data['content'] = $request->input('content');
-        $data['user'] = $request->input('user');
         
-        
-        event(new Notify($data));
+        $pusher->trigger('NotifyUser-'.$request->input('user'),'Notify' ,$data);
+        $user_to = User::findOrfail($request->input('user'));
+        $user_to->notify(new PushNotification(
+            $data['title'] , $data['content'] , $data['avantar']
+        ));
+        //event(new Notify($data['content']));
         return redirect('/admin/home/');
     }
 

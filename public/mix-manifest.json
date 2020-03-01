@@ -1,5 +1,3 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/js/chat.js": "/js/chat.js",
-    "/js/notifi.js": "/js/notifi.js"
+    "/js/app.js": "/js/app.js"
 }

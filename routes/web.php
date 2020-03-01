@@ -94,8 +94,7 @@ Route::post(
 )->name('io_generator_builder_generate_from_file');
 
 
+// Push Subscriptions
+Route::post('subscriptions', 'PushController@update');
+Route::post('subscriptions/delete', 'PushController@destroy');
 
-
-
-
-Route::resource('transactionRoleStatuses', 'TransactionRoleStatusController');

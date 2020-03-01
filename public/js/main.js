@@ -35,7 +35,7 @@ $(document).ready(function() {
     loadDateTimePicker();
 });
 
-function pusher(data){
+function pusher_res(data){
     var notificationsWrapper   = $('.dropdown-notifications');
     var notificationsToggle    = notificationsWrapper.find('a[data-toggle]');
     var notificationsCountElem = notificationsToggle.find('i[data-count]');
@@ -68,6 +68,7 @@ function pusher(data){
         notifications.html(newNotificationHtml + existingNotifications);
 
         notificationsCount += 1;
+        console.log(notificationsCount);
         notificationsCountElem.attr('data-count', notificationsCount);
         notificationsWrapper.find('.notif-count').text(notificationsCount);
         notificationsWrapper.show();

@@ -17,6 +17,7 @@
         "infyomlabs/generator-builder": "dev-master",
         "infyomlabs/laravel-generator": "6.0.x-dev",
         "intervention/image": "^2.5",
+        "laravel-notification-channels/webpush": "^5.0",
         "laravel/framework": "^6.2",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^6.0",

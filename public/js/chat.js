@@ -362,7 +362,7 @@ var chatbox = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\pacific_project\ClaimOCR\resources\assets\js\chat.js */"./resources/assets/js/chat.js");
+module.exports = __webpack_require__(/*! /usr/local/var/www/claimassistants/resources/assets/js/chat.js */"./resources/assets/js/chat.js");
 
 
 /***/ })

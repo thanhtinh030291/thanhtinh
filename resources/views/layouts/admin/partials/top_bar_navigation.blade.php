@@ -7,16 +7,25 @@
 
     <nav class="navbar-custom">
         <ul class="list-inline float-right mb-0">
+
             <li class="list-inline-item dropdown notif">
                 <a class="nav-link" href="/docs" role="button" aria-haspopup="false" aria-expanded="false">
                     Documents
                 </a>
             </li>
+            <li class="list-inline-item" id='checkbox-notify'>
+                <i class="fa fa-bell text-warning" style="font-size: x-large;" aria-hidden="true"></i>
+                <label class=" m-0 p-2 switch">
+                    <input type="checkbox" onchange="onOffpush(this)" checked>
+                    <span class="slider round"></span>
+                </label>
+            </li>
+            
             <li class="list-inline-item dropdown notif dropdown-notifications">
                 <a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown">
                     <i data-count="{{count($messages)}}" class="fa fa-envelope notification-icon text-warning"></i>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right profile-dropdown">
+                <div class="dropdown-menu dropdown-menu-right profile-dropdown dropdown-notifications">
                     <div class="dropdown-toolbar">
                         <div class="dropdown-toolbar-actions">
                             <a href="#" onclick="readAllMessages()">Mark all as read</a>
