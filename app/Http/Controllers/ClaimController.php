@@ -26,6 +26,7 @@ use GuzzleHttp\Client;
 use App\TransactionRoleStatus;
 use App\LevelRoleStatus;
 use App\RoleChangeStatus;
+use PDF;
 
 class ClaimController extends Controller
 {
@@ -523,6 +524,25 @@ class ClaimController extends Controller
         echo $data['content'];
         echo "</body>";
         echo "</html>";
+    }
+
+    public function exportLetterPDF(Request $request){
+        $data = $this->letter($request->letter_template_id , $request->claim_id);
+        $contents = "<html> 
+        <head>
+            body {
+                font-family: 'Arial, Helvetica, sans-serif';
+            }
+            <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+        </head>
+        <body>
+        {$data['content']}
+        </body>
+        </html>";
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['dpi' => 150 , 'defaultFont'=> 'sans-serif']);
+        $pdf->loadHTML($data['content']);
+        return $pdf->stream();
     }
 
     //ajax 

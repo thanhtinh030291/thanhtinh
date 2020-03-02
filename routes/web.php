@@ -37,6 +37,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/template', 'ClaimController@template')->name('template');
         Route::post('/requestLetter','ClaimController@requestLetter')->name('requestLetter');
         Route::post('/exportLetter','ClaimController@exportLetter')->name('exportLetter');
+        Route::post('/exportLetterPDF','ClaimController@exportLetterPDF')->name('exportLetterPDF');
         Route::post('/previewLetter','ClaimController@previewLetter')->name('previewLetter');
         Route::post('/changeStatus','ClaimController@changeStatus')->name('changeStatus');
         Route::post('/waitCheck','ClaimController@waitCheck')->name('waitCheck');

@@ -100,7 +100,7 @@ $totalAmount = 0;
                             <th>Info</th>
                             <th>Create By</th>
                             <th>Current Status</th>
-                            {{-- <th>Change Status</th> --}}
+                            <th>History</th>
                             <th>Note</th>
                             <th>Wait for the check</th>
                             
@@ -149,16 +149,14 @@ $totalAmount = 0;
                             <td>
                                 <h5 class="p-0 text-primary">{{ data_get($list_status_ad,  $item->status ,'New') }} </h5>
                             </td>
-                            {{-- <td>
-                                {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST', 'class' => 'form-inline')) }}
-                                    <div>
-                                        {{ Form::hidden('id', $item->id) }}
-                                        {{ Form::hidden('claim_id', $item->claim_id) }}
-                                        {{ Form::select('status', $item->list_status, null, [ 'class' => 'form-control col-md-8', 'placeholder' => 'Select Option']) }}
-                                        {!! Form::button('submit', ['type' => 'submit', 'class' => 'pull-right btn btn-info btn-md col-md-4']) !!}
-                                    </div>
-                                {!! Form::close() !!}
-                            </td> --}}
+                            <td>
+                                {{-- history --}}
+                                @foreach ($item->log as $item_log)
+                                    <p class="m-0">{{$item_log->created_at}} </p>
+                                    <p class="m-0">{{data_get($admin_list ,$item_log->causer_id)}} </p>
+                                    <p class="m-0">{{data_get($list_status_ad,  data_get($item_log->properties, 'attributes.status', 1))}} </p>
+                                @endforeach
+                            </td>
                             <td>
                                 <button href="#collapse{{$item->id}}" class="nav-toggle btn btn-info pull-right p-1">▲</button>
                                 @for ($i = count($item->note)-1; $i >= 0 ; $i--)
@@ -220,6 +218,11 @@ $totalAmount = 0;
                                     {!! Form::button('<i class="fa fa-print"></i>', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
                                 </div>
                                 {!! Form::close() !!}
+                                {{ Form::open(array('url' => '/admin/exportLetterPDF', 'method' => 'POST')) }}
+                                    {{ Form::hidden('claim_id', $data->id ) }}
+                                    {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
+                                    {!! Form::button('<i class="fa fa-file-pdf-o"></i>', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
+                                {!! Form::close() !!}    
                             </td>
                         </tr>
                     @endforeach
