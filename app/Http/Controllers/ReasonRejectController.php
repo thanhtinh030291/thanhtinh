@@ -110,8 +110,10 @@ class ReasonRejectController extends Controller
     public function update(reasonInjectRequest $request, ReasonReject $reasonReject)
     {
         $data = $request->except([]);
+        
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
+        //dd($data);
         ReasonReject::updateOrCreate(['id' => $reasonReject->id], $data);
 
         $request->session()->flash('status', __('message.reason_inject_update_success')); 

@@ -27,7 +27,7 @@ $max = config('constants.minMaxLength.max');
                 {{ Form::text('name', $data->name, [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
 
                 {{ Form::label('term', __('message.term'), array('class' => 'labelas')) }} 
-                {{ Form::select('term_id', $listTerm, $data->id, ['class' => ' select2 form-control', 'placeholder' => 'None']) }}<br>
+                {{ Form::select('term_id', $listTerm, $data->term_id, ['class' => ' select2 form-control', 'placeholder' => 'None']) }}<br>
 
                 {{ Form::label('template', __('message.template')) }}
                 {{ Form::textarea('template', $data->template, ['id' => 'template_reject', 'class' => 'form-control editor2']) }}<br>

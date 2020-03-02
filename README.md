@@ -122,6 +122,8 @@ PUSHER_APP_SECRET=2f138838a645af01ad3c
 PUSHER_APP_ID=891772
 PUSHER_APP_CLUSTER=ap1
 
+# step 13 - notify
+php artisan webpush:vapid 
 
 appId: a640ac782552e93f
 key: efaa761e84c08024d437f370eaa2a564

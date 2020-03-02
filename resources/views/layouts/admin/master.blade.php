@@ -225,7 +225,7 @@ function sendSubscriptionToBackEnd(subscription) {
     .done(function(res) {
         response = res;
     })
-    return response.json();
+    return response;
 }
 
 function enableNotifications(){

@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -31,7 +32,6 @@ class UserController extends Controller
             'email' => 'required|email',
             'file_avantar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'file_signarure' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-
         ]);
         
 
@@ -58,6 +58,14 @@ class UserController extends Controller
         if($request->image_signarure){
             
             $path = config('constants.signarureUpload');
+            if (!File::exists(storage_path("app".$path)))
+            {
+                File::makeDirectory(storage_path("app".$path), 0777, true, true);
+            }
+            if (!File::exists(storage_path("app".$path."thumbnail/")))
+            {
+                File::makeDirectory(storage_path("app".$path."thumbnail/"), 0777, true, true);
+            }
             if($user->signarure != 'nopic.png'){
                 Storage::delete($path . $user->signarure);
             }
