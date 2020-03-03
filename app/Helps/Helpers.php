@@ -1,5 +1,16 @@
 <?php
 use Illuminate\Support\Str;
+use App\User;
+function getUserSign($id){
+    $user = User::findOrFail($id);
+    $dirStorage = config('constants.signarureStorage');
+    $dataImage =  $dirStorage . $user->signarure ;
+    $htm = "
+    <p><img src='{$dataImage}' alt='face' height='150' width='150'></img></p>
+    <p>$user->name</p>
+    ";
+    return $htm;
+}
 
 function saveImage($file ,$path, $thumbnail=null){
     if (!File::exists(storage_path("app".$path)))

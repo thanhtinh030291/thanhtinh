@@ -12,9 +12,9 @@ var editor_config = {
         "emoticons template paste textcolor colorpicker textpattern"
     ],
     toolbar:
-          
             ["insertfile undo redo | styleselect | bold italic sizeselect fontselect fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
-            "applicantName | IOPDiag | PRefNo | PhName | PRefNo | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | TermRemark | tableInfoPayment | benefitOfClaim "]
+            "applicantName | IOPDiag | PRefNo | PhName  | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | TermRemark | tableInfoPayment | benefitOfClaim | createrSign | approveSign | claimNo | memRefNo | invoicePatient"
+            ]
         ,
     relative_urls: false,
     file_browser_callback: function(field_name, url, type, win) {
@@ -154,7 +154,45 @@ var editor_config = {
                 editor.insertContent("&nbsp;[[$benefitOfClaim]]&nbsp;");
             }
         });
-        
+
+        editor.addButton("createrSign", {
+            text: "createrSign",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$per_creater_sign]]&nbsp;");
+            }
+        });
+
+        editor.addButton("approveSign", {
+            text: "approveSign",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$per_approve_sign]]&nbsp;");
+            }
+        });
+
+        editor.addButton("claimNo", {
+            text: "claimNo",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$claimNo]]&nbsp;");
+            }
+        });
+
+        editor.addButton("memRefNo", {
+            text: "memRefNo",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$memRefNo]]&nbsp;");
+            }
+        });
+        editor.addButton("invoicePatient", {
+            text: "invoicePatient",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$invoicePatient]]&nbsp;");
+            }
+        });
     }
 };
 tinymce.init(editor_config);

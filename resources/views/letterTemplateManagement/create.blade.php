@@ -25,6 +25,9 @@
 
                     {{ Form::label('level', 'Level Checking') }}
                     {{ Form::select('level',$list_level,old('level'), ['id' => 'template_reject', 'class' => 'form-control editor', 'placeholder'=>'Automatic']) }}<br>
+
+                    {{ Form::label('level', 'Letter Payment') }}
+                    {{ Form::select('letter_payment',$listLetter,old('letter_payment'), ['id' => 'template_reject', 'class' => 'form-control editor', 'placeholder'=>'None']) }}<br>
                     
                     {{ Form::label('template', __('message.template')) }}
                     {{ Form::textarea('template', old('template'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>

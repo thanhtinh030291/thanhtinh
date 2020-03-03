@@ -29,6 +29,9 @@ $max = config('constants.minMaxLength.max');
                 {{ Form::label('level', 'Level Checking') }}
                 {{ Form::select('level',$list_level, $data->level, ['id' => 'template_reject', 'class' => 'form-control editor', 'placeholder'=>'Automatic']) }}<br>
 
+                {{ Form::label('level', 'Letter Payment') }}
+                    {{ Form::select('letter_payment', $listLetter, $data->letter_payment, ['id' => 'template_reject', 'class' => 'form-control editor', 'placeholder'=>'None']) }}<br>
+
                 {{ Form::label('template', __('message.template')) }}
                 {{ Form::textarea('template', $data->template, ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>
 

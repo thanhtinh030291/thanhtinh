@@ -52,7 +52,8 @@ class LetterTemplateController extends Controller
     {
         $list_level = LevelRoleStatus::pluck('name','id');
         $listTerm = Term::pluck('name','id');
-        return view('letterTemplateManagement.create', compact('listTerm', 'list_level'));
+        $listLetter = LetterTemplate::pluck('name','id');
+        return view('letterTemplateManagement.create', compact('listTerm', 'list_level', 'listLetter'));
     }
 
     /**
@@ -100,7 +101,8 @@ class LetterTemplateController extends Controller
         $data = $letterTemplate;
         $listTerm = Term::pluck('name','id');
         $list_level = LevelRoleStatus::pluck('name','id');
-        return view('letterTemplateManagement.edit', compact('data', 'listTerm','list_level'));
+        $listLetter = LetterTemplate::pluck('name','id');
+        return view('letterTemplateManagement.edit', compact('data', 'listTerm','list_level', 'listLetter'));
     }
 
     /**

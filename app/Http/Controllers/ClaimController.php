@@ -430,7 +430,7 @@ class ClaimController extends Controller
         ];
 
         try {
-            $res = PostApiMantic('api/rest/plugins/notetypes/issues/add_note_reply_letter/files', $body);
+            $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
             $res = json_decode($res->getBody(),true);
         } catch (Exception $e) {
 
@@ -528,21 +528,32 @@ class ClaimController extends Controller
 
     public function exportLetterPDF(Request $request){
         $data = $this->letter($request->letter_template_id , $request->claim_id);
-        $contents = "<html> 
-        <head>
-            body {
-                font-family: 'Arial, Helvetica, sans-serif';
-            }
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
-        </head>
-        <body>
-        {$data['content']}
-        </body>
-        </html>";
-        $pdf = \App::make('dompdf.wrapper');
-        $pdf->setOptions(['dpi' => 150 , 'defaultFont'=> 'sans-serif']);
-        $pdf->loadHTML($data['content']);
-        return $pdf->stream();
+        $export_letter = ExportLetter::findOrFail($request->id);
+        
+        $create_user_sign = getUserSign($export_letter->created_user);
+        $data['content'] = str_replace('[[$per_creater_sign]]', $create_user_sign, $data['content']);
+
+        if(isset($export_letter->approve['user'])){
+            $approve_user_sign = getUserSign($export_letter->approve['user']);
+            $data['content'] = str_replace('[[$per_approve_sign]]', $approve_user_sign, $data['content']);
+        }
+        
+
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
+        $mpdf->WriteHTML('
+        <div style="text-align: right; font-weight: bold; ">
+            <img src="'.asset("images/header.jpg").'" alt="Girl in a jacket">
+        </div>');
+        $mpdf->SetHTMLFooter('
+        <div style="text-align: right; font-weight: bold;">
+            <img src="'.asset("images/footer.png").'" alt="Girl in a jacket">
+        </div>');
+        $mpdf->WriteHTML( 
+            '<div style="padding-top: 20px">'
+            .$data['content'].
+            '</div>'
+        );
+        return $mpdf->Output();
     }
 
     //ajax 
@@ -554,10 +565,11 @@ class ClaimController extends Controller
 
 
     // export letter
-    public function letter($letter_template_id , $claim_id){ 
+    public function letter($letter_template_id , $claim_id){
         $letter = LetterTemplate::findOrFail($letter_template_id);
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        
         $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
         $IOPDiag = IOPDiag($HBS_CL_CLAIM);
         $benefitOfClaim = benefitOfClaim($HBS_CL_CLAIM);
@@ -587,6 +599,9 @@ class ClaimController extends Controller
         $content = str_replace('[[$apvAmt]]', formatPrice($HBS_CL_CLAIM->sumAppAmt), $content);
         $content = str_replace('[[$payMethod]]', $payMethod, $content);
         $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $HBS_CL_CLAIM->sumAppAmt) , $content);
+        $content = str_replace('[[$claimNo]]', $claim->code_claim_show , $content);
+        $content = str_replace('[[$memRefNo]]', $HBS_CL_CLAIM->member->memb_ref_no , $content);
+        $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
         if($CSRRemark){
             $content = str_replace('[[$CSRRemark]]', implode('<br>',$CSRRemark) , $content);
             $content = str_replace('[[$TermRemark]]', implode('<br>',array_unique($TermRemark)) , $content);

@@ -218,11 +218,15 @@ $totalAmount = 0;
                                     {!! Form::button('<i class="fa fa-print"></i>', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
                                 </div>
                                 {!! Form::close() !!}
-                                {{ Form::open(array('url' => '/admin/exportLetterPDF', 'method' => 'POST')) }}
-                                    {{ Form::hidden('claim_id', $data->id ) }}
-                                    {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
-                                    {!! Form::button('<i class="fa fa-file-pdf-o"></i>', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
-                                {!! Form::close() !!}    
+                                {{-- btn letter payment --}}
+                                @if ($item->letter_template->letter_payment != null)
+                                    {{ Form::open(array('url' => '/admin/exportLetterPDF', 'method' => 'POST')) }}
+                                        {{ Form::hidden('claim_id', $data->id ) }}
+                                        {{ Form::hidden('letter_template_id', $item->letter_template->letter_payment ) }}
+                                        {{ Form::hidden('id', $item->id ) }}
+                                        {!! Form::button('<i class="fa fa-file-pdf-o"></i>', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
+                                    {!! Form::close() !!} 
+                                @endif
                             </td>
                         </tr>
                     @endforeach
