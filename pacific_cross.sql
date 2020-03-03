@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 03, 2020 at 03:53 PM
+-- Generation Time: Mar 03, 2020 at 03:57 PM
 -- Server version: 10.4.6-MariaDB
 -- PHP Version: 7.2.22
 
@@ -38,37 +38,6 @@ CREATE TABLE `activity_log` (
   `causer_type` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `properties` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL
 ) ;
-
---
--- Dumping data for table `activity_log`
---
-
-INSERT INTO `activity_log` (`id`, `log_name`, `description`, `subject_id`, `subject_type`, `causer_id`, `causer_type`, `properties`, `created_at`, `updated_at`) VALUES
-(1, 'default', 'updated', 934, 'App\\ExportLetter', 1, 'App\\User', '[]', '2020-03-02 08:33:26', '2020-03-02 08:33:26'),
-(2, 'default', 'updated', 934, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":2,\"approve\":[],\"updated_user\":1},\"old\":{\"status\":0,\"approve\":[],\"updated_user\":1}}', '2020-03-02 08:40:51', '2020-03-02 08:40:51'),
-(3, 'default', 'updated', 934, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":3},\"old\":{\"status\":2}}', '2020-03-02 10:04:43', '2020-03-02 10:04:43'),
-(4, 'default', 'created', 936, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":0}}', '2020-03-02 10:05:46', '2020-03-02 10:05:46'),
-(5, 'default', 'updated', 936, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":0},\"old\":{\"status\":0}}', '2020-03-02 10:06:01', '2020-03-02 10:06:01'),
-(6, 'default', 'updated', 936, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":1},\"old\":{\"status\":0}}', '2020-03-02 10:06:31', '2020-03-02 10:06:31'),
-(7, 'default', 'updated', 936, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":1},\"old\":{\"status\":1}}', '2020-03-02 10:07:44', '2020-03-02 10:07:44'),
-(8, 'default', 'created', 937, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":0}}', '2020-03-03 05:36:27', '2020-03-03 05:36:27'),
-(9, 'default', 'updated', 936, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":5},\"old\":{\"status\":1}}', '2020-03-03 07:27:08', '2020-03-03 07:27:08'),
-(10, 'default', 'created', 938, 'App\\ExportLetter', 3, 'App\\User', '{\"attributes\":{\"status\":0}}', '2020-03-03 08:08:38', '2020-03-03 08:08:38'),
-(11, 'default', 'updated', 938, 'App\\ExportLetter', 3, 'App\\User', '{\"attributes\":{\"status\":0},\"old\":{\"status\":0}}', '2020-03-03 08:09:16', '2020-03-03 08:09:16'),
-(12, 'default', 'updated', 938, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":7},\"old\":{\"status\":0}}', '2020-03-03 08:09:40', '2020-03-03 08:09:40'),
-(13, 'default', 'updated', 938, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":5},\"old\":{\"status\":7}}', '2020-03-03 08:09:50', '2020-03-03 08:09:50'),
-(14, 'default', 'created', 939, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":0}}', '2020-03-03 09:00:17', '2020-03-03 09:00:17'),
-(15, 'default', 'created', 940, 'App\\ExportLetter', 3, 'App\\User', '{\"attributes\":{\"status\":0}}', '2020-03-03 09:01:16', '2020-03-03 09:01:16'),
-(16, 'default', 'updated', 940, 'App\\ExportLetter', 3, 'App\\User', '{\"attributes\":{\"status\":0},\"old\":{\"status\":0}}', '2020-03-03 09:01:29', '2020-03-03 09:01:29'),
-(17, 'default', 'updated', 940, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":5},\"old\":{\"status\":0}}', '2020-03-03 09:01:50', '2020-03-03 09:01:50'),
-(18, 'default', 'updated', 937, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":0},\"old\":{\"status\":0}}', '2020-03-03 10:34:11', '2020-03-03 10:34:11'),
-(19, 'default', 'updated', 937, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":5},\"old\":{\"status\":0}}', '2020-03-03 10:34:23', '2020-03-03 10:34:23'),
-(20, 'default', 'updated', 940, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":5},\"old\":{\"status\":5}}', '2020-03-03 10:35:18', '2020-03-03 10:35:18'),
-(21, 'default', 'updated', 940, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":5},\"old\":{\"status\":5}}', '2020-03-03 10:35:28', '2020-03-03 10:35:28'),
-(22, 'default', 'created', 941, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":0}}', '2020-03-03 10:35:47', '2020-03-03 10:35:47'),
-(23, 'default', 'updated', 941, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":0},\"old\":{\"status\":0}}', '2020-03-03 10:35:59', '2020-03-03 10:35:59'),
-(24, 'default', 'updated', 941, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":5},\"old\":{\"status\":0}}', '2020-03-03 10:36:07', '2020-03-03 10:36:07'),
-(25, 'default', 'updated', 941, 'App\\ExportLetter', 1, 'App\\User', '{\"attributes\":{\"status\":5},\"old\":{\"status\":5}}', '2020-03-03 10:36:13', '2020-03-03 10:36:13');
 
 -- --------------------------------------------------------
 
