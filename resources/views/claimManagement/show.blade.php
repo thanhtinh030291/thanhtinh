@@ -41,9 +41,13 @@ $totalAmount = 0;
                                     {{ Form::hidden('claim_id', $data->id ) }}
 
                                     {{ Form::label('letter_template_id', __('message.letter_template'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                                    {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'code_claim', 'class' => 'select2 form-control', 'required')) }}
-                                    {{ Form::submit( 'Send Letter', ['class' => 'mt-3 btn btn-info']) }}
-
+                                    {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'letterTemplate', 'class' => 'select2 form-control', 'required')) }}
+                                    {!! Form::button('Send Letter', ['data-toggle' => "modal" ,  
+                                        'data-target' => "#comfirmPaymentModal",
+                                        'type' => 'button', 
+                                        'class' => 'mt-3 btn btn-info' , 
+                                        'onclick' => 'comfirmPayment(this);',
+                                        ]) !!}
                                 {{ Form::close() }}
                 
                             </div>
@@ -374,6 +378,7 @@ $totalAmount = 0;
 {{-- Modal viewFile--}}
 <div id="viewFileModal" class="modal fade bd-example-modal-lg" role="dialog">
     <div class="modal-dialog modal-lg">
+        
         <!-- Modal content-->
         <div class="modal-content">
             {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
@@ -394,6 +399,78 @@ $totalAmount = 0;
     </div>
 </div>
 
+{{-- Modal comfirm payment--}}
+<div id="comfirmPaymentModal" class="modal fade bd-example-modal-lg" role="dialog">
+    <div class="modal-dialog modal-lg">
+        
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Comfirm Letter </h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
+                    {{ Form::hidden('claim_id', $data->id ) }}
+                    {{ Form::hidden('letter_template_id', null, array('id'=>'LetterTemplateId', 'class' => 'form-control')) }}
+
+                    {{ Form::text(null, null, array('id' => 'textLetter','class' => 'form-control', 'readonly')) }}<br>
+
+                    
+                    {{-- HBS --}}
+                    <div class="row mb-2">
+                        {{ Form::label('type',  'Apr Amt HBS' , array('class' => 'col-md-2')) }} 
+                        {{ Form::text('apv_hbs', null , array('id' => 'apv_hbs_in','class' => 'col-md-4 item-price')) }}
+                    </div>
+                    {{-- mantis --}}
+                    <div class="row  mb-2">
+                        {{ Form::label('type',  'Payment History' , array('class' => 'col-md-2')) }} 
+                        <table id="season_price_tbl" class="table table-striped header-fixed col-md-8">
+                            <thead>
+                                <tr>
+                                    <th>Datetime</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="empty_item" style="display: none;">
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr id="clone_item" style="display: none;">
+                                    <td>_text_default</td>
+                                    <td>
+                                        {{ Form::text('_amount_default', '_amount_value_default', ['class' => 'item-price form-control p-1 history_amt']) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {{-- Cấn trừ --}}
+                    <div class="row mb-2">
+                        {{ Form::label('type',  'Add Deduct' , array('class' => 'col-md-2')) }}
+                        <button class="btn btn-danger h4 btn-method" type="button">+</button>
+                        {{ Form::text('deduct', null , array('id' => 'deduct','class' => 'col-md-4 item-price', 'onchange' => "amount_letter_print()")) }}
+                    </div>
+
+                    {{-- Print letter --}}
+                    <div class="row mb-2">
+                        {{ Form::label('type',  'Amount in Payment Letter' , array('class' => 'text-white col-md-4 bg-secondary')) }} 
+                        {{ Form::text('amount_letter', null , array('id' => 'amount_letter','class' => 'h5 text-danger col-md-4 bg-secondary item-price', 'readonly' )) }}
+                    </div>
+                    <div class="row">
+                        <div id = 'button_save' class="pull-right">
+                            <button class="btn btn-danger" name="save_letter" value="save"> OK</button> 
+                            <button type="button" class="btn btn-secondary btn-cancel-delete" 
+                                data-dismiss="modal">Close</button>
+                        </div><br>
+                    </div>
+                {{ Form::close() }}
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 @endsection
@@ -406,6 +483,7 @@ $totalAmount = 0;
 <script src="{{asset('js/popper.min.js')}}" ></script>
 <script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('js/tinymce.js') }}"></script>
+<script src="{{ asset('js/axios.min.js') }}"></script>
 <script>
     function preview(e){
         $(".loader").show();
@@ -488,6 +566,54 @@ $totalAmount = 0;
         //CKEDITOR.instances['approve_letter'].setData(note);
     }
 
+    function comfirmPayment(e){
+        $('.loader').show();
+        var letter_template_id  = $("#letterTemplate option:selected").val();
+        var letter_template_name  = $("#letterTemplate option:selected").text();
+        $('#LetterTemplateId').val(letter_template_id);
+        $("#textLetter").val(letter_template_name);
+        $(".h_payment").remove();
+        axios.get("{{ url('admin/getPaymentHistory') ."/". $data->code_claim_show}}")
+        .then(function (response) {
+            $.each( response.data.data, function( key, value ) {
+                addInputItem("Lần " + value.tf_times +". " + value.tf_date , formatPrice(value.tf_amt));
+            });
+            $('#apv_hbs_in').val(formatPrice(response.data.approve_amt))
+            $(".loader").fadeOut("slow");
+            amount_letter_print();
+        })
+        .catch(function (error) {
+            $(".loader").fadeOut("slow");
+            alert(error);
+            
+        });
+        
+    }
+    function addInputItem(text,amt){
+
+        let clone =  '<tr class = "h_payment">' + $("#clone_item").clone().html() + '</tr>';
+        //repalace name
+        clone = clone.replace("_text_default", text);
+        clone = clone.replace("_amount_default", "amount[]");
+        clone = clone.replace("_amount_value_default", amt);
+        $("#empty_item").before(clone);
+        
+    }
+    function amount_letter_print(){
+        var total = 0;
+        var hbs_amt = parseInt(removeFormatPrice($('#apv_hbs_in').val()));
+        var deduct = parseInt(removeFormatPrice($("#deduct").val() ? $("#deduct").val() : 0));
+        var sumhis = 0;
+        $(".history_amt").each(function( index ) {
+            sumhis += parseInt(removeFormatPrice( $(this).val() ? $(this).val() : 0 )) ;
+        });
+        if($(".btn-method").text() == '+'){
+            $('#amount_letter').val(formatPrice(hbs_amt + deduct - sumhis));
+        }else{
+            $('#amount_letter').val(formatPrice(hbs_amt - deduct - sumhis));
+        }
+        
+    }
     function addNote(e){
         var id = e.dataset.id;
         var claim_id =  e.dataset.claim_id;
@@ -502,6 +628,7 @@ $totalAmount = 0;
         var url = e.dataset.url;
         window.open(url);
     }
+
     $(document).ready(function () {
         $('.nav-toggle').click(function () {
             var collapse_content_selector = $(this).attr('href');
@@ -515,6 +642,14 @@ $totalAmount = 0;
             });
         });
 
+        $('.btn-method').click(function () {
+            if($(this).text() == '+'){
+                $(this).html('-')
+            }else{
+                $(this).html('+')
+            }
+            amount_letter_print();
+        });
     });
 </script>
 @endsection

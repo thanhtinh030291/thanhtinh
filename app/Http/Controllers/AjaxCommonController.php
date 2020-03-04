@@ -6,6 +6,7 @@ use App\HBS_MR_POLICY_PLAN;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use App\Claim;
 
 use Illuminate\Http\Request;
 
@@ -110,5 +111,14 @@ class AjaxCommonController extends Controller
             return response()->json($datas->PD_PLAN->PD_PLAN_LIMIT[0]);
         }
         return response()->json($data);
+    }
+
+    // getPaymentHistory
+    public function getPaymentHistory($cl_no){
+        $data = GetApiMantic('api/rest/plugins/apimanagement/issues/'. $cl_no);
+        $claim = Claim::where('code_claim_show',  $cl_no)->first();
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $approve_amt = $HBS_CL_CLAIM->sumAppAmt;
+        return response()->json([ 'data' => $data, 'approve_amt' => $approve_amt]);
     }
 }

@@ -42,6 +42,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/changeStatus','ClaimController@changeStatus')->name('changeStatus');
         Route::post('/waitCheck','ClaimController@waitCheck')->name('waitCheck');
         Route::post('/sendEtalk','ClaimController@sendEtalk')->name('sendEtalk');
+
         
         Route::post('/addNote','ClaimController@addNote')->name('addNote');
         Route::get('/test/{claim_id}', 'ClaimController@test')->name('test.index');
@@ -73,6 +74,8 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::get('users/',  'UserController@edit')->name('MyProfile');
         Route::post('users/update','UserController@update');
+
+        Route::get('getPaymentHistory/{cl_no}',  'AjaxCommonController@getPaymentHistory')->name('getPaymentHistory');
         
     });
 });

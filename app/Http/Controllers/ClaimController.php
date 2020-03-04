@@ -498,7 +498,7 @@ class ClaimController extends Controller
         
         $userId = Auth::User()->id;
         $claim = Claim::findOrfail($request->claim_id);
-        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        
         $approve_amt = $HBS_CL_CLAIM->sumAppAmt;
         
         $data = [
