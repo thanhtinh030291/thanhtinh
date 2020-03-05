@@ -20,6 +20,7 @@ class ExportLetter extends BaseModel
         'wait'  => 'array',
         'approve' => 'array',
         'info' => 'array',
+        'data_cps' => 'array',
     ];
     
     protected function castAttribute($key, $value)

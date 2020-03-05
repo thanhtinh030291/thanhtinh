@@ -114,7 +114,7 @@ class AjaxCommonController extends Controller
     }
 
     // getPaymentHistory
-    public function getPaymentHistory($cl_no){
+    public static function getPaymentHistory($cl_no){
         $data = GetApiMantic('api/rest/plugins/apimanagement/issues/'. $cl_no);
         $claim = Claim::where('code_claim_show',  $cl_no)->first();
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);

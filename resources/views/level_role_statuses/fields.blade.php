@@ -21,11 +21,16 @@
     {!! Form::label('begin_status', 'Begin Status:') !!}
     {!! Form::select('begin_status', $list_status,null, ['class' => 'select2 form-control']) !!}
 </div>
-
 <!-- End Status Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('end_status', 'End Status:') !!}
     {!! Form::select('end_status', $list_status,null, ['class' => 'select2 form-control']) !!}
+</div>
+
+<!-- End Status Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('signature_accepted_by', 'Signature Cccepted By:') !!}
+    {!! Form::select('signature_accepted_by', $list_status,null, ['class' => 'select2 form-control']) !!}
 </div>
 
 <!-- Submit Field -->

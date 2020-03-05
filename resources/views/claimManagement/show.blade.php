@@ -226,6 +226,7 @@ $totalAmount = 0;
                                 @if ($item->letter_template->letter_payment != null)
                                     {{ Form::open(array('url' => '/admin/exportLetterPDF', 'method' => 'POST')) }}
                                         {{ Form::hidden('claim_id', $data->id ) }}
+                                        {{ Form::hidden('export_letter_id', $item->id ) }}
                                         {{ Form::hidden('letter_template_id', $item->letter_template->letter_payment ) }}
                                         {{ Form::hidden('id', $item->id ) }}
                                         {!! Form::button('<i class="fa fa-file-pdf-o"></i>', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
@@ -500,7 +501,7 @@ $totalAmount = 0;
         url: '/admin/previewLetter',
         type: 'POST',
         context: e,
-        data: {'claim_id' : claim_id , 'letter_template_id' : letter_template_id },
+        data: {'claim_id' : claim_id , 'letter_template_id' : letter_template_id , 'export_letter_id' : id},
         })
         .done(function(res) {
             tinymce.get("preview_letter").setContent(res);

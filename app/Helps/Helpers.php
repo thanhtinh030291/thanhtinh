@@ -434,3 +434,14 @@ function CSRRemark_TermRemark($claim){
     
 }
 
+function note_pay($export_letter){
+    $htm = '<p style = "font-size: 10px; padding: 0px ;margin: 0px">Note: : Claim số [[$claimNo]] tổng thanh toán bồi thường [[$apvAmt]] đồng.</p>';
+    if(!empty($export_letter->data_cps) || $export_letter->data_cps != null){
+        foreach ($export_letter->data_cps as $key => $value) {
+            $tf_date =  Carbon\Carbon::parse($value['tf_date'])->format('d/m/Y');
+            $tf_amt = formatPrice($value['tf_amt']);
+            $htm .= "<p style='font-size: 10px; padding: 0px ;margin: 0px'>Payment lần {$value['tf_times']} ngày {$tf_date} thanh toán cho khách hàng {$tf_amt} đồng.</p>";
+        }
+    }
+    return $htm;
+}

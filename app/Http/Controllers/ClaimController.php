@@ -366,7 +366,8 @@ class ClaimController extends Controller
         $claim_id = $request->claim_id;
         $id = $request->id;
         $user = Auth::User();
-        $export_letter = ExportLetter::findOrFail($id);        
+        $export_letter = ExportLetter::findOrFail($id);
+        
         $wail = [];
 
         if($export_letter->note == null){
@@ -395,11 +396,23 @@ class ClaimController extends Controller
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter,$list_level );
             
-            if($level->end_status == $request->status_change){
-                $export_letter->approve = [  'user' => $user->id,
+            if($level->signature_accepted_by == $request->status_change){
+                if($export_letter->letter_template->letter_payment == null){
+                    $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => data_get($export_letter->wait, "data")
-                ];
+                        'data' => data_get($export_letter->wait, "data"),
+                    ];
+                }else{
+                   
+                    $export_letter->approve = [  'user' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'data' => data_get($export_letter->wait, "data"),
+                        'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id)['content'])
+                    ];
+                    
+                }
+                
+
             }
         }
         
@@ -428,6 +441,14 @@ class ClaimController extends Controller
                 ]
             ]
         ];
+        if(isset($export_letter->approve['data_payment']))
+        {
+            $body['files'][] = [
+                'name' => $namefile.".pdf",
+                'content' => $export_letter->approve['data_payment']
+            ];
+        }
+
 
         try {
             $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
@@ -444,9 +465,10 @@ class ClaimController extends Controller
             $data = $export_letter->info;
             $export_letter->info = [
                 'approve_amt' => $data['approve_amt'],
+                'deduct' => data_get($data, 'deduct'),
                 'note' => $res['data']['note']
             ];
-            $export_letter->save();  
+            $export_letter->save();
         
         }
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
@@ -498,8 +520,7 @@ class ClaimController extends Controller
         
         $userId = Auth::User()->id;
         $claim = Claim::findOrfail($request->claim_id);
-        
-        $approve_amt = $HBS_CL_CLAIM->sumAppAmt;
+        $data_cps = json_decode(json_encode(AjaxCommonController::getPaymentHistory($claim->code_claim_show),true),true);
         
         $data = [
             'claim_id' => $request->claim_id,
@@ -507,7 +528,8 @@ class ClaimController extends Controller
             'status' => config('constants.statusExport.new'),
             'created_user' => $userId,
             'updated_user' => $userId,
-            'info' => ['approve_amt' => $approve_amt],
+            'info' => ['approve_amt' => $request->apv_hbs , 'deduct' => $request->deduct  ],
+            'data_cps' => data_get($data_cps,'original.data'),
         ] ;
         ExportLetter::create($data);
         return redirect('/admin/claim/'. $request->claim_id )->with('Status', 'Letter was successfully created');
@@ -527,8 +549,25 @@ class ClaimController extends Controller
     }
 
     public function exportLetterPDF(Request $request){
-        $data = $this->letter($request->letter_template_id , $request->claim_id);
-        $export_letter = ExportLetter::findOrFail($request->id);
+        $data = $this->letterPayment($request->letter_template_id , $request->claim_id , $request->export_letter_id);
+        header("Content-Type: application/pdf");
+        header("Expires: 0");//no-cache
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+        header("content-disposition: attachment;filename={$data['namefile']}.pdf");
+        echo $data['content'];
+    }
+
+    //ajax 
+    public function previewLetter(Request $request){
+        
+        $data = $this->letter($request->letter_template_id , $request->claim_id , $request->export_letter_id);
+        return response()->json(mb_convert_encoding($data['content'], 'UTF-8', 'UTF-8'));
+    }
+
+    // leter_payment
+    public function letterPayment($letter_template_id , $claim_id ,$export_letter_id){
+        $data = $this->letter($letter_template_id , $claim_id,  $export_letter_id);
+        $export_letter = ExportLetter::findOrFail($export_letter_id);
         
         $create_user_sign = getUserSign($export_letter->created_user);
         $data['content'] = str_replace('[[$per_creater_sign]]', $create_user_sign, $data['content']);
@@ -536,36 +575,30 @@ class ClaimController extends Controller
         if(isset($export_letter->approve['user'])){
             $approve_user_sign = getUserSign($export_letter->approve['user']);
             $data['content'] = str_replace('[[$per_approve_sign]]', $approve_user_sign, $data['content']);
+        }else{
+            $data['content'] = str_replace('[[$per_approve_sign]]', "", $data['content']);
         }
         
 
         $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
         $mpdf->WriteHTML('
         <div style="text-align: right; font-weight: bold; ">
-            <img src="'.asset("images/header.jpg").'" alt="Girl in a jacket">
+            <img src="'.asset("images/header.jpg").'" alt="head">
         </div>');
         $mpdf->SetHTMLFooter('
         <div style="text-align: right; font-weight: bold;">
-            <img src="'.asset("images/footer.png").'" alt="Girl in a jacket">
+            <img src="'.asset("images/footer.png").'" alt="foot">
         </div>');
         $mpdf->WriteHTML( 
             '<div style="padding-top: 20px">'
             .$data['content'].
             '</div>'
-        );
-        return $mpdf->Output();
+        );      
+        return ['content' => $mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN) , 'namefile' => $data['namefile']];
     }
-
-    //ajax 
-    public function previewLetter(Request $request){
-        
-        $data = $this->letter($request->letter_template_id , $request->claim_id);
-        return response()->json(mb_convert_encoding($data['content'], 'UTF-8', 'UTF-8'));
-    }
-
-
     // export letter
-    public function letter($letter_template_id , $claim_id){
+    public function letter($letter_template_id , $claim_id ,$export_letter_id = null){
+        
         $letter = LetterTemplate::findOrFail($letter_template_id);
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
@@ -580,14 +613,34 @@ class ClaimController extends Controller
         $payMethod = payMethod($HBS_CL_CLAIM);
 
         $CSRRemark_TermRemark = CSRRemark_TermRemark($claim);
+
+        
         
         $CSRRemark = $CSRRemark_TermRemark['CSRRemark'];
         $TermRemark = $CSRRemark_TermRemark['TermRemark'];
-        
+        $sumAppAmt = $HBS_CL_CLAIM->sumAppAmt ; 
+        $export_letter = ExportLetter::findOrFail($export_letter_id);
+        $note_pay =  note_pay($export_letter);
+        if($export_letter->data_cps == null || $export_letter->data_cps == [] ){
+            $time_pay = formatPrice($sumAppAmt);
+            $paymentAmt = $time_pay;
+        }else{
+            $time_pay = [];
+            foreach ($export_letter->data_cps as $key => $value) {
+                $time_pay[] = "Thanh toán lần {$value['tf_times']}: " . formatPrice($value['tf_amt']);
+            };
+            if(collect($export_letter->data_cps)->sum('tf_amt') != $sumAppAmt){
+                $time_pay[] = 'Thanh toán bổ sung: ' . formatPrice($sumAppAmt - collect($export_letter->data_cps)->sum('tf_amt'));
+            }
+            $time_pay[] = 'Tổng Cộng: '.formatPrice($sumAppAmt);
+            $time_pay = implode("<br>",$time_pay);
+            $paymentAmt = $sumAppAmt - collect($export_letter->data_cps)->sum('tf_amt');
+        }
 
         $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);
 
         $content = $letter->template;
+        $content = str_replace('[[$note_pay]]', $note_pay, $content);
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
         $content = str_replace('[[$benefitOfClaim]]', $benefitOfClaim , $content);
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
@@ -596,9 +649,8 @@ class ClaimController extends Controller
         $content = str_replace('[[$memberNameCap]]', $HBS_CL_CLAIM->memberNameCap, $content);
         $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
         $content = str_replace('[[$pstAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt), $content);
-        $content = str_replace('[[$apvAmt]]', formatPrice($HBS_CL_CLAIM->sumAppAmt), $content);
         $content = str_replace('[[$payMethod]]', $payMethod, $content);
-        $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $HBS_CL_CLAIM->sumAppAmt) , $content);
+        $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $sumAppAmt) , $content);
         $content = str_replace('[[$claimNo]]', $claim->code_claim_show , $content);
         $content = str_replace('[[$memRefNo]]', $HBS_CL_CLAIM->member->memb_ref_no , $content);
         $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
@@ -606,9 +658,10 @@ class ClaimController extends Controller
             $content = str_replace('[[$CSRRemark]]', implode('<br>',$CSRRemark) , $content);
             $content = str_replace('[[$TermRemark]]', implode('<br>',array_unique($TermRemark)) , $content);
         }
-        
-        
         $content = str_replace('[[$tableInfoPayment]]', $tableInfo , $content);
+        $content = str_replace('[[$apvAmt]]', formatPrice($sumAppAmt), $content);
+        $content = str_replace('[[$time_pay]]', $time_pay, $content);
+        $content = str_replace('[[$paymentAmt]]', $paymentAmt, $content);
         return ['content' => $content , 'namefile' => $namefile];
         
     }
@@ -769,7 +822,7 @@ class ClaimController extends Controller
                             <th style="border: 1px solid black" colspan="2">Tổng cộng:</th>
                             
                             <th style="border: 1px solid black">'.formatPrice($sum_pre_amt).'</th>
-                            <th style="border: 1px solid black">'.formatPrice($sum_app_amt).'</th>
+                            <th style="border: 1px solid black">[[$time_pay]]</th>
                         </tr>';
 
         $html .= '</tbody>';

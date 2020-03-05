@@ -21,6 +21,7 @@ class CreateLevelRoleStatusTable extends Migration
             $table->bigInteger('max_amount');
             $table->integer('begin_status');
             $table->integer('end_status');
+            $table->integer('signature_accepted_by')->nullable();
             $table->integer('created_user');
             $table->integer('updated_user');
             $table->integer('is_deleted')->default('0');

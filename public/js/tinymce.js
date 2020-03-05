@@ -13,7 +13,7 @@ var editor_config = {
     ],
     toolbar:
             ["insertfile undo redo | styleselect | bold italic sizeselect fontselect fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
-            "applicantName | IOPDiag | PRefNo | PhName  | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | TermRemark | tableInfoPayment | benefitOfClaim | createrSign | approveSign | claimNo | memRefNo | invoicePatient"
+            "applicantName | IOPDiag | PRefNo | PhName  | memberNameCap | ltrDate | pstAmt | apvAmt | payMethod | deniedAmt | CSRRemark | TermRemark | tableInfoPayment | benefitOfClaim | createrSign | approveSign | claimNo | memRefNo | invoicePatient | time_pay | paymentAmt"
             ]
         ,
     relative_urls: false,
@@ -191,6 +191,23 @@ var editor_config = {
             icon: false,
             onclick: function() {
                 editor.insertContent("&nbsp;[[$invoicePatient]]&nbsp;");
+            }
+        });
+
+        editor.addButton("time_pay", {
+            text: "time_pay",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$time_pay]]&nbsp;");
+            }
+        });
+        
+
+        editor.addButton("paymentAmt", {
+            text: "paymentAmt",
+            icon: false,
+            onclick: function() {
+                editor.insertContent("&nbsp;[[$paymentAmt]]&nbsp;");
             }
         });
     }
