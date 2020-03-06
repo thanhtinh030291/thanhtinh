@@ -14,7 +14,7 @@
                     <ul class="list-unstyled">
                         <li class="{{ setActive('admin/claim') }}"> 
                             <a class="{{ setActive('admin/claim') }}"
-                            href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_orc')}}</span></a>
+                            href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_ocr')}}</span></a>
                         </li>
                         <li class="{{ setActive('admin/reason_reject') }}"> 
                             <a class="{{ setActive('admin/reason_reject') }}"
@@ -34,10 +34,10 @@
                         </li>
                     </ul>
                 </li>
-                {{-- tool Support --}}
+                {{-- Support Tool --}}
                 <li class="submenu">
                     <a href="#">
-                        <i class="fa fa-calculator" aria-hidden="true"></i> <span> Tool Support </span>
+                        <i class="fa fa-calculator" aria-hidden="true"></i> <span> Support Tool </span>
                     </a>
                     <ul class="list-unstyled">
                         <li class="{{ setActive('admin/roomAndBoards') }}"> 

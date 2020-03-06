@@ -6,8 +6,8 @@
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
-    'title'       => __('message.form_claim_orc'),
-    'page_name'   => __('message.form_claim_orc'),
+    'title'       => __('message.form_claim_ocr'),
+    'page_name'   => __('message.form_claim_ocr'),
 ])
 <div class="row">
     <div class="col-md-12">

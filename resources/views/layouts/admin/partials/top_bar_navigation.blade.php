@@ -32,7 +32,7 @@
                         </div>
                     <h3 class="dropdown-toolbar-title">Notifications (<span class="notif-count">{{count($messages)}}</span>)</h3>
                     </div>
-                    <ul class="dropdown-menu-notifi">
+                    <ul class="dropdown-menu-notifi" style = " max-height: 300px; overflow: hidden; overflow-y: scroll;">
                         @foreach ($messages as $item)
                             <li class="notification active">
                                 <div class="media">

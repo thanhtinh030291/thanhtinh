@@ -25,7 +25,7 @@ return [
     'showing' => 'Showing',
     'to' => 'to',
     'of_total' => 'of total',
-    'form_claim_orc' => 'form claim ORC',
+    'form_claim_ocr' => 'form claim OCR',
     'update_fail' => 'The system have an error and please try again',
     'create' => 'Create',
     'display_result' => 'Display result',
@@ -89,9 +89,9 @@ return [
     'template' => 'Template',
 
     //account
-    'account_create' => 'User Create',
+    'account_create' => 'Created By',
     'account_view' => 'User View',
-    'account_edit' => 'User Edit',
+    'account_edit' => 'Updated By',
 
     //product
     'product' => 'List Medical & Service',

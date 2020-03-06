@@ -145,6 +145,18 @@ function registerServiceWorker() {
     });
 }
 
+navigator.serviceWorker.ready.then(function(reg) {
+    console.log('thanhtinh');
+  reg.pushManager.subscribe({userVisibleOnly: true}).then(function(subscription) {
+    console.log(subscription.endpoint);
+
+      // At this point you would most likely send the subscription
+      // endpoint to your server, save it, then use it to send a
+      // push message at a later date
+  })
+})
+
+
 function askPermission() {
     return new Promise(function(resolve, reject) {
     const permissionResult = Notification.requestPermission(function(result) {

@@ -436,7 +436,7 @@ class ClaimController extends Controller
             'text_note' => "Dear DLVN, \n Đính kèm là thư : '{$export_letter->letter_template->name}' \n Thanks,",
             'files' => [
                 [
-                    'name' => $namefile.".doc",
+                    'name' => $namefile."(payment).doc",
                     "content" => base64_encode(data_get($export_letter->approve, 'data'))
                 ]
             ]
@@ -444,7 +444,7 @@ class ClaimController extends Controller
         if(isset($export_letter->approve['data_payment']))
         {
             $body['files'][] = [
-                'name' => $namefile.".pdf",
+                'name' => ''.$namefile.".pdf",
                 'content' => $export_letter->approve['data_payment']
             ];
         }
