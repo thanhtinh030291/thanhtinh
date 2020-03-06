@@ -53,7 +53,7 @@
                         @endforeach
                     </ul>
                     <div class="dropdown-footer text-center">
-                        <a href="#">View All</a>
+                        <a href="/admin/message">View All</a>
                     </div>
                 </div>
             </li>

@@ -18,7 +18,10 @@ class SendMessageController extends Controller
     }
     public function index()
     {
-        return view('pusherManagement/send_mesage');
+        $user = Auth::user();
+        $messages = Message::where('user_to', $user->id)->get();
+        $admin_list = User::getListIncharge();
+        return view('messageManagement/index',compact('messages','admin_list'));
     }
 
     public function sendMessage(Request $request)

@@ -407,7 +407,7 @@ class ClaimController extends Controller
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => data_get($export_letter->wait, "data"),
-                        'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id)['content'])
+                        'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content'])
                     ];
                     
                 }
@@ -565,15 +565,16 @@ class ClaimController extends Controller
     }
 
     // leter_payment
-    public function letterPayment($letter_template_id , $claim_id ,$export_letter_id){
+    public function letterPayment($letter_template_id , $claim_id ,$export_letter_id, $approve = null){
         $data = $this->letter($letter_template_id , $claim_id,  $export_letter_id);
         $export_letter = ExportLetter::findOrFail($export_letter_id);
         
         $create_user_sign = getUserSign($export_letter->created_user);
         $data['content'] = str_replace('[[$per_creater_sign]]', $create_user_sign, $data['content']);
 
-        if(isset($export_letter->approve['user'])){
-            $approve_user_sign = getUserSign($export_letter->approve['user']);
+        if($approve != null){
+            $user = Auth::user();
+            $approve_user_sign = getUserSign($user->id);
             $data['content'] = str_replace('[[$per_approve_sign]]', $approve_user_sign, $data['content']);
         }else{
             $data['content'] = str_replace('[[$per_approve_sign]]', "", $data['content']);

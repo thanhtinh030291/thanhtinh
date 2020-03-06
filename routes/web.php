@@ -62,6 +62,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('levelRoleStatuses', 'LevelRoleStatusController')->middleware(['role:Admin']);
         Route::resource('transactionRoleStatuses', 'TransactionRoleStatusController')->middleware(['role:Admin']);
 
+        Route::resource('message', 'SendMessageController');
+
         //ajax
         Route::get('/dataAjaxHBSClaim', 'AjaxCommonController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
         Route::post('/loadInfoAjaxHBSClaim', 'AjaxCommonController@loadInfoAjaxHBSClaim')->name('loadInfoAjaxHBSClaim');
@@ -101,12 +103,4 @@ Route::post(
 // Push Subscriptions
 Route::post('subscriptions', 'PushController@update');
 Route::post('subscriptions/delete', 'PushController@destroy');
-Route::group(array('before' => 'auth'), function ()
-{
-    Route::get('/laravel-filemanager', '\Unisharp\Laravelfilemanager\controllers\LfmController@show');
-    Route::post('/laravel-filemanager/upload', '\Unisharp\Laravelfilemanager\controllers\LfmController@upload');
-   
-});
-Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
-    \UniSharp\LaravelFilemanager\Lfm::routes();
-});
+

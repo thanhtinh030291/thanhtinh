@@ -4,7 +4,7 @@ $min = config('constants.minMaxLength.min');
 $max = config('constants.minMaxLength.max');
 @endphp
 @extends('layouts.admin.master')
-@section('title', __('message.edit_letter_template'))
+@section('title','My Profile')
 @section('stylesheets')
 <link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
 <link href="{{ asset('css/multi_lang.css') }}" media="all" rel="stylesheet" type="text/css"/>
@@ -13,10 +13,10 @@ $max = config('constants.minMaxLength.max');
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
-    'title'       => __('message.edit_reason_inject'),
-    'parent_url'  => route('letter_template.index'),
-    'parent_name' => __('message.edit_reason_inject'),
-    'page_name'   => __('message.edit_reason_inject'),
+    'title'       => 'My Profile',
+    'parent_url'  => route('home'),
+    'parent_name' => "Home",
+    'page_name'   => 'My Profile',
 ])
 <div class="row">
     <div class="col-md-12">
@@ -29,10 +29,6 @@ $max = config('constants.minMaxLength.max');
                             <div class="col-xl-12">
                                 <div class="breadcrumb-holder">
                                     <h1 class="main-title float-left">My Profile</h1>
-                                    <ol class="breadcrumb float-right">
-                                        <li class="breadcrumb-item">Home</li>
-                                        <li class="breadcrumb-item active">Profile</li>
-                                    </ol>
                                     <div class="clearfix"></div>
                                 </div>
                             </div>
