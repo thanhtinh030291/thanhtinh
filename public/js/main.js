@@ -333,7 +333,7 @@ function postMessagee(e){
 
 function contentReject(){
     $("content_f").val("");
-    var url      = window.location.href; 
+    var url      = location.href; 
     var user_name = $('meta[name="user_name"]').attr('content')
     var html  = "Letter bị từ chối bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> <a href='"+
     url +"' target='_blank' rel='follow, index'>"+url+"</a>";
@@ -341,7 +341,7 @@ function contentReject(){
 }
 function contentAccept(){
     $("content_f").val("");
-    var url      = window.location.href; 
+    var url      = location.href; 
     var user_name = $('meta[name="user_name"]').attr('content')
     var html  = "Letter đã được chấp nhận bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> <a href='"+
     url +"' target='_blank' rel='follow, index'>"+url+"</a>";
@@ -349,7 +349,7 @@ function contentAccept(){
 }
 function contentRequest(){
     $("content_f").val("");
-    var url      = window.location.href; 
+    var url      = location.href; 
     var user_name = $('meta[name="user_name"]').attr('content')
     var html  = "Letter yêu cầu tiến hành xác nhận bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> <a href='"+
     url +"' target='_blank' rel='follow, index'>"+url+"</a>";

@@ -86,12 +86,22 @@ class SendMessageController extends Controller
         return view('messageManagement/index',compact('search_params', 'admin_list', 'limit', 'limit_list','data','admin_list'));
     }
 
-    public function trash()
+    public function trash(Request $request)
     {
+        $search_params = [
+            'is_read' => $request->get('is_read'),
+            'message' => $request->get('search'),
+            'important' => $request->get('important')
+        ];
+        
+        $limit_list = config('constants.limit_list');
+        $limit = $request->get('limit');
+        $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
         $user = Auth::user();
-        $data = Message::where('user_from', $user->id)->latest()->get();
+        $data = Message::withTrashed()->where('user_to', $user->id)->where('deleted_at','!=',null)->latest();
         $admin_list = User::getListIncharge();
-        return view('messageManagement/index',compact('data','admin_list'));
+        $data  = $data->paginate($per_page);
+        return view('messageManagement/index',compact('search_params', 'admin_list', 'limit', 'limit_list','data','admin_list'));
     }
 
     public function show($id)
@@ -106,8 +116,11 @@ class SendMessageController extends Controller
         if($data == null){
             return abort(404);
         }
-        $data->is_read = 1;
-        $data->save();
+        if($user->id == $data->user_to){
+            $data->is_read = 1;
+            $data->save();
+        }
+        
         return view('messageManagement.show', compact('data','admin_list'));
     }
 
