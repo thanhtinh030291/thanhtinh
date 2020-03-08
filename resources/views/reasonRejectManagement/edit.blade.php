@@ -45,7 +45,7 @@ $max = config('constants.minMaxLength.max');
 </div>
 @endsection
 @section('scripts')
-<script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
+
 <script src="{{ asset('js/tinymce.js') }}"></script>
 <script type="text/javascript">
     $.ajaxSetup({

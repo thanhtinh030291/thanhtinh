@@ -207,6 +207,7 @@ $totalAmount = 0;
                                 {{ Form::open(array('url' => '/admin/exportLetter', 'method' => 'POST')) }}
                                     {{ Form::hidden('claim_id', $data->id ) }}
                                     {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
+                                    {{ Form::hidden('export_letter_id', $item->id ) }}
                                 <div class='btn-group'>
                                     {!! Form::button('<i class="fa fa-eye-slash"></i>', ['data-toggle' => "modal" ,  
                                         'data-target' => "#previewModal",
@@ -239,10 +240,10 @@ $totalAmount = 0;
                 
 
                 {{-- //calculate --}}
-                @foreach ($items as $data)
+                @foreach ($items as $item)
                     @php
-                        if($data->reason_reject_id){
-                            $sum += removeFormatPrice($data->amount);
+                        if($item->reason_reject_id){
+                            $sum += removeFormatPrice($item->amount);
                         }
                     @endphp
                 @endforeach
@@ -275,22 +276,22 @@ $totalAmount = 0;
                             </tr>
                         
                         
-                            @foreach ($items as $data)
+                            @foreach ($items as $item)
                             <tr>
-                                <td>{{$data->content}}</td>
-                                <td>{{$data->amount}}</td>
+                                <td>{{$item->content}}</td>
+                                <td>{{$item->amount}}</td>
                                 @php
-                                    $totalAmount += removeFormatPrice($data->amount);
+                                    $totalAmount += removeFormatPrice($item->amount);
                                 @endphp
                                 <td>
                                     <label class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input " disabled readonly {{ $data->reason_reject_id ? "" : 'checked' }}>
+                                        <input type="checkbox" class="custom-control-input " disabled readonly {{ $item->reason_reject_id ? "" : 'checked' }}>
                                         <span class="custom-control-indicator"></span>
                                     </label>
                                 </td>
                                 <td>
-                                    @if($data->reason_reject_id)
-                                        <p class="text-danger font-weight-bold">{{ $data->reason_reject->name}}</p>
+                                    @if($item->reason_reject_id)
+                                        <p class="text-danger font-weight-bold">{{ $item->reason_reject->name}}</p>
                                     @endif
                                 </td>
                             </tr>
@@ -472,8 +473,6 @@ $totalAmount = 0;
     </div>
 </div>
 
-
-
 @endsection
 
 
@@ -482,9 +481,8 @@ $totalAmount = 0;
 <script src="{{ asset('js/format-price.js') }}"></script>
 <script src="{{ asset('js/jquery-ui.js') }}"></script>
 <script src="{{asset('js/popper.min.js')}}" ></script>
-<script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
+
 <script src="{{ asset('js/tinymce.js') }}"></script>
-<script src="{{ asset('js/axios.min.js') }}"></script>
 <script>
     function preview(e){
         $(".loader").show();
@@ -574,7 +572,8 @@ $totalAmount = 0;
         $('#LetterTemplateId').val(letter_template_id);
         $("#textLetter").val(letter_template_name);
         $(".h_payment").remove();
-        axios.get("{{ url('admin/getPaymentHistory') ."/". $data->code_claim_show}}")
+
+        axios.get("{{ url('admin/getPaymentHistory') }}/{{$data->code_claim_show}}")
         .then(function (response) {
             $.each( response.data.data, function( key, value ) {
                 addInputItem("Lần " + value.tf_times +". " + value.tf_date , formatPrice(value.tf_amt));

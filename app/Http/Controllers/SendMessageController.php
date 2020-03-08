@@ -9,6 +9,7 @@ use App\User;
 use App\Message;
 use App\Events\Notify;
 use App\Notifications\PushNotification;
+use Illuminate\Support\Arr;
 
 class SendMessageController extends Controller
 {
@@ -16,12 +17,98 @@ class SendMessageController extends Controller
     {
         parent::__construct();
     }
-    public function index()
+    public function index(Request $request)
+    {
+        $search_params = [
+            'is_read' => $request->get('is_read'),
+            'message' => $request->get('search'),
+            'important' => $request->get('important')
+        ];
+        
+        $limit_list = config('constants.limit_list');
+        $limit = $request->get('limit');
+        $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
+        $user = Auth::user();
+        $data = Message::findByParams($search_params)->where('user_to', $user->id)->latest();
+        $admin_list = User::getListIncharge();
+        $data  = $data->paginate($per_page);
+        return view('messageManagement/index',compact('search_params', 'admin_list', 'limit', 'limit_list','data','admin_list'));
+    }
+
+    /**
+    * Show the form for editing the specified resource.
+    *
+    * @param  \App\Product  $product
+    * @return \Illuminate\Http\Response
+    */
+    public function edit($id)
+    {   
+        $where = array('id' => $id);
+        $product  = Message::where($where)->first();
+    
+        return Response::json($product);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $product = Message::where('id',$id)->delete();
+    
+        return Response::json($product);
+    }
+
+    public function destroyMany(Request $request)
+    {
+        if(!empty($request->arr_delete)){
+            Message::whereIn('id', explode(",",$request->arr_delete))->delete();
+        }
+        return back();
+    }
+    
+    public function sent(Request $request)
+    {
+        $search_params = [
+            'is_read' => $request->get('is_read'),
+            'message' => $request->get('search'),
+        ];
+        $limit_list = config('constants.limit_list');
+        $limit = $request->get('limit');
+        $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
+        $user = Auth::user();
+        $data = Message::findByParams($search_params)->where('user_from', $user->id)->latest();
+        $admin_list = User::getListIncharge();
+        $data  = $data->paginate($per_page);
+        return view('messageManagement/index',compact('search_params', 'admin_list', 'limit', 'limit_list','data','admin_list'));
+    }
+
+    public function trash()
     {
         $user = Auth::user();
-        $data = Message::where('user_to', $user->id)->latest()->get();
+        $data = Message::where('user_from', $user->id)->latest()->get();
         $admin_list = User::getListIncharge();
         return view('messageManagement/index',compact('data','admin_list'));
+    }
+
+    public function show($id)
+    {
+        $user = Auth::user();
+        $admin_list = User::getListIncharge();
+        $data = Message::where('id', $id)->where(function ($query) use($user) {
+            $query->where('user_from',  $user->id)
+                ->orWhere('user_to', $user->id);
+        })->first();
+        
+        if($data == null){
+            return abort(404);
+        }
+        $data->is_read = 1;
+        $data->save();
+        return view('messageManagement.show', compact('data','admin_list'));
     }
 
     public function sendMessage(Request $request)
@@ -45,7 +132,7 @@ class SendMessageController extends Controller
             $options
         );
         
-        $user->messagesSent()->create([
+        $mesage_data = $user->messagesSent()->create([
             'user_to' => $request->input('user'),
             'message' => $request->input('content')
         ]);
@@ -53,7 +140,10 @@ class SendMessageController extends Controller
         $pusher->trigger('NotifyUser-'.$request->input('user'),'Notify' ,$data);
         $user_to = User::findOrfail($request->input('user'));
         $user_to->notify(new PushNotification(
-            $data['title'] , $data['content'] , $data['avantar']
+            $data['title'] , 
+            $data['content'] , 
+            $data['avantar'] , 
+            url('admin/message').'/'.$mesage_data->id
         ));
         //event(new Notify($data['content']));
         return redirect('/admin/home/');
@@ -63,5 +153,11 @@ class SendMessageController extends Controller
         
         $user = Auth::user();
         Message::where('is_read' , 0)->where('user_to',$user->id)->update(['is_read' => 1]);
+    }
+
+    public function important(Request $request){
+        
+        Message::where('id' , $request->id)->update(['important' => $request->value]);
+        return 1;
     }
 }

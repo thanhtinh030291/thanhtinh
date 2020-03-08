@@ -63,6 +63,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('transactionRoleStatuses', 'TransactionRoleStatusController')->middleware(['role:Admin']);
 
         Route::resource('message', 'SendMessageController');
+        Route::post('message/destroyMany', 'SendMessageController@destroyMany')->name('message.destroyMany');
+        Route::get('/sent','SendMessageController@sent')->name('message.sent');
+        Route::get('/trash','SendMessageController@trash')->name('message.trash');
+        Route::post('message/important', 'SendMessageController@important')->name('message.important');
+
 
         //ajax
         Route::get('/dataAjaxHBSClaim', 'AjaxCommonController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
@@ -101,6 +106,7 @@ Route::post(
 
 
 // Push Subscriptions
+Route::post('check_subscriptions', 'PushController@check_subscriptions');
 Route::post('subscriptions', 'PushController@update');
 Route::post('subscriptions/delete', 'PushController@destroy');
 

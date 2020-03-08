@@ -16,7 +16,7 @@
             <li class="list-inline-item" id='checkbox-notify'>
                 <i class="fa fa-bell text-warning" style="font-size: x-large;" aria-hidden="true"></i>
                 <label class=" m-0 p-2 switch">
-                    <input type="checkbox" onchange="onOffpush(this)" checked>
+                    <input type="checkbox" id="onOffpush_checkbox" onchange="onOffpush(this)" checked>
                     <span class="slider round"></span>
                 </label>
             </li>
@@ -43,7 +43,7 @@
                                     </div>
                                     <div class="media-body">
                                     <strong class="notification-title">{{$item->userFrom->email}}</strong>
-                                    <p class="notification-desc">{{$item->message}}</p>
+                                    <p class="notification-desc">{!!$item->message!!}</p>
                                     <div class="notification-meta">
                                         <small class="timestamp">{{dateConvertToString($item->created_at)}}</small>
                                     </div>

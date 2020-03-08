@@ -8,8 +8,10 @@
     <meta name="description" content="{{ config('app.name') }}">
     <meta name="author" content="{{ config('app.name') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name='key-notify' content="{{ config("constants.VAPID_PUBLIC_KEY") }}">
     <meta name="ws_url" content="http://localhost:3000/">
     <meta name="user_id" content="{{ Auth::id() }}">
+    <meta name="user_name" content="{{Auth::user()->name}}">
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{asset('images/favicon.ico')}}">
 
@@ -76,13 +78,15 @@
     <script src="{{asset('js/moment.min.js')}}"></script>
     <script src="{{asset('js/daterangepicker.js')}}"></script>
     <script src="{{asset('js/jquery.cookie.js')}}"></script>
+    <script src="{{ asset('js/axios.min.js') }}"></script>
+    <script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
     <!-- App js -->
     <script src="{{asset('js/pikeadmin.js')}}"></script>
     <script src="{{asset('js/pusher.min.js')}}"></script>
     <script src="{{ asset('js/select2.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
     <script src="https://js.pusher.com/5.1/pusher.min.js"></script>
-    <script src="{{asset('js/main.js')}}"></script>
+    <script src="{{asset('js/main.js?2')}}"></script>
     
     
     
@@ -118,149 +122,20 @@
 
         //Bind a function to a Event (the full Laravel class)
 
-function sendNotification(){
-    var data = new FormData();
-    data.append('title', document.getElementById('title').value);
-    data.append('body', document.getElementById('body').value);
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', "{{url('/api/send-notification/'.auth()->user()->id)}}", true);
-    xhr.onload = function () {
-    // do something to response
-    console.log(this.responseText);
-    };
-    xhr.send(data);
-}
-
-var _registration = null;
-
-function registerServiceWorker() {
-    return navigator.serviceWorker.register('/js/service-worker.js')
-    .then(function(registration) {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    _registration = registration;
-    return registration;
-    })
-    .catch(function(err) {
-    console.error('Unable to register service worker.', err);
-    });
-}
-
-navigator.serviceWorker.ready.then(function(reg) {
-    console.log('thanhtinh');
-  reg.pushManager.subscribe({userVisibleOnly: true}).then(function(subscription) {
-    console.log(subscription.endpoint);
-
-      // At this point you would most likely send the subscription
-      // endpoint to your server, save it, then use it to send a
-      // push message at a later date
-  })
-})
-
-
-function askPermission() {
-    return new Promise(function(resolve, reject) {
-    const permissionResult = Notification.requestPermission(function(result) {
-    resolve(result);
-    });
-    if (permissionResult) {
-    permissionResult.then(resolve, reject);
-    }
-    })
-    .then(function(permissionResult) {
-    if (permissionResult !== 'granted') {
-    throw new Error('We weren\'t granted permission.');
-    }
-    else{
-    subscribeUserToPush();
-    }
-    });
-}
-function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/');
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-}
-
-function getSWRegistration(){
-    var promise = new Promise(function(resolve, reject) {
-// do a thing, possibly async, then…
-        if (_registration != null) {
-        resolve(_registration);
-        }
-        else {
-        reject(Error("It broke"));
-        }
-    });
-    console.log(promise);
-    return promise;
-}
-
-function subscribeUserToPush() {
-    getSWRegistration()
-    .then(function(registration) {
-        console.log(registration);
-        const subscribeOptions = {
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-        '{{ config("constants.VAPID_PUBLIC_KEY") }}'
-        )
+    function sendNotification(){
+        var data = new FormData();
+        data.append('title', document.getElementById('title').value);
+        data.append('body', document.getElementById('body').value);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "{{url('/api/send-notification/'.auth()->user()->id)}}", true);
+        xhr.onload = function () {
+        // do something to response
+        console.log(this.responseText);
         };
-        return registration.pushManager.subscribe(subscribeOptions);
-    })
-    .then(function(pushSubscription) {
-    console.log('Received PushSubscription: ', JSON.stringify(pushSubscription));
-    sendSubscriptionToBackEnd(pushSubscription);
-    return pushSubscription;
-    });
-}
-
-function sendSubscriptionToBackEnd(subscription) {
-    var response;
-    subscription = JSON.parse(JSON.stringify(subscription))
-    console.log(subscription.keys.auth);
-    $.ajax({
-        url: '/subscriptions',
-        type: 'POST',
-        context: this,
-        data: {'endpoint' : subscription.endpoint , 
-                'publicKey' : subscription.keys.p256dh ,
-                'contentEncoding' : 'aes128gcm',
-                'authToken' : subscription.keys.auth
-        },
-    })
-    .done(function(res) {
-        response = res;
-    })
-    return response;
-}
-
-function enableNotifications(){
-//register service worker
-//check permission for notification/ask
-    askPermission();
-}
-
-if('serviceWorker' in navigator && (location.protocol != 'http' || location.hostname === "localhost")){
-    registerServiceWorker();
-}else{
-    $("#checkbox-notify").hide();
-}
-
-function onOffpush(e){
-    if(e.checked == false){
-
-    }else{
-        subscribeUserToPush();     
+        xhr.send(data);
     }
-}
-        
+
+
     </script>
     <!-- BEGIN Java Script for this page -->
     @yield('scripts')

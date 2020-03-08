@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Auth;
+use App\PushSubscriptions;
 
 class PushController extends Controller
 {
@@ -18,6 +20,24 @@ class PushController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+    }
+    //check exit notifi
+    public function check_subscriptions(Request $request){
+        $userId = Auth::User()->id;
+        $endpoint = $request->endpoint;
+        $publicKey = $request->publicKey;
+        $authToken= $request->authToken;
+        $count = PushSubscriptions::where('endpoint',$endpoint)
+        ->where('public_key',$publicKey)
+        ->where('auth_token',$authToken)
+        ->where('subscribable_id',$userId)
+        ->count();
+        if($count > 0){
+            return  1;
+        }else{
+            return  0;
+        }
+
     }
 
     /**
@@ -48,9 +68,7 @@ class PushController extends Controller
     public function destroy(Request $request)
     {
         $this->validate($request, ['endpoint' => 'required']);
-
         $request->user()->deletePushSubscription($request->endpoint);
-
         return response()->json(null, 204);
     }
 }

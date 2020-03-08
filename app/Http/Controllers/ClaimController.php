@@ -536,7 +536,8 @@ class ClaimController extends Controller
     }
 
     public function exportLetter(Request $request){
-        $data = $this->letter($request->letter_template_id , $request->claim_id);
+
+        $data = $this->letter($request->letter_template_id , $request->claim_id, $request->export_letter_id);
         header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
         header("Expires: 0");//no-cache
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache

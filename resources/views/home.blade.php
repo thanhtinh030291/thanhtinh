@@ -106,7 +106,7 @@
                                 <div class="message-item">
                                     <div class="message-user-img"><img src="/images/avatars/admin.png" class="avatar-circle" alt=""></div>
                                     <p class="message-item-user">{{$sentMessage->userTo->name}}</p>
-                                    <p class="message-item-msg">{{$sentMessage->message}}</p>
+                                    <p class="message-item-msg">{!!$sentMessage->message!!}</p>
                                     <p class="message-item-date">{{dateConvertToString($sentMessage->created_at)}}</p>
                                 </div>
                             </a>
@@ -133,7 +133,7 @@
                                     <div class="message-item">
                                         <div class="message-user-img"><img src="/images/avatars/admin.png" class="avatar-circle" alt=""></div>
                                         <p class="message-item-user">{{$latestMessage->userFrom->name}}</p>
-                                        <p class="message-item-msg">{{$latestMessage->message}}</p>
+                                        <p class="message-item-msg">{!!$latestMessage->message!!}</p>
                                         <p class="message-item-date">{{dateConvertToString($latestMessage->created_at)}}</p>
                                     </div>
                                 </a>

@@ -129,3 +129,9 @@ appId: a640ac782552e93f
 key: efaa761e84c08024d437f370eaa2a564
 
 # php artisan larecipe:docs
+
+
+# bao tri
+php artisan down --message="Upgrading Database" --retry=60
+php artisan up 
+php artisan down --allow=::1 

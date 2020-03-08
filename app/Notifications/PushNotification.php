@@ -15,17 +15,20 @@ class PushNotification extends Notification
     protected $title;
     protected $content;
     protected $img;
+    protected $url;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($title ,$content, $img)
+    public function __construct($title=null ,$content=null, $img=null, $url =null)
     {
         //
+        
         $this->title = $title;
         $this->content = $content;
         $this->img = $img;
+        $this->url = $url ? $url : url("");
     }
 
     /**
@@ -48,9 +51,9 @@ class PushNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'title' => 'Hello from Laravel!',
-            'body' => 'Thank you for using our application.',
-            'action_url' => 'https://laravel.com',
+            'title' => $this->title,
+            'body' => $this->content,
+            'action_url' => $this->url,
             'created' => Carbon::now()->toIso8601String()
         ];
     }
@@ -64,12 +67,11 @@ class PushNotification extends Notification
      */
     public function toWebPush($notifiable, $notification)
     {
-      
         return (new WebPushMessage)
-            ->title($this->title)
-            ->icon($this->img)
-            ->body($this->content)
-            ->action('View app', 'view_app')
-            ->data(['id' => $notification->id]);
+            ->title($notification->title)
+            ->icon($notification->img)
+            ->body(strip_tags(html_entity_decode($notification->content)))
+            ->action('View app', $this->url)
+            ->data(['id' => $notification->id, 'url' => $this->url]);
     }
 }
