@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Database\Schema\Builder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,5 +39,6 @@ class AppServiceProvider extends ServiceProvider
                 $options
             );
         });
+        Builder::defaultStringLength(191); // Update defaultStringLength
     }
 }
