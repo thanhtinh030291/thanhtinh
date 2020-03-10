@@ -2,8 +2,8 @@
 @extends('layouts.admin.master')
 @section('title', __('message.transport_edit'))
 @section('stylesheets')
-<link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
-<link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
+<link href="{{asset('css/fileinput.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+<link href="{{asset('css/formclaim.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -82,14 +82,14 @@
 @endsection
 
 @section('scripts')
-<script src="{{asset('js/fileinput.js')}}"></script>
-<script src="{{asset('js/papaparse.min.js')}}"></script>
-<script src="{{asset('js/popper.min.js')}}" ></script>
-<script src="{{ asset('js/tiff.min.js') }}"></script>
-<script src="{{ asset('js/format-price.js') }}"></script>
-<script src="{{ asset('js/jquery-ui.js') }}"></script>
-<script src="{{ asset('js/clipboard.js') }}"></script>
-<script src="{{asset('js/formclaim.js')}}"></script>
+<script src="{{asset('js/fileinput.js?vision=') .$vision }}"></script>
+<script src="{{asset('js/papaparse.min.js?vision=') .$vision }}"></script>
+<script src="{{asset('js/popper.min.js?vision=') .$vision }}" ></script>
+<script src="{{ asset('js/tiff.min.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/jquery-ui.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/clipboard.js?vision=') .$vision }}"></script>
+<script src="{{asset('js/formclaim.js?vision=') .$vision }}"></script>
 <script>
 var dataImage = @json($dataImage);
 var previewConfig = @json($previewConfig);

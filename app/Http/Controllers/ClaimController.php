@@ -291,7 +291,7 @@ class ClaimController extends Controller
                                 'reason_reject_id' => $request->_reasonInject[$key],
                                 'content' => $request->_content[$key],
                                 'amount' => $request->_amount[$key],
-                                'parameters' => data_get($request->table1_parameters, $key),
+                                'parameters' => data_get($request->table2_parameters, $key),
                                 'created_user' => $userId,
                                 'updated_user' => $userId,
                             ];
@@ -660,7 +660,7 @@ class ClaimController extends Controller
 
         $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
         if($CSRRemark){
-            $content = str_replace('[[$CSRRemark]]', implode('<br>',$CSRRemark) , $content);
+            $content = str_replace('[[$CSRRemark]]', implode('',$CSRRemark) , $content);
             $content = str_replace('[[$TermRemark]]', implode('<br>',array_unique($TermRemark)) , $content);
         }
         $content = str_replace('[[$tableInfoPayment]]', $tableInfo , $content);

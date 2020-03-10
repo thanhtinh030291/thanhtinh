@@ -5,6 +5,10 @@ use Maatwebsite\Excel\Facades\Excel;
 use Config;
 class CSVController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
     /**
     * @return \Illuminate\Support\Collection
     */

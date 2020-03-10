@@ -6,9 +6,9 @@ $max = config('constants.minMaxLength.max');
 @extends('layouts.admin.master')
 @section('title', __('message.edit_letter_template'))
 @section('stylesheets')
-<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
-<link href="{{ asset('css/multi_lang.css') }}" media="all" rel="stylesheet" type="text/css"/>
-<link href="{{ asset('css/ckeditor.css') }}" media="all" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css?vision=') .$vision }}">
+<link href="{{ asset('css/multi_lang.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+<link href="{{ asset('css/ckeditor.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -49,7 +49,7 @@ $max = config('constants.minMaxLength.max');
 @endsection
 @section('scripts')
 
-<script src="{{ asset('js/tinymce.js') }}"></script>
+<script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {

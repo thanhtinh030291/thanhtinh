@@ -20,6 +20,7 @@ class PushController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        parent::__construct();
     }
     //check exit notifi
     public function check_subscriptions(Request $request){

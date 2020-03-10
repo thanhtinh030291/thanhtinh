@@ -2,7 +2,7 @@
 @extends('layouts.admin.master')
 @section('title', __('message.role_management'))
 @section('stylesheets')
-<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css?vision=') .$vision }}">
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -35,7 +35,7 @@
 </div>
 @endsection
 @section('scripts')
-<script src="{{ asset('js/multi_lang.js') }}"></script>
+<script src="{{ asset('js/multi_lang.js?vision=') .$vision }}"></script>
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {

@@ -6,11 +6,11 @@ $max = config('constants.minMaxLength.max');
 @extends('layouts.admin.master')
 @section('title', 'Message')
 @section('stylesheets')
-<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
-<link href="{{ asset('css/multi_lang.css') }}" media="all" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css?vision=') .$vision }}">
+<link href="{{ asset('css/multi_lang.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css"/>
-<link href="{{ asset('css/chat.css') }}" media="all" rel="stylesheet" type="text/css"/>
-<link href="{{ asset('css/icheck.css') }}" media="all" rel="stylesheet" type="text/css"/>
+<link href="{{ asset('css/chat.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+<link href="{{ asset('css/icheck.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -85,7 +85,7 @@ $max = config('constants.minMaxLength.max');
 @endsection
 @section('scripts')
 
-<script src="{{ asset('js/tinymce.js') }}"></script>
+<script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {

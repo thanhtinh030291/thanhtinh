@@ -1,7 +1,7 @@
 @extends('layouts.admin.master')
 @section('title', 'Room And Boards')
 @section('stylesheets')
-    <link href="{{ asset('css/condition_advance.css') }}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/condition_advance.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
     @include('layouts.admin.breadcrumb_index', [
@@ -70,6 +70,6 @@
     {{ $roomAndBoards->appends($search_params)->links() }} 
 @endsection
 @section('scripts')
-    <script src="{{asset('js/lengthchange.js')}}"></script>
+    <script src="{{asset('js/lengthchange.js?vision=') .$vision }}"></script>
 @endsection
 

@@ -109,5 +109,5 @@
 
 @endsection
 @section('scripts')
-<script src="{{asset('js/lengthchange.js')}}"></script>
+<script src="{{asset('js/lengthchange.js?vision=') .$vision }}"></script>
 @endsection

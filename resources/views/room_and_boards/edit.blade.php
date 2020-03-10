@@ -1,7 +1,7 @@
 @extends('layouts.admin.master')
 @section('title', 'Room And Board')
 @section('stylesheets')
-<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css?vision=') .$vision }}">
 @endsection
 @section('content')
     @include('layouts.admin.breadcrumb_index', [
@@ -118,8 +118,8 @@
 
 @endsection
 @section('scripts')
-<script src="{{ asset('js/format-price.js') }}"></script>
-<script src="{{ asset('js/roomboard.js') }}"></script>
+<script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/roomboard.js?vision=') .$vision }}"></script>
 <script type="text/javascript">
     function addHourOld(){
         var  arrHour= @json($roomAndBoard->line_rb);

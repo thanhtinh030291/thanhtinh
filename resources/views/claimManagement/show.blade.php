@@ -6,9 +6,9 @@ $totalAmount = 0;
 @extends('layouts.admin.master')
 @section('title', __('message.claim_view'))
 @section('stylesheets')
-    <link href="{{asset('css/fileinput.css')}}" media="all" rel="stylesheet" type="text/css"/>
-    <link href="{{asset('css/formclaim.css')}}" media="all" rel="stylesheet" type="text/css"/>
-    <link href="{{asset('css/ckeditor.css')}}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('css/fileinput.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('css/formclaim.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('css/ckeditor.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <style>
         .disableRow {
             background-color: lightslategrey;
@@ -477,12 +477,12 @@ $totalAmount = 0;
 
 
 @section('scripts')
-<script src="{{asset('js/fileinput.js')}}"></script>
-<script src="{{ asset('js/format-price.js') }}"></script>
-<script src="{{ asset('js/jquery-ui.js') }}"></script>
-<script src="{{asset('js/popper.min.js')}}" ></script>
+<script src="{{asset('js/fileinput.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/jquery-ui.js?vision=') .$vision }}"></script>
+<script src="{{asset('js/popper.min.js?vision=') .$vision }}" ></script>
 
-<script src="{{ asset('js/tinymce.js') }}"></script>
+<script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script>
     function preview(e){
         $(".loader").show();

@@ -6,8 +6,8 @@ $max = config('constants.minMaxLength.max');
 @extends('layouts.admin.master')
 @section('title', __('message.term'))
 @section('stylesheets')
-<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
-<link href="{{ asset('css/multi_lang.css') }}" media="all" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css?vision=') .$vision }}">
+<link href="{{ asset('css/multi_lang.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -41,7 +41,7 @@ $max = config('constants.minMaxLength.max');
 </div>
 @endsection
 @section('scripts')
-<script src="{{ asset('js/multi_lang.js') }}"></script>
+<script src="{{ asset('js/multi_lang.js?vision=') .$vision }}"></script>
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {

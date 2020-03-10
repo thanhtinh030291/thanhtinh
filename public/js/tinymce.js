@@ -217,11 +217,24 @@ tinymce.init(editor_config);
 
 ////type 2
 var config2 = {
+    language: "en",
+    path_absolute: "/",
     selector: "textarea.editor2",
-    height: 500,
-    toolbar: "nameItem | amountItem | Date | Text | Begin | End | Example | insertfile undo redo | paste | copy",
-    plugins: "wordcount",
-    menubar: false,
+    branding: false,
+    
+    fontsize_formats: "8pt 10pt 11pt 12pt 14pt 18pt 24pt 36pt",
+    plugins: [
+        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+        "searchreplace wordcount visualblocks visualchars code fullscreen",
+        "insertdatetime media nonbreaking save table contextmenu directionality",
+        "emoticons template paste textcolor colorpicker textpattern"
+    ],
+    toolbar:
+            ["insertfile undo redo | styleselect | bold italic sizeselect fontselect fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+            "nameItem | amountItem | Date | Text | Begin | End | Example | insertfile undo redo | paste | copy"]
+        ,
+    
+    
     content_css: [
         "//fonts.googleapis.com/css?family=Lato:300,300i,400,400i",
         "//www.tinymce.com/css/codepen.min.css",
@@ -233,42 +246,42 @@ var config2 = {
             text: "Name Item",
             icon: false,
             onclick: function() {
-                editor.insertContent("&nbsp;<b class = 'text-danger'>[##nameItem##]</b>&nbsp;");
+                editor.insertContent("&nbsp;[##nameItem##]&nbsp;");
             }
         });
         editor.addButton("amountItem", {
             text: "Amount Item",
             icon: false,
             onclick: function() {
-                editor.insertContent("&nbsp;<b class = 'text-danger'>[##amountItem##]</b>&nbsp;");
+                editor.insertContent("&nbsp;[##amountItem##]&nbsp;");
             }
         });
         editor.addButton("Date", {
             text: "Date",
             icon: false,
             onclick: function() {
-                editor.insertContent("&nbsp;<b class = 'text-danger'>[##Date##]</b>&nbsp;");
+                editor.insertContent("&nbsp;[##Date##]&nbsp;");
             }
         });
         editor.addButton("Text", {
             text: "Text",
             icon: false,
             onclick: function() {
-                editor.insertContent("&nbsp;<b class = 'text-danger'>[##Text##]</b>&nbsp;");
+                editor.insertContent("&nbsp;[##Text##]&nbsp;");
             }
         });
         editor.addButton("Begin", {
             text: "Begin",
             icon: false,
             onclick: function() {
-                editor.insertContent("&nbsp;<b class = 'text-danger'>[Begin]</b>&nbsp;");
+                editor.insertContent("&nbsp;[Begin]&nbsp;");
             }
         });
         editor.addButton("End", {
             text: "End",
             icon: false,
             onclick: function() {
-                editor.insertContent("&nbsp;<b class = 'text-danger'>[End]</b>&nbsp;");
+                editor.insertContent("&nbsp;[End]&nbsp;");
             }
         });
         editor.addButton("Example", {

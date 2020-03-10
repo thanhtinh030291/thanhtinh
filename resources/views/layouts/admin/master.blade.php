@@ -16,19 +16,19 @@
     <link rel="shortcut icon" href="{{asset('images/favicon.ico')}}">
 
     <!-- Bootstrap CSS -->
-    <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('css/bootstrap.min.css?vision=') .$vision }}" rel="stylesheet" type="text/css" />
 
     <!-- Font Awesome CSS -->
-    <link href="{{asset('font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('font-awesome/css/font-awesome.min.css?vision=') .$vision }}" rel="stylesheet" type="text/css" />
 
     <!-- Custom CSS -->
-    <link href="{{asset('css/style.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('css/style.css?vision=') .$vision }}" rel="stylesheet" type="text/css" />
 
 	<!-- Date range picker CSS -->
-	<link href="{{asset('plugins/datetimepicker/css/daterangepicker.css')}}" rel="stylesheet" />
-    <link href="{{asset('css/select2.min.css')}}" rel="stylesheet" type="text/css" />
-    <link href="{{asset('css/select2_optimize.css')}}" rel="stylesheet" type="text/css" />
-    <link href="{{asset('css/bootstrap-notifications.css')}}" rel="stylesheet" type="text/css" />
+	<link href="{{asset('plugins/datetimepicker/css/daterangepicker.css?vision=') .$vision }}" rel="stylesheet" />
+    <link href="{{asset('css/select2.min.css?vision=') .$vision }}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('css/select2_optimize.css?vision=') .$vision }}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('css/bootstrap-notifications.css?vision=') .$vision }}" rel="stylesheet" type="text/css" />
     
     @yield('stylesheets')
 
@@ -67,24 +67,24 @@
     </div>
     <!-- END main -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="{{asset('js/modernizr.min.js')}}"></script>
-    <script src="{{asset('js/jquery.min.js')}}"></script>
-    <script src="{{asset('js/popper.min.js')}}"></script>
-    <script src="{{asset('js/bootstrap.min.js')}}"></script>
-    <script src="{{asset('js/detect.js')}}"></script>
-    <script src="{{asset('js/fastclick.js')}}"></script>
-    <script src="{{asset('js/jquery.blockUI.js')}}"></script>
-    <script src="{{asset('js/jquery.nicescroll.js')}}"></script>
-    <script src="{{asset('js/moment.min.js')}}"></script>
-    <script src="{{asset('js/daterangepicker.js')}}"></script>
-    <script src="{{asset('js/jquery.cookie.js')}}"></script>
-    <script src="{{ asset('js/axios.min.js') }}"></script>
-    <script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
+    <script src="{{asset('js/modernizr.min.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/jquery.min.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/popper.min.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/bootstrap.min.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/detect.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/fastclick.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/jquery.blockUI.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/jquery.nicescroll.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/moment.min.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/daterangepicker.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/jquery.cookie.js?vision=') .$vision }}"></script>
+    <script src="{{ asset('js/axios.min.js?vision=') .$vision }}"></script>
+    <script src="{{ asset('plugins/tinymce/tinymce.min.js?vision=') .$vision }}"></script>
     <!-- App js -->
-    <script src="{{asset('js/pikeadmin.js')}}"></script>
-    <script src="{{asset('js/pusher.min.js')}}"></script>
-    <script src="{{ asset('js/select2.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap-notify.min.js') }}"></script>
+    <script src="{{asset('js/pikeadmin.js?vision=') .$vision }}"></script>
+    <script src="{{asset('js/pusher.min.js?vision=') .$vision }}"></script>
+    <script src="{{ asset('js/select2.min.js?vision=') .$vision }}"></script>
+    <script src="{{ asset('js/bootstrap-notify.min.js?vision=') .$vision }}"></script>
     <script src="https://js.pusher.com/5.1/pusher.min.js"></script>
     <script src="{{asset('js/main.js?2')}}"></script>
     

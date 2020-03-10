@@ -5,8 +5,8 @@
 <meta name="ws_url" content="http://localhost:3000/">
 <meta name="user_id" content="{{ Auth::id() }}">
 
-<link href="{{ asset('css/app.css') }}" rel="stylesheet">
-<link href="{{ asset('css/chat.css') }}" rel="stylesheet">
+<link href="{{ asset('css/app.css?vision=') .$vision }}" rel="stylesheet">
+<link href="{{ asset('css/chat.css?vision=') .$vision }}" rel="stylesheet">
 <style media="screen">
     .online{
         color: #32CD32;
@@ -44,7 +44,7 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/vue.js') }}"></script>
-<script src="{{ asset('js/socket.io.js') }}"></script>
-<script src="{{ asset('js/chat.js') }}" charset="utf-8"></script>
+<script src="{{ asset('js/vue.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/socket.io.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/chat.js?vision=') .$vision }}" charset="utf-8"></script>
 @endsection

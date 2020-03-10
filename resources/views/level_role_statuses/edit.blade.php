@@ -1,7 +1,7 @@
 @extends('layouts.admin.master')
 @section('title', 'Level Role Status')
 @section('stylesheets')
-<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css?vision=') .$vision }}">
 @endsection
 @section('content')
     @include('layouts.admin.breadcrumb_index', [
