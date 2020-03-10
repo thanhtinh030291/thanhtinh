@@ -1390,7 +1390,7 @@ input:checked + .slider:before {
   position: fixed; 
   bottom: 0px;
   right: 8px;
-  z-index: 999999999999999;
+  z-index: 99;
   width: 320px; height: auto;
   box-shadow: 6px 6px 6px 10px rgba(0,0,0,0.2);
   border-top-left-radius: 5px;

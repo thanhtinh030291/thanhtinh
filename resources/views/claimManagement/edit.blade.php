@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <a class="btn btn-secondary btnt" href="{{url('admin/transport')}}">
+                    <a class="btn btn-secondary btnt" href="{{url('admin/claim')}}">
                         {{ __('message.back')}}
                     </a>
                     <button type="submit" class="btn btn-danger center-block btnt" style="margin-left: 20px"> {{__('message.save')}}</button> <br>
@@ -133,7 +133,7 @@ $(document).on('ready', function() {
                     $(this).val(value[index2]);
                 });
             });
-        },200);
+        },1500);
     }
 });
 </script>

@@ -436,7 +436,7 @@ class ClaimController extends Controller
             'text_note' => "Dear DLVN, \n Đính kèm là thư : '{$export_letter->letter_template->name}' \n Thanks,",
             'files' => [
                 [
-                    'name' => $namefile."(payment).doc",
+                    'name' => $namefile.".doc",
                     "content" => base64_encode(data_get($export_letter->approve, 'data'))
                 ]
             ]
@@ -444,7 +444,7 @@ class ClaimController extends Controller
         if(isset($export_letter->approve['data_payment']))
         {
             $body['files'][] = [
-                'name' => ''.$namefile.".pdf",
+                'name' => ''.$namefile."(payment).pdf",
                 'content' => $export_letter->approve['data_payment']
             ];
         }
@@ -604,19 +604,17 @@ class ClaimController extends Controller
         $letter = LetterTemplate::findOrFail($letter_template_id);
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        
         $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
         $IOPDiag = IOPDiag($HBS_CL_CLAIM);
         $benefitOfClaim = benefitOfClaim($HBS_CL_CLAIM);
         $police = $HBS_CL_CLAIM->Police;
-
         $policyHolder = $HBS_CL_CLAIM->policyHolder;
 
         $payMethod = payMethod($HBS_CL_CLAIM);
 
         $CSRRemark_TermRemark = CSRRemark_TermRemark($claim);
 
-        
+        $plan = $HBS_CL_CLAIM->plan;
         
         $CSRRemark = $CSRRemark_TermRemark['CSRRemark'];
         $TermRemark = $CSRRemark_TermRemark['TermRemark'];
@@ -655,6 +653,11 @@ class ClaimController extends Controller
         $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $sumAppAmt) , $content);
         $content = str_replace('[[$claimNo]]', $claim->code_claim_show , $content);
         $content = str_replace('[[$memRefNo]]', $HBS_CL_CLAIM->member->memb_ref_no , $content);
+        $content = str_replace('[[$DOB]]', Carbon::parse($HBS_CL_CLAIM->member->dob)->format('d/m/Y') , $content);
+        $content = str_replace('[[$SEX]]', str_replace('SEX_', "",$HBS_CL_CLAIM->member->scma_oid_sex) , $content);
+        $content = str_replace('[[$PoNo]]', $police->pocy_no, $content);
+        $content = str_replace('[[$EffDate]]', Carbon::parse($police->eff_date)->format('d/m/Y'), $content);
+
         $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
         if($CSRRemark){
             $content = str_replace('[[$CSRRemark]]', implode('<br>',$CSRRemark) , $content);

@@ -366,9 +366,9 @@ function benefitOfClaim($HBS_CL_CLAIM){
 function CSRRemark_TermRemark($claim){
     $CSRRemark = [];
     $TermRemark = [];
-    $hasTerm3 = false;
-    $hasTerm2 = false;
-    $hasTerm1 = false;
+    $hasTerm3 = null;
+    $hasTerm2 = null;
+    $hasTerm1 = null;
     
     $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
     $itemOfClaim = $claim->item_of_claim->groupBy('reason_reject_id');
@@ -377,15 +377,15 @@ function CSRRemark_TermRemark($claim){
         $template = $value[0]->reason_reject->template;
         if(isset($value[0]->reason_reject->term->fullTextTerm)){
             $TermRemark[] = $value[0]->reason_reject->term->fullTextTerm;
-            preg_match('/3.*/', $value[0]->reason_reject->term->name , $matches_term3, PREG_OFFSET_CAPTURE);
+            preg_match('/(3\..*)/', $value[0]->reason_reject->term->name , $matches_term3, PREG_OFFSET_CAPTURE);
             if($matches_term3){
                 $hasTerm3 = true;
             }
-            preg_match('/2.*/', $value[0]->reason_reject->term->name , $matches_term2, PREG_OFFSET_CAPTURE);
+            preg_match('/(2\..*)/', $value[0]->reason_reject->term->name , $matches_term2, PREG_OFFSET_CAPTURE);
             if($matches_term2){
                 $hasTerm2 = true;
             }
-            preg_match('/1.*/', $value[0]->reason_reject->term->name , $matches_term1, PREG_OFFSET_CAPTURE);
+            preg_match('/(1\..*)/', $value[0]->reason_reject->term->name , $matches_term1, PREG_OFFSET_CAPTURE);
             if($matches_term1){
                 $hasTerm1 = true;
             }

@@ -35,6 +35,57 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         return null;
     }
 
+    public function getPolicePlanAttribute()
+    {
+        $fisrtClLine = $this->HBS_CL_LINE->first();
+        if($fisrtClLine){
+            $popl_oid = $fisrtClLine->popl_oid;
+            return HBS_MR_POLICY_PLAN::findOrFail($popl_oid);
+        }
+        return null;
+    }
+
+    public function getPlanAttribute()
+    {
+        $plan = [];
+        if(!empty($ClLine)){
+            foreach ($ClLine as $key => $value) {
+                $pre = $value->PD_BEN_HEAD->scma_oid_ben_type;
+                switch ($pre) {
+                    case 'BENEFIT_TYPE_IP':
+                        switch ($value->MR_POLICY_PLAN->PD_PLAN->plan_id) {
+                            case '0001':
+                                $plan[] = 'IP 210M';
+                                break;
+                            case '0002':
+                            case '0006':
+                                $plan[] = 'IP 420M';
+                                break;
+                            default:
+                                $plan[] ='IP 630M';
+                                break;
+                        }
+                        break;
+                    default:
+                        switch ($value->MR_POLICY_PLAN->PD_PLAN->plan_id) {
+                            case '0003':
+                                $plan[] = 'OP 210M';
+                                break;
+                            case '0002':
+                            case '0004':
+                                $plan[] = 'OP 420M';
+                                break;
+                            default:
+                                $plan[] ='IP 630M';
+                                break;
+                        }
+                        break;
+                }
+            }
+        }
+        return array_unique($plan);
+    }
+
     public function getApplicantNameAttribute(){
         $dbDate = \Carbon\Carbon::parse($this->member->dob);
         $diffYears = \Carbon\Carbon::now()->diffInYears($dbDate);
