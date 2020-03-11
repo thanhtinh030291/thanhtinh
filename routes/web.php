@@ -83,6 +83,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('users/update','UserController@update');
 
         Route::get('getPaymentHistory/{cl_no}',  'AjaxCommonController@getPaymentHistory')->name('getPaymentHistory');
+
+        Route::resource('claimWordSheets', 'ClaimWordSheetController');
         
     });
 });
@@ -109,4 +111,6 @@ Route::post(
 Route::post('check_subscriptions', 'PushController@check_subscriptions');
 Route::post('subscriptions', 'PushController@update');
 Route::post('subscriptions/delete', 'PushController@destroy');
+
+
 

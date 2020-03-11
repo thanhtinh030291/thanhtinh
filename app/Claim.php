@@ -25,10 +25,20 @@ class Claim extends BaseModel
         return $this->hasMany('App\ItemOfClaim', 'claim_id');
     }
 
+    public function claim_word_sheet()
+    {
+        return $this->hasOne('App\ClaimWordSheet', 'claim_id', 'id');
+    }
+
     public function getCodeClaimHBSAttribute()
     {
         $data = HBS_CL_CLAIM::findOrFail($this->code_claim);
         return $data->cl_no;
+    }
+
+    public function getClClaimAttribute(){
+        $data = HBS_CL_CLAIM::findOrFail($this->code_claim);
+        return $data;
     }
 
     public static function storeFile($file ,  $dirUpload){

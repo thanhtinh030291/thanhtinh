@@ -173,7 +173,6 @@ class ClaimController extends Controller
     {
         $data = $claim;
         $user = Auth::user();
-        
         $admin_list = User::getListIncharge();
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
@@ -403,7 +402,6 @@ class ClaimController extends Controller
                         'data' => data_get($export_letter->wait, "data"),
                     ];
                 }else{
-                   
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => data_get($export_letter->wait, "data"),

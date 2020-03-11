@@ -34,22 +34,36 @@ $totalAmount = 0;
                             <img src="{{ asset('images/download-button.png') }}"  width="160" height="80">
                         </a>
                         <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Request letter</h5>
-                                <p class="card-text"></p>
-                                {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
-                                    {{ Form::hidden('claim_id', $data->id ) }}
+                            <div class="card-body row">
+                                <div class="col-md-6">
+                                    <h5 class="card-title">Request Letter</h5>
+                                    <p class="card-text"></p>
+                                    {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
+                                        {{ Form::hidden('claim_id', $data->id ) }}
 
-                                    {{ Form::label('letter_template_id', __('message.letter_template'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                                    {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'letterTemplate', 'class' => 'select2 form-control', 'required')) }}
-                                    {!! Form::button('Send Letter', ['data-toggle' => "modal" ,  
-                                        'data-target' => "#comfirmPaymentModal",
-                                        'type' => 'button', 
-                                        'class' => 'mt-3 btn btn-info' , 
-                                        'onclick' => 'comfirmPayment(this);',
-                                        ]) !!}
-                                {{ Form::close() }}
-                
+                                        {{ Form::label('letter_template_id', __('message.letter_template'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
+                                        {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'letterTemplate', 'class' => 'select2 form-control', 'required')) }}
+                                        {!! Form::button('Send Letter', ['data-toggle' => "modal" ,  
+                                            'data-target' => "#comfirmPaymentModal",
+                                            'type' => 'button', 
+                                            'class' => 'mt-3 btn btn-info' , 
+                                            'onclick' => 'comfirmPayment(this);',
+                                            ]) !!}
+                                    {{ Form::close() }}
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="card-title">Claim Word Sheet</h5>
+                                    @if($data->claim_word_sheet)
+                                    <a href="{{route('claimWordSheets.show', ['claimWordSheet' => $data->claim_word_sheet->id])}}" class="mt-3 btn btn-info">Link Work Sheet</a>
+                                    @else
+                                        
+                                        {{ Form::open(array('url' => route('claimWordSheets.store'))) }}
+                                        {{ Form::hidden('claim_id', $data->id ) }}
+                                        {{ Form::hidden('mem_ref_no', $data->clClaim->member->memb_ref_no ) }}
+                                        <button class="btn btn-info" type="submit" value="save">Run</button> 
+                                        {{ Form::close() }}
+                                    @endif
+                                </div>  
                             </div>
                         </div>
                     </div>

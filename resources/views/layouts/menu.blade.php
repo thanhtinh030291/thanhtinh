@@ -166,3 +166,7 @@
     <a href="{!! route('transactionRoleStatuses.index') !!}"><i class="fa fa-edit"></i><span>Transaction Role Statuses</span></a>
 </li>
 
+<li class="{{ Request::is('claimWordSheets*') ? 'active' : '' }}">
+    <a href="{!! route('claimWordSheets.index') !!}"><i class="fa fa-edit"></i><span>Claim Word Sheets</span></a>
+</li>
+
