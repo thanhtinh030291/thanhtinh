@@ -341,7 +341,7 @@ function template(e , idElement , table){
 // replace template 
     function replaceTemplace(str , id = null , table = ""){
         var result = str.replace(/\[##Text##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control text-template p-1" required />');
-        result = result.replace(/\[##Date##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control date-template datepicker p-1" required />');
+        result = result.replace(/\[##Date##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control date-template datepicker2 p-1" required />');
         var nameItem = $('#'+table+'_name_'+id).val() ;
         result = result.replace(/\[##nameItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_nameItem_'+id+' form-control text-template p-1" value="'+nameItem+'" required readonly/>');
         var amountItem = $('#'+table+'_amount_'+id).val() ;

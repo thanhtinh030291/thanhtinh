@@ -16,7 +16,26 @@ function loadDatepicker() {
             $(this).val('');
         }
     });
+
+    $(".datepicker2").daterangepicker({
+        locale: {
+            "format": "DD/MM/YYYY"
+        },
+        singleDatePicker: true,
+        showDropdowns: true,
+        autoUpdateInput: false,
+    });
+    $(".datepicker2").on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('DD/MM/YYYY'));
+    });
+    $(".datepicker2").on('change', function() {
+        var date = moment($(this).val(), 'DD/MM/YYYY', true);
+        if (!date.isValid()) {
+            $(this).val('');
+        }
+    });
 }
+
 
 function loadDateTimePicker() {
     $(".datetimepicker").daterangepicker({
