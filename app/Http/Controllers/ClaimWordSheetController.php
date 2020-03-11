@@ -56,11 +56,6 @@ class ClaimWordSheetController extends Controller
      *
      * @return Response
      */
-    public function create()
-    {
-        return view('claim_word_sheets.create');
-    }
-
     /**
      * Store a newly created ClaimWordSheet in storage.
      *
@@ -78,7 +73,7 @@ class ClaimWordSheetController extends Controller
         ClaimWordSheet::create($data);
         $request->session()->flash('status', 'Claim Word Sheet saved successfully.');
 
-        return redirect(route('claimWordSheets.index'));
+        return redirect(route('claim.show',['claim'=>$request->claim_id]));
     }
 
     /**
@@ -93,7 +88,7 @@ class ClaimWordSheetController extends Controller
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
 
-        return view('claim_word_sheets.show', compact('claimWordSheet'));
+        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM'));
     }
 
     /**

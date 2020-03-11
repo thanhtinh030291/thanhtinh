@@ -1,6 +1,104 @@
-@php
-    dd(formatPrice(1000000));
-@endphp
+<h3 class="text-center">Claim Work Sheet</h3>
+<div style="position: absolute; right: 5px; top: 0px;">
+    <table class="table table-striped" style="width: 120px">
+        <thead>
+            <tr>
+                <th>
+                    DLVN Claim
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    {{$claim->barcode}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="row mt-5">
+    <div class="col-md-4">
+    <p class="font-weight-bold">Name: {{$HBS_CL_CLAIM->member->mbr_last_name ." " . $HBS_CL_CLAIM->member->mbr_first_name}}</p>
+    </div>
+    <div class="col-md-4">
+    <p class="font-weight-bold">DOB: {{ Carbon\Carbon::parse($HBS_CL_CLAIM->member->dob)->format('d/m/Y') }}</p>
+    </div>
+    <div class="col-md-4">
+    <p class="font-weight-bold">Sex: {{str_replace("SEX_", "",$HBS_CL_CLAIM->member->scma_oid_sex)}}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+    <p class="font-weight-bold">Policy No: {{$HBS_CL_CLAIM->Police->pocy_no}}</p>
+    </div>
+    <div class="col-md-4">
+    <p class="font-weight-bold">Member No: {{ $HBS_CL_CLAIM->member->memb_ref_no}}</p>
+    </div>
+    <div class="col-md-4">
+    <p class="font-weight-bold">Claim No.: {{$claim->code_claim_show}}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+    <p class="font-weight-bold">Effective date: {{Carbon\Carbon::parse($HBS_CL_CLAIM->Police->eff_date)->format('d/m/Y')}}</p>
+    </div>
+    <div class="col-md-6">
+    <p class="font-weight-bold">Status: </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p class="font-weight-bold">Plan: </p>
+    </div>
+    <div class="col-md-6">
+        <p>- 30 ngày chờ</p>
+        <p>- 1 năm chờ</p> 
+        <p>- Hợp đồng/Điều khoản</p>
+    </div>
+</div>
+<div>
+    <p class="font-weight-bold">Occupation Loading: </p>
+    <p class="font-weight-bold">Loading: </p>
+    <p class="font-weight-bold">Exclusion: </p>
+</div>
+<div class="row">
+    <div class="col-sm-2 col-form-label ">
+        {{ Form::label('new_items_reject', "Type of visit: IP / OP", array('class' => 'card-title')) }}
+    </div>
+    <div class="col-sm-9">
+        <button type="button" class="btn btn-secondary mt-2 btnt" onclick="addInputItem()">{{ __('message.add')}}</button>
+    </div>
+</div>
+
+<table id="season_price_tbl" class="table table-striped header-fixed">
+    <thead>
+        <tr>
+            <th>{{ __('message.content')}}</th>
+            <th>{{ __('message.content')}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr id="empty_item" style="display: none;">
+            <td></td>
+            <td></td>
+        </tr>
+        <tr id="clone_item" style="display: none">
+            <td style="width:700px">
+                Incur date: from ___/___/_____ to ___/___/_____ Diagnosis:__________________________
+            </td>
+            <td>
+                <div class="row">
+                    <button type="button" class="delete_btn btn btn-danger float-right p-0" style="height : 40px">&#x2613;</button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
 <!-- Id Field -->
 <div class="form-group">
     {!! Form::label('id', 'Id:') !!}
