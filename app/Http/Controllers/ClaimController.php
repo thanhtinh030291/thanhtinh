@@ -659,7 +659,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
         if($CSRRemark){
             $content = str_replace('[[$CSRRemark]]', implode('',$CSRRemark) , $content);
-            $content = str_replace('[[$TermRemark]]', implode('<br>',array_unique($TermRemark)) , $content);
+            $content = str_replace('[[$TermRemark]]', implode('',array_unique($TermRemark)) , $content);
         }
         $content = str_replace('[[$tableInfoPayment]]', $tableInfo , $content);
         $content = str_replace('[[$apvAmt]]', formatPrice($sumAppAmt), $content);
