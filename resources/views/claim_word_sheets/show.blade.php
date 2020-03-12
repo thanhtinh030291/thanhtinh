@@ -24,8 +24,14 @@
     </div>
 @endsection
 @section('scripts')
+<script src="{{asset('js/imask.js')}}"></script>
 <script>
-    //add input item
+$('.imask-input').mask('AA/SS/YYYY', {'translation': {
+    A: {pattern: /[0-31]/},
+    S: {pattern: /[0-12]/},
+    Y: {pattern: /[1991 - 2200]/}
+  }
+});
 var count = 1;
 function addInputItem(){
     let clone =  '<tr id="row-'+count+'">';

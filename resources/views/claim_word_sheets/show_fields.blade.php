@@ -64,9 +64,10 @@
     <p class="font-weight-bold">Loading: </p>
     <p class="font-weight-bold">Exclusion: </p>
 </div>
+
 <div class="row">
     <div class="col-sm-2 col-form-label ">
-        {{ Form::label('new_items_reject', "Type of visit: IP / OP", array('class' => 'card-title')) }}
+        <p class="font-weight-bold">Type of visit: IP / OP </p>
     </div>
     <div class="col-sm-9">
         <button type="button" class="btn btn-secondary mt-2 btnt" onclick="addInputItem()">{{ __('message.add')}}</button>
@@ -83,15 +84,24 @@
     <tbody>
         <tr id="empty_item" style="display: none;">
             <td></td>
-            <td></td>
         </tr>
-        <tr id="clone_item" style="display: none">
-            <td style="width:700px">
-                Incur date: from ___/___/_____ to ___/___/_____ Diagnosis:__________________________
-            </td>
+        <tr id="clone_item" style="">
             <td>
-                <div class="row">
-                    <button type="button" class="delete_btn btn btn-danger float-right p-0" style="height : 40px">&#x2613;</button>
+                <div class="form-row">
+                    <label for="staticEmail2" class="col-md-2 font-weight-bold">Incur date:</label>
+                    <div class="input-group col-md-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="basic-addon1">From</span>
+                        </div>
+                        <input type="text" class="form-control imask-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <label for="staticEmail2" class="col-md-1">to</label>
+                    <input type="text" placeholder="dd/mm/yyyy" class=" imask-input col-md-2" >
+                    <label for="staticEmail2" class="col-md-2 font-weight-bold">Diagnosis</label>
+                    <div class="col-md-3">
+                        <input type="text"  >
+                        
+                    </div>
                 </div>
             </td>
         </tr>
