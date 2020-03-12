@@ -22,7 +22,7 @@
                     {{ Form::text('name', old('name'), [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
 
                     {{ Form::label('description', __('message.description'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                    {{ Form::text('description', old('description'), [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
+                    {{ Form::text('description', old('description'), [ 'class' => 'form-control editor','placeholder' => __('message.name'), 'required']) }}<br/>
                 <div class="text-center tour-button">
                     <a class="btn btnt btn-secondary" href="{{url('admin/term')}}">
                         {{ __('message.back')}}
@@ -40,5 +40,5 @@
 @section('scripts')
 
 <script src="{{ asset('js/multi_lang.js?vision=') .$vision }}"></script>
-
+<script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 @endsection

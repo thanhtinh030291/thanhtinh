@@ -26,7 +26,7 @@ $max = config('constants.minMaxLength.max');
                 {{ Form::text('name', $data->name, [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
 
                 {{ Form::label('description', __('message.description'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                    {{ Form::text('description', $data->description, [ 'class' => 'form-control item-price','placeholder' => __('message.name'), 'required']) }}<br/>
+                    {{ Form::textarea('description', $data->description, [ 'class' => 'form-control editor','placeholder' => __('message.name'), 'required']) }}<br/>
 
                 <div class="text-center tour-button">
                     <a class="btn btnt btn-secondary" href="{{url('admin/term')}}">
@@ -42,6 +42,7 @@ $max = config('constants.minMaxLength.max');
 @endsection
 @section('scripts')
 <script src="{{ asset('js/multi_lang.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {
