@@ -21,7 +21,7 @@ class Controller extends BaseController
         $this->middleware(function ($request, $next) {
             $user = Auth::user()  ;
             $listUser = User::whereNotIn('id',[Auth::User()->id])->pluck('email', 'id');
-            $vision = 3;
+            $vision = 4;
             if($user){
                 $messages = $user->messagesReceiver;
                 View::share('messages', $messages);
