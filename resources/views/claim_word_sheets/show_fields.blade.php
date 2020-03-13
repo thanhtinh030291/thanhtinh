@@ -61,8 +61,12 @@
 </div>
 <div>
     <p class="font-weight-bold">Occupation Loading: </p>
-    <p><span  class="font-weight-bold">Loading:</span> {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc}}</p>
-    <p><span  class="font-weight-bold">Exclusion:</span> {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc}}</p>
+    <p><span  class="font-weight-bold">Loading:</span> 
+        {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first() ? $member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc : "" }}
+    </p>
+    <p><span  class="font-weight-bold">Exclusion:</span> 
+        {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first() ? $member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc : ""}}
+    </p>
 </div>
 
 <div class="row">
