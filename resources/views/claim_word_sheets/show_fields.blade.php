@@ -126,9 +126,8 @@
             @if(!empty($member->CL_MBR_EVENT))
                 @foreach ($member->CL_MBR_EVENT as $item)
                     <tr>
-                        <td>{{Carbon\Carbon::parse($item->eff_date)->format('d/m/Y')}} - {{Carbon\Carbon::parse($item->term_date)->format('d/m/Y')}}</td>
+                        <td>{{Carbon\Carbon::parse($item->eff_date)->format('d/m/Y')}}</td>
                         <td>{{$item->event_desc}}</td>
-                        
                     </tr>
                 @endforeach
             @endif
@@ -149,15 +148,15 @@
 <div>
     <p class="font-weight-bold">CLAIM RESULT</p>
     <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="claim_resuft" id="inlineRadio1" value="1">
+        {{ Form::radio('claim_resuft', '1' , $claimWordSheet->claim_resuft == 1 ? true : false) }}
         <label class="form-check-label" for="inlineRadio1">{{config("constants.claim_result.1")}}</label>
     </div>
     <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="claim_resuft" id="inlineRadio2" value="2">
+        {{ Form::radio('claim_resuft', '2' , $claimWordSheet->claim_resuft == 2 ? true : false) }}
         <label class="form-check-label" for="inlineRadio2">{{config("constants.claim_result.2")}}</label>
     </div>
     <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="claim_resuft" id="inlineRadio3" value="3" >
+        {{ Form::radio('claim_resuft', '3' , $claimWordSheet->claim_resuft == 3 ? true : false) }}
         <label class="form-check-label" for="inlineRadio3">{{config("constants.claim_result.3")}}</label>
     </div>
 </div><br>

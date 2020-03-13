@@ -16,8 +16,14 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
+                    {!! Form::model($claimWordSheet, ['route' => ['claimWordSheets.update', $claimWordSheet->id], 'method' => 'patch']) !!}
                     @include('claim_word_sheets.show_fields')
-                    <a href="{!! route('claimWordSheets.index') !!}" class="btn btn-default">Back</a>
+
+                    <div class="form-group col-sm-12">
+                        {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
+                        <a href="{!! route('claim.index') !!}" class="btn btn-default">Cancel</a>
+                    </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
         </div>
