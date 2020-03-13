@@ -61,8 +61,8 @@
 </div>
 <div>
     <p class="font-weight-bold">Occupation Loading: </p>
-    <p class="font-weight-bold">Loading: </p>
-    <p class="font-weight-bold">Exclusion: </p>
+    <p><span  class="font-weight-bold">Loading:</span> {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc}}</p>
+    <p><span  class="font-weight-bold">Exclusion:</span> {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc}}</p>
 </div>
 
 <div class="row">
@@ -119,10 +119,10 @@
             <th>Description</th>
         </thead>
         <tbody>
-            @if(!empty($member->MR_MEMBER_EVENT))
-                @foreach ($member->MR_MEMBER_EVENT as $item)
+            @if(!empty($member->CL_MBR_EVENT))
+                @foreach ($member->CL_MBR_EVENT as $item)
                     <tr>
-                        <td>{{Carbon\Carbon::parse($item->event_date)->format('d/m/Y')}}</td>
+                        <td>{{Carbon\Carbon::parse($item->eff_date)->format('d/m/Y')}} - {{Carbon\Carbon::parse($item->term_date)->format('d/m/Y')}}</td>
                         <td>{{$item->event_desc}}</td>
                         
                     </tr>

@@ -19,6 +19,10 @@ class HBS_MR_MEMBER extends  BaseModelDB2
     }
     public function CL_LINE()
     {
-        return $this->hasMany('App\HBS_CL_LINE', 'memb_oid', 'memb_oid');
+        return $this->hasMany('App\HBS_CL_LINE', 'memb_oid', 'memb_oid')->where('REV_DATE', null);
+    }
+    public function CL_MBR_EVENT()
+    {
+        return $this->hasMany('App\HBS_CL_MBR_EVENT', 'memb_oid', 'memb_oid');
     }
 }
