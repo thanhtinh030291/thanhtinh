@@ -10,7 +10,7 @@ class HBS_CL_LINE extends BaseModelDB2
     protected $guarded = ['id'];
     public function HBS_MR_MEMBER()
     {
-        return $this->hasOne('App\HBS_MR_MEMBER', 'memb_oid', 'memb_oid');
+        return $this->belongsTo('App\HBS_MR_MEMBER', 'memb_oid', 'memb_oid');
     }
     public function RT_DIAGNOSIS()
     {

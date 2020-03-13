@@ -335,3 +335,35 @@ var config3 = {
     }
 };
 tinymce.init(config3);
+
+//text 
+var config4 = {
+    language: "en",
+    path_absolute : "/",
+    selector: "textarea.editor_default2",
+    branding: false,
+    plugins: [
+    "paste advlist autolink lists link image charmap print preview hr anchor pagebreak",
+    "searchreplace wordcount visualblocks visualchars code fullscreen",
+    "insertdatetime media nonbreaking save table contextmenu directionality",
+    "emoticons template paste textcolor colorpicker textpattern",
+    ],
+    toolbar: ["insertfile undo redo | styleselect | bold italic sizeselect fontselect fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media"
+            ],
+    relative_urls: false,
+    height: 200,
+    file_browser_callback : function(field_name, url, type, win) {
+    var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+    var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
+
+    var cmsURL = editor_config.path_absolute + 'laravel-filemanager?field_name=' + field_name;
+    if (type == 'image') {
+        cmsURL = cmsURL + "&type=Images";
+    } else {
+        cmsURL = cmsURL + "&type=Files";
+    }
+    }
+    
+};
+tinymce.init(config4);
+

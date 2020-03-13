@@ -19,13 +19,13 @@
 </div>
 <div class="row mt-5">
     <div class="col-md-4">
-    <p class="font-weight-bold">Name: {{$HBS_CL_CLAIM->member->mbr_last_name ." " . $HBS_CL_CLAIM->member->mbr_first_name}}</p>
+    <p class="font-weight-bold">Name: {{$member->mbr_last_name ." " . $member->mbr_first_name}}</p>
     </div>
     <div class="col-md-4">
-    <p class="font-weight-bold">DOB: {{ Carbon\Carbon::parse($HBS_CL_CLAIM->member->dob)->format('d/m/Y') }}</p>
+    <p class="font-weight-bold">DOB: {{ Carbon\Carbon::parse($member->dob)->format('d/m/Y') }}</p>
     </div>
     <div class="col-md-4">
-    <p class="font-weight-bold">Sex: {{str_replace("SEX_", "",$HBS_CL_CLAIM->member->scma_oid_sex)}}</p>
+    <p class="font-weight-bold">Sex: {{str_replace("SEX_", "",$member->scma_oid_sex)}}</p>
     </div>
 </div>
 
@@ -34,7 +34,7 @@
     <p class="font-weight-bold">Policy No: {{$HBS_CL_CLAIM->Police->pocy_no}}</p>
     </div>
     <div class="col-md-4">
-    <p class="font-weight-bold">Member No: {{ $HBS_CL_CLAIM->member->memb_ref_no}}</p>
+    <p class="font-weight-bold">Member No: {{ $member->memb_ref_no}}</p>
     </div>
     <div class="col-md-4">
     <p class="font-weight-bold">Claim No.: {{$claim->code_claim_show}}</p>
@@ -75,38 +75,98 @@
 </div>
 
 <table id="season_price_tbl" class="table table-striped header-fixed">
-    <thead>
-        <tr>
-            <th>{{ __('message.content')}}</th>
-            <th>{{ __('message.content')}}</th>
-        </tr>
-    </thead>
+    
     <tbody>
         <tr id="empty_item" style="display: none;">
             <td></td>
         </tr>
-        <tr id="clone_item" style="">
+        <tr id="clone_item" style="display: none">
             <td>
-                <div class="form-row">
-                    <label for="staticEmail2" class="col-md-2 font-weight-bold">Incur date:</label>
-                    <div class="input-group col-md-3">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text" id="basic-addon1">From</span>
-                        </div>
-                        <input type="text" class="form-control imask-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                <div class="form-row align-items-center">
+                    <div class="col-auto">
+                        <label for="staticEmail2" class="font-weight-bold">Incur date:  From</label>
                     </div>
-                    <label for="staticEmail2" class="col-md-1">to</label>
-                    <input type="text" placeholder="dd/mm/yyyy" class=" imask-input col-md-2" >
-                    <label for="staticEmail2" class="col-md-2 font-weight-bold">Diagnosis</label>
-                    <div class="col-md-3">
-                        <input type="text"  >
-                        
+                    
+                    <div class="col-auto">
+                            <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="dd/mm/yyyy" class=" imask-input">
+                    </div>
+                    <div class="col-auto">
+                        <label for="staticEmail2" class="font-weight-bold">To</label>
+                    </div>
+                    <div class=" col-auto">
+                        <input type="text" class="form-control" id="inlineFormInputGroup2" placeholder="dd/mm/yyyy" class=" imask-input">
+                    </div>
+                    <div class="col-auto">
+                        <label for="staticEmail2" class="font-weight-bold">Diagnosis</label>
+                    </div>
+                    <div class=" col-auto">
+                            <input type="text" class="form-control" id="inlineFormInputGroup3"  >
+                    </div>
+
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary delete_btn">X</button>
                     </div>
                 </div>
             </td>
         </tr>
     </tbody>
 </table>
+
+<div>
+    <p class="font-weight-bold">CLAIM HISTORY</p>
+    <table class="table table-striped header-fixed">
+        <thead>
+            <th>Date</th>
+            <th>Diagnosis</th>
+            <th>Treatment</th>
+            <th>Claim result(Approved)</th>
+        </thead>
+        <tbody>
+            @if(!empty($claim_line))
+            @foreach ($claim_line as $item)
+                <tr>
+                    <td>{{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y') .' - '.Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}}</td>
+                    <td>{{$item->prov_name}}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            @endforeach
+            @endif
+                
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <p class="font-weight-bold">MEMBER CLAIM EVENT</p>
+    <table class="table table-striped header-fixed">
+        <thead>
+            <th>Date</th>
+            <th>Description</th>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <p class="font-weight-bold">CLAIM ASSESSMENT</p>
+    {!! Form::textarea('assessment', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4"]) !!}
+</div>
+
+<div>
+    <p class="font-weight-bold">MEDICAL OPINIONS</p>
+    {!! Form::textarea('medical', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4"]) !!}
+</div>
+
+<div>
+    <p class="font-weight-bold">Claim result</p>
+    {!! Form::textarea('medical', $claimWordSheet->assessment,$claimWordSheet->claim_resuft,['class' => 'editor_default2' , 'rows' => "4"]) !!}
+</div>
+
+
+
 
 
 <!-- Id Field -->

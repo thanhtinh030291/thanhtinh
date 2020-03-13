@@ -13,4 +13,8 @@ class HBS_MR_MEMBER extends  BaseModelDB2
     {
         return $this->hasMany('App\HBS_MR_MEMBER_PLAN', 'memb_oid', 'memb_oid');
     }
+    public function CL_LINE()
+    {
+        return $this->hasMany('App\HBS_CL_LINE', 'memb_oid', 'memb_oid');
+    }
 }

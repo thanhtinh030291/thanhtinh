@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateClaimWordSheetRequest;
 use App\Http\Requests\UpdateClaimWordSheetRequest;
 use App\ClaimWordSheet;
+use App\HBS_MR_MEMBER;
 use Auth;
 use App\User;
 use App\Claim;
@@ -69,7 +70,6 @@ class ClaimWordSheetController extends Controller
         $data = $request->except([]);
         $data['created_user'] = $userId;
         $data['updated_user'] = $userId;
-
         ClaimWordSheet::create($data);
         $request->session()->flash('status', 'Claim Word Sheet saved successfully.');
 
@@ -87,8 +87,9 @@ class ClaimWordSheetController extends Controller
     {
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-
-        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM'));
+        $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
+        $claim_line = $member->CL_LINE;
+        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line'));
     }
 
     /**

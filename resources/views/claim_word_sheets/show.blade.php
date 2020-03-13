@@ -25,12 +25,23 @@
 @endsection
 @section('scripts')
 <script src="{{asset('js/imask.js')}}"></script>
+<script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script>
-$('.imask-input').mask('AA/SS/YYYY', {'translation': {
-    A: {pattern: /[0-31]/},
-    S: {pattern: /[0-12]/},
-    Y: {pattern: /[1991 - 2200]/}
-  }
+//btn delete table item 
+$(document).on("click", ".delete_btn", function(){
+    $(this).closest('tr').remove();
+});
+
+$('.imask-input').mask('AB/SC/MNJK', {'translation': {
+    A: {pattern: /[0-3]/},
+    B: {pattern: /[0-9]/},
+    S: {pattern: /[0-1]/},
+    C: {pattern: /[0-9]/},
+    M: {pattern: /[0-2]/},
+    N: {pattern: /[0-9]/},
+    J: {pattern: /[0-9]/},
+    K: {pattern: /[0-9]/},
+}
 });
 var count = 1;
 function addInputItem(){
