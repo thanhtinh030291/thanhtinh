@@ -991,8 +991,7 @@ class ClaimController extends Controller
                     }
                 }
             }
-        }
-    
+        }   
         return $data;
     }
 }

@@ -69,52 +69,26 @@
     <div class="col-sm-2 col-form-label ">
         <p class="font-weight-bold">Type of visit: IP / OP </p>
     </div>
-    <div class="col-sm-9">
-        <button type="button" class="btn btn-secondary mt-2 btnt" onclick="addInputItem()">{{ __('message.add')}}</button>
-    </div>
 </div>
 
-<table id="season_price_tbl" class="table table-striped header-fixed">
-    
+<table id="season_price_tbl" class="table table-striped header-fixed w-50">
     <tbody>
-        <tr id="empty_item" style="display: none;">
-            <td></td>
-        </tr>
-        <tr id="clone_item" style="display: none">
-            <td>
-                <div class="form-row align-items-center">
-                    <div class="col-auto">
-                        <label for="staticEmail2" class="font-weight-bold">Incur date:  From</label>
-                    </div>
-                    
-                    <div class="col-auto">
-                            <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="dd/mm/yyyy" class=" imask-input">
-                    </div>
-                    <div class="col-auto">
-                        <label for="staticEmail2" class="font-weight-bold">To</label>
-                    </div>
-                    <div class=" col-auto">
-                        <input type="text" class="form-control" id="inlineFormInputGroup2" placeholder="dd/mm/yyyy" class=" imask-input">
-                    </div>
-                    <div class="col-auto">
-                        <label for="staticEmail2" class="font-weight-bold">Diagnosis</label>
-                    </div>
-                    <div class=" col-auto">
-                            <input type="text" class="form-control" id="inlineFormInputGroup3"  >
-                    </div>
-
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary delete_btn">X</button>
-                    </div>
-                </div>
-            </td>
-        </tr>
+        @if(!empty($HBS_CL_CLAIM->HBS_CL_LINE))
+        @foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $item)
+            <tr>
+                <td>
+                    <p><span class="font-weight-bold">Incur date: </span> From {{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y')}} To  {{Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}} 
+                        <span class="font-weight-bold">Diagnosis: </span>  {{$item->prov_name}} </p>
+                </td>
+            </tr>
+        @endforeach
+        @endif
     </tbody>
 </table>
 
 <div>
     <p class="font-weight-bold">CLAIM HISTORY</p>
-    <table class="table table-striped header-fixed">
+    <table class="table table-striped header-fixed w-75">
         <thead>
             <th>Date</th>
             <th>Diagnosis</th>
@@ -127,8 +101,8 @@
                 <tr>
                     <td>{{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y') .' - '.Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}}</td>
                     <td>{{$item->prov_name}}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{{str_replace("BENEFIT_TYPE_", "", $item->PD_BEN_HEAD->scma_oid_ben_type)}}</td>
+                    <td>{{formatPrice($item->app_amt)}}</td>
                 </tr>
             @endforeach
             @endif
@@ -139,13 +113,21 @@
 
 <div>
     <p class="font-weight-bold">MEMBER CLAIM EVENT</p>
-    <table class="table table-striped header-fixed">
+    <table class="table table-striped header-fixed w-50">
         <thead>
             <th>Date</th>
             <th>Description</th>
         </thead>
         <tbody>
-            
+            @if(!empty($member->MR_MEMBER_EVENT))
+                @foreach ($member->MR_MEMBER_EVENT as $item)
+                    <tr>
+                        <td>{{Carbon\Carbon::parse($item->event_date)->format('d/m/Y')}}</td>
+                        <td>{{$item->event_desc}}</td>
+                        
+                    </tr>
+                @endforeach
+            @endif
         </tbody>
     </table>
 </div>
@@ -158,164 +140,97 @@
 <div>
     <p class="font-weight-bold">MEDICAL OPINIONS</p>
     {!! Form::textarea('medical', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4"]) !!}
-</div>
+</div><br>
 
 <div>
-    <p class="font-weight-bold">Claim result</p>
-    {!! Form::textarea('medical', $claimWordSheet->assessment,$claimWordSheet->claim_resuft,['class' => 'editor_default2' , 'rows' => "4"]) !!}
+    <p class="font-weight-bold">CLAIM RESULT</p>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="claim_resuft" id="inlineRadio1" value="1">
+        <label class="form-check-label" for="inlineRadio1">{{config("constants.claim_result.1")}}</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="claim_resuft" id="inlineRadio2" value="2">
+        <label class="form-check-label" for="inlineRadio2">{{config("constants.claim_result.2")}}</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="claim_resuft" id="inlineRadio3" value="3" >
+        <label class="form-check-label" for="inlineRadio3">{{config("constants.claim_result.3")}}</label>
+    </div>
+</div><br>
+<div>
+    <p class="font-weight-bold">Received claim documents (please check)</p>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="notification"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Notification of Claim form</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="dischage_summary"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Discharge summary</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="vat"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">VAT invoice (Original/Copy)</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="copy_of"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Copy of ID/Passport/ Coverage card</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="medical_report"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Medical report/Medical book</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="breakdown"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Breakdown of charges</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="discharge_letter"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Discharge letter</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="treatment_plant"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Treatment plan</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="incident_report"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Incident report</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="prescription"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Prescription</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="lab_test"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Lab test result</label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="police_report"  value="1">
+                <label class="form-check-label" for="inlineCheckbox1">Police report</label>
+            </div>
+        </div>
+    </div>
 </div>
-
-
-
-
-
-<!-- Id Field -->
-<div class="form-group">
-    {!! Form::label('id', 'Id:') !!}
-    <p>{!! $claimWordSheet->id !!}</p>
-</div>
-
-<!-- Claim Id Field -->
-<div class="form-group">
-    {!! Form::label('claim_id', 'Claim Id:') !!}
-    <p>{!! $claimWordSheet->claim_id !!}</p>
-</div>
-
-<!-- Mem Ref No Field -->
-<div class="form-group">
-    {!! Form::label('mem_ref_no', 'Mem Ref No:') !!}
-    <p>{!! $claimWordSheet->mem_ref_no !!}</p>
-</div>
-
-<!-- Visit Field -->
-<div class="form-group">
-    {!! Form::label('visit', 'Visit:') !!}
-    <p>{!! $claimWordSheet->visit !!}</p>
-</div>
-
-<!-- Assessment Field -->
-<div class="form-group">
-    {!! Form::label('assessment', 'Assessment:') !!}
-    <p>{!! $claimWordSheet->assessment !!}</p>
-</div>
-
-<!-- Medical Field -->
-<div class="form-group">
-    {!! Form::label('medical', 'Medical:') !!}
-    <p>{!! $claimWordSheet->medical !!}</p>
-</div>
-
-<!-- Claim Resuft Field -->
-<div class="form-group">
-    {!! Form::label('claim_resuft', 'Claim Resuft:') !!}
-    <p>{!! $claimWordSheet->claim_resuft !!}</p>
-</div>
-
-<!-- Note Field -->
-<div class="form-group">
-    {!! Form::label('note', 'Note:') !!}
-    <p>{!! $claimWordSheet->note !!}</p>
-</div>
-
-<!-- Notification Field -->
-<div class="form-group">
-    {!! Form::label('notification', 'Notification:') !!}
-    <p>{!! $claimWordSheet->notification !!}</p>
-</div>
-
-<!-- Dischage Summary Field -->
-<div class="form-group">
-    {!! Form::label('dischage_summary', 'Dischage Summary:') !!}
-    <p>{!! $claimWordSheet->dischage_summary !!}</p>
-</div>
-
-<!-- Vat Field -->
-<div class="form-group">
-    {!! Form::label('vat', 'Vat:') !!}
-    <p>{!! $claimWordSheet->vat !!}</p>
-</div>
-
-<!-- Copy Of Field -->
-<div class="form-group">
-    {!! Form::label('copy_of', 'Copy Of:') !!}
-    <p>{!! $claimWordSheet->copy_of !!}</p>
-</div>
-
-<!-- Medical Report Field -->
-<div class="form-group">
-    {!! Form::label('medical_report', 'Medical Report:') !!}
-    <p>{!! $claimWordSheet->medical_report !!}</p>
-</div>
-
-<!-- Breakdown Field -->
-<div class="form-group">
-    {!! Form::label('breakdown', 'Breakdown:') !!}
-    <p>{!! $claimWordSheet->breakdown !!}</p>
-</div>
-
-<!-- Discharge Letter Field -->
-<div class="form-group">
-    {!! Form::label('discharge_letter', 'Discharge Letter:') !!}
-    <p>{!! $claimWordSheet->discharge_letter !!}</p>
-</div>
-
-<!-- Treatment Plant Field -->
-<div class="form-group">
-    {!! Form::label('treatment_plant', 'Treatment Plant:') !!}
-    <p>{!! $claimWordSheet->treatment_plant !!}</p>
-</div>
-
-<!-- Incident Report Field -->
-<div class="form-group">
-    {!! Form::label('incident_report', 'Incident Report:') !!}
-    <p>{!! $claimWordSheet->incident_report !!}</p>
-</div>
-
-<!-- Prescription Field -->
-<div class="form-group">
-    {!! Form::label('prescription', 'Prescription:') !!}
-    <p>{!! $claimWordSheet->prescription !!}</p>
-</div>
-
-<!-- Lab Test Field -->
-<div class="form-group">
-    {!! Form::label('lab_test', 'Lab Test:') !!}
-    <p>{!! $claimWordSheet->lab_test !!}</p>
-</div>
-
-<!-- Police Report Field -->
-<div class="form-group">
-    {!! Form::label('police_report', 'Police Report:') !!}
-    <p>{!! $claimWordSheet->police_report !!}</p>
-</div>
-
-<!-- Created At Field -->
-<div class="form-group">
-    {!! Form::label('created_at', 'Created At:') !!}
-    <p>{!! $claimWordSheet->created_at !!}</p>
-</div>
-
-<!-- Updated At Field -->
-<div class="form-group">
-    {!! Form::label('updated_at', 'Updated At:') !!}
-    <p>{!! $claimWordSheet->updated_at !!}</p>
-</div>
-
-<!-- Created User Field -->
-<div class="form-group">
-    {!! Form::label('created_user', 'Created User:') !!}
-    <p>{!! $claimWordSheet->created_user !!}</p>
-</div>
-
-<!-- Updated User Field -->
-<div class="form-group">
-    {!! Form::label('updated_user', 'Updated User:') !!}
-    <p>{!! $claimWordSheet->updated_user !!}</p>
-</div>
-
-<!-- Deleted At Field -->
-<div class="form-group">
-    {!! Form::label('deleted_at', 'Deleted At:') !!}
-    <p>{!! $claimWordSheet->deleted_at !!}</p>
-</div>
-
