@@ -4,6 +4,10 @@ namespace App;
 
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Activity;
+use Spatie\Activitylog\Models\Activity as ActivityModel;
+
 
 /**
  * Class ClaimWordSheet
@@ -36,11 +40,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ClaimWordSheet extends BaseModel
 {
     use SoftDeletes;
-
+    use LogsActivity;
+    protected $guarded  = ['id'];
     public $table = 'claim_word_sheet';
     protected static $table_static = 'claim_word_sheet';
-    
-    
+    protected static $logAttributes = ["*"];
+    protected $subject_type = 'App\ClaimWordSheet';
     protected $dates = ['deleted_at'];
 
     
@@ -106,5 +111,10 @@ class ClaimWordSheet extends BaseModel
         
     ];
 
+    public function getLogAttribute()
+    {
+        $log = ActivityModel::where('subject_type', $this->subject_type)->where('subject_id', $this->id)->get();
+        return $log;
+    }
     
 }

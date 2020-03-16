@@ -57,7 +57,7 @@
                                 ])
                             </div>
                             <div class="card col-md-3">
-                                <div class="card-body"> 
+                                <div class="card-body" style="overflow: scroll; height: 350px;"> 
                                     <h5 class="card-title">Suggestions </h5>
                                     <div id="result_suggestions">
         
@@ -108,6 +108,7 @@ $('#dataImg').on('filedeleted', function(event, key, jqXHR, data) {
 });
 
 $(document).on('ready', function() {
+    type_ahead();
     var content = @json(old('_content'));
     content = content ? content : @json($data->item_of_claim->pluck('content'));
     var amount = @json(old('_amount'));

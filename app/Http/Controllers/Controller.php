@@ -20,7 +20,7 @@ class Controller extends BaseController
         
         $this->middleware(function ($request, $next) {
             $user = Auth::user()  ;
-            $listUser = User::whereNotIn('id',[Auth::User()->id])->pluck('email', 'id');
+            $listUser = User::pluck('email', 'id');
             $vision = 4;
             if($user){
                 $messages = $user->messagesReceiver;

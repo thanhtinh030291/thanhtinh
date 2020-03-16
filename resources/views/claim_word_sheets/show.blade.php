@@ -28,6 +28,7 @@
             </div>
         </div>
     </div>
+    @include('history')
 @endsection
 @section('scripts')
 <script src="{{asset('js/imask.js')}}"></script>

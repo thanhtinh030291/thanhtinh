@@ -50,8 +50,27 @@ class ExportLetter extends BaseModel
 
     public function getLogAttribute()
     {
-        
+        $list_status_ad = RoleChangeStatus::pluck('name','id');
         $log = ActivityModel::where('subject_type', $this->subject_type)->where('subject_id', $this->id)->get();
+        foreach ($log as $key => $value) {
+            foreach ($value->properties['attributes'] as $key2 => $value2) {
+                if($key2 == 'status'){
+                    if(isset($log[$key]->properties['old'])){
+                        $log[$key]->properties = [
+                            'attributes' => ["status" => data_get($list_status_ad, $log[$key]->properties['attributes']['status'],'New')],
+                            'old'        => ["status" => data_get($list_status_ad, $log[$key]->properties['old']['status'],'New')]
+                        ];
+                    }else{
+                        $log[$key]->properties = [
+                            'attributes' => ["status" =>data_get($list_status_ad, $log[$key]->properties['attributes']['status'],'New')]
+                        ];
+                    }
+                    
+                    //dd($log[$key]->properties['attributes']);
+                }
+            }
+        }
+        
         return $log;
     }
 

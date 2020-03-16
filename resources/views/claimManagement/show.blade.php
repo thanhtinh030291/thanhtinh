@@ -169,11 +169,10 @@ $totalAmount = 0;
                             </td>
                             <td>
                                 {{-- history --}}
-                                @foreach ($item->log as $item_log)
-                                    <p class="m-0">{{$item_log->created_at}} </p>
-                                    <p class="m-0">{{data_get($admin_list ,$item_log->causer_id)}} </p>
-                                    <p class="m-0">{{data_get($list_status_ad,  data_get($item_log->properties, 'attributes.status', 1))}} </p>
-                                @endforeach
+                                @include('history',[
+                                    'idmodal' => 'items_'.$item->id,
+                                    'log_history' => $item->log
+                                ])
                             </td>
                             <td>
                                 <button href="#collapse{{$item->id}}" class="nav-toggle btn btn-info pull-right p-1">▲</button>

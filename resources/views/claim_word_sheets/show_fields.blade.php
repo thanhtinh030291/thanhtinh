@@ -142,7 +142,7 @@
 
 <div>
     <p class="font-weight-bold">MEDICAL OPINIONS</p>
-    {!! Form::textarea('medical', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4"]) !!}
+    {!! Form::textarea('medical', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4" , 'disabled']) !!}
 </div><br>
 
 <div>
@@ -165,73 +165,85 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="notification"  value="1">
+                {{ Form::hidden('notification', '0')}}
+                {{ Form::checkbox('notification', '1', $claimWordSheet->notification == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Notification of Claim form</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="dischage_summary"  value="1">
+                {{ Form::hidden('dischage_summary', '0')}}
+                {{ Form::checkbox('dischage_summary', '1', $claimWordSheet->dischage_summary == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Discharge summary</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="vat"  value="1">
+                {{ Form::hidden('vat', '0')}}
+                {{ Form::checkbox('vat', '1', $claimWordSheet->vat == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">VAT invoice (Original/Copy)</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="copy_of"  value="1">
+                {{ Form::hidden('copy_of', '0')}}
+                {{ Form::checkbox('copy_of', '1', $claimWordSheet->copy_of == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Copy of ID/Passport/ Coverage card</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="medical_report"  value="1">
+                {{ Form::hidden('medical_report', '0')}}
+                {{ Form::checkbox('medical_report', '1', $claimWordSheet->medical_report == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Medical report/Medical book</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="breakdown"  value="1">
+                {{ Form::hidden('breakdown', '0')}}
+                {{ Form::checkbox('breakdown', '1', $claimWordSheet->breakdown == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Breakdown of charges</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="discharge_letter"  value="1">
+                {{ Form::hidden('discharge_letter', '0')}}
+                {{ Form::checkbox('discharge_letter', '1', $claimWordSheet->discharge_letter == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Discharge letter</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="treatment_plant"  value="1">
+                {{ Form::hidden('treatment_plant', '0')}}
+                {{ Form::checkbox('treatment_plant', '1', $claimWordSheet->treatment_plant == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Treatment plan</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="incident_report"  value="1">
+                {{ Form::hidden('incident_report', '0')}}
+                {{ Form::checkbox('incident_report', '1', $claimWordSheet->incident_report == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Incident report</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="prescription"  value="1">
+                {{ Form::hidden('prescription', '0')}}
+                {{ Form::checkbox('prescription', '1', $claimWordSheet->prescription == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Prescription</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="lab_test"  value="1">
+                {{ Form::hidden('lab_test', '0')}}
+                {{ Form::checkbox('lab_test', '1', $claimWordSheet->lab_test == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Lab test result</label>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" name="police_report"  value="1">
+                {{ Form::hidden('police_report', '0')}}
+                {{ Form::checkbox('police_report', '1', $claimWordSheet->police_report == 1? true : false , ['class' => 'form-check-input'])}}
                 <label class="form-check-label" for="inlineCheckbox1">Police report</label>
             </div>
         </div>

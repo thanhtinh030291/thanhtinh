@@ -4,6 +4,7 @@
 @section('stylesheets')
     <link href="{{asset('css/fileinput.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/formclaim.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/icheck.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -91,9 +92,17 @@
                         ])
                     </div>
                     <div class="card col-md-3">
-                        <div class="card-body"> 
+                        <div class="card-body" style="overflow: scroll; height: 350px;"> 
                             <h5 class="card-title">Suggestions </h5>
-                            <div id="result_suggestions">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input resize-checkbox" value="" onClick="checkAll2(this)" > 
+                                    <p class="ml-2 mt-2">Check All</p>
+                                </label>
+                                
+                            </div>
+                            {{ Form::select(null, $listReasonReject,null, array( 'id'=>'select-inject-default2','class' => 'select2 labelas', 'onchange' => 'template_clone()')) }}
+                            <div id="result_reason_reject">
 
                             </div>
                         </div>
@@ -126,8 +135,10 @@
     <script src="{{ asset('js/tiff.min.js?vision=') .$vision }}"></script>
     <script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
     <script src="{{ asset('js/jquery-ui.js?vision=') .$vision }}"></script>
+    <script src="{{ asset('js/typeahead.bundle.min.js')}}"></script>
     <script src="{{ asset('js/clipboard.js?vision=') .$vision }}"></script>
     <script src="{{asset('js/formclaim.js?vision=') .$vision }}"></script>
+    <script src="{{ asset('js/icheck.min.js?vision=') .$vision }}"></script>
     
     <script type="text/javascript">
         function arrayToTable(tableData) {
@@ -188,7 +199,10 @@
     </script>
     <script>
         // add value select to row and change tooltip
+        
         $(document).ready(function(){
+            type_ahead();
+            icheck_fn();
             $('[data-toggle="tooltip"]').tooltip({
                 customClass: 'tooltip-custom'
             });

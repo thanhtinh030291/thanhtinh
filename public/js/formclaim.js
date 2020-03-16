@@ -247,36 +247,7 @@ function checkValueCol(value, arrElemt){
             break;
     }
 }
-// search2 ajax
-function search2(e){
-    var id = e.dataset.id;
-    $.ajax({
-        url: '/admin/search2',
-        type: 'POST',
-        context: e,
-        data: {'search' : e.value},
-    })
-    .done(function(res) {
-        if(res.status == 'success'){
-            $("#result_suggestions").empty();
-            var container = $("#result_suggestions");
-            res.data.forEach(function(value, key) {
-                var p = $("<input>", {
-                    value: value,
-                    class: "div-added",
-                    id : 'result_suggestions_'+key
-                });
-                var div =  $('<div class="input-group mb-3"></div>');
-                div.append('<input type="text" data-id="'+id+'" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="'+value+'" id="result_suggestions_'+key+'">')
-                    .append($('<div class="input-group-append"></div>')
-                        .append('<button class="btn btn-outline-secondary" data-id="'+id+'" data-clipboard-demo data-clipboard-target="#result_suggestions_'+key+'" type="button"><i class="fa fa-clipboard" aria-hidden="true"></i></button>'));
-                container.append(div);
-            });
-        }else{
-            $("#result_suggestions").empty();
-        }
-    })
-}
+
 
 //btn delete table item 
 $(document).on("click", ".delete_btn", function(){
@@ -294,6 +265,9 @@ function addInputItem(){
     clone = clone.replace("_reasonInject_default", "_reasonInject["+count+"]");
     // div template id
     clone = clone.replace('template_default', "template_"+count);
+    clone = clone.replace('_icheck', "icheck");
+    clone = clone.replace('id_count', count);
+    
     // parameter in function
     clone = clone.replace('nameItem_defautl', "table2_nameItem_"+count);
     clone = clone.replace('amountItem_defautl', "table2_amountItem_"+count);
@@ -309,6 +283,18 @@ function addInputItem(){
     $('select[name="_reasonInject['+count+']"]').addClass('select2').attr('data-id', count);
     $('.select2').select2();
     count++;
+    type_ahead();
+    icheck_fn();
+}
+function type_ahead(){
+    $('.search-input').typeahead({
+        source:  function (query, process) {
+        return $.post('/admin/search2', { 'search': query }, function (data) {
+                return process(data.data);
+            });
+        }
+    });
+    
 }
 function addValueItem(content, amount, reasonInject, count, idItem = ""){
     $('input[name="_content['+count+']"]').val(content);
@@ -343,8 +329,10 @@ function template(e , idElement , table){
         var result = str.replace(/\[##Text##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control text-template p-1" required />');
         result = result.replace(/\[##Date##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control date-template datepicker2 p-1" required />');
         var nameItem = $('#'+table+'_name_'+id).val() ;
+        nameItem = nameItem ? nameItem : "";
         result = result.replace(/\[##nameItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_nameItem_'+id+' form-control text-template p-1" value="'+nameItem+'" required readonly/>');
         var amountItem = $('#'+table+'_amount_'+id).val() ;
+        amountItem = amountItem ? amountItem : " ";
         result = result.replace(/\[##amountItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_amountItem_'+id+' form-control text-template p-1" value="'+amountItem.replace(/(,)/gm, ".")+'" required readonly/>');
         result = result.replace(/\[Begin\]|\[End\]/g,'');
 
@@ -471,3 +459,58 @@ $(window).load(function() {
         })
     }
 });
+
+//Enable check and uncheck all functionality
+function checkAll2() {
+    var clicks = $(this).data('clicks');
+
+    if (clicks) {
+        //Uncheck all checkboxes
+        $(".icheck").iCheck("uncheck");
+        $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
+    } else {
+        //Check all checkboxes
+        $(".icheck").iCheck("check");
+        $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
+    }
+    $(this).data("clicks", !clicks);
+};
+var arr_icheck = [];
+function icheck_fn(){
+    $('.icheck').iCheck({
+        checkboxClass: 'icheckbox_flat-blue',
+        radioClass: 'iradio_flat-blue'
+        });
+        $('input').on('ifChecked', function(event){
+            var id = $(this).attr("data-id");
+            arr_icheck.push(id);
+        });
+        $('input').on('ifUnchecked', function(event){
+            var id = $(this).attr("data-id");
+            var index = arr_icheck.indexOf(id);
+            if (index > -1) {
+                arr_icheck.splice(index, 1);
+            }
+        });
+        
+}
+
+function template_clone(){
+    console.log($("#select-inject-default2").val());
+    $.ajax({
+        url: '/admin/template',
+        type: 'POST',
+        data: {'search' : $("#select-inject-default2").val()},
+    })
+    .done(function(res) {
+        if(res.status == 'success'){
+                $("#result_reason_reject").empty();
+                console.log(replaceTemplace(res.data, '_id_count' ,'table2'));
+                $("#result_reason_reject").append(replaceTemplace(res.data, '_id_count' ,'table2'));
+                loadDatepicker();
+        }else{
+            $("#result_reason_reject").empty();
+        }
+    })
+}
+
