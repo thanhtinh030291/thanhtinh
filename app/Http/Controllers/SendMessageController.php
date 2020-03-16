@@ -158,7 +158,6 @@ class SendMessageController extends Controller
             $data['avantar'] , 
             url('admin/message').'/'.$mesage_data->id
         ));
-        //event(new Notify($data['content']));
         return redirect('/admin/home/');
     }
 

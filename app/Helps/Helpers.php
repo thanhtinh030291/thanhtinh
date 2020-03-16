@@ -1,6 +1,10 @@
 <?php
 use Illuminate\Support\Str;
 use App\User;
+use App\Message;
+use App\Events\Notify;
+use App\Notifications\PushNotification;
+use Pusher\Pusher;
 function getUserSign($id){
     $user = User::findOrFail($id);
     $dirStorage = config('constants.signarureStorage');
@@ -444,4 +448,44 @@ function note_pay($export_letter){
         }
     }
     return $htm;
+}
+
+function notifi_system($content, $arrUserID = []){
+    $user = App\User::findOrFail(1);
+    $options = array(
+        'cluster' => config('constants.PUSHER_APP_CLUSTER'),
+        'encrypted' => true
+    );
+    $data['title'] = $user->name . ' gửi tin cho bạn';
+    $data['content'] = $content;
+    $data['avantar'] = config('constants.avantarStorage').'thumbnail/'.$user->avantar;
+    $pusher = new Pusher(
+        config('constants.PUSHER_APP_KEY'),
+        config('constants.PUSHER_APP_SECRET'),
+        config('constants.PUSHER_APP_ID'),
+        $options
+    );
+    $data_messageSent = [];
+    foreach ($arrUserID as $key => $value) {
+        $data_messageSent[] = [
+            'user_to' => $value,
+            'message' => $content
+        ];
+    }
+    $mesage_data = $user->messagesSent()->createMany($data_messageSent);
+    foreach ($arrUserID as $key => $value) {
+        $pusher->trigger('NotifyUser-'.$value,'Notify' ,$data);
+    }
+    
+    $user_to = User::whereIn('id', $arrUserID)->get();
+    foreach ($user_to as $key => $value) {
+        $value->notify(new PushNotification(
+            $data['title'] , 
+            $data['content'] , 
+            $data['avantar'] , 
+            url('admin/message')
+        ));
+    }
+    
+    return redirect('/admin/home/');
 }
