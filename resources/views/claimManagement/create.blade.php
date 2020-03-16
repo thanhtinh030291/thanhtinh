@@ -93,7 +93,7 @@
                     </div>
                     <div class="card col-md-3">
                         <div class="card-body" style="overflow: scroll; height: 350px;"> 
-                            <h5 class="card-title">Suggestions </h5>
+                            <h5 class="card-title">Do it quickly </h5>
                             <div class="form-check">
                                 <label class="form-check-label">
                                     <input type="checkbox" class="form-check-input resize-checkbox" value="" onClick="checkAll2(this)" > 
@@ -105,6 +105,7 @@
                             <div id="result_reason_reject">
 
                             </div>
+                            <button type="button" onclick="clickGo2()" class="btn btn-secondar">GO</button>
                         </div>
                     </div>
                 </div>

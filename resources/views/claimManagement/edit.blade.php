@@ -58,10 +58,19 @@
                             </div>
                             <div class="card col-md-3">
                                 <div class="card-body" style="overflow: scroll; height: 350px;"> 
-                                    <h5 class="card-title">Suggestions </h5>
-                                    <div id="result_suggestions">
+                                    <h5 class="card-title">Do it quickly </h5>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input resize-checkbox" value="" onClick="checkAll2(this)" > 
+                                            <p class="ml-2 mt-2">Check All</p>
+                                        </label>
+                                        
+                                    </div>
+                                    {{ Form::select(null, $listReasonReject,null, array( 'id'=>'select-inject-default2','class' => 'select2 labelas', 'onchange' => 'template_clone()')) }}
+                                    <div id="result_reason_reject">
         
                                     </div>
+                                    <button type="button" onclick="clickGo2()" class="btn btn-secondar">GO</button>
                                 </div>
                             </div>
                         </div>
@@ -88,8 +97,10 @@
 <script src="{{ asset('js/tiff.min.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/jquery-ui.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/typeahead.bundle.min.js')}}"></script>
 <script src="{{ asset('js/clipboard.js?vision=') .$vision }}"></script>
 <script src="{{asset('js/formclaim.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/icheck.min.js?vision=') .$vision }}"></script>
 <script>
 var dataImage = @json($dataImage);
 var previewConfig = @json($previewConfig);
@@ -109,6 +120,7 @@ $('#dataImg').on('filedeleted', function(event, key, jqXHR, data) {
 
 $(document).on('ready', function() {
     type_ahead();
+    icheck_fn();
     var content = @json(old('_content'));
     content = content ? content : @json($data->item_of_claim->pluck('content'));
     var amount = @json(old('_amount'));

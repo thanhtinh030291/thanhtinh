@@ -41,8 +41,6 @@ function clickGo(){
         }
     });
     $('.checkbox_class, .form-check-input').attr('checked', false);
-
-
 };
 
 // lick checkbox show buton comfirm
@@ -496,7 +494,6 @@ function icheck_fn(){
 }
 
 function template_clone(){
-    console.log($("#select-inject-default2").val());
     $.ajax({
         url: '/admin/template',
         type: 'POST',
@@ -505,12 +502,23 @@ function template_clone(){
     .done(function(res) {
         if(res.status == 'success'){
                 $("#result_reason_reject").empty();
-                console.log(replaceTemplace(res.data, '_id_count' ,'table2'));
-                $("#result_reason_reject").append(replaceTemplace(res.data, '_id_count' ,'table2'));
+                var html_d =  replaceTemplace(res.data, '_id_count' ,'table2');
+                console.log(html_d);
+                html_d = html_d.replace(/(name="table2_parameters\[_id_count\]\[\]")/gm, '')
+                $("#result_reason_reject").append(html_d);
                 loadDatepicker();
         }else{
             $("#result_reason_reject").empty();
         }
     })
 }
+
+function clickGo2(){
+    var text = $("#result_reason_reject").clone();
+    var valueSelect = $("#select-inject-default2 option:selected").val();
+    $.each(arr_icheck, function (index, value) {
+        $('select[name="_reasonInject['+value+']"]').val(valueSelect).change();
+    });
+    $(".icheck").iCheck("uncheck");
+};
 
