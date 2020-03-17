@@ -324,7 +324,6 @@ function postMessagee(e){
     $(".loader").show();
     var user_f = $('#user_f').val();
     var content_f = tinyMCE.get('content_f').getContent();
-    console.log("tinh:",content_f);
     axios.post("/postMessage",{
             'user' : user_f ,
             'content' : content_f,
@@ -352,26 +351,23 @@ function postMessagee(e){
 
 function contentReject(){
     $("content_f").val("");
-    var url      = location.href; 
+    var url      = $(location).attr('href');
     var user_name = $('meta[name="user_name"]').attr('content')
-    var html  = "Letter bị từ chối bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> <a href='"+
-    url +"' target='_blank' rel='follow, index'>"+url+"</a>";
+    var html  = "Letter bị từ chối bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> "+url;
     tinymce.get("content_f").setContent(html);
 }
 function contentAccept(){
     $("content_f").val("");
-    var url      = location.href; 
+    var url      = $(location).attr('href'); 
     var user_name = $('meta[name="user_name"]').attr('content')
-    var html  = "Letter đã được chấp nhận bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> <a href='"+
-    url +"' target='_blank' rel='follow, index'>"+url+"</a>";
+    var html  = "Letter đã được chấp nhận bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> "+url;
     tinymce.get("content_f").setContent(html);
 }
 function contentRequest(){
     $("content_f").val("");
-    var url      = location.href; 
+    var url      = $(location).attr('href'); 
     var user_name = $('meta[name="user_name"]').attr('content')
-    var html  = "Letter yêu cầu tiến hành xác nhận bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> <a href='"+
-    url +"' target='_blank' rel='follow, index'>"+url+"</a>";
+    var html  = "Letter yêu cầu tiến hành xác nhận bởi <b>" + user_name + "</b> Vui lòng kiểm tra lại thông tin tại : <br> "+url;
     tinymce.get("content_f").setContent(html);
 }
 tinymce.init({
