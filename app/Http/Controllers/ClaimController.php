@@ -748,7 +748,7 @@ class ClaimController extends Controller
                     case 'ANES':
                     case 'OPR':
                     case 'SUR':
-                        $range_pay = " Tối đa ".formatPrice($limit['amt'])." cho mỗi Bệnh tật/Thương tật, mỗi cuộc phẫu thuật";
+                        $range_pay = " Tối đa ".formatPrice(data_get($limit,'amt'))." cho mỗi Bệnh tật/Thương tật, mỗi cuộc phẫu thuật";
                         break;
                     case 'HSP':
                     case 'HVIS':
@@ -756,20 +756,20 @@ class ClaimController extends Controller
                     case 'PORX':
                     case 'POSH':
                     case 'LAMB':
-                        $range_pay = " Tối đa ".formatPrice($limit['amt'])." cho mỗi Bệnh tật/Thương tật, mỗi năm";
+                        $range_pay = " Tối đa ".formatPrice(data_get($limit,'amt'))." cho mỗi Bệnh tật/Thương tật, mỗi năm";
                         break;
                     case 'RB':
                     case 'EXTB':
                     case 'ICU':
                     case 'HNUR':
-                        $range_pay = " Tối đa ".formatPrice($limit['amt'])." mỗi ngày";
+                        $range_pay = " Tối đa ".formatPrice(data_get($limit,'amt'))." mỗi ngày";
                         break;
                     case 'ER':
                     case 'TDAM':
-                        $range_pay = " Tối đa ".formatPrice($limit['amt'])."  cho mỗi Tai nạn, mỗi năm";
+                        $range_pay = " Tối đa ".formatPrice(data_get($limit,'amt'))."  cho mỗi Tai nạn, mỗi năm";
                         break;
                     default:
-                        $range_pay = " Tối đa ".formatPrice($limit['amt']);
+                        $range_pay = " Tối đa ".formatPrice(data_get($limit,'amt'));
                         break;
                 }
                 $html .=    '
@@ -794,18 +794,18 @@ class ClaimController extends Controller
                 case 'OVRX':
                 case 'OV':
                 case 'RX':
-                    $content_limit = "Từ trên ".formatPrice($limit['amt_from'])." đến tối đa ". formatPrice($limit['amt_to']) ." mỗi lần thăm khám";
+                    $content_limit = "Từ trên ".formatPrice(data_get($limit,'amt_from'))." đến tối đa ". formatPrice(data_get($limit,'amt_to')) ." mỗi lần thăm khám";
                     break;
                 
                 default:
-                    $content_limit = "Tối đa ".formatPrice($limit['amt_from'])." mỗi năm";
+                    $content_limit = "Tối đa ".formatPrice(data_get($limit,'amt_from'))." mỗi năm";
                     break;
             }
             if($key == 0){
                 
                 $html .= '<tr>
                             <td style="border: 1px solid black; font-weight:bold;">Ngoại Trú</td>
-                            <td style="border: 1px solid black">Tối đa  '.formatPrice($limit['amt_yr']).' mỗi năm</td>
+                            <td style="border: 1px solid black">Tối đa  '.formatPrice(data_get($limit,'amt_yr')).' mỗi năm</td>
                             <td style="border: 1px solid black"></td>
                             <td style="border: 1px solid black"></td>
                         </tr>';
@@ -827,14 +827,14 @@ class ClaimController extends Controller
                 
                 $html .= '<tr>
                             <td style="border: 1px solid black; font-weight:bold;">Răng</td>
-                            <td style="border: 1px solid black">Tối đa  '.formatPrice($limit['amt_yr']).' mỗi năm</td>
+                            <td style="border: 1px solid black">Tối đa  '.formatPrice(data_get($limit,'amt_yr')).' mỗi năm</td>
                             <td style="border: 1px solid black"></td>
                             <td style="border: 1px solid black"></td>
                         </tr>';
             }
             $html .=    '<tr>
                             <td style="border: 1px solid black">Chi phí điều trị nha khoa '.$value->RT_DIAGNOSIS->diag_desc_vn.'</td>
-                            <td style="border: 1px solid black">Từ trên '.formatPrice($limit['amt']).' mỗi lần thăm khám</td>
+                            <td style="border: 1px solid black">Từ trên '.formatPrice(data_get($limit,'amt')).' mỗi lần thăm khám</td>
                             <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
                             <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
                         </tr>';

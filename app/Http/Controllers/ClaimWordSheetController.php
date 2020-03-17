@@ -88,6 +88,7 @@ class ClaimWordSheetController extends Controller
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
+        $member->plan;
         $claim_line = $member->CL_LINE;
         $log_history = $claimWordSheet->log;
         //dd($member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first());
