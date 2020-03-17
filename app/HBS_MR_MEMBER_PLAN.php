@@ -32,4 +32,14 @@ class HBS_MR_MEMBER_PLAN extends  BaseModelDB2
     public function PD_PLAN(){
         return $this->belongsTo('App\HBS_PD_PLAN', 'plan_oid', 'plan_oid');
     }
+
+    public function MR_MEMBER_PLAN_BENEFIT(){
+        return $this->hasMany('App\HBS_MR_MEMBER_PLAN_BENEFIT', 'mepl_oid', 'mepl_oid');
+    }
+
+    public function MR_POLICY_PLAN_BENEFIT() {
+        return $this->belongsToMany('App\HBS_MR_POLICY_PLAN_BENEFIT', 'MR_MEMBER_PLAN_BENEFIT', 'mepl_oid', 'pobe_oid')->withPivot('OCCUATION_LDG_PCT');
+    }
+
+
 }

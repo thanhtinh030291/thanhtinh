@@ -43,7 +43,7 @@
 
 <div class="row">
     <div class="col-md-6">
-    <p class="font-weight-bold">Effective date: {{Carbon\Carbon::parse($HBS_CL_CLAIM->Police->eff_date)->format('d/m/Y')}}</p>
+    <p class="font-weight-bold">Effective date: {{$member->pocyEffdate}}</p>
     </div>
     <div class="col-md-6">
     <p class="font-weight-bold">Status: </p>
@@ -52,6 +52,11 @@
 <div class="row">
     <div class="col-md-6">
         <p class="font-weight-bold">Plan: </p>
+        <div class="ml-5">
+            @foreach ($member->plan as $item)
+                <p>{{$item}}</p>
+            @endforeach
+        </div>
     </div>
     <div class="col-md-6">
         <p>- 30 ngày chờ</p>
@@ -60,7 +65,11 @@
     </div>
 </div>
 <div>
-    <p class="font-weight-bold">Occupation Loading: </p>
+    <p class="font-weight-bold">Occupation Loading: 
+        @foreach ($member->occupation as $item)
+            <span class="ml-3">{{$item}}</span>
+        @endforeach
+    </p>
     <p><span  class="font-weight-bold">Loading:</span> 
         {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first() ? $member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc : "" }}
     </p>
