@@ -147,10 +147,21 @@
 <div>
     <p class="font-weight-bold">CLAIM ASSESSMENT</p>
     {!! Form::textarea('assessment', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4"]) !!}
-</div>
+</div><br>
 
 <div>
-    <p class="font-weight-bold">MEDICAL OPINIONS</p>
+    <p class="font-weight-bold">MEDICAL OPINIONS  <button class="add_field_button">Add Question</button></p>
+    <div class="input_fields_wrap w-75 ml-4">
+        @foreach ($claimWordSheet->request_qa as $item)
+        <div class = "row mt-2">
+            
+            {{ Form::text('request_qa[]', $item , ['class'=>"form-control col-md-11"]) }}
+            <a href="#" class="col-md-1 remove_field btn btn-danger">X</a>
+        </div>
+        @endforeach
+        
+        
+    </div><br>
     {!! Form::textarea('medical', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4" , 'disabled']) !!}
 </div><br>
 
@@ -257,4 +268,20 @@
             </div>
         </div>
     </div>
-</div>
+</div><br>
+<div>
+    <p class="font-weight-bold">Status</p>
+    <div class="form-check form-check-inline">
+        {{ Form::radio('status', '1' , $claimWordSheet->status == 0 ? true : false) }}
+        <label class="form-check-label" for="inlineRadio1">{{config("constants.statusWorksheet.0")}}</label>
+    </div>
+    <div class="form-check form-check-inline">
+        {{ Form::radio('status', '2' , $claimWordSheet->status == 1 ? true : false) }}
+        <label class="form-check-label" for="inlineRadio2">{{config("constants.statusWorksheet.1")}}</label>
+    </div>
+    <div class="form-check form-check-inline">
+        {{ Form::radio('status', '3' , $claimWordSheet->status == 2 ? true : false) }}
+        <label class="form-check-label" for="inlineRadio3">{{config("constants.statusWorksheet.2")}}</label>
+    </div>
+</div><br>
+

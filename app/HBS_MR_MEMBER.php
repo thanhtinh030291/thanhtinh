@@ -27,10 +27,13 @@ class HBS_MR_MEMBER extends  BaseModelDB2
         return $this->hasMany('App\HBS_CL_MBR_EVENT', 'memb_oid', 'memb_oid');
     }
     
-    public function getPocyEffdateAttribute(Type $var = null)
+    public function getPocyEffdateAttribute()
     {
-        $effdate = $this->MR_MEMBER_PLAN->first()->eff_date;
-        return Carbon::parse($effdate)->format('d/m/Y');
+        $MR_MEMBER_PLAN = $this->MR_MEMBER_PLAN->first();
+        if($MR_MEMBER_PLAN){
+            return Carbon::parse($MR_MEMBER_PLAN->effdate)->format('d/m/Y');
+        }
+        return "";
     }
 
     public function getOccupationAttribute()

@@ -49,31 +49,6 @@ class ClaimWordSheet extends BaseModel
     protected $dates = ['deleted_at'];
 
     
-    
-    public $fillable = [
-        'claim_id',
-        'mem_ref_no',
-        'visit',
-        'assessment',
-        'medical',
-        'claim_resuft',
-        'note',
-        'notification',
-        'dischage_summary',
-        'vat',
-        'copy_of',
-        'medical_report',
-        'breakdown',
-        'discharge_letter',
-        'treatment_plant',
-        'incident_report',
-        'prescription',
-        'lab_test',
-        'police_report',
-        'created_user',
-        'updated_user',
-        'deleted_at'
-    ];
 
     /**
      * The attributes that should be casted to native types.
@@ -81,27 +56,15 @@ class ClaimWordSheet extends BaseModel
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'claim_id' => 'integer',
-        'mem_ref_no' => 'string',
-        'claim_resuft' => 'integer',
-        'note' => 'integer',
-        'notification' => 'integer',
-        'dischage_summary' => 'integer',
-        'vat' => 'integer',
-        'copy_of' => 'integer',
-        'medical_report' => 'integer',
-        'breakdown' => 'integer',
-        'discharge_letter' => 'integer',
-        'treatment_plant' => 'integer',
-        'incident_report' => 'integer',
-        'prescription' => 'integer',
-        'lab_test' => 'integer',
-        'police_report' => 'integer',
-        'created_user' => 'integer',
-        'updated_user' => 'integer'
+        'request_qa' => 'array',
     ];
-
+    protected function castAttribute($key, $value)
+    {
+        if ($this->getCastType($key) == 'array' && is_null($value)) {
+            return [];
+        }
+        return parent::castAttribute($key, $value);
+    }
     /**
      * Validation rules
      *

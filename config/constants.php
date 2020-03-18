@@ -97,5 +97,11 @@ return[
         1 => 'FULLY PAID' ,
         2 => 'PARTIALLY PAID' ,
         3 => 'DECLINED' 
+    ],
+    'statusWorksheet' => [
+        0 => 'Mặc Định',
+        1 => 'Yêu Cầu Hỗ trợ MD',
+        2 => 'Đã Giải Quyết'
     ]
+
 ];
