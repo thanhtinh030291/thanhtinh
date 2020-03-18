@@ -31,7 +31,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
     {
         $MR_MEMBER_PLAN = $this->MR_MEMBER_PLAN->first();
         if($MR_MEMBER_PLAN){
-            return Carbon::parse($MR_MEMBER_PLAN->effdate)->format('d/m/Y');
+            return Carbon::parse($MR_MEMBER_PLAN->eff_date)->format('d/m/Y');
         }
         return "";
     }
@@ -64,45 +64,36 @@ class HBS_MR_MEMBER extends  BaseModelDB2
     public function getPlanAttribute()
     {
         $plan = [];
-        
-        if(!empty($this->MR_MEMBER_PLAN)){
-            foreach ($this->MR_MEMBER_PLAN as $key => $value) {
-                $pre = $value->MR_POLICY_PLAN->PD_PLAN->PD_PLAN_LIMIT[0]->PD_BEN_HEAD[0]->scma_oid_ben_type;
-                //$pre = $value->MR_POLICY_PLAN_BENEFIT[0]->PD_PLAN_BENEFIT->PD_BEN_HEAD->scma_oid_ben_type;
-                $eff_date = Carbon::parse($value->eff_date)->format('d/m/Y');
-                switch ($pre) {
-                    case 'BENEFIT_TYPE_IP':
-                        switch ($value->MR_POLICY_PLAN->PD_PLAN->plan_id) {
-                            case '0001':
-                                $plan[] = 'IP 210M - ' . $eff_date;
-                                break;
-                            case '0002':
-                            case '0006':
-                                $plan[] = 'IP 420M - ' . $eff_date;
-                                break;
-                            default:
-                                $plan[] ='IP 630M - ' . $eff_date;
-                                break;
-                        }
-                        break;
-                    case 'BENEFIT_TYPE_OP':
-                        switch ($value->MR_POLICY_PLAN->PD_PLAN->plan_id) {
-                            case '0003':
-                                $plan[] = 'OP 210M - ' . $eff_date;
-                                break;
-                            case '0002':
-                            case '0004':
-                                $plan[] = 'OP 420M - ' . $eff_date;
-                                break;
-                            default:
-                                $plan[] ='OP 630M - ' . $eff_date;
-                                break;
-                        }
-                    default:
-                        break;
-                }
-            }
+        $DLVN_MEMBER = DLVN_MEMBER::where('MEMB_REF_NO' , $this->memb_ref_no)->get();
+        foreach ($DLVN_MEMBER as $key => $value) {
+            $plan_merge = array_map('trim', array_filter($value->only(['ip_plan','op_plan','dt_plan'])));
+            $plan[] = implode(", ", $plan_merge) ." - ".Carbon::parse($value->pocy_eff_date)->format('d/m/Y');
         }
         return $plan;
+    }
+
+    public function getStatusQueryAttribute(){
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        try {
+            $request = $client->get(config('constants.url_query_online').$this->memb_ref_no);
+            $response = $request->getBody()->getContents();
+            $response = json_decode($response,true);
+            if(data_get($response, 'response_msg.msg_code') == "DLVN0"){
+                $html = "";
+                foreach(data_get($response, 'client_info', []) as $key => $value){
+                    $html .= "<span class = 'ml-2'>" . data_get($value ,'sPlanID') . ": ".  data_get($value ,'sStatus')  . "</span>";
+                }
+                return $html;
+            }else{
+                return "";
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return "";
+        }
     }
 }

@@ -15,5 +15,19 @@ return [
         'edition'        => env('DB_ORA_EDITION', 'ora$base'),
         'server_version' => env('DB_ORA_SERVER_VERSION', '11g'),
     ],
+    'oracle-data-annaly' => [
+        'driver'         => 'oracle',
+        'tns'            => env('DB_ORA_TNS', ''),
+        'host'           => env('DB_ORA_HOST2', ''),
+        'port'           => env('DB_ORA_PORT2', '1521'),
+        'database'       => env('DB_ORA_DATABASE2', ''),
+        'username'       => env('DB_ORA_USERNAME2', ''),
+        'password'       => env('DB_ORA_PASSWORD2', ''),
+        'charset'        => env('DB_ORA_CHARSET', 'AL32UTF8'),
+        'prefix'         => env('DB_ORA_PREFIX', ''),
+        'prefix_schema'  => env('DB_ORA_SCHEMA_PREFIX2', ''),
+        'edition'        => env('DB_ORA_EDITION', 'ora$base'),
+        'server_version' => env('DB_ORA_SERVER_VERSION', '11g'),
+    ],
 ];
 

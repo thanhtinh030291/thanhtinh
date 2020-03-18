@@ -46,7 +46,7 @@
     <p class="font-weight-bold">Effective date: {{$member->pocyEffdate}}</p>
     </div>
     <div class="col-md-6">
-    <p class="font-weight-bold">Status: </p>
+    <p class="font-weight-bold">Status:  {!!$member->statusQuery!!}</p>
     </div>
 </div>
 <div class="row">
