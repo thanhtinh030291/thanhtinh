@@ -761,7 +761,9 @@ class ClaimController extends Controller
                     case 'RB':
                     case 'EXTB':
                     case 'ICU':
+                    case 'CCU':    
                     case 'HNUR':
+                    case 'PNUR':
                         $range_pay = " Tối đa ".formatPrice(data_get($limit,'amt'))." mỗi ngày";
                         break;
                     case 'ER':
@@ -794,6 +796,10 @@ class ClaimController extends Controller
                 case 'OVRX':
                 case 'OV':
                 case 'RX':
+                case 'LAB':
+                case 'XRAY':
+                case 'PHYS':
+                case 'CHIR':    
                     $content_limit = "Từ trên ".formatPrice(data_get($limit,'amt_from'))." đến tối đa ". formatPrice(data_get($limit,'amt_to')) ." mỗi lần thăm khám";
                     break;
                 
@@ -866,12 +872,10 @@ class ClaimController extends Controller
                 }
             }
             
-            if($ben_head == 'OVRX'){
+            if($ben_head == 'OVRX' || $ben_head == 'OV' || $ben_head == 'RX' || $ben_head == 'LAB' || $ben_head == 'XRAY' || $ben_head == 'PHYS' || $ben_head == 'CHIR'){
                 if ($valuet->limit_type == 'H') {
                     $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_OP')->where('ben_head', 'OVRX');
-                    
                     if( $array->count() > 0){
-                        //dd($valuet);
                         $data['amt_from'] = $valuet->deduct_amt_vis == null ? 0 :  $valuet->deduct_amt_vis;
                         $data['amt_to'] = $valuet->amt_vis == null ? 0 :  $valuet->amt_vis;
                     }
@@ -958,6 +962,26 @@ class ClaimController extends Controller
                     
                     if( $array->count() > 0){
                         $data['amt'] = $valuet->amt_day;
+                    }
+                }
+            }
+
+            if($ben_head == 'PNUR'){
+                if ($valuet->limit_type == 'H') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head','PNUR');
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $valuet->amt_day;
+                    }
+                }
+            }
+
+            if($ben_head == 'ICU' || $ben_head == 'CCU'){
+                if ($valuet->limit_type == 'CH') {
+                    $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->whereIn('ben_head', ['ICU', 'CCU']);
+                    
+                    if( $array->count() > 0){
+                        $data['amt'] = $data['amt'] >= $valuet->amt_day ? $data['amt'] :  $valuet->amt_day;
                     }
                 }
             }

@@ -59,8 +59,10 @@ return[
         'EXTB' => 'Giường cho người thân',
 
         'ICU' => 'Khoa chăm sóc đặc biệt',
+        'CCU' => 'Khoa chăm sóc đặc biệt',
 
         'HNUR' => 'Điều dưỡng tại nhà',
+        'PNUR' => 'Điều dưỡng tại nhà',
 
         'ER' => 'Điều trị tại phòng cấp cứu do tai nạn',
 
@@ -79,6 +81,10 @@ return[
         'OVRX' => 'Quyền lợi ngoại trú',
         'OV' => 'Quyền lợi ngoại trú',
         'RX' => 'Quyền lợi ngoại trú',
+        'LAB' => 'Quyền lợi ngoại trú',
+        'XRAY' => 'Quyền lợi ngoại trú',
+        'PHYS' => 'Quyền lợi ngoại trú',
+        'CHIR' => 'Quyền lợi ngoại trú',
 
         'ACUP' => 'Y hoc thay thế',
         'BSET' => 'Y hoc thay thế',
