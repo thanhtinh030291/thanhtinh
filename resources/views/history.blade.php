@@ -32,8 +32,13 @@
                             @foreach ($item->properties['attributes'] as $keyatt => $valueatt)
                                 @if($valueatt != $item->properties['old'][$keyatt])
                                     <div class="row">
+                                        @if (!is_array($valueatt))
                                         <div class="col-md-6 bg-primary">{!!$keyatt .":" .$valueatt!!}</div>
                                         <div class="col-md-6 bg-warning">{!!$keyatt .":" .$item->properties['old'][$keyatt]!!}</div>
+                                        @else
+                                            <div class="col-md-6 bg-primary">{!!$keyatt .":" .implode(",",$valueatt)!!}</div>
+                                            <div class="col-md-6 bg-warning">{!!$keyatt .":" .implode(",",$item->properties['old'][$keyatt])!!}</div>
+                                        @endif
                                     </div>
                                 @endif
                             @endforeach
