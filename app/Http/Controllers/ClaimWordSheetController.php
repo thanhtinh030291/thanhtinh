@@ -40,13 +40,14 @@ class ClaimWordSheetController extends Controller
             'created_at' => $request->get('created_at'),
             'updated_user' => $request->get('updated_user'),
             'updated_at' => $request->get('updated_at'),
+            'status' => $request->get('status'),
         ];
         $admin_list = User::getListIncharge();
         $limit_list = config('constants.limit_list');
         $limit = $request->get('limit');
         $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
 
-        $claimWordSheets =  ClaimWordSheet::findByParams($search_params)->orderBy('id', 'desc');
+        $claimWordSheets =  ClaimWordSheet::findByParams($search_params)->whereIn('status', [1,2])->orderBy('id', 'desc');
         $claimWordSheets  = $claimWordSheets->paginate($per_page);
 
         return view('claim_word_sheets.index', compact('search_params', 'admin_list', 'limit', 'limit_list', 'claimWordSheets' ));           

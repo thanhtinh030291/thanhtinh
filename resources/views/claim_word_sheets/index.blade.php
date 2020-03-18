@@ -10,9 +10,7 @@
     ])
     <div class="row">
         <div class="col-md-12">
-            <a class="btn btn-primary pull-right" href="{!! route('claimWordSheets.create') !!}">
-                {{ __('message.create')}}
-            </a>
+            
         </div>
     </div>
     <br>
@@ -30,6 +28,8 @@
                                 {{ Form::select('created_user', $admin_list, $search_params['created_user'], ['id' => 'created_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
                                 {{ Form::label('created_at', __('message.date_created'), ['class' => 'labelas']) }}
                                 {{ Form::text('created_at', $search_params['created_at'], ['class' => 'form-control datepicker']) }}
+                                {{ Form::label('status', __('message.status'), ['class' => 'labelas']) }}
+                                {{ Form::select('status', config('constants.statusWorksheet'), $search_params['status'], ['class' => 'form-control' ,'placeholder' => ' ']) }}
                             </div>
                             <div class="col-md-6">
                                 {{ Form::label('updated_user', __('message.account_edit'), ['class' => 'labelas']) }}

@@ -79,5 +79,9 @@ class ClaimWordSheet extends BaseModel
         $log = ActivityModel::where('subject_type', $this->subject_type)->where('subject_id', $this->id)->get();
         return $log;
     }
-    
+
+    public function claim()
+    {
+        return $this->belongsTo('App\Claim', 'claim_id', 'id');
+    }
 }

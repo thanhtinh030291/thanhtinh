@@ -272,15 +272,15 @@
 <div>
     <p class="font-weight-bold">Status</p>
     <div class="form-check form-check-inline">
-        {{ Form::radio('status', '1' , $claimWordSheet->status == 0 ? true : false) }}
+        {{ Form::radio('status', '0' , $claimWordSheet->status == 0 ? true : false) }}
         <label class="form-check-label" for="inlineRadio1">{{config("constants.statusWorksheet.0")}}</label>
     </div>
     <div class="form-check form-check-inline">
-        {{ Form::radio('status', '2' , $claimWordSheet->status == 1 ? true : false) }}
+        {{ Form::radio('status', '1' , $claimWordSheet->status == 1 ? true : false) }}
         <label class="form-check-label" for="inlineRadio2">{{config("constants.statusWorksheet.1")}}</label>
     </div>
     <div class="form-check form-check-inline">
-        {{ Form::radio('status', '3' , $claimWordSheet->status == 2 ? true : false) }}
+        {{ Form::radio('status', '2' , $claimWordSheet->status == 2 ? true : false) }}
         <label class="form-check-label" for="inlineRadio3">{{config("constants.statusWorksheet.2")}}</label>
     </div>
 </div><br>

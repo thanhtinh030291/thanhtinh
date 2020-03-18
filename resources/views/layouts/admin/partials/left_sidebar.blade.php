@@ -34,6 +34,18 @@
                         </li>
                     </ul>
                 </li>
+                {{-- Medical --}}
+                <li class="submenu">
+                    <a href="#">
+                        <i class="fa fa-medkit" aria-hidden="true"></i> <span> Medical Management </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li class="{{ setActive('admin/claimWordSheets') }}"> 
+                            <a class="{{ setActive('admin/claimWordSheets') }}"
+                            href="{{ url('admin/claimWordSheets') }}"><span> Q&A Of Claim</span></a>
+                        </li>
+                    </ul>
+                </li>
                 {{-- Support Tool --}}
                 <li class="submenu">
                     <a href="#">
