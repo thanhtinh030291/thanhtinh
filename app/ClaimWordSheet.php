@@ -57,6 +57,7 @@ class ClaimWordSheet extends BaseModel
      */
     protected $casts = [
         'request_qa' => 'array',
+        'benefit' => 'array'
     ];
     protected function castAttribute($key, $value)
     {

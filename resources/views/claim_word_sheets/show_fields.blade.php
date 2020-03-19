@@ -84,7 +84,7 @@
     </div>
 </div>
 
-<table id="season_price_tbl" class="table table-striped header-fixed w-50">
+<table id="season_price_tbl" class="table table-striped header-fixed w-75">
     <tbody>
         @if(!empty($HBS_CL_CLAIM->HBS_CL_LINE))
         @foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $item)
@@ -126,7 +126,7 @@
 
 <div>
     <p class="font-weight-bold">MEMBER CLAIM EVENT</p>
-    <table class="table table-striped header-fixed w-50">
+    <table class="table table-striped header-fixed w-75">
         <thead>
             <th>Date</th>
             <th>Description</th>
@@ -146,6 +146,32 @@
 
 <div>
     <p class="font-weight-bold">CLAIM ASSESSMENT</p>
+    <div class="row ml-1">
+        <div class="col-md-6">
+            <h6>BENEFIT <button class="add_benefit_button">Add Benefit</button></h6>
+            <div id="field_benefit">
+
+            </div>
+            <div id="clone_benefit" style="display: none">
+                <div class = "row mt-2">
+                    <div class="col-sm-6">
+                        {{ Form::select('_benefit[]["content"]', config('constants.benefit'),null, ['class'=>" _select2 form-control " ]) }}
+                    </div>
+                    {{ Form::text('_benefit[]["amount"]', null, ['class'=>"item-price form-control col-sm-5"]) }}
+                    <a href="#" class="col-md-1 remove_field btn btn-danger">X</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h6>REJECT</h6>
+            @foreach ($claim->item_of_claim as $item)
+                <div class="form-group row">
+                    <label for="staticEmail" class="col-sm-6 col-form-label text-right">{{$item->content}}</label>
+                    {{ Form::text(null, $item->amount, ['class'=>"form-control col-sm-4" , 'readonly']) }}
+                </div>
+            @endforeach
+        </div>
+    </div>
     {!! Form::textarea('assessment', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4"]) !!}
 </div><br>
 

@@ -21,8 +21,9 @@ class CreateClaimWordSheetTable extends Migration
             $table->longText('assessment')->nullable();
             $table->longText('medical')->nullable();
             $table->integer('claim_resuft')->nullable();
+            $table->longText('benefit')->nullable();
             $table->bigInteger('claim_amt')->default('0');
-            $table->bigInteger('Payable_amt')->default('0');
+            $table->bigInteger('payable_amt')->default('0');
             $table->text('note')->nullable();
             $table->integer('notification')->default('0');
             $table->integer('dischage_summary')->default('0');

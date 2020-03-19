@@ -180,7 +180,6 @@ function readAllMessages(){
             reject(Error("It broke"));
             }
         });
-        console.log(promise);
         return promise;
     }
 

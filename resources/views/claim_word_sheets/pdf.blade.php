@@ -8,7 +8,7 @@
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
         <style>
-         @font-face {
+        @font-face {
             font-family: "DejaVu Sans";
             font-style: normal;
             font-weight: 400;
@@ -185,7 +185,7 @@
 
 <div style="margin-left: 10px;">
     <p class="font-weight-bold">CLAIM ASSESSMENT</p>
-    {!! Form::textarea('assessment', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4", 'style' => 'min-height : 150px']) !!}
+    {!! Form::textarea('assessment', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4", 'style' => 'min-height : 100px']) !!}
 </div>
 
 <div style="margin-left: 10px;">
