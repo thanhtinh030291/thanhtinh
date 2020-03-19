@@ -85,6 +85,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('getPaymentHistory/{cl_no}',  'AjaxCommonController@getPaymentHistory')->name('getPaymentHistory');
 
         Route::resource('claimWordSheets', 'ClaimWordSheetController');
+        Route::get('claimWordSheets/pdf/{claimWordSheet}',  'ClaimWordSheetController@pdf')->name('claimWordSheets.pdf');
         
     });
 });

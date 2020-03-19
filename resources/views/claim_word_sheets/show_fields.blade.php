@@ -162,7 +162,9 @@
         
         
     </div><br>
-    {!! Form::textarea('medical', $claimWordSheet->medical,['class' => 'editor_default2', 'id' => 'editor_default2' , 'rows' => "4" , 'disabled']) !!}
+    {!! Form::textarea('medical', $claimWordSheet->medical,[
+        'class' => Auth::user()->hasRole('Medical') ?  'editor_default2' : 'editor_readonly' , 
+        'rows' => "4" , 'disabled']) !!}
 </div><br>
 
 <div>
@@ -277,6 +279,7 @@
         @if(Auth::user()->hasRole(['Admin', 'Medical']))
             <button type="submit" name="status" value="2" class="btn btn-info">{{config("constants.statusWorksheet.2")}}</button>
         @endif
+        <a href="{{route('claimWordSheets.pdf', $claimWordSheet->id)}}" target="_blank" class="btn btn-info m-2">Download PDF</a>
     </div>
 </div><br>
 

@@ -101,6 +101,8 @@ $(document).ready(function() {
         e.preventDefault(); $(this).parent('div').remove(); x--;
     })
 });
+
+
 </script>
 
     

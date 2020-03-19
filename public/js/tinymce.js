@@ -367,3 +367,14 @@ var config4 = {
 };
 tinymce.init(config4);
 
+var editor_readonly = {
+    selector: "textarea.editor_readonly",
+    branding: false,
+    readonly : 1,
+    menubar:false,
+    toolbar:false,
+    height : "200",
+    };
+tinymce.init(editor_readonly);
+
+
