@@ -162,7 +162,7 @@
         
         
     </div><br>
-    {!! Form::textarea('medical', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4" , 'disabled']) !!}
+    {!! Form::textarea('medical', $claimWordSheet->medical,['class' => 'editor_default2', 'id' => 'editor_default2' , 'rows' => "4" , 'disabled']) !!}
 </div><br>
 
 <div>
@@ -270,18 +270,13 @@
     </div>
 </div><br>
 <div>
-    <p class="font-weight-bold">Status</p>
+    <p class="font-weight-bold">Status : {{ data_get(config("constants.statusWorksheet"), $claimWordSheet->status)}}</p>
+    
     <div class="form-check form-check-inline">
-        {{ Form::radio('status', '0' , $claimWordSheet->status == 0 ? true : false) }}
-        <label class="form-check-label" for="inlineRadio1">{{config("constants.statusWorksheet.0")}}</label>
-    </div>
-    <div class="form-check form-check-inline">
-        {{ Form::radio('status', '1' , $claimWordSheet->status == 1 ? true : false) }}
-        <label class="form-check-label" for="inlineRadio2">{{config("constants.statusWorksheet.1")}}</label>
-    </div>
-    <div class="form-check form-check-inline">
-        {{ Form::radio('status', '2' , $claimWordSheet->status == 2 ? true : false) }}
-        <label class="form-check-label" for="inlineRadio3">{{config("constants.statusWorksheet.2")}}</label>
+        <button type="submit" name="status" value="1" class="btn btn-info m-2">{{config("constants.statusWorksheet.1")}}</button>
+        @if(Auth::user()->hasRole(['Admin', 'Medical']))
+            <button type="submit" name="status" value="2" class="btn btn-info">{{config("constants.statusWorksheet.2")}}</button>
+        @endif
     </div>
 </div><br>
 

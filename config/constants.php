@@ -109,6 +109,8 @@ return[
         0 => 'Mặc Định',
         1 => 'Yêu Cầu Hỗ trợ MD',
         2 => 'Đã Giải Quyết'
-    ]
+    ],
+
+    'notifiRoleMD' => 'Medical'
 
 ];

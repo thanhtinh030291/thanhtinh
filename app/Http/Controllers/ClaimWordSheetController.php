@@ -122,7 +122,20 @@ class ClaimWordSheetController extends Controller
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
         ClaimWordSheet::updateOrCreate(['id' => $claimWordSheet->id], $data);
-
+        if($request->status == 1){
+            $arrUserId = User::whereHas("roles", function($q){ $q->where("name", "Medical"); })->pluck('id')->toArray();
+            $content = Auth::User()->name . " yêu cầu hỗ trợ tư vấn Claim work sheet : <a href = '" . 
+            route('claimWordSheets.show', $claimWordSheet->id) ."'>". 
+            route('claimWordSheets.show',  $claimWordSheet->id)."</a>";
+            notifi_system($content, $arrUserId);
+        }
+        if($request->status == 2){
+            
+            $content = Auth::User()->name . " đã trả lời yêu cầu hỗ trợ tư vấn Claim work sheet : <a href = '" . 
+            route('claimWordSheets.show', $claimWordSheet->id) ."'>". 
+            route('claimWordSheets.show',  $claimWordSheet->id)."</a>";
+            notifi_system($content, [$claimWordSheet->created_user]);
+        }
         $request->session()->flash('status', 'Claim Word Sheet updated successfully.'); 
         return redirect(route('claimWordSheets.index'));
     }
