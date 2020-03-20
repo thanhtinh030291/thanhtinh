@@ -434,7 +434,8 @@ function CSRRemark_TermRemark($claim){
     if($hasTerm1){
         array_unshift($TermRemark, "<p>Quý khách vui lòng tham khảo Điều 1_ Các định nghĩa của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</p>");
     }
-    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => sort($TermRemark)];
+    
+    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $TermRemark];
     
 }
 
