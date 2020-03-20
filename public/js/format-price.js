@@ -6,7 +6,7 @@ function formatPrice(x) {
 function removeFormatPrice(number) {
     number = number.toString();
     var result = number.replace(/,/g, '');
-    result = result.replace(/[^0-9|.]+/g, '');
+    result = result.replace(/[^0-9]+/g, '');
     return result;
 }
 function changeFormatObj(obj) {

@@ -133,6 +133,9 @@ class ClaimWordSheetController extends Controller
     public function update(ClaimWordSheet $claimWordSheet, UpdateClaimWordSheetRequest $request)
     {
         $data = $request->except([]);
+        if (isset($data["benefit"])){
+            $data["benefit"] = array_values($data["benefit"]);
+        }
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
         ClaimWordSheet::updateOrCreate(['id' => $claimWordSheet->id], $data);

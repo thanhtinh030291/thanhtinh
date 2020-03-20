@@ -155,23 +155,34 @@
             <div id="clone_benefit" style="display: none">
                 <div class = "row mt-2">
                     <div class="col-sm-6">
-                        {{ Form::select('_benefit[]["content"]', config('constants.benefit'),null, ['class'=>" _select2 form-control " ]) }}
+                        {{ Form::select('_benefit[content]', config('constants.benefit'),null, ['class'=>" _select2 form-control " ]) }}
                     </div>
-                    {{ Form::text('_benefit[]["amount"]', null, ['class'=>"item-price form-control col-sm-5"]) }}
+                    {{ Form::text('_benefit[amount]', null, ['class'=>"item-price form-control col-sm-5 benefit_input", 'onchange' => 'add_amt()']) }}
                     <a href="#" class="col-md-1 remove_field btn btn-danger">X</a>
                 </div>
             </div>
+            
         </div>
         <div class="col-md-6">
             <h6>REJECT</h6>
             @foreach ($claim->item_of_claim as $item)
                 <div class="form-group row">
-                    <label for="staticEmail" class="col-sm-6 col-form-label text-right">{{$item->content}}</label>
-                    {{ Form::text(null, $item->amount, ['class'=>"form-control col-sm-4" , 'readonly']) }}
+                    <label for="staticEmail" class="col-sm-6 col-form-label text-right ">{{$item->content}}</label>
+                    {{ Form::text(null, $item->amount, ['class'=>"form-control col-sm-4 reject_input" , 'readonly']) }}
                 </div>
             @endforeach
+                
         </div>
     </div>
+    <div class="row ml-1">
+        <div class="col-md-6">
+            CLAIM AMT {{ Form::text('claim_amt', $claimWordSheet->claim_amt, [ 'id' => 'claim_amt' ,'class'=>"item-price form-control col-sm-5", 'readonly']) }}
+        </div>
+        <div class="col-md-6">
+            PAYABLE AMT {{ Form::text('payable_amt', $claimWordSheet->payable_amt, ['id' => 'payable_amt' ,'class'=>"item-price form-control col-sm-5", 'readonly']) }}
+        </div>
+    </div>
+    
     {!! Form::textarea('assessment', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4"]) !!}
 </div><br>
 

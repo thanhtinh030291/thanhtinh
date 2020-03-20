@@ -28,6 +28,9 @@
 
                     {{ Form::label('level', 'Letter Payment') }}
                     {{ Form::select('letter_payment',$listLetter,old('letter_payment'), ['id' => 'template_reject', 'class' => 'form-control editor', 'placeholder'=>'None']) }}<br>
+
+                    {{ Form::label('status_mantis', 'Status Of Mantics') }}
+                    {{ Form::select('status_mantis',config('constants.status_mantic'),old('status_mantis'), ['id' => 'template_reject', 'class' => 'form-control editor', 'placeholder'=>'None']) }}<br>
                     
                     {{ Form::label('template', __('message.template')) }}
                     {{ Form::textarea('template', old('template'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>

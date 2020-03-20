@@ -420,7 +420,7 @@ function CSRRemark_TermRemark($claim){
             // array to string 
             $arr_str = [];
             foreach ($arrMatche as $key => $value) {
-                $arr_str[] = preg_replace('/\[Begin\]|\[End\]/', ' ', implode("; ", $value));
+                $arr_str[] = preg_replace('/\[Begin\]|\[End\]/', '', implode(", ", $value));
             }
             $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
         }
@@ -434,7 +434,7 @@ function CSRRemark_TermRemark($claim){
     if($hasTerm1){
         array_unshift($TermRemark, "<p>Quý khách vui lòng tham khảo Điều 1_ Các Định nghĩa của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</p>");
     }
-    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $TermRemark];
+    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => sort($TermRemark)];
     
 }
 

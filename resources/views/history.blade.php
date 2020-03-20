@@ -36,8 +36,8 @@
                                         <div class="col-md-6 bg-primary">{!!$keyatt .":" .$valueatt!!}</div>
                                         <div class="col-md-6 bg-warning">{!!$keyatt .":" .$item->properties['old'][$keyatt]!!}</div>
                                         @else
-                                            <div class="col-md-6 bg-primary">{!!$keyatt .":" .implode(",",$valueatt)!!}</div>
-                                            <div class="col-md-6 bg-warning">{!!$keyatt .":" .implode(",",$item->properties['old'][$keyatt])!!}</div>
+                                            <div class="col-md-6 bg-primary">{!!$keyatt .":" .json_encode($valueatt,true)!!}</div>
+                                            <div class="col-md-6 bg-warning">{!!$keyatt .":" .json_encode($item->properties['old'][$keyatt],true)!!}</div>
                                         @endif
                                     </div>
                                 @endif

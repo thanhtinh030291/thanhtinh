@@ -93,14 +93,27 @@ $(document).ready(function() {
         $(wrapper).append('<div class = "row mt-2"><input type="text" name="request_qa[]" class="form-control col-md-11"/><a href="#" class="col-md-1 remove_field btn btn-danger">X</a></div>'); //add input box
 
     });
-
+    var count = 1;
     $('.add_benefit_button').click(function(e){ //on add input button click
         e.preventDefault();
         var clone = $('#clone_benefit').clone().html();
         clone = clone.replace(/_select2/gm, "select2");
-        clone = clone.replace(/_benefit/gm, "benefit");
+        clone = clone.replace(/_benefit/gm, "benefit["+count+"]");
         $("#field_benefit").append(clone);
         $('.select2').select2();
+        count++;
+    });
+    var data_benefit = @json($claimWordSheet->benefit);
+    $.each(data_benefit, function (index, value) {
+        var clone = $('#clone_benefit').clone().html();
+        clone = clone.replace(/_select2/gm, "select2");
+        clone = clone.replace(/_benefit/gm, "benefit["+count+"]");
+        $("#field_benefit").append(clone);
+        var bef = Object.values(value);
+        $('select[name="benefit['+count+'][content]"]').val(bef[0]).change();
+        $('input[name="benefit['+count+'][amount]"]').val(bef[1]);
+        $('.select2').select2();
+        count++;           
     });
 
     $("#field_benefit").on("click",".remove_field", function(e){ //user click on remove text
@@ -110,9 +123,22 @@ $(document).ready(function() {
     $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
         e.preventDefault(); $(this).parent('div').remove(); 
     })
-
+    add_amt();
 });
-
+function add_amt(){
+    var sumrj = 0 ;
+    var sumbe = 0 ;
+    $( ".benefit_input" ).each(function( index ) {
+        console.log($( this ).val());
+        sumbe += parseInt(removeFormatPrice($( this ).val() == '' ? 0 : $( this ).val()));
+    });
+    $( ".reject_input" ).each(function( index ) {
+        sumrj += parseInt(removeFormatPrice($( this ).val() == '' ? 0 : $( this ).val()));
+    });
+    
+    $("#claim_amt").val(sumbe);
+    $("#payable_amt").val(sumbe-sumrj);
+}
 
 </script>
 
