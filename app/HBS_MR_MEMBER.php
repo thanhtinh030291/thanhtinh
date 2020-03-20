@@ -98,4 +98,23 @@ class HBS_MR_MEMBER extends  BaseModelDB2
             return "";
         }
     }
+
+    public function getQueryOnlineAttribute(){
+        //return " ";
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        try {
+            $request = $client->get(config('constants.url_query_online').$this->memb_ref_no);
+            $response = $request->getBody()->getContents();
+            return $response;
+
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return "";
+        }
+    }
+
 }

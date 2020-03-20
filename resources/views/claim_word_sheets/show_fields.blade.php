@@ -46,7 +46,11 @@
     <p class="font-weight-bold">Effective date: {{$member->pocyEffdate}}</p>
     </div>
     <div class="col-md-6">
-    <p class="font-weight-bold">Status:  {!!$member->statusQuery!!}</p>
+    <p class="font-weight-bold">Status:  {!!$member->statusQuery!!}
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#onlineQueryModal">
+            Online Query
+        </button>
+    </p>
     </div>
 </div>
 <div class="row">
@@ -319,4 +323,25 @@
         <a href="{{route('claimWordSheets.pdf', $claimWordSheet->id)}}" target="_blank" class="btn btn-info m-2">Download PDF</a>
     </div>
 </div><br>
+
+<div class="modal fade" id="onlineQueryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Online Query</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body" id="rerulf_online_query" style="max-height: 350px; overflow: scroll;">
+            <pre>
+                {!!var_dump(json_decode(trim($member->queryOnline),true),true)!!}
+            </pre>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+</div>
 
