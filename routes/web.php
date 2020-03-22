@@ -86,7 +86,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::resource('claimWordSheets', 'ClaimWordSheetController');
         Route::get('claimWordSheets/pdf/{claimWordSheet}',  'ClaimWordSheetController@pdf')->name('claimWordSheets.pdf');
-        
+        Route::get('claimWordSheets/summary/{claimWordSheet}',  'ClaimWordSheetController@summary')->name('claimWordSheets.summary');
     });
 });
 

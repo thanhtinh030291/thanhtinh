@@ -42,6 +42,7 @@ class CreateClaimWordSheetTable extends Migration
             $table->integer('is_deleted')->default('0');
             $table->longText('request_qa')->nullable();
             $table->integer('status')->default('0');
+            $table->integer('old_number_page_send')->default('0');
 
             $table->timestamps();
             $table->softDeletes();

@@ -63,7 +63,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
 
     public function getPlanAttribute()
     {
-        //return [];
+        return [];
         $plan = [];
         $DLVN_MEMBER = DLVN_MEMBER::where('MEMB_REF_NO' , $this->memb_ref_no)->get();
         foreach ($DLVN_MEMBER as $key => $value) {
@@ -74,7 +74,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
     }
 
     public function getStatusQueryAttribute(){
-        //return " ";
+        return " ";
         $headers = [
             'Content-Type' => 'application/json',
         ];
@@ -100,7 +100,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
     }
 
     public function getQueryOnlineAttribute(){
-        //return " ";
+        return " ";
         $headers = [
             'Content-Type' => 'application/json',
         ];

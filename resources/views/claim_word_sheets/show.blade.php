@@ -4,6 +4,8 @@
     <link href="{{ asset('css/fileinput.css') }}" media="all" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/jquery-ui.min.css') }}">
     <link href="{{ asset('css/setting_date.css') }}" media="all" rel="stylesheet" type="text/css"/>
+    
+
 @endsection
 @section('content')
     @include('layouts.admin.breadcrumb_index', [
@@ -34,6 +36,8 @@
 <script src="{{asset('js/imask.js')}}"></script>
 <script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
+
+
 <script>
 //btn delete table item 
 $(document).on("click", ".delete_btn", function(){
@@ -129,7 +133,6 @@ function add_amt(){
     var sumrj = 0 ;
     var sumbe = 0 ;
     $( ".benefit_input" ).each(function( index ) {
-        console.log($( this ).val());
         sumbe += parseInt(removeFormatPrice($( this ).val() == '' ? 0 : $( this ).val()));
     });
     $( ".reject_input" ).each(function( index ) {
@@ -138,6 +141,31 @@ function add_amt(){
     
     $("#claim_amt").val(sumbe);
     $("#payable_amt").val(sumbe-sumrj);
+}
+
+function upload_summary(){
+    $(".loader").show();
+    axios.get("{{route('claimWordSheets.summary', $claimWordSheet->id)}}")
+    .then(function (response) {
+        $(".loader").fadeOut("slow");
+        console.log(response);
+        $.notify({
+            icon: 'fa fa-bell',
+            title: '<strong>Hệ Thống</strong>',
+            message: response.data.message
+        },{
+            placement: {
+                from: "top",
+                align: "right"
+            },
+            type: 'success'
+        });
+        
+    })
+    .catch(function (error) {
+        $(".loader").fadeOut("slow");
+        alert(error);
+    });
 }
 
 </script>

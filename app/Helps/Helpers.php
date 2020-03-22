@@ -72,6 +72,21 @@ function PostApiMantic($url,$body) {
     return $response;
 }
 
+function PostApiManticHasFile($url,$body) {
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Authorization' => config('constants.token_mantic'),
+    ];
+    $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+      
+
+    $response = $client->request("POST", config('constants.url_mantic').$url , $body);
+
+    return $response;
+}
+
 function sendEmail($user_send, $data , $template , $subject)
 {
     if (!data_get($user_send, 'email')) {

@@ -320,7 +320,8 @@
         @if(Auth::user()->hasRole(['Admin', 'Medical']))
             <button type="submit" name="status" value="2" class="btn btn-info">{{config("constants.statusWorksheet.2")}}</button>
         @endif
-        <a href="{{route('claimWordSheets.pdf', $claimWordSheet->id)}}" target="_blank" class="btn btn-info m-2">Download PDF</a>
+        <a href="{{route('claimWordSheets.pdf', $claimWordSheet->id)}}" target="_blank" class="btn btn-info m-2">Download Work Sheet</a>
+        <button type="button" onclick="upload_summary()" class="btn btn-info m-2">Send Work Sheet to summary</button>
     </div>
 </div><br>
 

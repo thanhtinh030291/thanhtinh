@@ -24,7 +24,7 @@
             font-size:
             }
             .font-weight-bold {
-                font-weight: 700!important;
+                font-size: larger;
             }
         </style>
     </head>
@@ -55,8 +55,8 @@
         <td>
             <p class="font-weight-bold">Name: {{$member->mbr_last_name ." " . $member->mbr_first_name}}</p>
         </td>
-        <td>
-            <p class="font-weight-bold">DOB: {{ Carbon\Carbon::parse($member->dob)->format('d/m/Y') }}</p>
+        <td align="center">
+            <p class="font-weight-bold" >DOB: {{ Carbon\Carbon::parse($member->dob)->format('d/m/Y') }}</p>
         </td>
         <td>
             <p class="font-weight-bold">Sex: {{str_replace("SEX_", "",$member->scma_oid_sex)}}</p>
@@ -163,29 +163,60 @@
 
 <div style="margin-left: 10px;">
     <p class="font-weight-bold">MEMBER CLAIM EVENT</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if(!empty($member->CL_MBR_EVENT))
-                @foreach ($member->CL_MBR_EVENT as $item)
-                    <tr>
-                        <td>{{Carbon\Carbon::parse($item->eff_date)->format('d/m/Y')}}</td>
-                        <td>{{$item->event_desc}}</td>
-                    </tr>
-                @endforeach
-            @endif
-        </tbody>
-    </table>
+    @if(!empty($member->CL_MBR_EVENT))
+        <table>
+            <thead>
+                <tr>
+                    <th align="center">Date</th>
+                    <th align="center">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                    @foreach ($member->CL_MBR_EVENT as $item)
+                        <tr>
+                            <td>{{Carbon\Carbon::parse($item->eff_date)->format('d/m/Y')}}</td>
+                            <td>{{$item->event_desc}}</td>
+                        </tr>
+                    @endforeach
+                
+            </tbody>
+        </table>
+    @endif
 </div>
 
 <div style="margin-left: 10px;">
     <p class="font-weight-bold">CLAIM ASSESSMENT</p>
-    {!! Form::textarea('assessment', $claimWordSheet->assessment,['class' => 'editor_default2' , 'rows' => "4", 'style' => 'min-height : 100px']) !!}
+    <table>
+        <thead>
+            <tr>
+                <th align="center">Benefit</th>
+                <th align="center">Reject</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr>
+                <td>
+                    @foreach ($claimWordSheet->benefit as $item)
+                    <p>{{data_get($item, 'content')}} : {{formatPrice(data_get($item, 'amount'))}}</p>
+                    @endforeach
+                </td>
+                <td>
+                    @if($claim->item_of_claim)
+                        @foreach ($claim->item_of_claim as $item)
+                            <p>{{$item->content}} : {{formatPrice($item->amount)}}</p>
+                        @endforeach
+                    @endif
+                </td>
+            </tr>
+            <tr align="center">
+                <th align="center">Claim AMT : {{formatPrice($claimWordSheet->claim_amt)}}</th>
+                <th align="center">PAYABLE AMT : {{formatPrice($claimWordSheet->payable_amt)}}</th>
+            </tr>    
+        </tbody>
+    </table>
+    {!! $claimWordSheet->assessment !!}
 </div>
 
 <div style="margin-left: 10px;">
@@ -200,7 +231,7 @@
     </div>
     <div style="margin-left: 25px;">
         <p>ANSWER</p>
-        {!! Form::textarea('medical', $claimWordSheet->medical,['rows' => "4" , 'style' => 'min-height : 100px' ]) !!}
+        {!!  $claimWordSheet->medical !!}
     </div>
 </div>
 

@@ -135,3 +135,7 @@ key: efaa761e84c08024d437f370eaa2a564
 php artisan down --message="Upgrading Database" --retry=60  --allow=192.168.0.16
 php artisan up 
 php artisan down --allow=::1 
+
+gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=combine.pdf -dBATCH 1.pdf 2.pdf
+gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -dFirstPage=1 -dLastPage=2 -sOutputFile=OUTPUT.pdf ORIGINAL.pdf
+
