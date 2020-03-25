@@ -98,7 +98,11 @@ return[
     ],
     'token_mantic' => 'jGPFMpQK5nz5f4PRqARovKXe_W3fUoQC',
     'url_mantic' => 'http://manticdaichi.com/',
-    'url_cps' => 'http://192.168.0.10/cps_dlvn/index.php/mantis/',
+    'url_cps' => 'http://192.168.0.10/cps_dlvn_uat/index.php/mantis/',
+    'api_cps' => 'http://192.168.0.10/cps_dlvn_uat/index.php/api/',
+    'client_id' => 'o2-bslda-6vuop0wj5k-t3-fw57p8ae6',
+    'client_secret' => 'c7cb680c607991a774ecfaab5b9fbf5dec19a503dbfe308c3fd0847378fb44d2',
+    'grant_type' => 'client_credentials',
     'url_query_online' => 'https://pcvwebservice.pacificcross.com.vn/bluecross/query_rest.php?id=',
     'claim_result' => [
         1 => 'FULLY PAID' ,

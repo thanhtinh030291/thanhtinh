@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <head>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+        
         <style>
         @font-face {
             font-family: "DejaVu Sans";
@@ -19,26 +19,79 @@
                 local("DejaVu Sans"), 
                 url("/fonts/dejavu-sans/DejaVuSans.ttf") format("truetype");
             }
+            h1, .h1 {
+            font-size: 2.5rem;
+            }
+
+            h2, .h2 {
+            font-size: 2rem;
+            }
+
+            h3, .h3 {
+            font-size: 1.75rem;
+            }
+
+            h4, .h4 {
+            font-size: 1.5rem;
+            }
+
+            h5, .h5 {
+            font-size: 1.25rem;
+            }
+
+            h6, .h6 {
+            font-size: 1rem;
+            }
+
+            
             body { 
             font-family: "DejaVu Sans";
             font-size:
             }
             .font-weight-bold {
-                font-size: larger;
+                font-size: 16px;
             }
+            table { 
+                width: 750px; 
+                border-collapse: collapse; 
+                margin:7px auto;
+                }
+
+            /* Zebra striping */
+            tr:nth-of-type(odd) { 
+                background: #eee; 
+                }
+
+            th { 
+                background: #5a5858; 
+                color: white; 
+                font-weight: bold; 
+                }
+
+            td, th { 
+                padding: 5px; 
+                border: 1px solid #ccc; 
+                text-align: left; 
+                font-size: 14px;
+                }
+            p {
+                margin-top: 0;
+                margin-bottom: 0.5rem;
+                font-size: 14px;
+                }
         </style>
     </head>
 </head>
 <body>
-    <h3 class="text-center">Claim Work Sheet</h3>
+    <h2 style="text-align: center;">Claim Work Sheet</h2>
 <div style="position: absolute; right: 5px; top: 0px;">
-    <table class="table table-striped" style="width: 120px">
+    <table class="table table-striped" style="width: 140px">
         <thead>
             <tr>
                 <th>
                     DLVN Claim
                 </th>
-            </tr>
+            </tr>    
         </thead>
         <tbody>
             <tr>
@@ -50,7 +103,7 @@
     </table>
 </div>
 
-<table class="table" style="margin-top: 15px;">
+<table class="table" style="margin-top: 20px;">
     <tr>
         <td>
             <p class="font-weight-bold">Name: {{$member->mbr_last_name ." " . $member->mbr_first_name}}</p>
@@ -150,10 +203,10 @@
             @if(!empty($claim_line))
             @foreach ($claim_line as $item)
                 <tr>
-                    <td>{{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y') .' - '.Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}}</td>
-                    <td>{{$item->prov_name}}</td>
-                    <td>{{str_replace("BENEFIT_TYPE_", "", $item->PD_BEN_HEAD->scma_oid_ben_type)}}</td>
-                    <td>{{formatPrice($item->app_amt)}}</td>
+                    <td><p>{{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y') .' - '.Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}}</p></td>
+                    <td><p>{{$item->prov_name}}</p></td>
+                    <td><p>{{str_replace("BENEFIT_TYPE_", "", $item->PD_BEN_HEAD->scma_oid_ben_type)}}</p></td>
+                    <td><p>{{formatPrice($item->app_amt)}}</p></td>
                 </tr>
             @endforeach
             @endif

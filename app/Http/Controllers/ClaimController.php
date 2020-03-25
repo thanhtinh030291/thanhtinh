@@ -521,7 +521,7 @@ class ClaimController extends Controller
         
         $userId = Auth::User()->id;
         $claim = Claim::findOrfail($request->claim_id);
-        $data_cps = json_decode(json_encode(AjaxCommonController::getPaymentHistory($claim->code_claim_show),true),true);
+        $data_cps = json_decode(json_encode(AjaxCommonController::getPaymentHistoryCPS($claim->code_claim_show),true),true);
         
         $data = [
             'claim_id' => $request->claim_id,
@@ -529,7 +529,7 @@ class ClaimController extends Controller
             'status' => config('constants.statusExport.new'),
             'created_user' => $userId,
             'updated_user' => $userId,
-            'info' => ['approve_amt' => $request->apv_hbs , 'deduct' => $request->deduct  ],
+            'info' => ['approve_amt' => $request->apv_hbs , 'PCV_EXPENSE' => $request->PCV_EXPENSE , "DEBT_BALANCE" => $request->DEBT_BALANCE ],
             'data_cps' => data_get($data_cps,'original.data'),
         ] ;
         ExportLetter::create($data);
@@ -645,14 +645,14 @@ class ClaimController extends Controller
         }else{
             $time_pay = [];
             foreach ($export_letter->data_cps as $key => $value) {
-                $time_pay[] = "Thanh toán lần {$value['tf_times']}: " . formatPrice($value['tf_amt']);
+                $time_pay[] = "Thanh toán lần {$value['PAYMENT_TIME']}: " . formatPrice($value['TF_AMT']);
             };
-            if(collect($export_letter->data_cps)->sum('tf_amt') != $sumAppAmt){
-                $time_pay[] = 'Thanh toán bổ sung: ' . formatPrice($sumAppAmt - collect($export_letter->data_cps)->sum('tf_amt'));
+            if(collect($export_letter->data_cps)->sum('TF_AMT') != $sumAppAmt){
+                $time_pay[] = 'Thanh toán bổ sung: ' . formatPrice($sumAppAmt - collect($export_letter->data_cps)->sum('TF_AMT'));
             }
             $time_pay[] = 'Tổng Cộng: '.formatPrice($sumAppAmt);
             $time_pay = implode("<br>",$time_pay);
-            $paymentAmt = $sumAppAmt - collect($export_letter->data_cps)->sum('tf_amt');
+            $paymentAmt = $sumAppAmt - collect($export_letter->data_cps)->sum('TF_AMT');
         }
 
         $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);

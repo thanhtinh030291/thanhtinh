@@ -2,9 +2,11 @@
 use Illuminate\Support\Str;
 use App\User;
 use App\Message;
+use App\Setting;
 use App\Events\Notify;
 use App\Notifications\PushNotification;
 use Pusher\Pusher;
+
 function getUserSign($id){
     $user = User::findOrFail($id);
     $dirStorage = config('constants.signarureStorage');
@@ -260,7 +262,7 @@ function getHourStartEnd($text){
     $end = trim(explode('-', $text)[1]);
 
  
-return [
+    return [
         'date_start' =>  explode(' ', $start)[0],
         'hours_start' =>  explode(' ', $start)[1],
         'date_end' =>  explode(' ', $end)[0],
@@ -458,10 +460,13 @@ function note_pay($export_letter){
     $htm = '<p style = "font-size: 10px; padding: 0px ;margin: 0px">Note: : Claim số [[$claimNo]] tổng thanh toán bồi thường [[$apvAmt]] đồng.</p>';
     if(!empty($export_letter->data_cps) || $export_letter->data_cps != null){
         foreach ($export_letter->data_cps as $key => $value) {
-            $tf_date =  Carbon\Carbon::parse($value['tf_date'])->format('d/m/Y');
-            $tf_amt = formatPrice($value['tf_amt']);
-            $htm .= "<p style='font-size: 10px; padding: 0px ;margin: 0px'>Payment lần {$value['tf_times']} ngày {$tf_date} thanh toán cho khách hàng {$tf_amt} đồng.</p>";
+            $tf_date =  Carbon\Carbon::parse($value['TF_DATE'])->format('d/m/Y');
+            $tf_amt = formatPrice($value['TF_AMT']);
+            $htm .= "<p style='font-size: 10px; padding: 0px ;margin: 0px'>Payment lần {$value['PAYMENT_TIME']} ngày {$tf_date} thanh toán cho khách hàng {$tf_amt} đồng.</p>";
         }
+    }
+    if(data_get($export_letter->info,'PCV_EXPENSE', 0) != 0){
+        $htm .= "<p style='font-size: 10px; padding: 0px ;margin: 0px'>TT dư " . formatPrice(data_get($export_letter->info,'PCV_EXPENSE', 0))." đồng.</p>";
     }
     return $htm;
 }
@@ -504,4 +509,34 @@ function notifi_system($content, $arrUserID = []){
     }
     
     return redirect('/admin/home/');
+}
+
+
+// Get token CPS
+function getTokenCPS(){
+    $headers = [
+        'Content-Type' => 'application/json',
+    ];
+    $body = [
+        'client_id' => config('constants.client_id'),
+        'client_secret' => config('constants.client_secret'),
+        'grant_type' => config('constants.grant_type'),
+    ];
+    $setting = Setting::where('id', 1)->first();
+    if($setting === null){
+        $setting = Setting::create([]);
+    }
+    $startTime = Carbon\Carbon::parse($setting->updated_at);
+    $now = Carbon\Carbon::now();
+    $totalDuration = $startTime->diffInSeconds($now);
+    if($setting->token_cps == null || $totalDuration >= 3500){
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.api_cps').'get_token' , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        $setting->token_cps = data_get($response , 'access_token');
+        $setting->save();
+    }
+    return  $setting->token_cps;
 }

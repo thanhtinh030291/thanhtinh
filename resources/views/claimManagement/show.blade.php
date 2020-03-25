@@ -435,7 +435,7 @@ $totalAmount = 0;
                     {{-- HBS --}}
                     <div class="row mb-2">
                         {{ Form::label('type',  'Apr Amt HBS' , array('class' => 'col-md-2')) }} 
-                        {{ Form::text('apv_hbs', null , array('id' => 'apv_hbs_in','class' => 'col-md-4 item-price')) }}
+                        {{ Form::text('apv_hbs', null , array('id' => 'apv_hbs_in','class' => 'col-md-4 item-price form-control', 'readonly')) }}
                     </div>
                     {{-- mantis --}}
                     <div class="row  mb-2">
@@ -455,7 +455,7 @@ $totalAmount = 0;
                                 <tr id="clone_item" style="display: none;">
                                     <td>_text_default</td>
                                     <td>
-                                        {{ Form::text('_amount_default', '_amount_value_default', ['class' => 'item-price form-control p-1 history_amt']) }}
+                                        {{ Form::text('_amount_default', '_amount_value_default', ['class' => 'item-price form-control p-1 history_amt' , 'readonly']) }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -463,11 +463,15 @@ $totalAmount = 0;
                     </div>
                     {{-- Cấn trừ --}}
                     <div class="row mb-2">
-                        {{ Form::label('type',  'Add Deduct' , array('class' => 'col-md-2')) }}
-                        <button class="btn btn-danger h4 btn-method" type="button">+</button>
-                        {{ Form::text('deduct', null , array('id' => 'deduct','class' => 'col-md-4 item-price', 'onchange' => "amount_letter_print()")) }}
+                        {{ Form::label('PCV_EXPENSE',  'PCV EXPENSE' , array('class' => 'col-md-2')) }}
+                        {{ Form::text('PCV_EXPENSE', null , array('id' => 'PCV_EXPENSE','class' => 'col-md-4 item-price form-control', 'readonly' ,'onchange' => "amount_letter_print()")) }}
                     </div>
-
+                    <div class="row mb-2">
+                        {{ Form::label('type',  'DEBT BALANCE' , array('class' => 'col-md-2')) }}
+                        {{ Form::text('DEBT_BALANCE', null , array('id' => 'DEBT_BALANCE','class' => 'col-md-4 item-price form-control', 'readonly' ,'onchange' => "amount_letter_print()")) }}
+                    </div>
+                    <a class="btn btn-success btn-xs" href="{{config("constants.url_cps").$data->barcode}}" target="_blank">Link CPS</a>
+                    <button type="button" class="btn btn-primary" onclick="comfirmPayment()"><i class="fa fa-refresh" aria-hidden="true"></i></button>
                     {{-- Print letter --}}
                     <div class="row mb-2">
                         {{ Form::label('type',  'Amount in Payment Letter' , array('class' => 'text-white col-md-4 bg-secondary')) }} 
@@ -586,12 +590,20 @@ $totalAmount = 0;
         $("#textLetter").val(letter_template_name);
         $(".h_payment").remove();
 
-        axios.get("{{ url('admin/getPaymentHistory') }}/{{$data->code_claim_show}}")
+        axios.get("{{ url('admin/getPaymentHistoryCPS') }}/{{$data->code_claim_show}}")
         .then(function (response) {
             $.each( response.data.data, function( key, value ) {
-                addInputItem("Lần " + value.tf_times +". " + value.tf_date , formatPrice(value.tf_amt));
+                addInputItem("Lần " + value.PAYMENT_TIME +". " + value.TF_DATE , formatPrice(value.TF_AMT));
             });
-            $('#apv_hbs_in').val(formatPrice(response.data.approve_amt))
+            $('#apv_hbs_in').val(formatPrice(response.data.approve_amt));
+            //get info balance
+            axios.get("{{ url('admin/getBalanceCPS') }}/{{$data->clClaim->member->memb_ref_no}}/{{$data->code_claim_show}}")
+            .then(response => { 
+                console.log(response.data);
+                $('#PCV_EXPENSE').val(formatPrice(response.data.data.PCV_EXPENSE));
+                $('#DEBT_BALANCE').val(formatPrice(response.data.data.DEBT_BALANCE));
+            });
+
             $(".loader").fadeOut("slow");
             amount_letter_print();
         })

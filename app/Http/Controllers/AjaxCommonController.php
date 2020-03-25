@@ -113,12 +113,63 @@ class AjaxCommonController extends Controller
         return response()->json($data);
     }
 
-    // getPaymentHistory
+    // getPaymentHistory mantic
     public static function getPaymentHistory($cl_no){
         $data = GetApiMantic('api/rest/plugins/apimanagement/issues/'. $cl_no);
         $claim = Claim::where('code_claim_show',  $cl_no)->first();
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $approve_amt = $HBS_CL_CLAIM->sumAppAmt;
         return response()->json([ 'data' => $data, 'approve_amt' => $approve_amt]);
+    }
+    // get  payment of claim  CPS
+
+    public static function getPaymentHistoryCPS($cl_no){
+        $token = getTokenCPS();
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $body = [
+            'access_token' => $token,
+        ];
+
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.api_cps').'get_payment/'. $cl_no , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        $claim = Claim::where('code_claim_show',  $cl_no)->first();
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $approve_amt = $HBS_CL_CLAIM->sumAppAmt;
+        return response()->json([ 'data' => $response, 'approve_amt' => $approve_amt]);
+    }
+
+    public static function getBalanceCPS($mem_ref_no , $cl_no){
+        $token = getTokenCPS();
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $body = [
+            'access_token' => $token,
+        ];
+
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.api_cps').'get_client_debit/'. $mem_ref_no , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        if (empty($response)){
+            $data =[
+                'PCV_EXPENSE' => 0,
+                'DEBT_BALANCE' => 0
+            ];
+        }else{
+            $colect_data = collect($response);
+            $data =[
+                'PCV_EXPENSE' => $colect_data->where('DEBT_CL_NO', $cl_no)->sum('PCV_EXPENSE'),
+                'DEBT_BALANCE' => $colect_data->sum('DEBT_BALANCE')
+            ];
+        }
+
+        return response()->json([ 'data' => $data]);
     }
 }

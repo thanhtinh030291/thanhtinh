@@ -83,6 +83,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('users/update','UserController@update');
 
         Route::get('getPaymentHistory/{cl_no}',  'AjaxCommonController@getPaymentHistory')->name('getPaymentHistory');
+        Route::get('getPaymentHistoryCPS/{cl_no}',  'AjaxCommonController@getPaymentHistoryCPS')->name('getPaymentHistoryCPS');
+        Route::get('getBalanceCPS/{mem_ref_no}/{cl_no}',  'AjaxCommonController@getBalanceCPS')->name('getBalanceCPS');
+        
 
         Route::resource('claimWordSheets', 'ClaimWordSheetController');
         Route::get('claimWordSheets/pdf/{claimWordSheet}',  'ClaimWordSheetController@pdf')->name('claimWordSheets.pdf');
