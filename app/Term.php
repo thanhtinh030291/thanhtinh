@@ -21,6 +21,6 @@ class Term extends BaseModel
     }
 
     public function getFullTextTermAttribute(){
-        return "<p>Điều " .$this->name ." ". preg_replace('/(<p>)/', "", $this->description, 1); ;
+        return '<p style="text-align: justify;">Điều ' .$this->name ." ". preg_replace('/(<p>)/', "", $this->description, 1); ;
     }
 }
