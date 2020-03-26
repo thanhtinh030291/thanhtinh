@@ -442,7 +442,6 @@ function CSRRemark_TermRemark($claim){
             $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
         }
     }
-    dd($TermRemark);
     if($hasTerm3){
         array_unshift($TermRemark, "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 3_ Các quy định loại trừ trách nhiệm bảo hiểm của Quy tắc và điều khoản bảo hiểm Chăm sóc sức khỏe: “Dai-ichi Life Việt Nam sẽ không thanh toán quyền lợi điều trị nội trú và điều trị ngoại trú theo quy định tại Điều 2 của Quy tắc, Điều khoản sản phẩm bổ sung này nếu việc điều trị Bệnh tật/Thương tật của Người được bảo hiểm thuộc bất kỳ trường hợp hoặc sự việc nào sau đây”: </p>");
     }
