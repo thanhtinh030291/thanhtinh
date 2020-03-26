@@ -398,21 +398,7 @@ function CSRRemark_TermRemark($claim){
         $template = $value[0]->reason_reject->template;
         if(isset($value[0]->reason_reject->term->fullTextTerm)){
             $TermRemark[] = $value[0]->reason_reject->term->fullTextTerm;
-            preg_match('/(3\..*)/', $value[0]->reason_reject->term->name , $matches_term3, PREG_OFFSET_CAPTURE);
-            if($matches_term3){
-                $hasTerm3 = true;
-            }
-            preg_match('/(2\..*)/', $value[0]->reason_reject->term->name , $matches_term2, PREG_OFFSET_CAPTURE);
-            if($matches_term2){
-                $hasTerm2 = true;
-            }
-            preg_match('/(1\..*)/', $value[0]->reason_reject->term->name , $matches_term1, PREG_OFFSET_CAPTURE);
-            if($matches_term1){
-                $hasTerm1 = true;
-            }
         }
-        
-
         
         if (!preg_match('/\[Begin\].*\[End\]/U', $template)){
             foreach ($value as $keyItem => $item) {
@@ -442,17 +428,28 @@ function CSRRemark_TermRemark($claim){
             $CSRRemark[] = Str::replaceArray('$arrParameter', $arr_str, $template_new);
         }
     }
-    if($hasTerm3){
-        array_unshift($TermRemark, "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 3_ Các quy định loại trừ trách nhiệm bảo hiểm của Quy tắc và điều khoản bảo hiểm Chăm sóc sức khỏe: “Dai-ichi Life Việt Nam sẽ không thanh toán quyền lợi điều trị nội trú và điều trị ngoại trú theo quy định tại Điều 2 của Quy tắc, Điều khoản sản phẩm bổ sung này nếu việc điều trị Bệnh tật/Thương tật của Người được bảo hiểm thuộc bất kỳ trường hợp hoặc sự việc nào sau đây”: </p>");
-    }
-    if($hasTerm2){
-        array_unshift($TermRemark, "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 2_ Các quyền lợi bảo hiểm của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</p>");
-    }
-    if($hasTerm1){
-        array_unshift($TermRemark, "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 1_ Các định nghĩa của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</p>");
+    $TermRemark = collect($TermRemark)->sortBy('group')->groupBy('group');
+    $show_term = [];
+    foreach ($TermRemark as $key => $value) {
+        switch ($key) {
+            case '1':
+                $show_term[] = "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 3_ Các quy định loại trừ trách nhiệm bảo hiểm của Quy tắc và điều khoản bảo hiểm Chăm sóc sức khỏe: “Dai-ichi Life Việt Nam sẽ không thanh toán quyền lợi điều trị nội trú và điều trị ngoại trú theo quy định tại Điều 2 của Quy tắc, Điều khoản sản phẩm bổ sung này nếu việc điều trị Bệnh tật/Thương tật của Người được bảo hiểm thuộc bất kỳ trường hợp hoặc sự việc nào sau đây”: </p>";
+                break;
+            case '2':
+                $show_term[] = "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 2_ Các quyền lợi bảo hiểm của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</p>";
+                break;
+            default:
+                $show_term[] = "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 1_ Các định nghĩa của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</p>";
+                break;
+        }
+        $collect_value = collect($value)->sortBy('num');
+        foreach ($collect_value as $key_c => $value_c) {
+            $show_term[] = $value_c['content'];
+        }
     }
     
-    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $TermRemark];
+    
+    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $show_term];
     
 }
 
