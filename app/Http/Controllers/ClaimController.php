@@ -26,6 +26,9 @@ use GuzzleHttp\Client;
 use App\TransactionRoleStatus;
 use App\LevelRoleStatus;
 use App\RoleChangeStatus;
+use App\MANTIS_TEAM;
+use App\MANTIS_USER_GROUP;
+use App\MANTIS_USER;
 use PDF;
 
 class ClaimController extends Controller
@@ -58,18 +61,36 @@ class ClaimController extends Controller
             $q->select('id','claim_id','status', 'info');
         };
         $conditionHasExport = function ($q) use ($request){
-            //$q->where('status', $request->letter_status);
+            
+        };
+        $conditionHasExport_team = function ($q) use ($request){
+            
         };
         $datas = Claim::findByParams($finder)
         ->with(['export_letter_last' => $conditionExport]);
         $datas = $datas->orderBy('id', 'desc');
+        $team = $request->team;
+        if($team != null){
+            $array_user = MANTIS_USER_GROUP::where('team_id', $team)->pluck('user_id')->toArray();
+            $array_user = MANTIS_USER::whereIn('id',$array_user)->pluck('email')->toArray();
+            $array_user = User::whereIn('email',$array_user)->pluck('id')->toArray();
+            $datas = $datas->whereIn('id', 'desc');
+            $datas = $datas->whereHas('export_letter_last', $conditionHasExport_team);
+        }
         if($request->letter_status != null){
             $datas = $datas->whereHas('export_letter_last', $conditionHasExport)->get()->where('export_letter_last.status', $request->letter_status);
         }
+        
 
         $datas = $datas->paginate($itemPerPage);
         $list_status = RoleChangeStatus::pluck('name','id');
-        return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status'));
+        try {
+            $list_team = MANTIS_TEAM::pluck('name','id');
+        } catch (Exception $e) {
+            $list_team = [];
+        }
+
+        return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status', 'list_team', 'team'));
     }
     
 
@@ -194,8 +215,8 @@ class ClaimController extends Controller
                 ->first();
             }else{
                 $level = $list_level
-                ->where('min_amount','<=', data_get($value->info, 'approve_amt') )
-                ->where('max_amount','>', data_get($value->info, 'approve_amt') )
+                ->where('min_amount','<=', removeFormatPrice(data_get($value->info, 'approve_amt')) )
+                ->where('max_amount','>', removeFormatPrice(data_get($value->info, 'approve_amt') ) )
                 ->first();
             }
             

@@ -71,24 +71,32 @@ return [
             ],
         ],
         
-        'mysql2' => [
+        'mysql_mantic' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE2_URL'),
-            'host' => env('DB_HOST2', '127.0.0.1'),
-            'port' => env('DB_PORT2', '3306'),
-            'database' => env('DB_DATABASE2', 'forge'),
-            'username' => env('DB_USERNAME2', 'forge'),
-            'password' => env('DB_PASSWORD2', ''),
-            'unix_socket' => env('DB_SOCKET2', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_MANTIS_HOST', '127.0.0.1'),
+            'port' => env('DB_MANTIS_PORT', '3306'),
+            'database' => env('DB_MANTIS_DATABASE', 'forge'),
+            'username' => env('DB_MANTIS_USERNAME', 'forge'),
+            'password' => env('DB_MANTIS_PASSWORD', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+            'modes'       => [
+                'ONLY_FULL_GROUP_BY',
+                'STRICT_TRANS_TABLES',
+                'NO_ZERO_IN_DATE',
+                'NO_ZERO_DATE',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_ENGINE_SUBSTITUTION',
+            ],
         ],
 
         'pgsql' => [

@@ -30,10 +30,16 @@
                         <div class="col-md-6">
                             {{ Form::label('name', __('message.id_claim'), array('class' => 'labelas')) }}
                             {{ Form::select('code_claim',[], $finder['code_claim'], ['class' => 'code_claim form-control']) }}
+
                             {{ Form::label('created_user', __('message.account_create'), ['class' => 'labelas']) }}
                             {{ Form::select('created_user', $admin_list, data_get($finder ,'created_user'), ['id' => 'created_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
+                            
                             {{ Form::label('created_at', __('message.date_created'), ['class' => 'labelas']) }}
                             {{ Form::text('created_at', data_get($finder,'created_at'), ['class' => 'form-control datepicker']) }}
+
+                            {{ Form::label('team', 'Team', ['class' => 'labelas']) }}
+                            {{ Form::select('team', $list_team, $team, ['id' => 'created_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
+                            
                         </div>
                         <div class="col-md-6">
                             {{ Form::label('letter_status', 'Latest Letter status', ['class' => 'labelas']) }}
@@ -41,6 +47,7 @@
 
                             {{ Form::label('updated_user', __('message.account_edit'), ['class' => 'labelas']) }}
                             {{ Form::select('updated_user', $admin_list, data_get($finder, 'updated_user'), ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
+                            
                             {{ Form::label('updated_at', __('message.date_updated'), ['class' => 'labelas']) }}
                             {{ Form::text('updated_at', data_get($finder, 'updated_at'), ['class' => 'form-control datepicker']) }}
                         </div>
