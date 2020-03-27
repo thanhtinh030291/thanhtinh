@@ -64,17 +64,18 @@ class ClaimController extends Controller
             
         };
         $conditionHasExport_team = function ($q) use ($request){
-            
+            $team = $request->team;
+            $array_user = MANTIS_USER_GROUP::where('team_id', $team)->pluck('user_id')->toArray();
+            $array_user = MANTIS_USER::whereIn('id',$array_user)->pluck('email')->toArray();
+            $array_user = User::whereIn('email',$array_user)->pluck('id')->toArray();
+            $q->whereIn('created_user', $array_user);
         };
         $datas = Claim::findByParams($finder)
         ->with(['export_letter_last' => $conditionExport]);
         $datas = $datas->orderBy('id', 'desc');
         $team = $request->team;
         if($team != null){
-            $array_user = MANTIS_USER_GROUP::where('team_id', $team)->pluck('user_id')->toArray();
-            $array_user = MANTIS_USER::whereIn('id',$array_user)->pluck('email')->toArray();
-            $array_user = User::whereIn('email',$array_user)->pluck('id')->toArray();
-            $datas = $datas->whereIn('id', 'desc');
+            
             $datas = $datas->whereHas('export_letter_last', $conditionHasExport_team);
         }
         if($request->letter_status != null){
@@ -89,7 +90,7 @@ class ClaimController extends Controller
         } catch (Exception $e) {
             $list_team = [];
         }
-
+        $finder['team'] = $team;
         return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status', 'list_team', 'team'));
     }
     
