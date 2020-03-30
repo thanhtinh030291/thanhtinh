@@ -545,7 +545,12 @@ $totalAmount = 0;
             if(res){
                 addButton(index,value,'rejected');
             }else{
+                var res2 = value.match(/(Approved)|(approved)/g);
+                if(res2){
+                    addButton(index,value,'approved');
+                }else{
                 addButton(index,value);
+                }
             }
         });
 
@@ -558,11 +563,11 @@ $totalAmount = 0;
         clone =  $("#button_clone").clone().html() ;
         
         clone = clone.replace("text_default", text);
-        if(type != 'none'){
+        if(type == 'rejected'){
             clone = clone.replace("btn-secondary", 'btn-danger');
-            clone = clone.replace("value_default", value+"-rejected");
+            clone = clone.replace("value_default", value+"-"+type);
         }else{
-            clone = clone.replace("value_default", value+"-none");
+            clone = clone.replace("value_default", value+"-"+type);
         }
         $("#button_items").append(clone);
     }

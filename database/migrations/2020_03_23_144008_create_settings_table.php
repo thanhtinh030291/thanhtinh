@@ -17,6 +17,8 @@ class CreateSettingsTable extends Migration
             $table->bigIncrements('id');
             $table->string('token_cps')->nullable();
             $table->string('version_js_css')->nullable();
+            $table->text('manager_claim')->nullable();
+            $table->text('header_claim')->nullable();
             $table->timestamps();
         });
     }

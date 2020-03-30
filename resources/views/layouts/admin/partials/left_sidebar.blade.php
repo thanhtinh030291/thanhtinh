@@ -92,6 +92,10 @@
                             <a  class="{{ setActive('admin/transactionRoleStatuses') }}" href="{{ url('admin/transactionRoleStatuses') }}">
                             <span> Transaction Approved</span></a>
                         </li>
+                        <li class="{{ setActive('admin/setting') }}">
+                            <a  class="{{ setActive('admin/setting') }}" href="{{ url('admin/setting') }}">
+                            <span> Setting App</span></a>
+                        </li>
                     </ul>
                 </li>
                 @endrole

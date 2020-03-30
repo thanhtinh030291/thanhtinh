@@ -13,6 +13,7 @@ use App\User;
 use App\Product;
 use App\HBS_CL_CLAIM;
 use App\LetterTemplate;
+use App\Setting;
 use Auth;
 use App\ReasonReject;
 use App\Http\Requests\formClaimRequest;
@@ -405,6 +406,7 @@ class ClaimController extends Controller
         }else{
             $status_change = $request->status_change;
             $status_change = explode("-",$status_change);
+            $to_user = [];
             if($status_change[1] == 'rejected'){
                 array_push($data ,
                 [  'user' => $user->id,
@@ -413,6 +415,35 @@ class ClaimController extends Controller
                 ]);
                 $export_letter->note = $data;
             }
+            if($status_change[1] == 'approved'){
+                if($user->hasRole('Claim')){
+                    $leader = $user->Leader;
+                    if($leader != null){
+                        $to_user = [$leader->id];
+                    }
+                }
+                if($user->hasRole('Lead') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 50000000){
+                    $to_user = Setting::findOrFail(1)->manager_claim;
+                }
+                if($user->hasRole('Manager') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
+                    $to_user = Setting::findOrFail(1)->header_claim;
+                }
+                if(!empty($to_user)){
+                    foreach ($to_user as $key => $value) {
+                        $request = new Request([
+                            'user' => $value,
+                            'content' => 'Letter yêu cầu tiến hành xác nhận bởi '.$user->name.' Vui lòng kiểm tra lại thông tin tại : 
+                            <a href="'.route('claim.show',$claim_id).'">'.route('claim.show',$claim_id).'</a>'
+                        ]);
+                        $send_mes = new SendMessageController();
+                        $send_mes->sendMessage($request);
+                    }
+                    
+                }
+                
+                
+            }
+            
             $export_letter->status = $status_change[0];
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter,$list_level );

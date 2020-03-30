@@ -72,5 +72,14 @@ class User extends Authenticatable
         return $messages;
     }
 
-    
+    public function getLeaderAttribute()
+    {
+        try {
+            $user_mantis = MANTIS_USER::where('email', $this->email)->first();
+            $leader_mantis_email = $user_mantis->USER_GROUP->TEAM->leadInfo->email;
+            return User::where('email', $leader_mantis_email)->first();
+        } catch (\Throwable $th) {
+            return null;
+        }
+    }
 }

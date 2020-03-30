@@ -12,4 +12,7 @@ class MANTIS_USER_GROUP extends BaseModelMantis
     {
         return $this->belongsTo('App\MANTIS_USER', 'id', 'memb_oid');
     }
+    public function TEAM(){
+        return $this->belongsTo('App\MANTIS_TEAM', 'team_id', 'id');
+    }
 }

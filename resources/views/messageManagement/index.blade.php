@@ -96,7 +96,7 @@ $max = config('constants.minMaxLength.max');
                         </td>
                         <td class="mailbox-name"><a href="{{url("admin/message")."/".$item->id}}">{{data_get($admin_list, $item->user_from)}}</a></td>
                         <td class="mailbox-subject">
-                            {!! truncate($item->message , 50)!!}
+                            <p>{!! truncate(strip_tags($item->message) , 150)!!}</p>
                         </td>
                         <td class="mailbox-attachment">
                             {{ $item->is_read == 0 ? "Chưa Đọc" : "Đã Đọc"  }}
