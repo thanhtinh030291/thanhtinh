@@ -80,6 +80,9 @@
     <p><span  class="font-weight-bold">Exclusion:</span> 
         {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first() ? $member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc : ""}}
     </p>
+    <p><span  class="font-weight-bold">Etalk Link:</span>
+        <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$claim->barcode }}">Link</a>
+    </p>
 </div>
 
 <div class="row">
@@ -95,7 +98,7 @@
             <tr>
                 <td>
                     <p><span class="font-weight-bold">Incur date: </span> From {{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y')}} To  {{Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}} 
-                        <span class="font-weight-bold">Diagnosis: </span>  {{$item->prov_name}} </p>
+                        <span class="font-weight-bold">Diagnosis: </span> Chuẩn đoán: {{$item->RT_DIAGNOSIS->diag_desc_vn}}; Tại {{$item->prov_name}} </p>
                 </td>
             </tr>
         @endforeach
@@ -117,7 +120,7 @@
             @foreach ($claim_line as $item)
                 <tr>
                     <td>{{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y') .' - '.Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}}</td>
-                    <td>{{$item->prov_name}}</td>
+                    <td>{{$item->RT_DIAGNOSIS->diag_desc_vn}}</td>
                     <td>{{str_replace("BENEFIT_TYPE_", "", $item->PD_BEN_HEAD->scma_oid_ben_type)}}</td>
                     <td>{{formatPrice($item->app_amt)}}</td>
                 </tr>
@@ -205,7 +208,7 @@
     </div><br>
     {!! Form::textarea('medical', $claimWordSheet->medical,[
         'class' => Auth::user()->hasRole('Medical') ?  'editor_default2' : 'editor_readonly' , 
-        'rows' => "4" , 'disabled']) !!}
+        'rows' => "4" ]) !!}
 </div><br>
 
 <div>

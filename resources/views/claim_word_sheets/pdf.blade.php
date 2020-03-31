@@ -180,7 +180,7 @@
             <tr>
                 <td>
                     <p><span class="font-weight-bold">Incur date: </span> From {{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y')}} To  {{Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}} 
-                        <span class="font-weight-bold">Diagnosis: </span>  {{$item->prov_name}} </p>
+                        <span class="font-weight-bold">Diagnosis: </span> Chuẩn đoán: {{$item->RT_DIAGNOSIS->diag_desc_vn}}; Tại {{$item->prov_name}} </p>
                 </td>
             </tr>
         @endforeach
@@ -204,7 +204,7 @@
             @foreach ($claim_line as $item)
                 <tr>
                     <td><p>{{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y') .' - '.Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}}</p></td>
-                    <td><p>{{$item->prov_name}}</p></td>
+                    <td><p>{{$item->RT_DIAGNOSIS->diag_desc_vn}}</p></td>
                     <td><p>{{str_replace("BENEFIT_TYPE_", "", $item->PD_BEN_HEAD->scma_oid_ben_type)}}</p></td>
                     <td><p>{{formatPrice($item->app_amt)}}</p></td>
                 </tr>

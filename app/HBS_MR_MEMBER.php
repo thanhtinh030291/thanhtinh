@@ -65,7 +65,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
     {
         //return [];
         $plan = [];
-        $DLVN_MEMBER = DLVN_MEMBER::where('MEMB_REF_NO' , $this->memb_ref_no)->get();
+        $DLVN_MEMBER = DLVN_MEMBER::where('MEMB_REF_NO' , $this->memb_ref_no)->orderBy('pocy_eff_date', 'desc')->get();
         foreach ($DLVN_MEMBER as $key => $value) {
             $plan_merge = array_map('trim', array_filter($value->only(['ip_plan','op_plan','dt_plan'])));
             $plan[] = implode(", ", $plan_merge) ." - ".Carbon::parse($value->pocy_eff_date)->format('d/m/Y');
