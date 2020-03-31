@@ -205,7 +205,7 @@
                 <tr>
                     <td><p>{{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y') .' - '.Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}}</p></td>
                     <td><p>{{$item->RT_DIAGNOSIS->diag_desc_vn}}</p></td>
-                    <td><p>{{str_replace("BENEFIT_TYPE_", "", $item->PD_BEN_HEAD->scma_oid_ben_type)}}</p></td>
+                    <td><p>{{str_replace("BENEFIT_TYPE_", "", $item->PD_BEN_HEAD->scma_oid_ben_type)}} - {{$item->PD_BEN_HEAD->ben_head}}</p></td>
                     <td><p>{{formatPrice($item->app_amt)}}</p></td>
                 </tr>
             @endforeach

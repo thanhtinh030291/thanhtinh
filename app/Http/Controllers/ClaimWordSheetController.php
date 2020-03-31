@@ -95,6 +95,10 @@ class ClaimWordSheetController extends Controller
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $claim_line = $member->CL_LINE;
+        //rmove claim line curent
+        $arr_clli_oid = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('clli_oid')->toArray();
+        $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
+        
         $log_history = $claimWordSheet->log;
         //dd($member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first());
         return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history'));
@@ -106,6 +110,10 @@ class ClaimWordSheetController extends Controller
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $claim_line = $member->CL_LINE;
+        //rmove claim line curent
+        $arr_clli_oid = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('clli_oid')->toArray();
+        $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
+
         $log_history = $claimWordSheet->log;
         $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
         //return view('claim_word_sheets.pdf', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history'));
@@ -127,6 +135,10 @@ class ClaimWordSheetController extends Controller
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $claim_line = $member->CL_LINE;
+        //rmove claim line curent
+        $arr_clli_oid = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('clli_oid')->toArray();
+        $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
+        
         $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
         $mpdf->WriteHTML(view('claim_word_sheets.pdf', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line'))->render());
         $mpdf->SetHTMLFooter('
