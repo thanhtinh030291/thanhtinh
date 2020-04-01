@@ -634,11 +634,11 @@ class ClaimController extends Controller
     }
 
     public function exportLetterPDF(Request $request){
+        $export_letter = ExportLetter::findOrFail($request->export_letter_id);
         if($export_letter->approve != null){
             $letter = LetterTemplate::findOrFail($request->letter_template_id);
             $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-            $export_letter = ExportLetter::findOrFail($request->export_letter_id);
             $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
             $data['content'] =  $export_letter->approve['data_payment'];
             $data['namefile'] = $namefile;
