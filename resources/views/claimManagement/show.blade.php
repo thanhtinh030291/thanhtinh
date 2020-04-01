@@ -54,7 +54,7 @@ $totalAmount = 0;
                                 <div class="col-md-6">
                                     <h5 class="card-title">Claim Word Sheet</h5>
                                     @if($data->claim_word_sheet)
-                                    <a href="{{route('claimWordSheets.show', ['claimWordSheet' => $data->claim_word_sheet->id])}}" class="mt-3 btn btn-info">Link Work Sheet</a>
+                                    <a target="_blank" href="{{route('claimWordSheets.show', ['claimWordSheet' => $data->claim_word_sheet->id])}}" class="mt-3 btn btn-info">Link Work Sheet</a>
                                     @else
                                         
                                         {{ Form::open(array('url' => route('claimWordSheets.store'))) }}
