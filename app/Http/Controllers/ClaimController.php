@@ -634,8 +634,18 @@ class ClaimController extends Controller
     }
 
     public function exportLetterPDF(Request $request){
+        $export_letter = ExportLetter::findOrFail($request->export_letter_id);
+        if($export_letter->approve != null){
+            $letter = LetterTemplate::findOrFail($request->letter_template_id);
+            $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
+            $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+            $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
+            $data['content'] =  base64_decode($export_letter->approve['data_payment']);
+            $data['namefile'] = $namefile;
+        }else{
+            $data = $this->letterPayment($request->letter_template_id , $request->claim_id , $request->export_letter_id);
+        }
         
-        $data = $this->letterPayment($request->letter_template_id , $request->claim_id , $request->export_letter_id);
         header("Content-Type: application/pdf");
         header("Expires: 0");//no-cache
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
