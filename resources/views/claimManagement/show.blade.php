@@ -218,6 +218,7 @@ $totalAmount = 0;
                             </td>
                             <td>
                                 {{ Form::open(array('url' => '/admin/exportLetter', 'method' => 'POST')) }}
+                                @csrf
                                     {{ Form::hidden('claim_id', $data->id ) }}
                                     {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
                                     {{ Form::hidden('export_letter_id', $item->id ) }}
@@ -239,6 +240,7 @@ $totalAmount = 0;
                                 {{-- btn letter payment --}}
                                 @if ($item->letter_template->letter_payment != null)
                                     {{ Form::open(array('url' => '/admin/exportLetterPDF', 'method' => 'POST')) }}
+                                    @csrf
                                         {{ Form::hidden('claim_id', $data->id ) }}
                                         {{ Form::hidden('export_letter_id', $item->id ) }}
                                         {{ Form::hidden('letter_template_id', $item->letter_template->letter_payment ) }}
