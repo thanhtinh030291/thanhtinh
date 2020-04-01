@@ -641,7 +641,7 @@ class ClaimController extends Controller
             $export_letter = ExportLetter::findOrFail($request->export_letter_id);
             $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
             $data['content'] =  $export_letter->approve['data_payment'];
-            data['namefile'] = $namefile;
+            $data['namefile'] = $namefile;
         }else{
             $data = $this->letterPayment($request->letter_template_id , $request->claim_id , $request->export_letter_id);
         }
