@@ -63,9 +63,22 @@
         </div>
     </div>
     <div class="col-md-6">
-        <p>- 30 ngày chờ</p>
-        <p>- 1 năm chờ</p> 
-        <p>- Hợp đồng/Điều khoản</p>
+        <div class="form-check form-check-inline">
+            {{ Form::hidden('30_day', '0')}}
+            {{ Form::checkbox('30_day', '1', $claimWordSheet['30_day'] == 1? true : false , ['class' => 'form-check-input'])}}
+            <label class="form-check-label" for="inlineCheckbox1">- 30 ngày chờ</label>
+        </div><br>
+        <div class="form-check form-check-inline">
+            {{ Form::hidden('1_year', '0')}}
+            {{ Form::checkbox('1_year', '1', $claimWordSheet['1_year'] == 1? true : false , ['class' => 'form-check-input'])}}
+            <label class="form-check-label" for="inlineCheckbox1">- 1 năm chờ</label>
+        </div><br>
+        <div class="form-check form-check-inline">
+            {{ Form::hidden('contract_rule', '0')}}
+            {{ Form::checkbox('contract_rule', '1', $claimWordSheet['contract_rule'] == 1? true : false , ['class' => 'form-check-input'])}}
+            <label class="form-check-label" for="inlineCheckbox1">- Hợp đồng/Điều khoản</label>
+        </div>
+        
     </div>
 </div>
 <div>

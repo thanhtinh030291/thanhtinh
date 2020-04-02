@@ -260,7 +260,7 @@ class ClaimWordSheetController extends Controller
             notifi_system($content, [$claimWordSheet->created_user]);
         }
         $request->session()->flash('status', 'Claim Word Sheet updated successfully.'); 
-        return redirect(route('claimWordSheets.index'));
+        return redirect(route('claimWordSheets.show', $claimWordSheet->id));
     }
 
     /**
