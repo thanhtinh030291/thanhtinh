@@ -450,7 +450,7 @@ class ClaimController extends Controller
             $export_letter->status = $status_change[0];
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter,$list_level );
-            
+            $user_create = User::findOrFail($export_letter->created_user);
             if($level->signature_accepted_by == $request->status_change){
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
@@ -465,7 +465,24 @@ class ClaimController extends Controller
                     ];
                     
                 }
+            }elseif($user_create->hasRole('Claim Independent')){
+                if($request->status_change == 14 || $request->status_change == 7 ){
+                    if($export_letter->letter_template->letter_payment == null){
+                        $export_letter->approve = [  'user' => $user->id,
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                            'data' => data_get($export_letter->wait, "data"),
+                        ];
+                    }else{
+                        $export_letter->approve = [  'user' => $user->id,
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                            'data' => data_get($export_letter->wait, "data"),
+                            'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content'])
+                        ];
+                        
+                    }
+                }
             }
+
             $status_notifi = RoleChangeStatus::findOrFail($status_change[0])->name;
             $url_n = route('claim.show',['claim' => $claim_id]);
             $text_notifi = "Claim: <a href='{$url_n}'>{$url_n}</a> đã chuyển sang trạng thái {$status_notifi} bởi {$user->name}";
