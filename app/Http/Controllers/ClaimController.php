@@ -385,6 +385,7 @@ class ClaimController extends Controller
     // wait for check
     public function waitCheck(Request $request)
     {
+        
         $claim_id = $request->claim_id;
         $id = $request->id;
         $user = Auth::User();
@@ -433,13 +434,13 @@ class ClaimController extends Controller
                 }
                 if(!empty($to_user)){
                     foreach ($to_user as $key => $value) {
-                        $request = new Request([
+                        $request2 = new Request([
                             'user' => $value,
                             'content' => 'Letter yêu cầu tiến hành xác nhận bởi '.$user->name.' Vui lòng kiểm tra lại thông tin tại : 
                             <a href="'.route('claim.show',$claim_id).'">'.route('claim.show',$claim_id).'</a>'
                         ]);
                         $send_mes = new SendMessageController();
-                        $send_mes->sendMessage($request);
+                        $send_mes->sendMessage($request2);
                     }
                     
                 }
@@ -451,13 +452,16 @@ class ClaimController extends Controller
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter,$list_level );
             $user_create = User::findOrFail($export_letter->created_user);
-            if($level->signature_accepted_by == $request->status_change){
+            
+            if($level->signature_accepted_by == $status_change[0]){
+                
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => data_get($export_letter->wait, "data"),
                     ];
                 }else{
+                    
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => data_get($export_letter->wait, "data"),
@@ -482,7 +486,7 @@ class ClaimController extends Controller
                     }
                 }
             }
-
+            
             $status_notifi = RoleChangeStatus::findOrFail($status_change[0])->name;
             $url_n = route('claim.show',['claim' => $claim_id]);
             $text_notifi = "Claim: <a href='{$url_n}'>{$url_n}</a> đã chuyển sang trạng thái {$status_notifi} bởi {$user->name}";
@@ -682,6 +686,7 @@ class ClaimController extends Controller
 
     // leter_payment
     public function letterPayment($letter_template_id , $claim_id ,$export_letter_id, $approve = null){
+        
         $data = $this->letter($letter_template_id , $claim_id,  $export_letter_id);
         $export_letter = ExportLetter::findOrFail($export_letter_id);
         
