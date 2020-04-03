@@ -696,6 +696,7 @@ $totalAmount = 0;
         });
 
         var url_file_sorted =   '{{ $data->url_file_sorted ?  asset("") . config('constants.sotedClaimStorage') . $data->url_file_sorted  : ''}}' ;
+        var sorted_file_name = '{{$data->url_file_sorted}}';
 
         $("#url_file_sorted").fileinput({
             uploadAsync: false,
@@ -707,7 +708,7 @@ $totalAmount = 0;
             initialPreviewFileType: 'image', // image is the default and can be overridden in config below
             initialPreviewDownloadUrl: 'https://kartik-v.github.io/bootstrap-fileinput-samples/samples/{filename}', // includes the dynamic `filename` tag to be replaced for each config
             initialPreviewConfig: [
-                {type: "pdf", size: 8000, caption: "summaryFile.pdf",  key: 1, downloadUrl: url_file_sorted}, // disable download
+                {type: "pdf", size: 8000, caption: sorted_file_name,  key: 1, downloadUrl: url_file_sorted}, // disable download
             ],
             purifyHtml: true, // this by default purifies HTML data for preview
             uploadExtraData: {
