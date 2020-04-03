@@ -422,7 +422,7 @@ class ClaimController extends Controller
                         $to_user = [$leader->id];
                     }
                 }
-                if($user->hasRole('Lead', 'Claim Independent')){
+                if($user->hasRole('Lead') || $user->hasRole('Claim Independent')){
                     $to_user = User::whereHas("roles", function($q){ $q->where("name", "QC"); })->get()->pluck('id')->toArray();
                 }
                 if($user->hasRole('QC') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 30000000){
