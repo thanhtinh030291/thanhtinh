@@ -6,6 +6,7 @@ use App\Setting;
 use App\Events\Notify;
 use App\Notifications\PushNotification;
 use Pusher\Pusher;
+use Illuminate\Support\Facades\Storage;
 
 function getUserSign($id){
     $user = User::findOrFail($id);
@@ -41,6 +42,17 @@ function saveImage($file ,$path, $thumbnail=null){
 
     return $file_name;
 }
+
+function saveFile($file ,$path ,$oldFile = null)
+{
+    if($oldFile){
+        Storage::delete($path.$oldFile);
+    }
+    $fileName = time() . md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
+    $file->storeAs($path, $fileName);
+    return $fileName;
+}
+
 function GetApiMantic($url)
 {
     $headers = [

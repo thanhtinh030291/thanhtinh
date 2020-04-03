@@ -5,6 +5,9 @@ return[
     'appLogo'     => "/images/logo.png",
     'formClaimUpload'   => '/public/formClaim/',
     'formClaimStorage'  => '/storage/formClaim/',
+    'sortedClaimUpload'   => '/public/sortedClaim/',
+    'sotedClaimStorage'  => '/storage/sortedClaim/',
+
     'avantarUpload' => '/public/avantar/',
     'avantarStorage' => '/storage/avantar/',
     'signarureUpload' => '/public/signarure/',

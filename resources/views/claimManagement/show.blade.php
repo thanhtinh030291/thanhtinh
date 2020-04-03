@@ -35,7 +35,7 @@ $totalAmount = 0;
                         </a>
                         <div class="card">
                             <div class="card-body row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <h5 class="card-title">Request Letter</h5>
                                     <p class="card-text"></p>
                                     {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
@@ -51,7 +51,7 @@ $totalAmount = 0;
                                             ]) !!}
                                     {{ Form::close() }}
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <h5 class="card-title">Claim Word Sheet</h5>
                                     @if($data->claim_word_sheet)
                                     <a target="_blank" href="{{route('claimWordSheets.show', ['claimWordSheet' => $data->claim_word_sheet->id])}}" class="mt-3 btn btn-info">Link Work Sheet</a>
@@ -63,7 +63,19 @@ $totalAmount = 0;
                                         <button class="btn btn-info" type="submit" value="save">Run</button> 
                                         {{ Form::close() }}
                                     @endif
-                                </div>  
+                                </div> 
+                                <div class="col-md-5">
+                                    {{ Form::open(array('url' => '/admin/claim/uploadSortedFile/'.$data->id, 'method'=>'post', 'files' => true))}}
+                                    <h5 class="card-title">Tệp đã được sắp sếp</h5>
+                                    <div class="file-loading">
+                                        <input id="url_file_sorted" type="file" name="_url_file_sorted[]" >
+                                    </div>
+                                    <div class="d-flex justify-content-right">
+                                        <button type="submit" class="btn btn-primary  btnt" > {{__('message.save')}}</button> <br>
+                                    </div>
+                                    <!-- End file image -->
+                                    {{ Form::close() }}
+                                </div> 
                             </div>
                         </div>
                     </div>
@@ -681,6 +693,27 @@ $totalAmount = 0;
                 $(this).html('+')
             }
             amount_letter_print();
+        });
+
+        var url_file_sorted =   '{{ $data->url_file_sorted ?  asset("") . config('constants.sotedClaimStorage') . $data->url_file_sorted  : ''}}' ;
+
+        $("#url_file_sorted").fileinput({
+            uploadAsync: false,
+            
+            maxFileCount: 1,
+            overwriteInitial: true,
+            initialPreview: [ url_file_sorted ],
+            initialPreviewAsData: true, // identify if you are sending preview data only and not the raw markup
+            initialPreviewFileType: 'image', // image is the default and can be overridden in config below
+            initialPreviewDownloadUrl: 'https://kartik-v.github.io/bootstrap-fileinput-samples/samples/{filename}', // includes the dynamic `filename` tag to be replaced for each config
+            initialPreviewConfig: [
+                {type: "pdf", size: 8000, caption: "summaryFile.pdf",  key: 1, downloadUrl: url_file_sorted}, // disable download
+            ],
+            purifyHtml: true, // this by default purifies HTML data for preview
+            uploadExtraData: {
+                img_key: "1000",
+                img_keywords: "happy, places"
+            }
         });
     });
 </script>

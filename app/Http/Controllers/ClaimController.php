@@ -115,7 +115,9 @@ class ClaimController extends Controller
      */
     public function store(formClaimRequest $request)
     {
-        
+        if ($request->_url_file_sorted) {
+            saveFile($request->_url_file_sorted[0], config('constants.sortedClaimUpload'));
+        }
         $file = $request->file;
         $dataNew = $request->except(['file','file2','table2_parameters', 'table1_parameters']);
         $userId = Auth::User()->id;
@@ -168,7 +170,9 @@ class ClaimController extends Controller
             }
         }
         
-        
+        if ($request->_url_file_sorted) {
+            $dataNew['url_file_sorted'] = saveFile($request->_url_file_sorted[0], config('constants.sortedClaimUpload'));
+        }
         //
         try {
             DB::beginTransaction();
@@ -177,7 +181,7 @@ class ClaimController extends Controller
             $claim->item_of_claim()->saveMany($dataItems);
             DB::commit();
             $request->session()->flash('status', __('message.add_claim'));
-            return redirect('/admin/claim');
+            return redirect('/admin/claim/'.$claim->id);
         } catch (Exception $e) {
             Log::error(generateLogMsg($e));
             DB::rollback();
@@ -242,6 +246,15 @@ class ClaimController extends Controller
         return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate' , 'list_status_ad', 'user']));
     }
 
+    public function uploadSortedFile(Request $request, $id){
+        $claim = Claim::findOrFail($id);
+        if ($request->_url_file_sorted) {
+            $dataUpdate['url_file_sorted'] = saveFile($request->_url_file_sorted[0], config('constants.sortedClaimUpload'),$claim->url_file_sorted);
+            Claim::updateOrCreate(['id' => $id], $dataUpdate);
+        }
+        return redirect('/admin/claim/'.$id);
+    }
+
     public function barcode_link($barcode)
     { 
         $claim = Claim::where('barcode', $barcode)->first();
@@ -297,10 +310,16 @@ class ClaimController extends Controller
      */
     public function update(formClaimRequest $request, Claim $claim)
     {
+
+        
+    
         $data = $claim;
         $userId = Auth::User()->id;
         $dataUpdate = $request;
         $dataUpdate = $dataUpdate->except(['table2_parameters']);
+        if ($request->_url_file_sorted) {
+            $dataUpdate['url_file_sorted'] = saveFile($request->_url_file_sorted[0], config('constants.sortedClaimUpload'),$claim->url_file_sorted);
+        }
         try {
             DB::beginTransaction();
             if (Claim::updateOrCreate(['id' => $claim->id], $dataUpdate)) {
@@ -340,7 +359,7 @@ class ClaimController extends Controller
                 DB::commit();
                 $request->session()->flash('status', __('message.update_claim'));
             }
-            return redirect('/admin/claim');
+            return redirect('/admin/claim/'.$data->id);
         } catch (Exception $e) {
             Log::error(generateLogMsg($e));
             DB::rollback();

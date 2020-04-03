@@ -102,10 +102,10 @@ function btnScan(){
 
 $('#fileUpload2').fileinput({
     required: false,
-    allowedFileExtensions: ['tiff','tif','TIFF','TIF']
+    allowedFileExtensions: ['PDF','pdf']
 }).on("filebatchselected", function(event, files) {
     trialImage = files[0];
-    showTiff(trialImage);
+    //showTiff(trialImage);
 });
 
 //button checkall click

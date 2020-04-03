@@ -27,8 +27,8 @@
                         <button type="button" class="btn btn-danger mt-2 float-right" onclick="btnScan()" ><i class="fa fa-print" aria-hidden="true"></i> Scan</button>
                     </div>
                     <div class="col-md-3">
-                        {{ Form::label('file2', 'File TIFF', array('class' => 'labelas')) }} <span class="text-danger">*(tif , tiff )</span>
-                        {{ Form::file('file2', array('id' => "fileUpload2", 'class' => "file")) }} 
+                        {{ Form::label('_url_file_sorted', 'Tệp đã được sắp sếp', array('class' => 'labelas')) }} <span class="text-danger">*(PDF)</span>
+                        {{ Form::file('_url_file_sorted[]', array('id' => "fileUpload2", 'class' => "file")) }} 
                     </div>
                     <div class="col-md-6">
                         {{ Form::label('code_claim', __('message.code_claim'), array('class' => 'labelas')) }} <span class="text-danger">*</span>

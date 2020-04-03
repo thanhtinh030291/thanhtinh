@@ -30,6 +30,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/read_all_messages', 'SendMessageController@readAll')->name('readAll');
 
         Route::resource('claim', 'ClaimController');
+        Route::post('/claim/uploadSortedFile/{id}', 'ClaimController@uploadSortedFile')->name('uploadSortedFile');
+        
         Route::get('/claim/barcode/{barcode}', 'ClaimController@barcode_link');
 
         Route::post('/search', 'ClaimController@searchFullText')->name('search');

@@ -23,9 +23,17 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
+                                {{ Form::label('file', 'File ORC', array('class' => 'labelas')) }} <span class="text-danger">*(CSV )</span>
                                 <div class="file-loading">
                                     <input id="dataImg" type="file" name="_image[]" multiple >
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                {{ Form::label('_url_file_sorted', 'Tệp đã được sắp sếp', array('class' => 'labelas')) }} <span class="text-danger">*(PDF)</span>
+                                <div class="file-loading">
+                                    <input id="url_file_sorted" type="file" name="_url_file_sorted[]" >
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -111,6 +119,27 @@ $('#dataImg').fileinput({
     validateInitialCount: true,
     initialPreview: dataImage,
     initialPreviewConfig: previewConfig,
+});
+
+var url_file_sorted =  [' {{ $data->url_file_sorted ?  asset("") . config('constants.sotedClaimStorage') . $data->url_file_sorted  : ''}} '];
+
+$("#url_file_sorted").fileinput({
+    uploadAsync: false,
+    
+    maxFileCount: 1,
+    overwriteInitial: true,
+    initialPreview: url_file_sorted,
+    initialPreviewAsData: true, // identify if you are sending preview data only and not the raw markup
+    initialPreviewFileType: 'image', // image is the default and can be overridden in config below
+    initialPreviewDownloadUrl: 'https://kartik-v.github.io/bootstrap-fileinput-samples/samples/{filename}', // includes the dynamic `filename` tag to be replaced for each config
+    initialPreviewConfig: [
+        {type: "pdf", size: 8000, caption: "sumaryFile.pdf",  key: 1, downloadUrl: false}, // disable download
+    ],
+    purifyHtml: true, // this by default purifies HTML data for preview
+    uploadExtraData: {
+        img_key: "1000",
+        img_keywords: "happy, places"
+    }
 });
 var str_key = [];
 $('#dataImg').on('filedeleted', function(event, key, jqXHR, data) {

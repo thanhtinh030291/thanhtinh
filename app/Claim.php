@@ -47,6 +47,7 @@ class Claim extends BaseModel
         return $imageName;
     }
 
+    
     public function scopeItemClaimReject($query)
     {
         $conditionTerm = function ($q) {
