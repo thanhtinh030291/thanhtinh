@@ -425,7 +425,7 @@ class ClaimController extends Controller
                 if($user->hasRole('Lead', 'Claim Independent')){
                     $to_user = User::whereHas("roles", function($q){ $q->where("name", "QC"); })->get()->pluck('id')->toArray();
                 }
-                if($user->hasRole('QC') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 50000000){
+                if($user->hasRole('QC') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 30000000){
                     $to_user = Setting::findOrFail(1)->manager_claim;
                 }
                 if($user->hasRole('Manager') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
