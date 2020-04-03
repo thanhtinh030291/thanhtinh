@@ -111,7 +111,7 @@
             <tr>
                 <td>
                     <p><span class="font-weight-bold">Incur date: </span> From {{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y')}} To  {{Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}} 
-                        <span class="font-weight-bold">Diagnosis: </span> Chuẩn đoán: {{$item->RT_DIAGNOSIS->diag_desc_vn}}; Tại {{$item->prov_name}} </p>
+                        <span class="font-weight-bold">Diagnosis: </span> Chẩn đoán: {{$item->RT_DIAGNOSIS->diag_desc_vn}}; Tại {{$item->prov_name}} </p>
                 </td>
             </tr>
         @endforeach
