@@ -777,7 +777,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$SEX]]', str_replace('SEX_', "",$HBS_CL_CLAIM->member->scma_oid_sex) , $content);
         $content = str_replace('[[$PoNo]]', $police->pocy_no, $content);
         $content = str_replace('[[$EffDate]]', Carbon::parse($police->eff_date)->format('d/m/Y'), $content);
-        $content = str_replace('[[$now]]', Carbon::now()->format('d/m/Y'), $content);
+        $content = str_replace('[[$now]]', datepayment(), $content);
 
         $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
         if($CSRRemark){

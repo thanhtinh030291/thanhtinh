@@ -468,6 +468,22 @@ function note_pay($export_letter){
     return $htm;
 }
 
+function datepayment(){
+    $now = Carbon\Carbon::now();
+    
+    switch ($now->dayOfWeek) {
+        case 5:
+            $now = $now->addDays(3);
+            break;
+        case 6:
+            $now = $now->addDays(2);
+            break;
+        default:
+            $now = $now->addDays(1);
+            break;
+    }
+    return $now->format("d/m/Y");
+}
 function notifi_system($content, $arrUserID = []){
     $user = App\User::findOrFail(1);
     $options = array(
