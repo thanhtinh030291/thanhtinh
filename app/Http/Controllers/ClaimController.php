@@ -31,6 +31,7 @@ use App\MANTIS_TEAM;
 use App\MANTIS_USER_GROUP;
 use App\MANTIS_USER;
 use PDF;
+use Illuminate\Support\Arr;
 
 class ClaimController extends Controller
 {
@@ -444,6 +445,7 @@ class ClaimController extends Controller
                 }
                 if($user->hasRole('Lead') || $user->hasRole('Claim Independent')){
                     $to_user = User::whereHas("roles", function($q){ $q->where("name", "QC"); })->get()->pluck('id')->toArray();
+                    $to_user = [Arr::random($to_user)];
                 }
                 if($user->hasRole('QC') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 30000000){
                     $to_user = Setting::findOrFail(1)->manager_claim;
