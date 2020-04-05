@@ -239,7 +239,14 @@ class ClaimController extends Controller
             }else{
                 $export_letter[$key]['list_status'] = $list_status_ad;
             }
-            $export_letter[$key]['end_status'] = $level->end_status;
+            $user_create = User::findOrFail($value->created_user);
+
+            if( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 100000000){
+                $export_letter[$key]['end_status'] = 7;
+            }else{
+                $export_letter[$key]['end_status'] = $level->end_status;
+            }
+            
 
         }
 
@@ -410,7 +417,7 @@ class ClaimController extends Controller
         $id = $request->id;
         $user = Auth::User();
         $export_letter = ExportLetter::findOrFail($id);
-        
+        $user_create = User::findOrFail($export_letter->created_user);
         $wail = [];
 
         if($export_letter->note == null){
@@ -447,12 +454,17 @@ class ClaimController extends Controller
                     $to_user = User::whereHas("roles", function($q){ $q->where("name", "QC"); })->get()->pluck('id')->toArray();
                     $to_user = [Arr::random($to_user)];
                 }
-                if($user->hasRole('QC') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 30000000){
+                if(($user_create->hasRole('Claim') || $user_create->hasRole('Lead')) && $user->hasRole('QC') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 30000000){
                     $to_user = Setting::findOrFail(1)->manager_claim;
                 }
-                if($user->hasRole('Manager') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
+                if( $user->hasRole('Manager') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
                     $to_user = Setting::findOrFail(1)->header_claim;
                 }
+                // Claim Independent
+                if($user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
+                    $to_user = Setting::findOrFail(1)->manager_claim;
+                }
+
                 if(!empty($to_user)){
                     foreach ($to_user as $key => $value) {
                         $request2 = new Request([
@@ -472,9 +484,8 @@ class ClaimController extends Controller
             $export_letter->status = $status_change[0];
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter,$list_level );
-            $user_create = User::findOrFail($export_letter->created_user);
             
-            if($level->signature_accepted_by == $status_change[0]){
+            if($level->signature_accepted_by == $status_change[0] || ($user_create->hasRole('Claim Independent') && $user->hasRole('Manager'))){
                 
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,

@@ -39,7 +39,7 @@ $max = config('constants.minMaxLength.max');
                 <div class="box-body no-padding">
                 <div class="mailbox-read-info">
                     <h3>{{$data->title}}</h3>
-                    <h5>From: {{data_get($admin_list, $data->user_from)}}
+                    <h5>From: {{data_get($admin_list, $data->user_from)}}  ------ To  {{data_get($admin_list, $data->user_to)}}
                     <span class="mailbox-read-time pull-right">{{$data->created_at}}</span></h5>
                 </div>
                 <!-- /.mailbox-read-info -->
