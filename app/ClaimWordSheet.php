@@ -44,7 +44,41 @@ class ClaimWordSheet extends BaseModel
     protected $guarded  = ['id'];
     public $table = 'claim_word_sheet';
     protected static $table_static = 'claim_word_sheet';
-    protected static $logAttributes = ["*"];
+    protected static $logAttributes = [
+        "id",
+        "claim_id",
+        "mem_ref_no",
+        "visit",
+        "assessment",
+        "medical",
+        "claim_resuft",
+        "claim_amt",
+        "payable_amt",
+        "note",
+        "notification",
+        "dischage_summary",
+        "vat",
+        "copy_of",
+        "medical_report",
+        "breakdown",
+        "discharge_letter",
+        "treatment_plant",
+        "incident_report",
+        "prescription",
+        "lab_test",
+        "police_report",
+        "created_user",
+        "updated_user",
+        "is_deleted",
+        "status",
+        "old_number_page_send",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+        "30_day",
+        "1_year",
+        "contract_rule"
+    ];
     protected $subject_type = 'App\ClaimWordSheet';
     protected $dates = ['deleted_at'];
 

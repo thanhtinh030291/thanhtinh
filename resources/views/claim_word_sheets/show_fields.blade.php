@@ -31,7 +31,7 @@
 
 <div class="row">
     <div class="col-md-4">
-    <p class="font-weight-bold">Policy No: {{$HBS_CL_CLAIM->Police->pocy_no}}</p>
+    <p class="font-weight-bold">Policy No: {{$HBS_CL_CLAIM->Police->pocy_ref_no}}</p>
     </div>
     <div class="col-md-4">
     <p class="font-weight-bold">Member No: {{ $member->memb_ref_no}}</p>
@@ -100,24 +100,35 @@
 
 <div class="row">
     <div class="col-sm-2 col-form-label ">
-        <p class="font-weight-bold">Type of visit: IP / OP </p>
+        <p class="font-weight-bold"><span>Type of visit: IP / OP  </span><button type="button" id="add_button_type_of_visit">Add Field</button></p>
     </div>
 </div>
+<div id="type_of_visit">
 
-<table id="season_price_tbl" class="table table-striped header-fixed w-75">
-    <tbody>
-        @if(!empty($HBS_CL_CLAIM->HBS_CL_LINE))
-        @foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $item)
-            <tr>
-                <td>
-                    <p><span class="font-weight-bold">Incur date: </span> From {{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y')}} To  {{Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}} 
-                        <span class="font-weight-bold">Diagnosis: </span> Chẩn đoán: {{$item->RT_DIAGNOSIS->diag_desc_vn}}; Tại {{$item->prov_name}} </p>
-                </td>
-            </tr>
-        @endforeach
-        @endif
-    </tbody>
-</table>
+</div>
+<div class="input_fields_type_of_visit  ml-4" style="display:none">
+    <div class = "row mt-2">
+        <div class="col-3 input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">Incur date: From</div>
+            </div>
+            {{ Form::text('_type_of_visit[from]', '' , ['class'=>"imask-input form-control col"]) }}
+        </div>
+        <div class="col-2 input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">To</div>
+            </div>
+            {{ Form::text('_type_of_visit[to]', '' , ['class'=>"imask-input form-control col"]) }}
+        </div>
+        <div class="col-6 input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">Diagnosis: </div>
+            </div>
+            {{ Form::text('_type_of_visit[diagnosis]', '' , ['class'=>"form-control col"]) }}
+        </div>
+        <button type="button" class="col-1 btn btn-danger remove_field_btn" >X</button>
+    </div>
+</div>
 
 <div>
     <p class="font-weight-bold">CLAIM HISTORY</p>
@@ -178,7 +189,7 @@
                         {{ Form::select('_benefit[content]', config('constants.benefit'),null, ['class'=>" _select2 form-control " ]) }}
                     </div>
                     {{ Form::text('_benefit[amount]', null, ['class'=>"item-price form-control col-sm-5 benefit_input", 'onchange' => 'add_amt()']) }}
-                    <a href="#" class="col-md-1 remove_field btn btn-danger">X</a>
+                    <button type="button" class="col-md-1 remove_field_btn btn btn-danger">X</>
                 </div>
             </div>
             
@@ -213,7 +224,7 @@
         <div class = "row mt-2">
             
             {{ Form::text('request_qa[]', $item , ['class'=>"form-control col-md-11"]) }}
-            <a href="#" class="col-md-1 remove_field btn btn-danger">X</a>
+            <button type="button" class="col-md-1 remove_field_btn btn btn-danger">X</button>
         </div>
         @endforeach
         

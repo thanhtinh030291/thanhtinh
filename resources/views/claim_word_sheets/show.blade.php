@@ -43,17 +43,19 @@
 $(document).on("click", ".delete_btn", function(){
     $(this).closest('tr').remove();
 });
-
-$('.imask-input').mask('AB/SC/MNJK', {'translation': {
-    A: {pattern: /[0-3]/},
-    B: {pattern: /[0-9]/},
-    S: {pattern: /[0-1]/},
-    C: {pattern: /[0-9]/},
-    M: {pattern: /[0-2]/},
-    N: {pattern: /[0-9]/},
-    J: {pattern: /[0-9]/},
-    K: {pattern: /[0-9]/},
-}
+$(document).ready(function(){
+    $('.imask-input').mask('AB/SC/MNJK', {'translation': {
+        A: {pattern: /[0-3]/},
+        B: {pattern: /[0-9]/},
+        S: {pattern: /[0-1]/},
+        C: {pattern: /[0-9]/},
+        M: {pattern: /[0-2]/},
+        N: {pattern: /[0-9]/},
+        J: {pattern: /[0-9]/},
+        K: {pattern: /[0-9]/},
+    },
+    placeholder: "__/__/____"
+    });
 });
 var count = 1;
 function addInputItem(){
@@ -89,12 +91,35 @@ function addValueItem(content, amount, reasonInject, count, idItem = ""){
     $('input[name="_idItem['+count+']"]').val(idItem);
 }
 $(document).ready(function() {
+     //type of visit
+     var count_type = 1;
+     $("#add_button_type_of_visit").click(function(e){ //on add input button click
+        e.preventDefault();
+        var clone = $('.input_fields_type_of_visit').clone().html();
+        var clone = $('.input_fields_type_of_visit').clone().html();
+        clone = clone.replace(/_type_of_visit/gm, "type_of_visit["+count_type+"]");
+        $("#type_of_visit").append(clone);
+        count_type++;
+
+    });
+     var data_type_of_visit = @json($claimWordSheet->type_of_visit);
+    $.each(data_type_of_visit, function (index, value) {
+        console.log(value);
+        var clone = $('.input_fields_type_of_visit').clone().html();
+        clone = clone.replace(/_type_of_visit/gm, "type_of_visit["+count_type+"]");
+        $("#type_of_visit").append(clone);
+        $('input[name="type_of_visit['+count_type+'][from]"]').val(value.from);
+        $('input[name="type_of_visit['+count_type+'][to]"]').val(value.to);
+        $('input[name="type_of_visit['+count_type+'][diagnosis]"]').val(value.diagnosis);
+        count_type++;
+    });
+    //
     var wrapper         = $(".input_fields_wrap"); //Fields wrapper
     var add_button      = $(".add_field_button"); //Add button ID
 
     $(add_button).click(function(e){ //on add input button click
         e.preventDefault();
-        $(wrapper).append('<div class = "row mt-2"><input type="text" name="request_qa[]" class="form-control col-md-11"/><a href="#" class="col-md-1 remove_field btn btn-danger">X</a></div>'); //add input box
+        $(wrapper).append('<div class = "row mt-2"><input type="text" name="request_qa[]" class="form-control col-md-11"/><button type="button" class="col-md-1 remove_field_btn btn btn-danger">X</button></div>'); //add input box
 
     });
     var count = 1;
@@ -107,6 +132,8 @@ $(document).ready(function() {
         $('.select2').select2();
         count++;
     });
+   
+    //benefit
     var data_benefit = @json($claimWordSheet->benefit);
     $.each(data_benefit, function (index, value) {
         var clone = $('#clone_benefit').clone().html();
@@ -119,15 +146,14 @@ $(document).ready(function() {
         $('.select2').select2();
         count++;           
     });
-
-    $("#field_benefit").on("click",".remove_field", function(e){ //user click on remove text
-        e.preventDefault(); $(this).parent('div').remove(); 
-    })
-
-    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+    $('.remove_field').click(function(e){ //user click on remove text
         e.preventDefault(); $(this).parent('div').remove(); 
     })
     add_amt();
+});
+
+$(document).on("click", ".remove_field_btn", function(){
+    $(this).parent('div').remove();
 });
 function add_amt(){
     var sumrj = 0 ;

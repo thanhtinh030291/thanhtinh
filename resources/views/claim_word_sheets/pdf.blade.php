@@ -118,7 +118,7 @@
 
     <tr>
         <td>
-            <p class="font-weight-bold">Policy No: {{$HBS_CL_CLAIM->Police->pocy_no}}</p>
+            <p class="font-weight-bold">Policy No: {{$HBS_CL_CLAIM->Police->pocy_ref_no}}</p>
         </td>
         <td>
             <p class="font-weight-bold">Member No: {{ $member->memb_ref_no}}</p>
@@ -187,12 +187,12 @@
 
 <table id="season_price_tbl" style="margin-left: 25px;" >
     <tbody>
-        @if(!empty($HBS_CL_CLAIM->HBS_CL_LINE))
-        @foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $item)
+        @if(!empty($claimWordSheet->type_of_visit))
+        @foreach ($claimWordSheet->type_of_visit as $item)
             <tr>
                 <td>
-                    <p><span class="font-weight-bold">Incur date: </span> From {{Carbon\Carbon::parse($item->incur_date_from)->format('d/m/Y')}} To  {{Carbon\Carbon::parse($item->incur_date_to)->format('d/m/Y')}} 
-                        <span class="font-weight-bold">Diagnosis: </span> Chẩn đoán: {{$item->RT_DIAGNOSIS->diag_desc_vn}}; Tại {{$item->prov_name}} </p>
+                    <p><span class="font-weight-bold">Incur date: </span> From {{data_get($item,'from')}} To  {{data_get($item,'to')}} 
+                        <span class="font-weight-bold">Diagnosis: </span>  {{data_get($item,'diagnosis')}} </p>
                 </td>
             </tr>
         @endforeach
