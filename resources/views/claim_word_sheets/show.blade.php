@@ -154,6 +154,7 @@ $(document).ready(function() {
 
 $(document).on("click", ".remove_field_btn", function(){
     $(this).parent('div').remove();
+    add_amt();
 });
 function add_amt(){
     var sumrj = 0 ;
