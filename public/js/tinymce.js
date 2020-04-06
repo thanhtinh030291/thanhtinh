@@ -301,6 +301,9 @@ var config3 = {
     path_absolute : "/",
     selector: "textarea.editor_default",
     branding: false,
+    paste_retain_style_properties: "all",
+    keep_styles: true,
+    schema: "html4",
     plugins: [
     "paste advlist autolink lists link image charmap print preview hr anchor pagebreak",
     "searchreplace wordcount visualblocks visualchars code fullscreen",
