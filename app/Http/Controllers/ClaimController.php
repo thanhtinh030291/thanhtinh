@@ -403,8 +403,8 @@ class ClaimController extends Controller
             ->first();
         }else{
             $level = $list_level
-            ->where('min_amount','<=', data_get($export_letter->info, 'approve_amt') )
-            ->where('max_amount','>', data_get($export_letter->info, 'approve_amt') )
+            ->where('min_amount','<=', removeFormatPrice(data_get($export_letter->info, 'approve_amt')) )
+            ->where('max_amount','>', removeFormatPrice(data_get($export_letter->info, 'approve_amt')) )
             ->first();
         }
         return $level;
@@ -484,9 +484,8 @@ class ClaimController extends Controller
             $export_letter->status = $status_change[0];
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter,$list_level );
-            
             if($level->signature_accepted_by == $status_change[0] || ($user_create->hasRole('Claim Independent') && $user->hasRole('Manager'))){
-                
+               
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),

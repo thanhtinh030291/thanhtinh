@@ -27,7 +27,6 @@ class AppBaseController extends Controller
         
         $this->middleware(function ($request, $next) {
             $user = Auth::user()  ;
-           
             if($user){
                 $messages = $user->messagesReceiver;
                 View::share('messages', $messages);
