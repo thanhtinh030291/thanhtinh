@@ -7,9 +7,11 @@ use App\Http\Requests\UpdateClaimWordSheetRequest;
 use App\ClaimWordSheet;
 use App\HBS_MR_MEMBER;
 use Auth;
+use App\ItemOfClaim;
 use App\User;
 use App\Claim;
 use App\HBS_CL_CLAIM;
+use App\ReasonReject;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
@@ -100,8 +102,9 @@ class ClaimWordSheetController extends Controller
         $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
         
         $log_history = $claimWordSheet->log;
+        $listReasonReject = ReasonReject::pluck('name', 'id');
         //dd($member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first());
-        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history'));
+        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history', 'listReasonReject'));
     }
 
     public function pdf(ClaimWordSheet $claimWordSheet){
@@ -238,13 +241,50 @@ class ClaimWordSheetController extends Controller
      */
     public function update(ClaimWordSheet $claimWordSheet, UpdateClaimWordSheetRequest $request)
     {
-        $data = $request->except([]);
+        $data = $request->except(['table2_parameters']);
         if (isset($data["benefit"])){
             $data["benefit"] = array_values($data["benefit"]);
         }
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
-        ClaimWordSheet::updateOrCreate(['id' => $claimWordSheet->id], $data);
+        $claim_word_sheet = ClaimWordSheet::updateOrCreate(['id' => $claimWordSheet->id], $data);
+        // add reject
+        $data = Claim::findOrFail($claimWordSheet->claim_id);
+        if ($request->_content != null) {
+            $dataItemNew = [];
+            foreach ($request->_idItem as $key => $value) {
+                if ($value == null) {
+                    $dataItemNew[] = [
+                        'claim_id' => $data->id,
+                        'reason_reject_id' => $request->_reasonInject[$key],
+                        'content' => $request->_content[$key],
+                        'amount' => $request->_amount[$key],
+                        'parameters' => data_get($request->table2_parameters, $key),
+                        'created_user' => $userId,
+                        'updated_user' => $userId,
+                    ];
+                } else {
+                    $keynew = $key - 1;
+                    $data->item_of_claim[$keynew]->updated_user = $userId;
+                    $data->item_of_claim[$keynew]->reason_reject_id = $request->_reasonInject[$key];
+                    $data->item_of_claim[$keynew]->content = $request->_content[$key];
+                    $data->item_of_claim[$keynew]->parameters = data_get($request->table2_parameters, $key);
+                    $data->item_of_claim[$keynew]->amount = $request->_amount[$key];
+                }
+            }
+             //delete
+            $dataDel = ItemOfClaim::whereNotIn('id', array_filter($request->_idItem))->where('claim_id', $data->id);
+            $dataDel->delete();
+            // update
+            $data->push();
+            // new season price
+            $data->item_of_claim()->createMany($dataItemNew);
+        } else {
+            $dataDel = ItemOfClaim::where('claim_id', $data->id);
+            $dataDel->delete();
+        } // update and create new tour_set
+        //end
+        
         if($request->status == 1){
             $arrUserId = User::whereHas("roles", function($q){ $q->where("name", "Medical"); })->pluck('id')->toArray();
             $content = Auth::User()->name . " yêu cầu hỗ trợ tư vấn Claim work sheet : <a href = '" . 

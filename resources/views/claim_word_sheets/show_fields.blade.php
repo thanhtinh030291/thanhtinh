@@ -178,8 +178,8 @@
 <div>
     <p class="font-weight-bold">CLAIM ASSESSMENT</p>
     <div class="row ml-1">
-        <div class="col-md-6">
-            <h6>BENEFIT <button class="add_benefit_button">Add Benefit</button></h6>
+        <div class="col-md-4">
+            <h6>BENEFIT  <button class="add_benefit_button">Add Benefit</button></h6>
             <div id="field_benefit">
 
             </div>
@@ -194,14 +194,9 @@
             </div>
             
         </div>
-        <div class="col-md-6">
-            <h6>REJECT</h6>
-            @foreach ($claim->item_of_claim as $item)
-                <div class="form-group row">
-                    <label for="staticEmail" class="col-sm-6 col-form-label text-right ">{{$item->content}}</label>
-                    {{ Form::text(null, $item->amount, ['class'=>"form-control col-sm-4 reject_input" , 'readonly']) }}
-                </div>
-            @endforeach
+        <div class="col-md-12 mt-2">
+            <h6>REJECT  <button type="button" class="" onclick="addInputItem()">Add Reject</button></h6>
+            @include('layouts.admin.form_reject')
                 
         </div>
     </div>
@@ -341,7 +336,7 @@
 </div><br>
 <div>
     <p class="font-weight-bold">Status : {{ data_get(config("constants.statusWorksheet"), $claimWordSheet->status)}}</p>
-    
+    <p class="text-danger">Vui lòng lưu lại trước khi tải work sheet về máy!!!!</p>
     <div class="form-check form-check-inline">
         <button type="submit" name="status" value="1" class="btn btn-info m-2">{{config("constants.statusWorksheet.1")}}</button>
         @if(Auth::user()->hasRole(['Admin', 'Medical']))

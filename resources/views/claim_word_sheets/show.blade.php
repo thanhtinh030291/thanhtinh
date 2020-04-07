@@ -78,7 +78,7 @@ function addInputItem(){
     
     
     $("#empty_item").before(clone);
-    $('input[name="_content['+count+']"]').attr({"required": "true", 'data-id': count, 'id': 'table2_name_'+count, 'onclick':"setIdPaste(this)"});
+    $('input[name="_content['+count+']"]').attr({"required": "true", 'data-id': count, 'id': 'table2_name_'+count});
     $('input[name="_amount['+count+']"]').attr({"required": "true", 'id': 'table2_amount_'+count});
     $('select[name="_reasonInject['+count+']"]').addClass('select2').attr('data-id', count);
     $('.select2').select2();
@@ -89,6 +89,46 @@ function addValueItem(content, amount, reasonInject, count, idItem = ""){
     $('input[name="_amount['+count+']"]').val(amount);
     $('select[name="_reasonInject['+count+']"]').val(reasonInject).change();
     $('input[name="_idItem['+count+']"]').val(idItem);
+}
+// ajax template
+function template(e , idElement , table){
+
+var id = e.dataset.id;
+var container = $("#"+idElement);
+$.ajax({
+    url: '/admin/template',
+    type: 'POST',
+    context: e,
+    data: {'search' : e.value},
+})
+.done(function(res) {
+    if(res.status == 'success'){
+            container.empty();
+            container.append(replaceTemplace(res.data, id ,table));
+            loadDatepicker();
+    }else{
+            container.empty();
+    }
+})
+}
+
+// replace template 
+function replaceTemplace(str , id = null , table = ""){
+    var result = str.replace(/\[##Text##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control text-template p-1" required />');
+    result = result.replace(/\[##Date##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="form-control date-template datepicker2 p-1" required />');
+    var nameItem = $('#'+table+'_name_'+id).val() ;
+    nameItem = nameItem ? nameItem : "";
+    result = result.replace(/\[##nameItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_nameItem_'+id+' form-control text-template p-1" value="'+nameItem+'" required readonly/>');
+    var amountItem = $('#'+table+'_amount_'+id).val() ;
+    amountItem = amountItem ? amountItem : " ";
+    result = result.replace(/\[##amountItem##\]/g,'<input type="text" name="'+table+'_parameters['+id+'][]" class="'+table+'_amountItem_'+id+' form-control text-template p-1" value="'+amountItem.replace(/(,)/gm, ".")+'" required readonly/>');
+    result = result.replace(/\[Begin\]|\[End\]/g,'');
+
+    return result;
+}
+
+function binding2Input(e , classElement){
+    $('.'+classElement).val(e.value.replace(/(,)/gm, "."));
 }
 $(document).ready(function() {
      //type of visit
@@ -122,15 +162,15 @@ $(document).ready(function() {
         $(wrapper).append('<div class = "row mt-2"><input type="text" name="request_qa[]" class="form-control col-md-11"/><button type="button" class="col-md-1 remove_field_btn btn btn-danger">X</button></div>'); //add input box
 
     });
-    var count = 1;
+    var count_benefit = 1;
     $('.add_benefit_button').click(function(e){ //on add input button click
         e.preventDefault();
         var clone = $('#clone_benefit').clone().html();
         clone = clone.replace(/_select2/gm, "select2");
-        clone = clone.replace(/_benefit/gm, "benefit["+count+"]");
+        clone = clone.replace(/_benefit/gm, "benefit["+count_benefit+"]");
         $("#field_benefit").append(clone);
         $('.select2').select2();
-        count++;
+        count_benefit++;
     });
    
     //benefit
@@ -138,13 +178,13 @@ $(document).ready(function() {
     $.each(data_benefit, function (index, value) {
         var clone = $('#clone_benefit').clone().html();
         clone = clone.replace(/_select2/gm, "select2");
-        clone = clone.replace(/_benefit/gm, "benefit["+count+"]");
+        clone = clone.replace(/_benefit/gm, "benefit["+count_benefit+"]");
         $("#field_benefit").append(clone);
         var bef = Object.values(value);
-        $('select[name="benefit['+count+'][content]"]').val(bef[0]).change();
-        $('input[name="benefit['+count+'][amount]"]').val(bef[1]);
+        $('select[name="benefit['+count_benefit+'][content]"]').val(bef[0]).change();
+        $('input[name="benefit['+count_benefit+'][amount]"]').val(bef[1]);
         $('.select2').select2();
-        count++;           
+        count_benefit++;           
     });
     $('.remove_field').click(function(e){ //user click on remove text
         e.preventDefault(); $(this).parent('div').remove(); 
@@ -156,6 +196,14 @@ $(document).on("click", ".remove_field_btn", function(){
     $(this).parent('div').remove();
     add_amt();
 });
+$(document).on("change", ".reject_input", function(){
+    add_amt();
+});
+
+$(document).on("click", ".delete_btn", function(){
+    add_amt();
+});
+
 function add_amt(){
     var sumrj = 0 ;
     var sumbe = 0 ;
@@ -195,6 +243,37 @@ function upload_summary(){
     });
 }
 
+$(document).on('ready', function() {
+
+    var content = @json(old('_content'));
+    content = content ? content : @json($claim->item_of_claim->pluck('content'));
+    var amount = @json(old('_amount'));
+    amount = amount ? amount : @json($claim->item_of_claim->pluck('amount'));
+    var reasonInject = @json(old('_reasonInject'));
+    reasonInject = reasonInject ? reasonInject : @json($claim->item_of_claim->pluck('reason_reject_id'));
+    var idItem = @json(old('_idItem'));
+    idItem = idItem ? idItem : @json($claim->item_of_claim->pluck('id'));
+    if(content != null){
+        $.each(content, function (index, value) {
+            addInputItem();
+            addValueItem(content[index],amount[index],reasonInject[index],count-1,idItem[index]);
+        });
+    }
+    var table2_parameters = @json(old('table2_parameters')? array_values(old('table2_parameters')) : old('table2_parameters')) ;
+    table2_parameters = table2_parameters ? table2_parameters : @json($claim->item_of_claim->pluck('parameters'));
+    if(table2_parameters != null){
+        setTimeout(function(){
+            $.each(table2_parameters, function (index, value) {
+                var i = parseInt(index)+1;
+                var el = $('input[name="table2_parameters['+i+'][]"]');
+                $.each(el, function (index2, value2) {
+                    $(this).val(value[index2]);
+                });
+            });
+            add_amt();
+        },1500);
+    }
+});
 </script>
 
     
