@@ -63,7 +63,7 @@ class ClaimController extends Controller
             $q->select('id','claim_id','status', 'info');
         };
         $conditionHasExport = function ($q) use ($request){
-            
+            $q->where('status',$request->letter_status);
         };
         $conditionHasExport_team = function ($q) use ($request){
             $team = $request->team;
@@ -81,7 +81,7 @@ class ClaimController extends Controller
             $datas = $datas->whereHas('export_letter_last', $conditionHasExport_team);
         }
         if($request->letter_status != null){
-            $datas = $datas->whereHas('export_letter_last', $conditionHasExport)->get()->where('export_letter_last.status', $request->letter_status);
+            $datas = $datas->whereHas('export_letter_last', $conditionHasExport);
         }
         
 
@@ -93,6 +93,7 @@ class ClaimController extends Controller
             $list_team = [];
         }
         $finder['team'] = $team;
+        $finder['letter_status'] = $request->letter_status;
         return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status', 'list_team', 'team'));
     }
     
