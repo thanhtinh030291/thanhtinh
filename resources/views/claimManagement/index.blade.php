@@ -38,12 +38,12 @@
                             {{ Form::text('created_at', data_get($finder,'created_at'), ['class' => 'form-control datepicker']) }}
 
                             {{ Form::label('team', 'Team', ['class' => 'labelas']) }}
-                            {{ Form::select('team', $list_team, $team, ['id' => 'created_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
+                            {{ Form::select('team', $list_team, $team, ['id' => 'tearm_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
                             
                         </div>
                         <div class="col-md-6">
                             {{ Form::label('letter_status', 'Latest Letter status', ['class' => 'labelas']) }}
-                            {{ Form::select('letter_status', $list_status, data_get($finder, 'letter_status'), ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
+                            {{ Form::select('letter_status', $list_status, data_get($finder, 'letter_status'), ['id' => 'letter_status', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
 
                             {{ Form::label('updated_user', __('message.account_edit'), ['class' => 'labelas']) }}
                             {{ Form::select('updated_user', $admin_list, data_get($finder, 'updated_user'), ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}

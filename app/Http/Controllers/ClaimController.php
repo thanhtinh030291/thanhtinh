@@ -67,10 +67,16 @@ class ClaimController extends Controller
         };
         $conditionHasExport_team = function ($q) use ($request){
             $team = $request->team;
-            $array_user = MANTIS_USER_GROUP::where('team_id', $team)->pluck('user_id')->toArray();
-            $array_user = MANTIS_USER::whereIn('id',$array_user)->pluck('email')->toArray();
-            $array_user = User::whereIn('email',$array_user)->pluck('id')->toArray();
-            $q->whereIn('created_user', $array_user);
+            if($team == 'team_i'){
+                $array_user = User::whereHas("roles", function($qr){ $qr->where("name", "Claim Independent"); })->get()->pluck('id')->toArray();
+                $q->whereIn('created_user', $array_user);
+            }else{
+                $array_user = MANTIS_USER_GROUP::where('team_id', $team)->pluck('user_id')->toArray();
+                $array_user = MANTIS_USER::whereIn('id',$array_user)->pluck('email')->toArray();
+                $array_user = User::whereIn('email',$array_user)->pluck('id')->toArray();
+                $q->whereIn('created_user', $array_user);
+            }
+            
         };
         $datas = Claim::findByParams($finder)
         ->with(['export_letter_last' => $conditionExport]);
@@ -89,9 +95,11 @@ class ClaimController extends Controller
         $list_status = RoleChangeStatus::pluck('name','id');
         try {
             $list_team = MANTIS_TEAM::pluck('name','id');
+            $list_team['team_i']= 'Team Độc Lập';
         } catch (Exception $e) {
             $list_team = [];
         }
+        
         $finder['team'] = $team;
         $finder['letter_status'] = $request->letter_status;
         return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status', 'list_team', 'team'));
