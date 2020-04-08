@@ -310,7 +310,7 @@ var config3 = {
     "insertdatetime media nonbreaking save table contextmenu directionality",
     "emoticons template paste textcolor colorpicker textpattern",
     ],
-    toolbar: ["insertfile undo redo | styleselect | bold italic sizeselect fontselect fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+    toolbar: ["insertfile undo redo | styleselect | bold italic sizeselect fontselect fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media ",
             "Note"
             ],
     relative_urls: false,
