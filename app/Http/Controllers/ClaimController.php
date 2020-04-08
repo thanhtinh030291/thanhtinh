@@ -319,6 +319,8 @@ class ClaimController extends Controller
      */
     public function update(formClaimRequest $request, Claim $claim)
     {
+
+        
     
         $data = $claim;
         $userId = Auth::User()->id;
@@ -430,18 +432,6 @@ class ClaimController extends Controller
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'data' => $request->template
             ];
-            if($export_letter->letter_template->letter_payment == null){
-                $export_letter->wait = [  'user' => $user->id,
-                        'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => $request->template
-                ];
-            }else{
-                $export_letter->wait = [  'user' => $user->id,
-                    'created_at' => Carbon::now()->toDateTimeString(),
-                    'data' => $request->template,
-                    'data_payment' => $this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id)['content']
-                ];
-            }
         }else{
             $status_change = $request->status_change;
             $status_change = explode("-",$status_change);
@@ -496,20 +486,18 @@ class ClaimController extends Controller
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter,$list_level );
             if($level->signature_accepted_by == $status_change[0] || ($user_create->hasRole('Claim Independent') && $user->hasRole('Manager'))){
+               
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => data_get($export_letter->wait, "data"),
                     ];
                 }else{
-                    $data_v['content'] =  data_get($export_letter->wait, "data_payment");
-                    $approve_user_sign = getUserSign($user->id);
-                    $data_v['content'] = str_replace('[[$per_approve_sign]]', $approve_user_sign, $data_v['content']);
-                    $data_v['content'] = str_replace("<div id='per_approve_sign' style='display:none'></div>", $approve_user_sign, $data_v['content']);
+                    
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => data_get($export_letter->wait, "data"),
-                        'data_payment' =>  $data_v['content']
+                        'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content'])
                     ];
                     
                 }
@@ -524,7 +512,7 @@ class ClaimController extends Controller
                         $export_letter->approve = [  'user' => $user->id,
                             'created_at' => Carbon::now()->toDateTimeString(),
                             'data' => data_get($export_letter->wait, "data"),
-                            'data_payment' => $this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content']
+                            'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content'])
                         ];
                         
                     }
@@ -690,7 +678,6 @@ class ClaimController extends Controller
             $data = $this->letter($request->letter_template_id , $request->claim_id, $request->export_letter_id);
         }
         
-        
         header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
         header("Expires: 0");//no-cache
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
@@ -709,37 +696,17 @@ class ClaimController extends Controller
             $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
             $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
-            $data['content'] =  $export_letter->approve['data_payment'];
-            $data['namefile'] = $namefile;
-        }elseif($export_letter->wait != null){
-            $letter = LetterTemplate::findOrFail($request->letter_template_id);
-            $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
-            $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-            $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
-            $data['content'] =  $export_letter->wait['data_payment'];
+            $data['content'] =  base64_decode($export_letter->approve['data_payment']);
             $data['namefile'] = $namefile;
         }else{
             $data = $this->letterPayment($request->letter_template_id , $request->claim_id , $request->export_letter_id);
         }
-         $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
-        $mpdf->WriteHTML('
-        <div style="text-align: right; font-weight: bold; ">
-            <img src="'.asset("images/header.jpg").'" alt="head">
-        </div>');
-        $mpdf->SetHTMLFooter('
-        <div style="text-align: right; font-weight: bold;">
-            <img src="'.asset("images/footer.png").'" alt="foot">
-        </div>');
-        $mpdf->WriteHTML( 
-            '<div style="padding-top: 20px">'
-            .$data['content'].
-            '</div>'
-        );
+        
         header("Content-Type: application/pdf");
         header("Expires: 0");//no-cache
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
         header("content-disposition: attachment;filename={$data['namefile']}.pdf");
-        echo $mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN);
+        echo $data['content'];
     }
 
     //ajax 
@@ -762,27 +729,26 @@ class ClaimController extends Controller
             $user = Auth::user();
             $approve_user_sign = getUserSign($user->id);
             $data['content'] = str_replace('[[$per_approve_sign]]', $approve_user_sign, $data['content']);
-            $data['content'] = str_replace("<div id='per_approve_sign' style='display:none'></div>", $approve_user_sign, $data['content']);
         }else{
-            $data['content'] = str_replace('[[$per_approve_sign]]', "<div id='per_approve_sign' style='display:none'></div>", $data['content']);
+            $data['content'] = str_replace('[[$per_approve_sign]]', "", $data['content']);
         }
         
 
-        // $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
-        // $mpdf->WriteHTML('
-        // <div style="text-align: right; font-weight: bold; ">
-        //     <img src="'.asset("images/header.jpg").'" alt="head">
-        // </div>');
-        // $mpdf->SetHTMLFooter('
-        // <div style="text-align: right; font-weight: bold;">
-        //     <img src="'.asset("images/footer.png").'" alt="foot">
-        // </div>');
-        // $mpdf->WriteHTML( 
-        //     '<div style="padding-top: 20px">'
-        //     .$data['content'].
-        //     '</div>'
-        // );      
-        return ['content' => $data['content'] , 'namefile' => $data['namefile']];
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
+        $mpdf->WriteHTML('
+        <div style="text-align: right; font-weight: bold; ">
+            <img src="'.asset("images/header.jpg").'" alt="head">
+        </div>');
+        $mpdf->SetHTMLFooter('
+        <div style="text-align: right; font-weight: bold;">
+            <img src="'.asset("images/footer.png").'" alt="foot">
+        </div>');
+        $mpdf->WriteHTML( 
+            '<div style="padding-top: 20px">'
+            .$data['content'].
+            '</div>'
+        );      
+        return ['content' => $mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN) , 'namefile' => $data['namefile']];
     }
     // export letter
     public function letter($letter_template_id , $claim_id ,$export_letter_id = null){
@@ -1208,6 +1174,3 @@ class ClaimController extends Controller
         return $data;
     }
 }
-
-
-
