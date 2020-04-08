@@ -243,6 +243,31 @@ function upload_summary(){
     });
 }
 
+function sendSortedFile(){
+    $(".loader").show();
+    axios.get("{{route('claimWordSheets.sendSortedFile', $claimWordSheet->id)}}")
+    .then(function (response) {
+        $(".loader").fadeOut("slow");
+        console.log(response);
+        $.notify({
+            icon: 'fa fa-bell',
+            title: '<strong>Hệ Thống</strong>',
+            message: response.data.message
+        },{
+            placement: {
+                from: "top",
+                align: "right"
+            },
+            type: 'success'
+        });
+        
+    })
+    .catch(function (error) {
+        $(".loader").fadeOut("slow");
+        alert(error);
+    });
+}
+
 $(document).on('ready', function() {
 
     var content = @json(old('_content'));
