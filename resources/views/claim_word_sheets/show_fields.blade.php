@@ -336,7 +336,7 @@
 </div><br>
 <div>
     <p class="font-weight-bold">Status : {{ data_get(config("constants.statusWorksheet"), $claimWordSheet->status)}}</p>
-    <p class="text-danger">Vui lòng lưu lại trước khi tải work sheet về máy!!!!</p>
+    <p class="text-danger">Vui lòng lưu lại trước khi tải work sheet về máy hoặc lưu worksheet vào tệp đã sắp sếp  !!!!</p>
     <div class="form-check form-check-inline">
         <button type="submit" name="status" value="1" class="btn btn-info m-2">{{config("constants.statusWorksheet.1")}}</button>
         @if(Auth::user()->hasRole(['Admin', 'Medical']))
