@@ -530,11 +530,7 @@ class ClaimController extends Controller
             $status_notifi = RoleChangeStatus::findOrFail($status_change[0])->name;
             $url_n = route('claim.show',['claim' => $claim_id]);
             $text_notifi = "Claim: <a href='{$url_n}'>{$url_n}</a> đã chuyển sang trạng thái {$status_notifi} bởi {$user->name}";
-            $arr_id = $export_letter->log->pluck('causer_id')->unique();
-            $arr_id = $arr_id->reject(function ($value, $key) use($user){
-                return $value == $user->id;
-            });
-            $arr_id = $arr_id->toArray();
+            $arr_id = $export_letter->log->pluck('causer_id')->unique()->toArray();
             notifi_system($text_notifi, $arr_id);
         }
         
