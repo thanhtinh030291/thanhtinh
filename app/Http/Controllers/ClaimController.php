@@ -787,15 +787,20 @@ class ClaimController extends Controller
             $paymentAmt = $time_pay;
         }else{
             $time_pay = [];
+            $sum_tf_amt = 0;
             foreach ($export_letter->data_cps as $key => $value) {
-                $time_pay[] = "Thanh toán lần {$value['PAYMENT_TIME']}: " . formatPrice($value['TF_AMT']);
+                if($value['TF_DATE'] != null){
+                    $time_pay[] = "Thanh toán lần {$value['PAYMENT_TIME']}: " . formatPrice($value['TF_AMT']);
+                    $sum_tf_amt += $value['TF_AMT'];
+                }
+                
             };
             if(collect($export_letter->data_cps)->sum('TF_AMT') != $sumAppAmt){
-                $time_pay[] = 'Thanh toán bổ sung: ' . formatPrice($sumAppAmt - collect($export_letter->data_cps)->sum('TF_AMT'));
+                $time_pay[] = 'Thanh toán bổ sung: ' . formatPrice($sumAppAmt - $sum_tf_amt);
             }
             $time_pay[] = 'Tổng Cộng: '.formatPrice($sumAppAmt);
             $time_pay = implode("<br>",$time_pay);
-            $paymentAmt = $sumAppAmt - collect($export_letter->data_cps)->sum('TF_AMT');
+            $paymentAmt = $sumAppAmt - $sum_tf_amt;
         }
 
         $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);

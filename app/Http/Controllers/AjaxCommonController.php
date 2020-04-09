@@ -137,6 +137,8 @@ class AjaxCommonController extends Controller
         ]);
         $response = $client->request("POST", config('constants.api_cps').'get_payment/'. $cl_no , ['form_params'=>$body]);
         $response =  json_decode($response->getBody()->getContents());
+        $response = collect($response)->where('TF_DATE', "!=", null);
+        
         $claim = Claim::where('code_claim_show',  $cl_no)->first();
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $approve_amt = $HBS_CL_CLAIM->sumAppAmt;

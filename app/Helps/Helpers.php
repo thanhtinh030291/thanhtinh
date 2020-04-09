@@ -473,10 +473,7 @@ function note_pay($export_letter){
             $tf_amt = formatPrice($value['TF_AMT']);
             if($value['TF_DATE'] != null){
                 $htm .= "<p style='font-size: 10px; padding: 0px ;margin: 0px'>Payment lần {$value['PAYMENT_TIME']} ngày {$tf_date} thanh toán cho khách hàng {$tf_amt} đồng.</p>";
-            }else{
-                $htm .= "<p style='font-size: 10px; padding: 0px ;margin: 0px'>Payment lần {$value['PAYMENT_TIME']}  thanh toán cho khách hàng {$tf_amt} đồng.</p>";
             }
-            
         }
     }
     if(data_get($export_letter->info,'PCV_EXPENSE', 0) != 0){
