@@ -423,6 +423,7 @@ class ClaimController extends Controller
     {
         
         $claim_id = $request->claim_id;
+        $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $id = $request->id;
         $user = Auth::User();
         $export_letter = ExportLetter::findOrFail($id);
@@ -478,7 +479,7 @@ class ClaimController extends Controller
                     foreach ($to_user as $key => $value) {
                         $request2 = new Request([
                             'user' => $value,
-                            'content' => 'Letter yêu cầu tiến hành xác nhận bởi '.$user->name.' Vui lòng kiểm tra lại thông tin tại : 
+                            'content' => 'Letter của claim '.$claim->code_claim_show.' yêu cầu tiến hành xác nhận bởi '.$user->name.' Vui lòng kiểm tra lại thông tin tại : 
                             <a href="'.route('claim.show',$claim_id).'">'.route('claim.show',$claim_id).'</a>'
                         ]);
                         $send_mes = new SendMessageController();
@@ -530,13 +531,17 @@ class ClaimController extends Controller
             if($status_change[1] == 'rejected'){
                 $status_notifi = RoleChangeStatus::findOrFail($status_change[0])->name;
                 $url_n = route('claim.show',['claim' => $claim_id]);
-                $text_notifi = "Claim: <a href='{$url_n}'>{$url_n}</a> đã chuyển sang trạng thái {$status_notifi} bởi {$user->name}";
-                $arr_id = $export_letter->log->pluck('causer_id')->unique()->toArray();
+                $text_notifi = "Claim: <a href='{$url_n}'>{$url_n}</a> đã chuyển sang trạng thái <span class='text-danger font-weight-bold' >{$status_notifi}</span> bởi {$user->name}";
+                $arr_id = $export_letter->log->pluck('causer_id')->unique();
+                $arr_id = $arr_id->reject(function ($value, $key) use($user){
+                    return $value == $user->id;
+                });
+                $arr_id = $arr_id->toArray();
                 notifi_system($text_notifi, $arr_id);
             }else{
                 $status_notifi = RoleChangeStatus::findOrFail($status_change[0])->name;
                 $url_n = route('claim.show',['claim' => $claim_id]);
-                $text_notifi = "Claim: <a href='{$url_n}'>{$url_n}</a> đã chuyển sang trạng thái {$status_notifi} bởi {$user->name}";
+                $text_notifi = "Claim: {$claim->code_claim_show} Link <a href='{$url_n}'>{$url_n}</a> đã chuyển sang trạng thái <span class='text-success font-weight-bold' > {$status_notifi}</span> bởi {$user->name}";
                 $arr_id = [$user_create->id];
                 notifi_system($text_notifi, $arr_id);
             }
