@@ -661,6 +661,7 @@ class ClaimController extends Controller
             'updated_user' => $userId,
             'info' => ['approve_amt' => $request->apv_hbs , 'PCV_EXPENSE' => $request->PCV_EXPENSE , "DEBT_BALANCE" => $request->DEBT_BALANCE ],
             'data_cps' => data_get($data_cps,'original.data'),
+            'apv_amt' => preg_replace('/[^0-9]/', "", $request->apv_hbs),
         ] ;
         ExportLetter::create($data);
         return redirect('/admin/claim/'. $request->claim_id )->with('Status', 'Letter was successfully created');
