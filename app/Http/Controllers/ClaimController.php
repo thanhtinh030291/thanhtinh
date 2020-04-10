@@ -452,6 +452,7 @@ class ClaimController extends Controller
                     'data' => $request->template
                 ]);
                 $export_letter->note = $data;
+                $export_letter->approve = null;
             }
             if($status_change[1] == 'approved'){
                 if($user->hasRole('Claim')){
@@ -594,7 +595,6 @@ class ClaimController extends Controller
                 'content' => $export_letter->approve['data_payment']
             ];
         }
-
 
         try {
             $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
