@@ -51,4 +51,12 @@ class SettingController extends Controller
         return redirect('/admin/setting');
     }
 
+    public function notifiAllUser(Request $request)
+    {
+        $data = $request->except([]);
+        $text_notifi = $request->message;
+        $arr_id = User::pluck('id');
+        notifi_system($text_notifi, $arr_id);
+    }
+
 }
