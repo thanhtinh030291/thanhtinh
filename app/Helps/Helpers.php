@@ -148,6 +148,15 @@ function loadImg($imageName = null, $dir = null) {
     }
 }
 
+function loadAvantarUser($avantar){
+    if($avantar == 'admin.png'){
+        return '/images/noimage.png';
+    }else{
+        return loadImg($avantar, config('constants.avantarStorage').'thumbnail/');
+    }
+    
+}
+
 function generateLogMsg(Exception $exception) {
     $message = $exception->getMessage();
     $trace   = $exception->getTrace();

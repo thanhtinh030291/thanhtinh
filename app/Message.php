@@ -17,10 +17,10 @@ class Message extends BaseModel
 
     public function userTo()
     {
-        return $this->belongsTo(User::class,'user_to')->select('email','id','name');
+        return $this->belongsTo(User::class,'user_to')->select('email','id','name','avantar');
     }
     public function userFrom()
     {
-        return $this->belongsTo(User::class,'user_from')->select('email','id','name');
+        return $this->belongsTo(User::class,'user_from')->select('email','id','name','avantar');
     }
 }

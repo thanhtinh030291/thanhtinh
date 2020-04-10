@@ -38,11 +38,11 @@
                                 <div class="media">
                                     <div class="media-left">
                                     <div class="media-object">
-                                        <img src="https://api.adorable.io/avatars/71/`+avatar+`.png" class="img-circle" alt="50x50" style="width: 50px; height: 50px;">
+                                        <img src="{{loadAvantarUser($item->userFrom->avantar)}}" class="img-circle" alt="50x50" style="width: 50px; height: 50px;">
                                     </div>
                                     </div>
                                     <div class="media-body">
-                                    <strong class="notification-title">{{$item->userFrom->email}}</strong>
+                                    <strong class="notification-title">{{$item->userFrom->name}}</strong>
                                     <p class="notification-desc">{!!$item->message!!}</p>
                                     <div class="notification-meta">
                                         <small class="timestamp">{{dateConvertToString($item->created_at)}}</small>
