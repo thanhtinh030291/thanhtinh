@@ -848,7 +848,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$tableInfoPayment]]', $tableInfo , $content);
         $content = str_replace('[[$apvAmt]]', formatPrice($sumAppAmt), $content);
         $content = str_replace('[[$time_pay]]', $time_pay, $content);
-        $content = str_replace('[[$paymentAmt]]', $paymentAmt, $content);
+        $content = str_replace('[[$paymentAmt]]', formatPrice($paymentAmt), $content);
         return ['content' => $content , 'namefile' => $namefile];
         
     }
