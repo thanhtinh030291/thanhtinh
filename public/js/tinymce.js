@@ -222,7 +222,7 @@ var config2 = {
     selector: "textarea.editor2",
     branding: false,
     
-    fontsize_formats: "8pt 10pt 11pt 12pt 14pt 18pt 24pt 36pt",
+    fontsize_formats: "8pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 24pt 36pt",
     plugins: [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",
@@ -301,6 +301,7 @@ var config3 = {
     path_absolute : "/",
     selector: "textarea.editor_default",
     branding: false,
+    fontsize_formats: "8pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 24pt 36pt",
     paste_retain_style_properties: "all",
     keep_styles: true,
     schema: "html4",

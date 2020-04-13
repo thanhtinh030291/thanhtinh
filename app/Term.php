@@ -26,7 +26,7 @@ class Term extends BaseModel
                 'group' => explode(".", $this->name)[0],
                 'num'   => explode(".", $this->name)[1],
                 'name' => $this->name,
-                'content' => '<p style="text-align: justify;">Điều ' .$this->name ." ". preg_replace('/(<p>)/', "", $this->description, 1)
+                'content' => '<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Điều ' .$this->name ." ". preg_replace('/(<p>)/', "", $this->description.'</span>', 1)
             ];
         return $q;
     }

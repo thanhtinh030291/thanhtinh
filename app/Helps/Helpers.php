@@ -330,20 +330,20 @@ function payMethod($HBS_CL_CLAIM){
     $payMethod =    '<table style=" border: 1px solid black; border-collapse: collapse;">
                         <tbody>
                         <tr>
-                            <td style="border: 1px solid black; width: 350px;">
+                            <td style="border: 1px solid black; width: 350px; font-family: arial, helvetica, sans-serif">
                                 <p>Tên người thụ hưởng: '.$name_reciever.'</p>
                             </td>
-                            <td style="border: 1px solid black; width: 350px;">
+                            <td style="border: 1px solid black; width: 350px; font-family: arial, helvetica, sans-serif">
                                 <p>'.$info_reciever.'</p>
                             </td>
                         </tr>
                         <tr>
-                            <td style="border: 1px solid black" colspan="2">
+                            <td style="border: 1px solid black; font-family: arial, helvetica, sans-serif" colspan="2">
                                 <p>Tên và địa chỉ Ngân hàng: '.$banking.'</p>
                             </td>
                         </tr>
                         <tr>
-                            <td style="border: 1px solid black" colspan="2">
+                            <td style="border: 1px solid black; font-family: arial, helvetica, sans-serif" colspan="2">
                                 <p>'.$notify.'</p>
                             </td>
                         </tr>
@@ -454,13 +454,13 @@ function CSRRemark_TermRemark($claim){
     foreach ($TermRemark as $key => $value) {
         switch ($key) {
             case '3':
-                $show_term[] = "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 3_ Các quy định loại trừ trách nhiệm bảo hiểm của Quy tắc và điều khoản bảo hiểm Chăm sóc sức khỏe: “Dai-ichi Life Việt Nam sẽ không thanh toán quyền lợi điều trị nội trú và điều trị ngoại trú theo quy định tại Điều 2 của Quy tắc, Điều khoản sản phẩm bổ sung này nếu việc điều trị Bệnh tật/Thương tật của Người được bảo hiểm thuộc bất kỳ trường hợp hoặc sự việc nào sau đây”: </p>";
+                $show_term[] = "<p style='text-align: justify;'><span style='font-family: arial, helvetica, sans-serif;'>Quý khách vui lòng tham khảo Điều 3_ Các quy định loại trừ trách nhiệm bảo hiểm của Quy tắc và điều khoản bảo hiểm Chăm sóc sức khỏe: “Dai-ichi Life Việt Nam sẽ không thanh toán quyền lợi điều trị nội trú và điều trị ngoại trú theo quy định tại Điều 2 của Quy tắc, Điều khoản sản phẩm bổ sung này nếu việc điều trị Bệnh tật/Thương tật của Người được bảo hiểm thuộc bất kỳ trường hợp hoặc sự việc nào sau đây”: </span></p>";
                 break;
             case '2':
-                $show_term[] = "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 2_ Các quyền lợi bảo hiểm của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</p>";
+                $show_term[] = "<p style='text-align: justify;'><span style='font-family: arial, helvetica, sans-serif;'>Quý khách vui lòng tham khảo Điều 2_ Các quyền lợi bảo hiểm của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</span></p>";
                 break;
             default:
-                $show_term[] = "<p style='text-align: justify;'>Quý khách vui lòng tham khảo Điều 1_ Các định nghĩa của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</p>";
+                $show_term[] = "<p style='text-align: justify;'><span style='font-family: arial, helvetica, sans-serif;'>Quý khách vui lòng tham khảo Điều 1_ Các định nghĩa của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe:</span></p>";
                 break;
         }
         $collect_value = collect($value)->sortBy('num');

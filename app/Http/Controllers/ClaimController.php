@@ -866,15 +866,15 @@ class ClaimController extends Controller
                 <table style=" border: 1px solid black; border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th style="border: 1px solid black" rowspan="2">Quyền lợi</th>
-                            <th style="border: 1px solid black">Giới hạn thanh toán</th>
-                            <th style="border: 1px solid black">Số tiền yêu cầu bồi thường (Căn cứ trên chứng từ hợp lệ) </th>
-                            <th style="border: 1px solid black">Số tiền thanh toán</th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif" rowspan="2">Quyền lợi</th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Giới hạn thanh toán</th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Số tiền yêu cầu bồi thường (Căn cứ trên chứng từ hợp lệ) </th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Số tiền thanh toán</th>
                         </tr>
                         <tr>
-                            <th style="border: 1px solid black">Đồng</th>
-                            <th style="border: 1px solid black">Đồng</th>
-                            <th style="border: 1px solid black">Đồng</th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Đồng</th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Đồng</th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Đồng</th>
                         </tr>
                     <thead>';
         $IP = [];
@@ -899,10 +899,10 @@ class ClaimController extends Controller
             // nội trú
         foreach ($IP as $keyIP => $valueIP) {
             $html .= '<tr>
-                    <td style="border: 1px solid black; font-weight:bold;">Nội Trú</td>
-                    <td style="border: 1px solid black">Mỗi bệnh /thương tật </td>
-                    <td style="border: 1px solid black"></td>
-                    <td style="border: 1px solid black"></td>
+                    <td style="border: 1px solid black; font-weight:bold; font-family: arial, helvetica, sans-serif">Nội Trú</td>
+                    <td style="border: 1px solid black; font-family: arial, helvetica, sans-serif">Mỗi bệnh /thương tật </td>
+                    <td style="border: 1px solid black; font-family: arial, helvetica, sans-serif"></td>
+                    <td style="border: 1px solid black; font-family: arial, helvetica, sans-serif"></td>
                 </tr>';
             foreach ($valueIP as $key => $value) {
                 $content =config('constants.content_ip.'.$value->PD_BEN_HEAD->ben_head);
@@ -940,10 +940,10 @@ class ClaimController extends Controller
                 }
                 $html .=    '
                             <tr>
-                                <td style="border: 1px solid black">'.$content.'</td>
-                                <td style="border: 1px solid black">'.$range_pay.'</td>
-                                <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
-                                <td style="border: 1px solid black ; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
+                                <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">'.$content.'</td>
+                                <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">'.$range_pay.'</td>
+                                <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
+                                <td style="border: 1px solid black ; text-align: center; vertical-align: middle; font-family: arial, helvetica, sans-serif">'.formatPrice($value->app_amt).'</td>
                             </tr>
                             ';
                 $sum_pre_amt += $value->pres_amt;
@@ -974,17 +974,17 @@ class ClaimController extends Controller
             if($key == 0){
                 
                 $html .= '<tr>
-                            <td style="border: 1px solid black; font-weight:bold;">Ngoại Trú</td>
-                            <td style="border: 1px solid black">Tối đa  '.formatPrice(data_get($limit,'amt_yr')).' mỗi năm</td>
-                            <td style="border: 1px solid black"></td>
-                            <td style="border: 1px solid black"></td>
+                            <td style="border: 1px solid black ; font-weight:bold; font-family: arial, helvetica, sans-serif">Ngoại Trú</td>
+                            <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Tối đa  '.formatPrice(data_get($limit,'amt_yr')).' mỗi năm</td>
+                            <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif"></td>
+                            <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif"></td>
                         </tr>';
             }
             $html .=    '<tr>
-                            <td style="border: 1px solid black">'.$content.'</td>
-                            <td style="border: 1px solid black">'.$content_limit.'</td>
-                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
-                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
+                            <td style="border: 1px solid black ;font-family: arial, helvetica, sans-serif">'.$content.'</td>
+                            <td style="border: 1px solid black; font-family: arial, helvetica, sans-serif">'.$content_limit.'</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle; font-family: arial, helvetica, sans-serif">'.formatPrice($value->pres_amt).'</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle; font-family: arial, helvetica, sans-serif">'.formatPrice($value->app_amt).'</td>
                         </tr>';
             $sum_pre_amt += $value->pres_amt;
             $sum_app_amt += $value->app_amt;
@@ -996,26 +996,26 @@ class ClaimController extends Controller
             if($key == 0){
                 
                 $html .= '<tr>
-                            <td style="border: 1px solid black; font-weight:bold;">Răng</td>
-                            <td style="border: 1px solid black">Tối đa  '.formatPrice(data_get($limit,'amt_yr')).' mỗi năm</td>
-                            <td style="border: 1px solid black"></td>
-                            <td style="border: 1px solid black"></td>
+                            <td style="border: 1px solid black ; font-weight:bold; font-family: arial, helvetica, sans-serif">Răng</td>
+                            <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Tối đa  '.formatPrice(data_get($limit,'amt_yr')).' mỗi năm</td>
+                            <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif"></td>
+                            <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif"></td>
                         </tr>';
             }
             $html .=    '<tr>
-                            <td style="border: 1px solid black">Chi phí điều trị nha khoa '.$value->RT_DIAGNOSIS->diag_desc_vn.'</td>
-                            <td style="border: 1px solid black">Từ trên '.formatPrice(data_get($limit,'amt')).' mỗi lần thăm khám</td>
-                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->pres_amt).'</td>
-                            <td style="border: 1px solid black; text-align: center; vertical-align: middle;">'.formatPrice($value->app_amt).'</td>
+                            <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Chi phí điều trị nha khoa '.$value->RT_DIAGNOSIS->diag_desc_vn.'</td>
+                            <td style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">Từ trên '.formatPrice(data_get($limit,'amt')).' mỗi lần thăm khám</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle; font-family: arial, helvetica, sans-serif">'.formatPrice($value->pres_amt).'</td>
+                            <td style="border: 1px solid black; text-align: center; vertical-align: middle; font-family: arial, helvetica, sans-serif">'.formatPrice($value->app_amt).'</td>
                         </tr>';
             $sum_pre_amt += $value->pres_amt;
             $sum_app_amt += $value->app_amt;
         }
             $html .=    '<tr>
-                            <th style="border: 1px solid black" colspan="2">Tổng cộng:</th>
+                            <th style="border: 1px solid black ;font-family: arial, helvetica, sans-serif" colspan="2">Tổng cộng:</th>
                             
-                            <th style="border: 1px solid black">'.formatPrice($sum_pre_amt).'</th>
-                            <th style="border: 1px solid black">[[$time_pay]]</th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">'.formatPrice($sum_pre_amt).'</th>
+                            <th style="border: 1px solid black ; font-family: arial, helvetica, sans-serif">[[$time_pay]]</th>
                         </tr>';
 
         $html .= '</tbody>';
