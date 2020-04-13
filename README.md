@@ -132,7 +132,7 @@ key: efaa761e84c08024d437f370eaa2a564
 
 
 # bao tri
-php artisan down --message="Upgrading Database" --retry=60  --allow=192.168.0.16
+php artisan down --message="Upgrading systems" --retry=60  --allow=192.168.0.16
 php artisan up 
 php artisan down --allow=::1 
 

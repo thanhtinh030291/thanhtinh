@@ -36,7 +36,7 @@
 <script src="{{asset('js/imask.js')}}"></script>
 <script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
-
+<script src="{{ asset('js/jsonViewer.js?vision=') .$vision }}"></script>
 
 <script>
 //btn delete table item 
@@ -44,6 +44,9 @@ $(document).on("click", ".delete_btn", function(){
     $(this).closest('tr').remove();
 });
 $(document).ready(function(){
+    var myData = @json(json_decode(trim($member->queryOnline),true));
+    var editor = new JsonEditor('#jsonViewer', myData);
+
     $('.imask-input').mask('AB/SC/MNJK', {'translation': {
         A: {pattern: /[0-3]/},
         B: {pattern: /[0-9]/},

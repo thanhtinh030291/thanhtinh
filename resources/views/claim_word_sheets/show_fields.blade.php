@@ -349,8 +349,8 @@
     </div>
 </div><br>
 
-<div class="modal fade" id="onlineQueryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade bd-example-modal-lg" id="onlineQueryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Online Query</h5>
@@ -359,9 +359,10 @@
         </button>
         </div>
         <div class="modal-body" id="rerulf_online_query" style="max-height: 350px; overflow: scroll;">
-            <pre>
-                {!!var_dump(json_decode(trim($member->queryOnline),true),true)!!}
-            </pre>
+            {{-- <pre>
+                {!!print("<pre>". print_r(json_decode(trim($member->queryOnline),true)) . "</pre>")!!}
+            </pre> --}}
+            <div id="jsonViewer"></div>
         </div>
         <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
