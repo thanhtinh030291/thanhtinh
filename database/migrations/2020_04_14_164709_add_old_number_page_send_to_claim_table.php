@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddApvAmtToExportLetterTable extends Migration
+class AddOldNumberPageSendToClaimTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class AddApvAmtToExportLetterTable extends Migration
      */
     public function up()
     {
-        Schema::table('export_letter', function (Blueprint $table) {
-            $table->bigInteger('apv_amt')->default('0'); 
+        Schema::table('claim', function (Blueprint $table) {
+            //
+            $table->integer('old_number_page_send')->default('0');
         });
     }
 
@@ -25,8 +26,9 @@ class AddApvAmtToExportLetterTable extends Migration
      */
     public function down()
     {
-        Schema::table('export_letter', function (Blueprint $table) {
-            $table->dropColumn('apv_amt');
+        Schema::table('claim', function (Blueprint $table) {
+            //
+            $table->dropColumn('old_number_page_send');
         });
     }
 }

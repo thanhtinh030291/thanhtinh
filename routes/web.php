@@ -31,6 +31,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         Route::resource('claim', 'ClaimController');
         Route::post('/claim/uploadSortedFile/{id}', 'ClaimController@uploadSortedFile')->name('uploadSortedFile');
+        Route::post('/claim/sendSortedFile/{id}', 'ClaimController@sendSortedFile')->name('claim.sendSortedFile');
         
         Route::get('/claim/barcode/{barcode}', 'ClaimController@barcode_link');
 

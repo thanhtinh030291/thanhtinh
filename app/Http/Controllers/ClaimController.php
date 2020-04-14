@@ -105,7 +105,6 @@ class ClaimController extends Controller
         return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status', 'list_team', 'team'));
     }
     
-
     /**
      * Show the form for creating a new resource.
      *
@@ -256,7 +255,6 @@ class ClaimController extends Controller
                 $export_letter[$key]['end_status'] = $level->end_status;
             }
             
-
         }
 
         
@@ -328,8 +326,6 @@ class ClaimController extends Controller
     public function update(formClaimRequest $request, Claim $claim)
     {
 
-        
-    
         $data = $claim;
         $userId = Auth::User()->id;
         $dataUpdate = $request;
@@ -1201,5 +1197,83 @@ class ClaimController extends Controller
             }
         }   
         return $data;
+    }
+
+    public function sendSortedFile(Request $request, $id){
+        $path_file = [] ;
+        $export_letter_id = $request->export_letter_id;
+        $export_letter = ExportLetter::findOrFail($export_letter_id);
+        $user = Auth::User();
+        $claim  = Claim::itemClaimReject()->findOrFail($id);
+        $count_page = 0;
+
+        //get file 
+        if($export_letter->approve != null){
+           
+            $data['content_letter'] = $export_letter->approve['data'];
+            $data['content_payment'] =  isset($export_letter->approve['data_payment']) ? base64_decode($export_letter->approve['data_payment']) : null;
+        }else{
+            
+            $data['content_letter'] = $export_letter->wait['data'];
+            $data['content_payment'] = $export_letter->letter_template->letter_payment ? $this->letterPayment($export_letter->letter_template->letter_payment , $id , $request->export_letter_id) : null;
+        }
+        // save cache payment
+        if($data['content_payment']){
+            $file_name_payment =  md5(Str::random(12).time());
+            Storage::put('public/cache/' . $file_name_payment, $data['content_payment']);
+            $path_file[] = storage_path("app/public/cache/$file_name_payment") ;
+            $mpdf = new \Mpdf\Mpdf();
+            $count_page += $mpdf->SetSourceFile(storage_path("app/public/cache/$file_name_payment"));
+        }
+        
+
+        //save cache letter
+        $file_name_letter =  md5(Str::random(11).time());
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
+        $mpdf->WriteHTML( $data['content_letter']);
+        $pdf = $mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN);
+        Storage::put('public/cache/' . $file_name_letter, $pdf);
+        $path_file[] = storage_path("app/public/cache/$file_name_letter") ;
+        $count_page += count($mpdf->pages);
+        
+        // count number page;
+        if($claim->url_file_sorted && file_exists(storage_path('app/public/sortedClaim/'. $claim->url_file_sorted))){
+            $filename_sorted = storage_path('app/public/sortedClaim/'. $claim->url_file_sorted);
+            $handle = fopen($filename_sorted, "r");
+            $file_contents = stream_get_contents($handle);
+            fclose($handle);
+            if($file_contents != ""){
+                $file_name_man =  md5(Str::random(10).time());
+                Storage::put('public/cache/' . $file_name_man, $file_contents);
+                $path_file[] = storage_path("app/public/cache/$file_name_man") ;
+                if($claim->old_number_page_send != 0){
+                    
+                    $file_name_man_output =  md5(Str::random(9).time());
+                    $FirstPage = $claim->old_number_page_send + 1 ;
+                    $removed = array_pop($path_file);
+                    $cm_run ="gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dFirstPage={$FirstPage} -sOutputFile=". storage_path("app/public/cache/$file_name_man_output") ." ".storage_path("app/public/cache/$file_name_man");
+                    exec($cm_run);
+                    Storage::delete(str_replace(storage_path("app")."/", "", $removed));
+                    $path_file[] = storage_path("app/public/cache/$file_name_man_output");
+                }
+            }
+        }else{
+            $file_name =  md5(Str::random(13).time());
+            Storage::put('public/sortedClaim/' . $file_name .'.pdf', "");
+            $claim->url_file_sorted = $file_name .'.pdf';
+            $claim->push();
+        }
+        $cm_run = "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile=".storage_path("app/public/sortedClaim/{$claim->url_file_sorted}"). 
+        " -dBATCH " . implode(" ",$path_file);
+        exec($cm_run);
+
+        foreach ($path_file as $key => $value){
+            $path_file[$key]  = str_replace(storage_path("app")."/", "", $value);
+        }
+
+        $claim->old_number_page_send = $count_page;
+        $claim->save();
+        Storage::delete($path_file);
+        return redirect('/admin/claim/'.$id)->with('status', __('message.update_claim'));
     }
 }

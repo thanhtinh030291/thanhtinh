@@ -29,32 +29,33 @@ $totalAmount = 0;
             
                 <div class="row">
                     <div class="col-md-8">
-                        {{ Form::label('type','Form default:', array('class' => '')) }} <span class="text-danger"> </span>
-                        <a href="{{$dataImage}}" download>
-                            <img src="{{ asset('images/download-button.png') }}"  width="160" height="80">
-                        </a>
                         <div class="card">
                             <div class="card-body row">
-                                <div class="col-md-4">
+                                <div class="col-md-7">
+                                    
                                     <h5 class="card-title">Request Letter</h5>
                                     <p class="card-text"></p>
                                     {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
                                         {{ Form::hidden('claim_id', $data->id ) }}
-
-                                        {{ Form::label('letter_template_id', __('message.letter_template'), array('class' => 'labelas')) }} <span class="text-danger">*</span>
-                                        {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'letterTemplate', 'class' => 'select2 form-control', 'required')) }}
-                                        {!! Form::button('Send Letter', ['data-toggle' => "modal" ,  
-                                            'data-target' => "#comfirmPaymentModal",
-                                            'type' => 'button', 
-                                            'class' => 'mt-3 btn btn-info' , 
-                                            'onclick' => 'comfirmPayment(this);',
-                                            ]) !!}
+                                        {{ Form::label('letter_template_id', __('message.letter_template'), array('class' => 'labelas')) }}
+                                        <div class="row">
+                                            <div class="col-md-8 pr-0">
+                                                {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'letterTemplate', 'class' => 'select2 form-control', 'required')) }}
+                                            </div>
+                                            <div class="col-md-4 p-0">
+                                                {!! Form::button('Send Letter', ['data-toggle' => "modal" ,  
+                                                'data-target' => "#comfirmPaymentModal",
+                                                'type' => 'button', 
+                                                'class' => ' btn btn-info' , 
+                                                'onclick' => 'comfirmPayment(this);',
+                                                ]) !!}
+                                            </div>
+                                        </div>
                                     {{ Form::close() }}
-                                </div>
-                                <div class="col-md-3">
-                                    <h5 class="card-title">Claim Word Sheet</h5>
+                                    {{-- claimWordSheets --}}
+                                    {{ Form::label('claimWordSheets', 'Claim Word Sheet', array('class' => 'labelas')) }}
                                     @if($data->claim_word_sheet)
-                                    <a target="_blank" href="{{route('claimWordSheets.show', ['claimWordSheet' => $data->claim_word_sheet->id])}}" class="mt-3 btn btn-info">Link Work Sheet</a>
+                                    <a target="_blank" href="{{route('claimWordSheets.show', ['claimWordSheet' => $data->claim_word_sheet->id])}}" class="mt-3 btn btn-info">Link Work Sheet</a><br>
                                     @else
                                         
                                         {{ Form::open(array('url' => route('claimWordSheets.store'))) }}
@@ -63,7 +64,10 @@ $totalAmount = 0;
                                         <button class="btn btn-info" type="submit" value="save">Run</button> 
                                         {{ Form::close() }}
                                     @endif
-                                </div> 
+                                    {{-- payment request  --}}
+                                    {{ Form::label('Payment_Request', 'Payment Request', array('class' => 'labelas')) }}
+                                    <p class="text-danger">Yêu cầu thanh toán chỉ hiển thị khi Issue trên Health Etalk đạt trạng thái Finish! </p>
+                                </div>
                                 <div class="col-md-5">
                                     {{ Form::open(array('url' => '/admin/claim/uploadSortedFile/'.$data->id, 'method'=>'post', 'files' => true))}}
                                     <h5 class="card-title">Tệp đã được sắp sếp</h5>
@@ -94,18 +98,27 @@ $totalAmount = 0;
                             <a class="btn btn-primary col-md-8" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->barcode }}">Link</a>
 
                             {{ Form::label('type',  __('message.account_create'), array('class' => 'col-md-4')) }}
-                            {{ Form::label('type', $admin_list[$data->updated_user] , array('class' => 'col-md-8')) }} 
+                            {{ Form::label('type', $admin_list[$data->updated_user] ." ". $data->created_at, array('class' => 'col-md-8')) }} 
 
                             {{ Form::label('type',  __('message.account_edit'), array('class' => 'col-md-4')) }} 
-                            {{ Form::label('type', $admin_list[$data->updated_user] , array('class' => 'col-md-8')) }}
+                            {{ Form::label('type', $admin_list[$data->updated_user] ." ". $data->updated_at, array('class' => 'col-md-8')) }}
 
-                            {{ Form::label('type',  __('message.date_created'), array('class' => 'col-md-4')) }} 
-                            {{ Form::label('type', $data->created_at , array('class' => 'col-md-8')) }}
+                            {{ Form::label('type',  "Approve Amt HBS", array('class' => 'col-md-4 ')) }}
+                            {{ Form::label('type', "", array( "id" => "apv_hbs_show", 'class' => 'col-md-8 text-danger font-weight-bold')) }}
+                            
+                            {{ Form::label('type',  "Payment History", array('class' => 'col-md-4 ')) }}
+                            <div id="payment_history_show" class="col-md-12 border border-danger p-3 mb-3">
+                            </div>
 
-                            {{ Form::label('type',  __('message.date_updated'), array('class' => 'col-md-4')) }} 
-                            {{ Form::label('type', $data->updated_at , array('class' => 'col-md-8')) }}
+                            {{-- Cấn trừ --}}
 
+                            {{ Form::label('PCV_EXPENSE',  'PCV EXPENSE' , array('class' => 'col-md-4')) }}
+                            {{ Form::text('PCV_EXPENSE_SHOW', null , array('id' => 'PCV_EXPENSE_SHOW','class' => 'col-md-5 item-price form-control'  )) }}
+                            <button class="btn btn-primary col-md-3"><i class="fa fa-share-square-o" aria-hidden="true"></i> CPS</button>
 
+                            {{ Form::label('type',  'DEBT BALANCE' , array('class' => 'col-md-4')) }}
+                            {{ Form::text('DEBT_BALANCE_SHOW', null , array('id' => 'DEBT_BALANCE_SHOW','class' => 'col-md-5 item-price form-control')) }} 
+                            <button class="btn btn-primary col-md-3"><i class="fa fa-share-square-o" aria-hidden="true"></i> CPS</button>
                         </div>
                     </div>
                 </div>
@@ -229,6 +242,12 @@ $totalAmount = 0;
                                         ]) !!}
                                         <br>
                                         {{$item->wait['created_at']}}
+                                        {{ Form::open(array('url' => '/admin/claim/sendSortedFile/'.$data->id, 'method'=>'post', 'files' => true))}}
+                                        {{ Form::hidden('export_letter_id', $item->id ) }}
+                                        {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
+                                        {!! Form::button('<i class="fa fa-repeat"></i> Lưu vào tệp đã sắp sếp', ['type' => 'submit', 'class' => 'btn btn-info btn-xs p-1']) !!}
+                                        {!! Form::close() !!}
+
                                 @endif
                             </td>
                             <td>
@@ -621,7 +640,7 @@ $totalAmount = 0;
             //get info balance
             axios.get("{{ url('admin/getBalanceCPS') }}/{{$data->clClaim->member->memb_ref_no}}/{{$data->code_claim_show}}")
             .then(response => { 
-                console.log(response.data);
+                
                 $('#PCV_EXPENSE').val(formatPrice(response.data.data.PCV_EXPENSE));
                 $('#DEBT_BALANCE').val(formatPrice(response.data.data.DEBT_BALANCE));
             });
@@ -687,6 +706,28 @@ $totalAmount = 0;
                     toggle_switch.html('▼');
                 }
             });
+        });
+        //payment_history_show
+        axios.get("{{ url('admin/getPaymentHistoryCPS') }}/{{$data->code_claim_show}}")
+        .then(function (response) {
+            $.each( response.data.data, function( key, value ) {
+                $("#payment_history_show").append("<p>Lần " + value.PAYMENT_TIME +". " + value.TF_DATE + " : <span class='text-danger font-weight-bold'>" + formatPrice(value.TF_AMT)+ " đ</span></p>");
+            });
+            $('#apv_hbs_show').text(formatPrice(response.data.approve_amt));
+            //get info balance
+            axios.get("{{ url('admin/getBalanceCPS') }}/{{$data->clClaim->member->memb_ref_no}}/{{$data->code_claim_show}}")
+            .then(response => { 
+                $('#PCV_EXPENSE_SHOW').val(formatPrice(response.data.data.PCV_EXPENSE));
+                $('#DEBT_BALANCE_SHOW').val(formatPrice(response.data.data.DEBT_BALANCE));
+            });
+
+            $(".loader").fadeOut("slow");
+            
+        })
+        .catch(function (error) {
+            $(".loader").fadeOut("slow");
+            alert(error);
+            
         });
 
         $('.btn-method').click(function () {

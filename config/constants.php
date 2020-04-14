@@ -100,7 +100,8 @@ return[
         'OSTE' => 'Y hoc thay thế'
     ],
     'token_mantic' => 'jGPFMpQK5nz5f4PRqARovKXe_W3fUoQC',
-    'url_mantic' => 'http://health-etalk.pacificcross.com.vn/',
+    'url_mantic' => 'https://health-etalk.pacificcross.com.vn/',
+    'url_mantic_api' => 'http://192.168.0.235/mantis_dlvn/',
     'url_cps' => 'https://cpsdlvn.pacificcross.com.vn/index.php/mantis/',
     'api_cps' => 'https://cpsdlvn.pacificcross.com.vn/index.php/api/',
     'client_id' => 'ul-2l44e7vq-3t8m-4fqeaxi-6olcepgxweq',
@@ -192,5 +193,11 @@ return[
         110=>'investrequest',
         115=>'askpartner',
         120=>'readyforprocess'
+    ],
+    'payment_method' =>[
+        'TT' => 'Chuyển khoản qua ngân hàng',
+        'CA' => 'Nhận tiền mặt tại ngân hàng',
+        'CQ' => 'Nhận tiền mặt tại văn phòng',
+        'PP' => 'Đóng phí bảo hiểm cho hợp đồng'
     ],
 ];

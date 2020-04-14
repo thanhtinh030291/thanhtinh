@@ -62,7 +62,7 @@ function GetApiMantic($url)
     $client = new \GuzzleHttp\Client([
         'headers' => $headers
     ]);
-    $request = $client->get(config('constants.url_mantic').$url);
+    $request = $client->get(config('constants.url_mantic_api').$url);
     $response = $request->getBody();
     return json_decode($response->getContents(), true);
 }
@@ -81,7 +81,7 @@ function PostApiMantic($url,$body) {
     $client = new \GuzzleHttp\Client([
             'headers' => $headers
         ]);
-    $response = $client->request("POST", config('constants.url_mantic').$url , ['form_params'=>$body]);
+    $response = $client->request("POST", config('constants.url_mantic_api').$url , ['form_params'=>$body]);
 
     return $response;
 }
@@ -96,7 +96,7 @@ function PostApiManticHasFile($url,$body) {
         ]);
       
 
-    $response = $client->request("POST", config('constants.url_mantic').$url , $body);
+    $response = $client->request("POST", config('constants.url_mantic_api').$url , $body);
 
     return $response;
 }
