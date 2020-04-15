@@ -84,7 +84,10 @@
                         @foreach ($datas as $data)
                         <tbody>
                             <tr>
-                                <td>{{$data->code_claim_show}}</td>
+                                <td>
+                                    <p class="p-0 m-0">{{$data->code_claim_show}}</p>
+                                    {{$data->member_name}}
+                                </td>
                                 <td>
                                     @if(isset($data->export_letter[0]->status))
                                         <h4 class="p-0 text-primary">{{ data_get($list_status,  $data->export_letter_last->status, "New") }} </h4>

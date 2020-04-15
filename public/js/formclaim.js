@@ -450,6 +450,7 @@ $(window).load(function() {
             console.log(res.claim.barcode,  res.claim.cl_no );
             $('.barcode').val(res.claim.barcode);
             $('.code_claim_show').val(res.claim.cl_no);
+            $('.member_name').val(res.member.mbr_last_name +' '+res.member.mbr_first_name);
             container.empty();
             container.append('<p class="card-text">Full-Name: '+res.member.mbr_last_name +' '+res.member.mbr_first_name+'</p>')
             .append('<p class="card-text">Member No: '+ res.member.mbr_no +'</p>')

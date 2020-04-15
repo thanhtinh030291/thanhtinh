@@ -39,8 +39,11 @@
                                 
                             </div>
                         </div>
-                        {{ Form::hidden('code_claim_show', old('code_claim_show'), array('class' => 'code_claim_show labelas')) }}
-                        {{ Form::label('barcode', 'barcode', array('class' => 'labelas')) }}
+                        {{ Form::label('member_name', 'Member Name', array('class' => 'labelas')) }}
+                        {{ Form::text('member_name', old('member_name'), array('class' => 'member_name form-control')) }}
+                        {{ Form::label('code_claim_show', 'Code Claim', array('class' => 'labelas')) }}
+                        {{ Form::text('code_claim_show', old('code_claim_show'), array('class' => 'code_claim_show form-control')) }}
+                        {{ Form::label('barcode', 'Barcode', array('class' => 'labelas')) }}
                         {{ Form::text('barcode', old('barcode'), array('id'=>'barcode', 'class' => 'barcode form-control', 'required')) }}
                         <div id="page">
                             <div id="list-page"></div>

@@ -85,6 +85,9 @@ $totalAmount = 0;
                     </div>
                     <div class="col-md-4">
                         <div class="row">
+                            {{ Form::label('type',  'Member Name', array('class' => 'col-md-4')) }}
+                            {{ Form::label('type', $data->member_name , array('class' => 'col-md-8')) }}
+
                             {{ Form::label('type',  __('message.id_claim'), array('class' => 'col-md-4')) }}
                             {{ Form::label('type', $data->code_claim , array('class' => 'col-md-8')) }}
 
