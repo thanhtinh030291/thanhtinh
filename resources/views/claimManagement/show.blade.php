@@ -743,7 +743,7 @@ $totalAmount = 0;
             amount_letter_print();
         });
 
-        var url_file_sorted =   '{{ $data->url_file_sorted ?  asset("") . config('constants.sotedClaimStorage') . $data->url_file_sorted  : ''}}' ;
+        var url_file_sorted =   '{{ $data->url_file_sorted ?  asset("") . config('constants.sotedClaimStorage') . $data->url_file_sorted . "?v=" . time()  : ''}}' ;
         var sorted_file_name = '{{$data->url_file_sorted}}';
         var sorted_file_ext = sorted_file_name !='' ? sorted_file_name.split(".")[1] : 'image';
         switch (sorted_file_ext.toLowerCase()) {
