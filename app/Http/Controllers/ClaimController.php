@@ -790,7 +790,7 @@ class ClaimController extends Controller
         
         $CSRRemark = $CSRRemark_TermRemark['CSRRemark'];
         $TermRemark = $CSRRemark_TermRemark['TermRemark'];
-        $sumAppAmt = $HBS_CL_CLAIM->sumAppAmt ; 
+        $sumAppAmt = (int)$HBS_CL_CLAIM->sumAppAmt ;
         $export_letter = ExportLetter::findOrFail($export_letter_id);
         $note_pay =  note_pay($export_letter);
         if($export_letter->data_cps == null || $export_letter->data_cps == [] ){
@@ -827,7 +827,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
         $content = str_replace('[[$pstAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt), $content);
         $content = str_replace('[[$payMethod]]', $payMethod, $content);
-        $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - $sumAppAmt) , $content);
+        $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - (int)$sumAppAmt) , $content);
         $content = str_replace('[[$claimNo]]', $claim->code_claim_show , $content);
         $content = str_replace('[[$memRefNo]]', $HBS_CL_CLAIM->member->memb_ref_no , $content);
         $content = str_replace('[[$DOB]]', Carbon::parse($HBS_CL_CLAIM->member->dob)->format('d/m/Y') , $content);
@@ -842,7 +842,7 @@ class ClaimController extends Controller
             $content = str_replace('[[$TermRemark]]', implode('',array_unique($TermRemark)) , $content);
         }
         $content = str_replace('[[$tableInfoPayment]]', $tableInfo , $content);
-        $content = str_replace('[[$apvAmt]]', formatPrice($sumAppAmt), $content);
+        $content = str_replace('[[$apvAmt]]', formatPrice((int)$sumAppAmt), $content);
         $content = str_replace('[[$time_pay]]', $time_pay, $content);
         $content = str_replace('[[$paymentAmt]]', formatPrice($paymentAmt), $content);
         return ['content' => $content , 'namefile' => $namefile];

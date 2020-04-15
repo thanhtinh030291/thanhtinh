@@ -142,7 +142,7 @@ class AjaxCommonController extends Controller
         $claim = Claim::where('code_claim_show',  $cl_no)->first();
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $approve_amt = $HBS_CL_CLAIM->sumAppAmt;
-        return response()->json([ 'data' => $response, 'approve_amt' => $approve_amt]);
+        return response()->json([ 'data' => $response, 'approve_amt' => (int)$approve_amt]);
     }
 
     public static function getBalanceCPS($mem_ref_no , $cl_no){
