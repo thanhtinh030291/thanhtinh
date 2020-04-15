@@ -437,6 +437,12 @@ class ClaimController extends Controller
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'data' => $request->template
             ];
+            $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+            $approve_amt = (int)$HBS_CL_CLAIM->sumAppAmt;
+            $export_letter->info = ['approve_amt' => $approve_amt ,
+                                    'PCV_EXPENSE' => data_get($export_letter->info,'PCV_EXPENSE') , 
+                                    "DEBT_BALANCE" => data_get($export_letter->info,'DEBT_BALANCE') ];
+            $export_letter->apv_amt = preg_replace('/[^0-9]/', "", $approve_amt);
         }else{
             $status_change = $request->status_change;
             $status_change = explode("-",$status_change);
