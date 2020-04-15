@@ -134,7 +134,7 @@
         </td>
         <td></td>
         <td>
-            <p class="font-weight-bold">Status:  {!!$member->statusQuery!!}</p>
+            <p class="font-weight-bold">Status:  {!!$claimWordSheet->status_online_query ? $claimWordSheet->status_online_query : $member->statusQuery!!}</p>
         </td>
     </tr>
 

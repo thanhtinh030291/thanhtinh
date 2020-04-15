@@ -381,4 +381,15 @@ var editor_readonly = {
     };
 tinymce.init(editor_readonly);
 
+var editor_not_menu = {
+    selector: "textarea.editor_not_menu",
+    branding: false,
+    menubar:false,
+    toolbar:false,
+    
+    };
+tinymce.init(editor_not_menu);
+
+
+
 
