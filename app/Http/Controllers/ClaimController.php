@@ -256,9 +256,31 @@ class ClaimController extends Controller
             }
             
         }
-
-        
-        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 'listLetterTemplate' , 'list_status_ad', 'user']));
+        try {
+            $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($data->code_claim_show)->getContent(),true);
+            $payment_history = data_get($payment_history_cps,'data_full',[]);
+            $approve_amt = data_get($payment_history_cps,'approve_amt');
+            $present_amt = data_get($payment_history_cps,'present_amt');
+            
+            $payment_method = data_get($payment_history_cps,'payment_method');
+            $pocy_ref_no = data_get($payment_history_cps,'pocy_ref_no');
+            $memb_ref_no = data_get($payment_history_cps,'memb_ref_no');
+            $member_name = data_get($payment_history_cps,'member_name');
+            $balance_cps = json_decode(AjaxCommonController::getBalanceCPS($data->clClaim->member->memb_ref_no , $data->code_claim_show)->getContent(),true);
+            $balance_cps = collect(data_get($balance_cps, 'data_full'));
+            $tranfer_amt = (int)$approve_amt - (int)collect($payment_history)->sum('TF_AMT')-$balance_cps->sum('DEBT_BALANCE');
+            
+        } catch (\Throwable $th) {
+            $payment_history = [];
+            $approve_amt = 0;
+            $tranfer_amt = 0;
+            $present_amt = 0;
+        }
+        $can_pay_rq = json_decode(json_encode(GetApiMantic('api/rest/plugins/apimanagement/issues/finish/'.$data->barcode)),true);
+        $can_pay_rq = data_get($can_pay_rq,'status') == 'success' ? 'success' : 'error';
+        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
+        'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
+        'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq']));
     }
 
     public function uploadSortedFile(Request $request, $id){
@@ -1281,5 +1303,75 @@ class ClaimController extends Controller
         $claim->save();
         Storage::delete($path_file);
         return redirect('/admin/claim/'.$id)->with('status', __('message.update_claim'));
+    }
+
+    public function setPcvExpense(Request $request, $id){
+        $pattern = '/[^0-9]+/';
+        $rp = AjaxCommonController::setPcvExpense($request->paym_id, preg_replace($pattern,"",$request->pcv_expense));
+        switch (data_get($rp,'code')) {
+            case '00':
+                return redirect('/admin/claim/'.$id)->with('status', data_get($rp,'description'));
+                break;
+            case '01':
+            case '02':
+                return redirect('/admin/claim/'.$id)->with('errorStatus', data_get($rp,'description'));
+            default:
+                return redirect('/admin/claim/'.$id)->with('errorStatus', 'System error !!! please try again');
+                break;
+        }
+        
+    }
+
+    public function sendPayment(Request $request, $id){
+        $rp = AjaxCommonController::sendPayment($request);
+        switch (data_get($rp,'code')) {
+            case '00':
+                return redirect('/admin/claim/'.$id)->with('status', data_get($rp,'description'));
+                break;
+            case '01':
+            case '02':
+            case '03':
+            case '04':
+            case '05':
+            case '06':
+            case '07':
+            case '08':
+                return redirect('/admin/claim/'.$id)->with('errorStatus', data_get($rp,'description'));
+            default:
+                return redirect('/admin/claim/'.$id)->with('errorStatus', 'System error !!! please try again');
+                break;
+        }
+    }
+
+    public function setDebt(Request $request, $id){
+        $rp = AjaxCommonController::setDebt($request->debt_id);
+        switch (data_get($rp,'code')) {
+            case '00':
+                return redirect('/admin/claim/'.$id)->with('status', data_get($rp,'description'));
+                break;
+            case '01':
+            case '02':
+                return redirect('/admin/claim/'.$id)->with('errorStatus', data_get($rp,'description'));
+            default:
+                return redirect('/admin/claim/'.$id)->with('errorStatus', 'System error !!! please try again');
+                break;
+        }
+    }
+
+    public function payDebt(Request $request, $id){
+        $pattern = '/[^0-9]+/';
+        $rp = AjaxCommonController::payDebt($request , preg_replace($pattern, "", $request->paid_amt));
+        switch (data_get($rp,'code')) {
+            case '00':
+                return redirect('/admin/claim/'.$id)->with('status', data_get($rp,'description'));
+                break;
+            case '01':
+            case '02':
+            case '03':
+                return redirect('/admin/claim/'.$id)->with('errorStatus', data_get($rp,'description'));
+            default:
+                return redirect('/admin/claim/'.$id)->with('errorStatus', 'System error !!! please try again');
+                break;
+        }
     }
 }

@@ -103,9 +103,9 @@ return[
     'url_mantic' => 'https://health-etalk.pacificcross.com.vn/',
     'url_mantic_api' => 'http://192.168.0.235/mantis_dlvn/',
     'url_cps' => 'https://cpsdlvn.pacificcross.com.vn/index.php/mantis/',
-    'api_cps' => 'https://cpsdlvn.pacificcross.com.vn/index.php/api/',
-    'client_id' => 'ul-2l44e7vq-3t8m-4fqeaxi-6olcepgxweq',
-    'client_secret' => 'ukbg95yi3ifcdjiso5rc7kcjqeetxpfv',
+    'api_cps' => 'http://192.168.0.10/cps_dlvn_uat/index.php/api/',
+    'client_id' => 'o2-bslda-6vuop0wj5k-t3-fw57p8ae6',
+    'client_secret' => 'c7cb680c607991a774ecfaab5b9fbf5dec19a503dbfe308c3fd0847378fb44d2',
     'grant_type' => 'client_credentials',
     'url_query_online' => 'https://pcvwebservice.pacificcross.com.vn/bluecross/query_rest.php?id=',
     'claim_result' => [
@@ -199,5 +199,11 @@ return[
         'CA' => 'Nhận tiền mặt tại ngân hàng',
         'CQ' => 'Nhận tiền mặt tại văn phòng',
         'PP' => 'Đóng phí bảo hiểm cho hợp đồng'
+    ],
+    'debt_type' =>[
+        1 => 'nợ được đòi lại',
+        2 => 'nợ nhưng đã cấn trừ qua Claim khác',
+        3 => 'nợ nhưng khách hàng đã gửi trả lại',
+        4 => 'nợ không được đòi lại',
     ],
 ];

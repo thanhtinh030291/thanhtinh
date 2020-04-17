@@ -59,11 +59,18 @@ function GetApiMantic($url)
         'Content-Type' => 'application/json',
         'Authorization' => config('constants.token_mantic'),
     ];
-    $client = new \GuzzleHttp\Client([
-        'headers' => $headers
-    ]);
-    $request = $client->get(config('constants.url_mantic_api').$url);
-    $response = $request->getBody();
+    
+    try {
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $request = $client->get(config('constants.url_mantic_api').$url);
+        $response = $request->getBody();
+    }catch (GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse()->getBody(true);
+    }
+    
+    
     return json_decode($response->getContents(), true);
 }
 

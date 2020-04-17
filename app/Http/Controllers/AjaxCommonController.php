@@ -137,14 +137,28 @@ class AjaxCommonController extends Controller
         ]);
         $response = $client->request("POST", config('constants.api_cps').'get_payment/'. $cl_no , ['form_params'=>$body]);
         $response =  json_decode($response->getBody()->getContents());
+        $response_full = $response;
         $response = collect($response)->where('TF_DATE', "!=", null);
         
         $claim = Claim::where('code_claim_show',  $cl_no)->first();
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $approve_amt = $HBS_CL_CLAIM->sumAppAmt;
-        return response()->json([ 'data' => $response, 'approve_amt' => (int)$approve_amt]);
+        $present_amt = $HBS_CL_CLAIM->sumPresAmt;
+        $payment_method = str_replace("CL_PAY_METHOD_","",$HBS_CL_CLAIM->payMethod);
+        $pocy_ref_no = $HBS_CL_CLAIM->Police->pocy_ref_no;
+        $memb_ref_no = $HBS_CL_CLAIM->member->memb_ref_no;
+        $member_name = $HBS_CL_CLAIM->memberNameCap;
+        return response()->json([ 'data' => $response,
+                                'data_full' => $response_full,
+                                'approve_amt' => (int)$approve_amt , 
+                                'present_amt' => (int)$present_amt ,
+                                'payment_method' => $payment_method,
+                                'pocy_ref_no' => $pocy_ref_no,
+                                'memb_ref_no' => $memb_ref_no,
+                                'member_name' => $member_name,
+                            ]);
     }
-
+    // get  Balance of claim  CPS 
     public static function getBalanceCPS($mem_ref_no , $cl_no){
         $token = getTokenCPS();
         $headers = [
@@ -159,19 +173,114 @@ class AjaxCommonController extends Controller
         ]);
         $response = $client->request("POST", config('constants.api_cps').'get_client_debit/'. $mem_ref_no , ['form_params'=>$body]);
         $response =  json_decode($response->getBody()->getContents());
+        /*
+            There are 4 types:
+            -	1: nợ được đòi lại
+            -	2: nợ nhưng đã cấn trừ qua Claim khác
+            -	3: nợ nhưng khách hàng đã gửi trả lại
+            -	4: nợ không được đòi lại
+        */
         if (empty($response)){
             $data =[
                 'PCV_EXPENSE' => 0,
                 'DEBT_BALANCE' => 0
             ];
+            $data_full =[];
         }else{
             $colect_data = collect($response);
             $data =[
                 'PCV_EXPENSE' => $colect_data->where('DEBT_CL_NO', $cl_no)->sum('PCV_EXPENSE'),
                 'DEBT_BALANCE' => $colect_data->sum('DEBT_BALANCE')
             ];
+            $data_full = collect($response);
         }
 
-        return response()->json([ 'data' => $data]);
+        return response()->json([ 'data' => $data , 'data_full' =>  $data_full]);
+    }
+    
+    
+    public static function setPcvExpense($paym_id, $pcv_expense){
+        $token = getTokenCPS();
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $body = [
+            'access_token' => $token,
+            'pcv_expense' => $pcv_expense,
+            'username'    => Auth::user()->name
+        ];
+
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.api_cps').'set_pcv_expense/'. $paym_id , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        return $response;
+    }
+
+    public static function sendPayment($request){
+        $token = getTokenCPS();
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $body = [
+            'access_token' => $token,
+            'memb_name' => $request->memb_name,
+            'pocy_ref_no' => $request->pocy_ref_no,
+            'memb_ref_no' => $request->memb_ref_no,
+            'pres_amt' => $request->pres_amt,
+            'app_amt' => $request->app_amt,
+            'tf_amt' => $request->tf_amt,
+            'deduct_amt' => $request->deduct_amt,
+            'payment_method' => $request->payment_method,
+            'mantis_id' => $request->mantis_id,
+            'username'    => Auth::user()->name
+        ];
+        
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.api_cps').'send_payment/'. $request->cl_no , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        return $response;
+    }
+
+    public static function setDebt($debt_id){
+        $token = getTokenCPS();
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $body = [
+            'access_token' => $token,
+            'username'    => Auth::user()->name
+        ];
+        
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.api_cps').'set_debt/'. $debt_id , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        return $response;
+    }
+
+    public static function payDebt($request , $paid_amt){
+        $token = getTokenCPS();
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $body = [
+            'access_token' => $token,
+            'paid_amt' => $paid_amt,
+            'username'    => Auth::user()->name,
+            'cl_no' => $request->cl_no,
+            'memb_name' => $request->memb_name,
+        ];
+        
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.api_cps').'pay_debt/'. $request->memb_ref_no , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        return $response;
     }
 }

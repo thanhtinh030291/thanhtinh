@@ -9,9 +9,16 @@ $totalAmount = 0;
     <link href="{{asset('css/fileinput.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/formclaim.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/ckeditor.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('plugins/datatables/dataTables.bootstrap4.min.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <style>
         .disableRow {
             background-color: lightslategrey;
+        }
+        table.dataTable thead>tr>th {
+            font-size: 11px !important;
+        }
+        .modal-lg {
+            max-width: 1200px !important;
         }
     </style>
 @endsection
@@ -67,6 +74,14 @@ $totalAmount = 0;
                                     {{-- payment request  --}}
                                     {{ Form::label('Payment_Request', 'Payment Request', array('class' => 'labelas')) }}
                                     <p class="text-danger">Yêu cầu thanh toán chỉ hiển thị khi Issue trên Health Etalk đạt trạng thái Finish! </p>
+                                    @if($can_pay_rq == 'success'){
+                                            {!! Form::button('Yêu Cầu Finance Thanh Toán', ['data-toggle' => "modal" ,  
+                                                'data-target' => "#requetPaymentModal",
+                                                'type' => 'button', 
+                                                'class' => ' btn btn-info' , 
+                                                
+                                                ]) !!}
+                                    @endif
                                 </div>
                                 <div class="col-md-5">
                                     {{ Form::open(array('url' => '/admin/claim/uploadSortedFile/'.$data->id, 'method'=>'post', 'files' => true))}}
@@ -107,21 +122,42 @@ $totalAmount = 0;
                             {{ Form::label('type', $admin_list[$data->updated_user] ." ". $data->updated_at, array('class' => 'col-md-8')) }}
 
                             {{ Form::label('type',  "Approve Amt HBS", array('class' => 'col-md-4 ')) }}
-                            {{ Form::label('type', "", array( "id" => "apv_hbs_show", 'class' => 'col-md-8 text-danger font-weight-bold')) }}
-                            
-                            {{ Form::label('type',  "Payment History", array('class' => 'col-md-4 ')) }}
-                            <div id="payment_history_show" class="col-md-12 border border-danger p-3 mb-3">
-                            </div>
-
+                            {{ Form::label('type', formatPrice($approve_amt, " đ"), array( "id" => "apv_hbs_show", 'class' => 'col-md-8 text-danger font-weight-bold')) }}
                             {{-- Cấn trừ --}}
-
-                            {{ Form::label('PCV_EXPENSE',  'PCV EXPENSE' , array('class' => 'col-md-4')) }}
-                            {{ Form::text('PCV_EXPENSE_SHOW', null , array('id' => 'PCV_EXPENSE_SHOW','class' => 'col-md-5 item-price form-control'  )) }}
-                            <button class="btn btn-primary col-md-3"><i class="fa fa-share-square-o" aria-hidden="true"></i> CPS</button>
-
-                            {{ Form::label('type',  'DEBT BALANCE' , array('class' => 'col-md-4')) }}
-                            {{ Form::text('DEBT_BALANCE_SHOW', null , array('id' => 'DEBT_BALANCE_SHOW','class' => 'col-md-5 item-price form-control')) }} 
-                            <button class="btn btn-primary col-md-3"><i class="fa fa-share-square-o" aria-hidden="true"></i> CPS</button>
+                            {{ Form::label('type',  "Payment History", array('class' => 'col-md-6 ')) }}
+                            <div id="payment_history_show" class="col-md-12 border border-danger p-3 mb-3">
+                                @foreach ($payment_history as $key => $value )
+                                <p>Lần {{data_get($value, 'PAYMENT_TIME')}} : ({!!data_get($value, 'TF_DATE') ? '<span class="text-success font-weight-bold">Đã thanh toán </span>' . data_get($value, 'TF_DATE') : '<span class="text-info font-weight-bold">Đang Chờ Thanh Toán</span>'!!})
+                                    <span class="text-danger font-weight-bold">{{formatPrice(data_get($value, 'TF_AMT'), " đ")}}</span>
+                                    <button class="btn btn-primary p-1" data-toggle="collapse" data-target="#collapse{{data_get($value, 'PAYM_ID')}}" aria-expanded="true" aria-controls="collapseOne">
+                                        <i class="fa fa-share-square-o" aria-hidden="true"></i> CPS
+                                    </button>
+                                    <div id="collapse{{data_get($value, 'PAYM_ID')}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                                        
+                                            {{ Form::open(array('url' => '/admin/claim/setPcvExpense/'.$data->id, 'method'=>'post', 'files' => true, 'style' => 'width: 100%;'))}}
+                                            <div class="row">
+                                                {{ Form::label('PCV_EXPENSE',  'PCV EXPENSE' , array('class' => 'col-md-4' , 'font-size' => '11px')) }}
+                                                {{ Form::hidden('paym_id',  data_get($value, 'PAYM_ID') ) }}
+                                                {{ Form::text('pcv_expense', null , array('id' => 'PCV_EXPENSE_SHOW','class' => 'col-md-5 item-price form-control'  )) }}
+                                                <button class="btn btn-primary col-md-2">save</button>
+                                            </div>
+                                            {{ Form::close() }}
+                                        
+                                    </div>
+                                </p>
+                                @endforeach
+                            </div>
+                            {{--Dư nợ của user--}}
+                            {{ Form::label('type',  "Member's Debt Balance", array('class' => 'col-md-6 ')) }}
+                            {!! Form::button('View', ['data-toggle' => "modal" ,  
+                                'data-target' => "#debtBalanceModal",
+                                'type' => 'button', 
+                                'class' => ' btn btn-info' ,
+                            ]) !!}
+                            @if($balance_cps->sum('DEBT_BALANCE') > 0)
+                                <p class="text-danger">Khách Hàng đang nợ có thể đòi : <span class="font-weight-bold">{{formatPrice($balance_cps->sum('DEBT_BALANCE'), ' đ')}}</span></p>
+                            @endif
+                            
                         </div>
                     </div>
                 </div>
@@ -365,170 +401,22 @@ $totalAmount = 0;
 </div>
 
 {{-- Modal preview--}}
-<div id="previewModal" class="modal fade bd-example-modal-lg" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
-        <div class="modal-content">
-            {{ Form::open(array('url' => '/admin/waitCheck', 'method' => 'POST')) }}
-                {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
-                {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
-
-                <div class="modal-header">
-                    <h4 class="modal-title">Preview</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    {{ Form::textarea('template', old('template'), ['id' => 'preview_letter', 'class' => 'form-control editor_default']) }}<br>
-                </div>
-                <div class="modal-footer">
-                    {{ Form::hidden('status', config('constants.statusExport.new')) }}<br>
-                    
-                        <button class="btn btn-danger" name="save_letter" value="save">{{ __('message.yes')}} </button>
-                        <button type="button" class="btn btn-secondary btn-cancel-delete" 
-                            data-dismiss="modal">{{ __('message.no') }}</button>
-                </div>
-            {!! Form::close() !!}
-        </div>
-    </div>
-</div>
-
+@include('claimManagement.previewModal')
 {{-- noteOrEditModal--}}
-<div id="noteOrEditModal" class="modal fade bd-example-modal-lg" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
-        <div class="modal-content">
-            {{ Form::open(array('url' => '/admin/waitCheck', 'method' => 'POST')) }}
-                {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
-                {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
+@include('claimManagement.noteOrEditModal')
 
-                <div class="modal-header">
-                    <h4 class="modal-title">Note of Reject </h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    {{ Form::textarea('template', old('template'), ['id' => 'note_letter', 'class' => 'form-control editor_default']) }}<br>
-                    {{ Form::hidden('status', config('constants.statusExport.note_save'), ['id' => 'statusSubmit']) }}<br>
-                    <div class="row">
-                        <div id = 'button_save' class="pull-right">
-                            <button class="btn btn-danger" name="save_letter" value="save"> Save Letter</button> 
-                            <button type="button" class="btn btn-secondary btn-cancel-delete" 
-                                data-dismiss="modal">Close</button>
-                        </div><br>
-                    </div>
-                    
-                </div>
-                <div class="modal-footer bg-info">
-                    <h4 class="modal-title"> Change Status </h4>
-                    <div id='button_items'>
-                    </div>
-                    <div id="button_clone" style="display: none">
-                        <button class="btn btn-secondary m-1" name = 'status_change' value = 'value_default'> text_default </button> 
-                    </div>
-                </div>
-            {!! Form::close() !!}
-        </div>
-    </div>
-</div>
-    
 {{-- Modal viewFile--}}
-<div id="viewFileModal" class="modal fade bd-example-modal-lg" role="dialog">
-    <div class="modal-dialog modal-lg">
-        
-        <!-- Modal content-->
-        <div class="modal-content">
-            {{ Form::open(array('url' => '/admin/changeStatus', 'method' => 'POST')) }}
-                {{ Form::hidden('id', null ,['class' => 'export_letter_id']) }}
-                {{ Form::hidden('claim_id', null ,['class' => 'ex_claim_id']) }}
-
-                <div class="modal-header">
-                    <h4 class="modal-title">View</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    {{ Form::textarea('template', old('template'), ['id' => 'approve_letter', 'class' => 'form-control editor_default']) }}<br>
-                </div>
-                <div class="modal-footer">
-                </div>
-            {!! Form::close() !!}
-        </div>
-    </div>
-</div>
+@include('claimManagement.viewFileModal')
 
 {{-- Modal comfirm payment--}}
-<div id="comfirmPaymentModal" class="modal fade bd-example-modal-lg" role="dialog">
-    <div class="modal-dialog modal-lg">
-        
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Comfirm Letter </h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
-                    {{ Form::hidden('claim_id', $data->id ) }}
-                    {{ Form::hidden('letter_template_id', null, array('id'=>'LetterTemplateId', 'class' => 'form-control')) }}
+@include('claimManagement.comfirmPaymentModal')
 
-                    {{ Form::text(null, null, array('id' => 'textLetter','class' => 'form-control', 'readonly')) }}<br>
+{{-- Modal request payment--}}
+@include('claimManagement.requetPaymentModal')
 
-                    
-                    {{-- HBS --}}
-                    <div class="row mb-2">
-                        {{ Form::label('type',  'Apr Amt HBS' , array('class' => 'col-md-2')) }} 
-                        {{ Form::text('apv_hbs', null , array('id' => 'apv_hbs_in','class' => 'col-md-4 item-price form-control', 'readonly')) }}
-                    </div>
-                    {{-- mantis --}}
-                    <div class="row  mb-2">
-                        {{ Form::label('type',  'Payment History' , array('class' => 'col-md-2')) }} 
-                        <table id="season_price_tbl" class="table table-striped header-fixed col-md-8">
-                            <thead>
-                                <tr>
-                                    <th>Datetime</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr id="empty_item" style="display: none;">
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr id="clone_item" style="display: none;">
-                                    <td>_text_default</td>
-                                    <td>
-                                        {{ Form::text('_amount_default', '_amount_value_default', ['class' => 'item-price form-control p-1 history_amt' , 'readonly']) }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    {{-- Cấn trừ --}}
-                    <div class="row mb-2">
-                        {{ Form::label('PCV_EXPENSE',  'PCV EXPENSE' , array('class' => 'col-md-2')) }}
-                        {{ Form::text('PCV_EXPENSE', null , array('id' => 'PCV_EXPENSE','class' => 'col-md-4 item-price form-control', 'readonly' ,'onchange' => "amount_letter_print()")) }}
-                    </div>
-                    <div class="row mb-2">
-                        {{ Form::label('type',  'DEBT BALANCE' , array('class' => 'col-md-2')) }}
-                        {{ Form::text('DEBT_BALANCE', null , array('id' => 'DEBT_BALANCE','class' => 'col-md-4 item-price form-control', 'readonly' ,'onchange' => "amount_letter_print()")) }}
-                    </div>
-                    <a class="btn btn-success btn-xs" href="{{config("constants.url_cps").$data->barcode}}" target="_blank">Link CPS</a>
-                    <button type="button" class="btn btn-primary" onclick="comfirmPayment()"><i class="fa fa-refresh" aria-hidden="true"></i></button>
-                    {{-- Print letter --}}
-                    <div class="row mb-2">
-                        {{ Form::label('type',  'Amount in Payment Letter' , array('class' => 'text-white col-md-4 bg-secondary')) }} 
-                        {{ Form::text('amount_letter', null , array('id' => 'amount_letter','class' => 'h5 text-danger col-md-4 bg-secondary item-price', 'readonly' )) }}
-                    </div>
-                    <div class="row">
-                        <div id = 'button_save' class="pull-right">
-                            <button class="btn btn-danger" name="save_letter" value="save"> OK</button> 
-                            <button type="button" class="btn btn-secondary btn-cancel-delete" 
-                                data-dismiss="modal">Close</button>
-                        </div><br>
-                    </div>
-                {{ Form::close() }}
-            </div>
-        </div>
-    </div>
-</div>
+{{-- Modal Debt Balance--}}
+@include('claimManagement.debtBalanceModal')
+
 
 @endsection
 
@@ -538,7 +426,8 @@ $totalAmount = 0;
 <script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/jquery-ui.js?vision=') .$vision }}"></script>
 <script src="{{asset('js/popper.min.js?vision=') .$vision }}" ></script>
-
+<script src="{{asset('plugins/datatables/jquery.dataTables.min.js?vision=') .$vision }}" ></script>
+<script src="{{asset('plugins/datatables/dataTables.bootstrap4.min.js?vision=') .$vision }}" ></script>
 <script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script>
     function preview(e){
@@ -700,6 +589,7 @@ $totalAmount = 0;
     }
 
     $(document).ready(function () {
+        $('#debtBalanceTable').DataTable();
         $('.nav-toggle').click(function () {
             var collapse_content_selector = $(this).attr('href');
             var toggle_switch = $(this);
@@ -710,28 +600,6 @@ $totalAmount = 0;
                     toggle_switch.html('▼');
                 }
             });
-        });
-        //payment_history_show
-        axios.get("{{ url('admin/getPaymentHistoryCPS') }}/{{$data->code_claim_show}}")
-        .then(function (response) {
-            $.each( response.data.data, function( key, value ) {
-                $("#payment_history_show").append("<p>Lần " + value.PAYMENT_TIME +". " + value.TF_DATE + " : <span class='text-danger font-weight-bold'>" + formatPrice(value.TF_AMT)+ " đ</span></p>");
-            });
-            $('#apv_hbs_show').text(formatPrice(response.data.approve_amt));
-            //get info balance
-            axios.get("{{ url('admin/getBalanceCPS') }}/{{$data->clClaim->member->memb_ref_no}}/{{$data->code_claim_show}}")
-            .then(response => { 
-                $('#PCV_EXPENSE_SHOW').val(formatPrice(response.data.data.PCV_EXPENSE));
-                $('#DEBT_BALANCE_SHOW').val(formatPrice(response.data.data.DEBT_BALANCE));
-            });
-
-            $(".loader").fadeOut("slow");
-            
-        })
-        .catch(function (error) {
-            $(".loader").fadeOut("slow");
-            alert(error);
-            
         });
 
         $('.btn-method').click(function () {

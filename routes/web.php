@@ -32,6 +32,10 @@ Route::group(['prefix' => 'admin'], function () {
         Route::resource('claim', 'ClaimController');
         Route::post('/claim/uploadSortedFile/{id}', 'ClaimController@uploadSortedFile')->name('uploadSortedFile');
         Route::post('/claim/sendSortedFile/{id}', 'ClaimController@sendSortedFile')->name('claim.sendSortedFile');
+        Route::post('/claim/setPcvExpense/{id}', 'ClaimController@setPcvExpense')->name('claim.setPcvExpense');
+        Route::post('/claim/sendPayment/{id}', 'ClaimController@sendPayment')->name('claim.sendPayment');
+        Route::post('/claim/setDebt/{id}', 'ClaimController@setDebt')->name('claim.setDebt');
+        Route::post('/claim/payDebt/{id}', 'ClaimController@payDebt')->name('claim.payDebt');
         
         Route::get('/claim/barcode/{barcode}', 'ClaimController@barcode_link');
 

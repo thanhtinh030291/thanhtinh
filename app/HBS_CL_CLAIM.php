@@ -114,13 +114,13 @@ class HBS_CL_CLAIM extends  BaseModelDB2
     public function getSumPresAmtAttribute(){
         $clLines = $this->HBS_CL_LINE->toArray();
         $sum = array_sum(array_column($clLines,'pres_amt'));
-        return $sum;
+        return (int)$sum;
     }
 
     public function getSumAppAmtAttribute(){
         $clLines = $this->HBS_CL_LINE->toArray();
         $sum = array_sum(array_column($clLines,'app_amt'));
-        return $sum;
+        return (int)$sum;
     }
 
     //show RT_DIAGNOSIS
