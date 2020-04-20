@@ -207,9 +207,7 @@ $totalAmount = 0;
                                         
                                         {!! Form::button('Send Etalk', 
                                         [   'type' => 'submit', 
-                                            'class' => 'btn btn-info btn-md' ,
-                                            'onclick'=> 'clickSendEtalk(this)',
-                                            'data-url' => config("constants.url_cps").$data->barcode
+                                            'class' => 'btn btn-info btn-md' 
                                         ]) !!}
                                     </div>
                                 {!! Form::close() !!}
@@ -583,10 +581,7 @@ $totalAmount = 0;
 
     $(".disableRow").find("input,textarea,select").attr("disabled", "disabled");
 
-    function clickSendEtalk(e){
-        var url = e.dataset.url;
-        window.open(url);
-    }
+   
 
     $(document).ready(function () {
         $('#debtBalanceTable').DataTable();

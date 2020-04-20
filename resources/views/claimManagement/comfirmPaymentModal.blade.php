@@ -53,7 +53,6 @@
                         {{ Form::label('type',  'DEBT BALANCE' , array('class' => 'col-md-2')) }}
                         {{ Form::text('DEBT_BALANCE', null , array('id' => 'DEBT_BALANCE','class' => 'col-md-4 item-price form-control', 'readonly' ,'onchange' => "amount_letter_print()")) }}
                     </div>
-                    <a class="btn btn-success btn-xs" href="{{config("constants.url_cps").$data->barcode}}" target="_blank">Link CPS</a>
                     <button type="button" class="btn btn-primary" onclick="comfirmPayment()"><i class="fa fa-refresh" aria-hidden="true"></i></button>
                     {{-- Print letter --}}
                     <div class="row mb-2">
