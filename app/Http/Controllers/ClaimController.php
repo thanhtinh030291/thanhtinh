@@ -1250,7 +1250,7 @@ class ClaimController extends Controller
             $file_name_payment =  md5(Str::random(12).time());
             Storage::put('public/cache/' . $file_name_payment, $data['content_payment']);
             $path_file[] = storage_path("app/public/cache/$file_name_payment") ;
-            $mpdf = new \Mpdf\Mpdf();
+            $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
             $count_page += $mpdf->SetSourceFile(storage_path("app/public/cache/$file_name_payment"));
         }
         
