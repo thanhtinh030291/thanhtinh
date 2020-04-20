@@ -41,6 +41,13 @@ class Claim extends BaseModel
         return $data;
     }
 
+    //get CSR file 
+    public function getCsrFileAttribute(){
+        $csr  = HBS_SY_RPT_IDX::where('rpct_oid','like','%CLSETTRPT%')->where('idx_val',"like","%{$this->code_claim_show}%")->orderBy('upd_date', 'DESC')->get();
+        
+        return $csr;
+    }
+
     public static function storeFile($file ,  $dirUpload){
         $imageName = time() . md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
         $file->storeAs($dirUpload, $imageName);

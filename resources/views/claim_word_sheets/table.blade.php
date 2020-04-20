@@ -15,7 +15,7 @@
         <tbody>
         @foreach($claimWordSheets as $claimWordSheet)
             <tr>
-                <td>{!! $claimWordSheet->claim->code_claim_show !!}</td>
+                <td>{!! isset($claimWordSheet->claim->code_claim_show) ? $claimWordSheet->claim->code_claim_show : " " !!}</td>
                 <td>{!! $claimWordSheet->mem_ref_no !!}</td>
                 <td>{!! $claimWordSheet->claim_resuft ? data_get(config('constants.claim_result'), $claimWordSheet->claim_resuft ) : "" !!}</td>
                 <td>{!! data_get($admin_list, $claimWordSheet->created_user) !!}</td>

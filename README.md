@@ -139,3 +139,4 @@ php artisan down --allow=::1
 gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=combine.pdf -dBATCH 1.pdf 2.pdf
 gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -dFirstPage=1 -dLastPage=2 -sOutputFile=OUTPUT.pdf ORIGINAL.pdf
 
+sudo mount -t cifs -o username=hbs_ial,password=sprite,vers=1.0,_netdev //192.168.148.3/dlvnprod /mnt/thanhtinh

@@ -71,16 +71,20 @@ $totalAmount = 0;
                                         <button class="btn btn-info" type="submit" value="save">Run</button> 
                                         {{ Form::close() }}
                                     @endif
+
+                                    {{ Form::label('CSR_File', 'CSR File ', array('class' => 'labelas')) }}<br>
+                                    {!! Form::button('CSR File', ['data-toggle' => "modal" ,  'data-target' => "#csrModal", 'type' => 'button', 'class' => ' btn btn-info' ]) !!}<br>
+
                                     {{-- payment request  --}}
                                     {{ Form::label('Payment_Request', 'Payment Request', array('class' => 'labelas')) }}
                                     <p class="text-danger">Yêu cầu thanh toán chỉ hiển thị khi Issue trên Health Etalk đạt trạng thái Finish! </p>
                                     @if($can_pay_rq == 'success'){
-                                            {!! Form::button('Yêu Cầu Finance Thanh Toán', ['data-toggle' => "modal" ,  
+                                            {{-- {!! Form::button('Yêu Cầu Finance Thanh Toán', ['data-toggle' => "modal" ,  
                                                 'data-target' => "#requetPaymentModal",
                                                 'type' => 'button', 
                                                 'class' => ' btn btn-info' , 
                                                 
-                                                ]) !!}
+                                                ]) !!} --}}
                                     @endif
                                 </div>
                                 <div class="col-md-5">
@@ -129,9 +133,9 @@ $totalAmount = 0;
                                 @foreach ($payment_history as $key => $value )
                                 <p>Lần {{data_get($value, 'PAYMENT_TIME')}} : ({!!data_get($value, 'TF_DATE') ? '<span class="text-success font-weight-bold">Đã thanh toán </span>' . data_get($value, 'TF_DATE') : '<span class="text-info font-weight-bold">Đang Chờ Thanh Toán</span>'!!})
                                     <span class="text-danger font-weight-bold">{{formatPrice(data_get($value, 'TF_AMT'), " đ")}}</span>
-                                    <button class="btn btn-primary p-1" data-toggle="collapse" data-target="#collapse{{data_get($value, 'PAYM_ID')}}" aria-expanded="true" aria-controls="collapseOne">
+                                    {{-- <button class="btn btn-primary p-1" data-toggle="collapse" data-target="#collapse{{data_get($value, 'PAYM_ID')}}" aria-expanded="true" aria-controls="collapseOne">
                                         <i class="fa fa-share-square-o" aria-hidden="true"></i> CPS
-                                    </button>
+                                    </button> --}}
                                     <div id="collapse{{data_get($value, 'PAYM_ID')}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                                         
                                             {{ Form::open(array('url' => '/admin/claim/setPcvExpense/'.$data->id, 'method'=>'post', 'files' => true, 'style' => 'width: 100%;'))}}
@@ -414,6 +418,9 @@ $totalAmount = 0;
 
 {{-- Modal Debt Balance--}}
 @include('claimManagement.debtBalanceModal')
+
+{{-- Modal CSR File--}}
+@include('claimManagement.csrModal')
 
 
 @endsection

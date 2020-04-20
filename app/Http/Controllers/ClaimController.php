@@ -208,6 +208,8 @@ class ClaimController extends Controller
     public function show(Claim $claim)
     {
         $data = $claim;
+        //get CSR file
+        $CsrFile = $claim->CsrFile;
         $user = Auth::user();
         $admin_list = User::getListIncharge();
         $dirStorage = Config::get('constants.formClaimStorage');
@@ -280,7 +282,7 @@ class ClaimController extends Controller
         $can_pay_rq = data_get($can_pay_rq,'status') == 'success' ? 'success' : 'error';
         return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
-        'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq']));
+        'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq', 'CsrFile']));
     }
 
     public function uploadSortedFile(Request $request, $id){
@@ -619,7 +621,6 @@ class ClaimController extends Controller
                 'content' => $export_letter->approve['data_payment']
             ];
         }
-
         try {
             $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
             $res = json_decode($res->getBody(),true);

@@ -122,7 +122,7 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         $sum = array_sum(array_column($clLines,'app_amt'));
         return (int)$sum;
     }
-
+    
     //show RT_DIAGNOSIS
     public function scopeIOPDiag($query){
         $conditionPlanLimit = function($q){
@@ -144,5 +144,5 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         return $query->with(['HBS_CL_LINE' => $condition]);
     }
     
-
+    
 }
