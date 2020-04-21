@@ -53,6 +53,7 @@ class ClaimController extends Controller
         $admin_list = User::getListIncharge();
 
         $finder = [
+            'budget_check' => $request->budget_check,
             'budget' => $request->budget,
             'code_claim' => $request->code_claim,
             'created_user' => $request->created_user,
@@ -100,7 +101,7 @@ class ClaimController extends Controller
             $datas = $datas->whereHas('export_letter_last', $conditionHasExport);
         }
 
-        if($request->budget != null && $request->budget != "0;300000000" ){
+        if($request->budget != null && $request->budget_check != null ){
             $datas = $datas->whereHas('export_letter_last', $conditionHasBudget);
         }
         

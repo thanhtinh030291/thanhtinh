@@ -53,6 +53,7 @@
                             {{ Form::text('updated_at', data_get($finder, 'updated_at'), ['class' => 'form-control datepicker']) }}
 
                             {{ Form::label('budget', 'Range Of Approve Amt', ['class' => 'labelas']) }}
+                            {{ Form::checkbox('budget_check', 'value',isset($finder['budget_check']) ? true : false ,['class' => 'labelas']) }}
                             {{ Form::text('budget', isset($finder['budget']) ? $finder['budget'] : '', ['id' => "rangePrimary",'class' => ' form-control', 'placeholder' => '']) }}
                             <p id="priceRangeSelected"></P>
                         </div>

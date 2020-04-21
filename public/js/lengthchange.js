@@ -15,6 +15,7 @@ $(document).on('change', '.lengthChange', function() {
 $(document).on('click', '#clearForm', function(){
     var frm = $(this).closest('form');
     frm.find('input[type="text"]').val('');
+    frm.find('input[type="checkbox"]').prop('checked', false);
     frm.find('select').each(function(idx, sel) {
         $(sel).prop('selectedIndex', 0);
     });
