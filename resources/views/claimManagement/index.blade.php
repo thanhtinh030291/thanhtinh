@@ -3,6 +3,7 @@
 @section('title', __('message.google_cloud_vision_API'))
 @section('stylesheets')
     <link href="{{ asset('css/condition_advance.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/ion.rangeSlider.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -50,6 +51,10 @@
                             
                             {{ Form::label('updated_at', __('message.date_updated'), ['class' => 'labelas']) }}
                             {{ Form::text('updated_at', data_get($finder, 'updated_at'), ['class' => 'form-control datepicker']) }}
+
+                            {{ Form::label('budget', 'Range Of Approve Amt', ['class' => 'labelas']) }}
+                            {{ Form::text('budget', isset($finder['budget']) ? $finder['budget'] : '', ['id' => "rangePrimary",'class' => ' form-control', 'placeholder' => '']) }}
+                            <p id="priceRangeSelected"></P>
                         </div>
                     </div>
                     <br>
@@ -132,6 +137,8 @@
 @section('scripts')
 <script src="{{asset('js/lengthchange.js?vision=') .$vision }}"></script>
 <script src="{{asset('js/jquery.imgareaselect.pack.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/ion.rangeSlider.min.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/format-price.js?vision=') .$vision }}"></script>
 <script>
     //ajax select code
 $(window).load(function() {
@@ -153,34 +160,23 @@ $(window).load(function() {
             cache: true
         }
     });
-    //load info of claim
-    $(document).on("change","#code_claim",function(){
-        resultApplicant(this.value);
+    
+    $("#rangePrimary").ionRangeSlider({
+    type: "double",
+    grid: true,
+    min: 0,
+    max: 1000000000,
+    from: <?= data_get($finder, 'budget') ? explode(";", data_get($finder, 'budget'))[0] : 0 ?>,
+    to: <?= data_get($finder, 'budget') ? explode(";", data_get($finder, 'budget'))[1] : 300000000 ?> ,
+    prefix: ""
     });
-    $( document ).ready(function() {
-        var id_code = $('#code_claim').val();
-        if(id_code != null){
-            resultApplicant(id_code);
-            
-        }
+    $("#rangePrimary").on("change", function () {
+        var $this = $(this),
+        value = $this.prop("value").split(";");
+        var minPrice = value[0];
+        var maxPrice = value[1];
+        $("#priceRangeSelected").text("Từ " + formatPrice(minPrice) + " đ,  đến " + formatPrice(maxPrice) + "đ");
     });
-
-    function resultApplicant(value){
-        var container = $("#result_applicant");
-        $.ajax({
-            url: "/admin/loadInfoAjaxHBSClaim",
-            type: 'POST',
-            
-            data: {'search' : value},
-        })
-        .done(function(res) {
-            
-            container.empty();
-            container.append('<p class="card-text">Full-Name: '+res.mbr_last_name +' '+res.mbr_first_name+'</p>')
-            .append('<p class="card-text">Member No: '+ res.mbr_no +'</p>')
-            .append('<p class="card-text">Member Ref No: '+ res.memb_ref_no +'</p>')
-        })
-    }
 });
 </script>
 

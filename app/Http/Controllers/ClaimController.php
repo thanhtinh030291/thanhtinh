@@ -51,7 +51,9 @@ class ClaimController extends Controller
         $itemPerPage = Config::get('constants.paginator.itemPerPage');
         $id_claim =  $request->code_claim;
         $admin_list = User::getListIncharge();
+       
         $finder = [
+            'budget' => $request->budget,
             'code_claim' => $request->code_claim,
             'created_user' => $request->created_user,
             'created_at' => $request->created_at,
@@ -78,6 +80,14 @@ class ClaimController extends Controller
             }
             
         };
+        $conditionHasBudget = function ($q) use ($request){
+            $budget = explode(";", $request->budget);
+            $searchMinRate = data_get($budget, 0 , 0) ;
+            $searchMaxRate = data_get($budget, 1 , 9999999999);
+            $q->where('apv_amt','>=',$searchMinRate);
+            $q->where('apv_amt','<=',$searchMaxRate);
+        };
+
         $datas = Claim::findByParams($finder)
         ->with(['export_letter_last' => $conditionExport]);
         $datas = $datas->orderBy('id', 'desc');
@@ -88,6 +98,10 @@ class ClaimController extends Controller
         }
         if($request->letter_status != null){
             $datas = $datas->whereHas('export_letter_last', $conditionHasExport);
+        }
+
+        if($request->budget != null){
+            $datas = $datas->whereHas('export_letter_last', $conditionHasBudget);
         }
         
 
