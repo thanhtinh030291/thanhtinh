@@ -51,7 +51,7 @@ class ClaimController extends Controller
         $itemPerPage = Config::get('constants.paginator.itemPerPage');
         $id_claim =  $request->code_claim;
         $admin_list = User::getListIncharge();
-       
+
         $finder = [
             'budget' => $request->budget,
             'code_claim' => $request->code_claim,
@@ -100,7 +100,7 @@ class ClaimController extends Controller
             $datas = $datas->whereHas('export_letter_last', $conditionHasExport);
         }
 
-        if($request->budget != null){
+        if($request->budget != null && $request->budget != "0;300000000" ){
             $datas = $datas->whereHas('export_letter_last', $conditionHasBudget);
         }
         
