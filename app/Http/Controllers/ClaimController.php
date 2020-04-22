@@ -844,10 +844,8 @@ class ClaimController extends Controller
             $time_pay = [];
             $sum_tf_amt = 0;
             foreach ($export_letter->data_cps as $key => $value) {
-                if($value['TF_DATE'] != null){
                     $time_pay[] = "Thanh toán lần {$value['PAYMENT_TIME']}: " . formatPrice($value['TF_AMT']);
                     $sum_tf_amt += $value['TF_AMT'];
-                }
                 
             };
             if(collect($export_letter->data_cps)->sum('TF_AMT') != $sumAppAmt){
