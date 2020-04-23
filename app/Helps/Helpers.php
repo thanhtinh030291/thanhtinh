@@ -313,6 +313,7 @@ function payMethod($HBS_CL_CLAIM){
             $info_reciever = 'Số tài khoản: '.$HBS_CL_CLAIM->member->cl_pay_acct_no;
             $banking = $HBS_CL_CLAIM->member->bank_name.', '.$HBS_CL_CLAIM->member->cl_pay_bank_branch.', '. $HBS_CL_CLAIM->member->cl_pay_bank_city;
             $notify = "Quý khách vui lòng kiểm tra tài khoản nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán.";
+            $not_show_table = false;
             break;
         case 'CL_PAY_METHOD_CA':
             $name_reciever = $HBS_CL_CLAIM->member->cash_beneficiary_name;
@@ -320,18 +321,21 @@ function payMethod($HBS_CL_CLAIM){
             '.Carbon\Carbon::parse($HBS_CL_CLAIM->member->cash_id_passport_date_of_issue)->format('d/m/Y').', nơi cấp: '. $HBS_CL_CLAIM->member->cash_id_passport_issue_place;
             $banking = $HBS_CL_CLAIM->member->cash_bank_name.', '.$HBS_CL_CLAIM->member->cash_bank_branch.', '.$HBS_CL_CLAIM->member->cash_bank_city ;
             $notify = "Quý khách vui lòng mang theo CMND đến Ngân hàng nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán";
+            $not_show_table = false;
             break;
         case 'CL_PAY_METHOD_CQ':
             $name_reciever = $HBS_CL_CLAIM->member->cash_beneficiary_name;
             $info_reciever = " ";
             $banking = "";
             $notify ="Nhận tiền mặt tại Pacific Cross Vietnam, Lầu 16, Tháp B, Tòa nhà Royal Centre, 235 Nguyễn Văn Cừ, Phường Nguyễn Cư Trinh, Quận 1, TP. HCM (Quý khách vui lòng mang theo CMND đến Văn phòng nhận tiền từ Thứ Hai đến Thứ Sáu hàng tuần sau 1 ngày làm việc kể từ ngày chấp nhận thanh toán)";
+            $not_show_table = false;
             break;
         default:
             $name_reciever = " ";
             $info_reciever = " ";
             $banking = "";
-            $notify = "Số tiền trên được thanh toán cho quý khách bằng hình thức thanh toán đóng phí hợp đồng ". $HBS_CL_CLAIM->Police->pocy_ref_no ;
+            $notify = "“Số tiền trên được thanh toán cho Quý khách bằng hình thức đóng phí bảo hiểm cho hợp đồng số ". $HBS_CL_CLAIM->Police->pocy_ref_no ."”" ;
+            $not_show_table = true;
             break;
     }
     $payMethod =    '<table style=" border: 1px solid black; border-collapse: collapse;">
@@ -356,6 +360,10 @@ function payMethod($HBS_CL_CLAIM){
                         </tr>
                     </tbody>
                     </table>';
+    if($not_show_table){
+        $payMethod = '<p style=" font-family: arial, helvetica, sans-serif ; font-size: 11pt; padding-left: 40px;"><strong>'.$notify.'</strong></p>';
+    }
+    
     return $payMethod;
 }
 
