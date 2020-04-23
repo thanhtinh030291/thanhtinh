@@ -105,13 +105,12 @@
     </div>
 </div>
 <div id="type_of_visit">
-
 </div>
 <div class="input_fields_type_of_visit  ml-4" style="display:none">
     <div class = "row mt-2">
-        <div class="col-3 input-group">
+        <div class="col-2 input-group">
             <div class="input-group-prepend">
-                <div class="input-group-text">Incur date: From</div>
+                <div class="input-group-text">From</div>
             </div>
             {{ Form::text('_type_of_visit[from]', '' , ['class'=>"imask-input form-control col"]) }}
         </div>
@@ -121,13 +120,20 @@
             </div>
             {{ Form::text('_type_of_visit[to]', '' , ['class'=>"imask-input form-control col"]) }}
         </div>
-        <div class="col-6 input-group">
-            <div class="input-group-prepend">
+        <div class="col-4 input-group p-0">
+            <div class="input-group-prepend p-0">
                 <div class="input-group-text">Diagnosis: </div>
             </div>
             {{ Form::text('_type_of_visit[diagnosis]', '' , ['class'=>"form-control col"]) }}
         </div>
-        <button type="button" class="col-1 btn btn-danger remove_field_btn" >X</button>
+        <div class="col-4 input-group p-0">
+            <div class="input-group-prepend p-0">
+                <div class="input-group-text">Prov Name: </div>
+            </div>
+            {{ Form::text('_type_of_visit[prov_name]', '' , ['class'=>"form-control col"]) }}
+        </div>
+        <button style="float: left;
+        position: absolute; left: -15px !important;" type="button" class="btn btn-danger remove_field_btn" >X</button>
     </div>
 </div>
 

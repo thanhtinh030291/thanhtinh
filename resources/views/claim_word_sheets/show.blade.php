@@ -145,7 +145,8 @@ $(document).ready(function() {
         count_type++;
 
     });
-     var data_type_of_visit = @json($claimWordSheet->type_of_visit);
+    
+    var data_type_of_visit = @json($claimWordSheet->type_of_visit);
     $.each(data_type_of_visit, function (index, value) {
         console.log(value);
         var clone = $('.input_fields_type_of_visit').clone().html();
@@ -154,6 +155,7 @@ $(document).ready(function() {
         $('input[name="type_of_visit['+count_type+'][from]"]').val(value.from);
         $('input[name="type_of_visit['+count_type+'][to]"]').val(value.to);
         $('input[name="type_of_visit['+count_type+'][diagnosis]"]').val(value.diagnosis);
+        $('input[name="type_of_visit['+count_type+'][prov_name]"]').val(value.prov_name);
         count_type++;
     });
     //

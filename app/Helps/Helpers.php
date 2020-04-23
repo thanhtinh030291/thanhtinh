@@ -395,6 +395,30 @@ function IOPDiag($HBS_CL_CLAIM){
     return $IOPDiag;
 }
 
+function IOPDiagWookSheet($HBS_CL_CLAIM){
+    $IOPDiag = [];
+        foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $key => $value) {
+            switch ($value->PD_BEN_HEAD->scma_oid_ben_type) {
+                case 'BENEFIT_TYPE_OP':
+                    $IOPDiag[$key]['from'] = Carbon\Carbon::parse($value->incur_date_from)->format('d/m/Y');
+                    $IOPDiag[$key]['to'] = null;
+                    $IOPDiag[$key]['diagnosis'] = $value->RT_DIAGNOSIS->diag_desc_vn;
+                    $IOPDiag[$key]['prov_name'] = $value->prov_name;
+                    break;
+                case 'BENEFIT_TYPE_IP':
+                    $IOPDiag[$key]['from'] = Carbon\Carbon::parse($value->incur_date_from)->format('d/m/Y');
+                    $IOPDiag[$key]['to'] = Carbon\Carbon::parse($value->incur_date_to)->format('d/m/Y');
+                    $IOPDiag[$key]['diagnosis'] = $value->RT_DIAGNOSIS->diag_desc_vn;
+                    $IOPDiag[$key]['prov_name'] = $value->prov_name;
+                    break;
+                default:
+
+                    break;
+            }
+        }
+    
+    return $IOPDiag;
+}
 // print letter benefitOfClaim
 
 function benefitOfClaim($HBS_CL_CLAIM){

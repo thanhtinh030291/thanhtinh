@@ -103,6 +103,10 @@ class ClaimWordSheetController extends Controller
         
         $log_history = $claimWordSheet->log;
         $listReasonReject = ReasonReject::pluck('name', 'id');
+        $data_type_of_visit_hbs = IOPDiagWookSheet($HBS_CL_CLAIM);
+        if($claimWordSheet->type_of_visit == [] || $claimWordSheet->type_of_visit == null){
+            $claimWordSheet->type_of_visit = $data_type_of_visit_hbs;
+        }
         //dd($member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first());
         return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history', 'listReasonReject'));
     }
