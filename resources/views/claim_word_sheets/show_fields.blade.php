@@ -110,30 +110,29 @@
     <div class = "row mt-2">
         <div class="col-2 input-group">
             <div class="input-group-prepend">
-                <div class="input-group-text">From</div>
+                <div class="input-group-text" style="font-size:12px">From</div>
             </div>
-            {{ Form::text('_type_of_visit[from]', '' , ['class'=>"imask-input form-control col"]) }}
+            {{ Form::text('_type_of_visit[from]', '' , ['class'=>"imask-input form-control col", 'style' => 'font-size : 12px']) }}
         </div>
         <div class="col-2 input-group">
             <div class="input-group-prepend">
-                <div class="input-group-text">To</div>
+                <div class="input-group-text" style="font-size:12px">To</div>
             </div>
-            {{ Form::text('_type_of_visit[to]', '' , ['class'=>"imask-input form-control col"]) }}
+            {{ Form::text('_type_of_visit[to]', '' , ['class'=>"imask-input form-control col" , 'style' => 'font-size : 12px']) }}
         </div>
         <div class="col-4 input-group p-0">
             <div class="input-group-prepend p-0">
-                <div class="input-group-text">Diagnosis: </div>
+                <div class="input-group-text p-1" style="font-size:12px">Diagnosis: </div>
             </div>
-            {{ Form::text('_type_of_visit[diagnosis]', '' , ['class'=>"form-control col"]) }}
+            {{ Form::text('_type_of_visit[diagnosis]', '' , ['class'=>"form-control col" , 'style' => 'font-size : 12px']) }}
         </div>
         <div class="col-4 input-group p-0">
             <div class="input-group-prepend p-0">
-                <div class="input-group-text">Prov Name: </div>
+                <div class="input-group-text p-1" style="font-size:12px">Prov Name: </div>
             </div>
-            {{ Form::text('_type_of_visit[prov_name]', '' , ['class'=>"form-control col"]) }}
+            {{ Form::text('_type_of_visit[prov_name]', '' , ['class'=>"form-control col" , 'style' => 'font-size : 12px' ]) }}
         </div>
-        <button style="float: left;
-        position: absolute; left: -15px !important;" type="button" class="btn btn-danger remove_field_btn" >X</button>
+        <button style="float: left; position: absolute; right: -15px !important;" type="button" class="btn btn-danger remove_field_btn" >X</button>
     </div>
 </div>
 

@@ -192,7 +192,11 @@
             <tr>
                 <td>
                     <p><span class="font-weight-bold">Incur date: </span> From {{data_get($item,'from')}} To  {{data_get($item,'to')}} 
-                        <span class="font-weight-bold">Diagnosis: </span>  {{data_get($item,'diagnosis')}} </p>
+                        <span class="font-weight-bold">Diagnosis: </span>  {{data_get($item,'diagnosis')}}
+                        @if(data_get($item,'prov_name'))
+                        <span class="font-weight-bold">Prov name: </span>  {{data_get($item,'prov_name')}}
+                        @endif
+                    </p>
                 </td>
             </tr>
         @endforeach

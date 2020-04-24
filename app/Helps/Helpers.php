@@ -369,26 +369,41 @@ function payMethod($HBS_CL_CLAIM){
 
 // print letter IOPDiag
 
-function IOPDiag($HBS_CL_CLAIM){
+function IOPDiag($HBS_CL_CLAIM, $claim_id){
     $IOPDiag = [];
-        foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $key => $value) {
-            switch ($value->PD_BEN_HEAD->scma_oid_ben_type) {
-                case 'BENEFIT_TYPE_OP':
-                    $from_date = Carbon\Carbon::parse($value->incur_date_from)->format('d/m/Y');
-                    $to_date = Carbon\Carbon::parse($value->incur_date_to)->format('d/m/Y');
-                    $IOPDiag[] = "Chẩn đoán: " . $value->RT_DIAGNOSIS->diag_desc_vn ." <br>
-                                Ngày khám: $from_date tại ". $value->prov_name . ".";
+        $ClaimWordSheet = App\ClaimWordSheet::where('claim_id',$claim_id)->first();
+        if(data_get($ClaimWordSheet,'type_of_visit') == null || data_get($ClaimWordSheet,'type_of_visit') == []){
+            foreach ($HBS_CL_CLAIM->HBS_CL_LINE as $key => $value) {
+                switch ($value->PD_BEN_HEAD->scma_oid_ben_type) {
+                    case 'BENEFIT_TYPE_OP':
+                        $from_date = Carbon\Carbon::parse($value->incur_date_from)->format('d/m/Y');
+                        $to_date = Carbon\Carbon::parse($value->incur_date_to)->format('d/m/Y');
+                        $IOPDiag[] = "Chẩn đoán: " . $value->RT_DIAGNOSIS->diag_desc_vn ." <br>
+                                    Ngày khám: $from_date tại ". $value->prov_name . ".";
+    
+                        break;
+                    case 'BENEFIT_TYPE_IP':
+                        $from_date = Carbon\Carbon::parse($value->incur_date_from)->format('d/m/Y');
+                        $to_date = Carbon\Carbon::parse($value->incur_date_to)->format('d/m/Y');
+                        $IOPDiag[] = "Chẩn đoán: ". $value->RT_DIAGNOSIS->diag_desc_vn ." <br>
+                                Ngày nhập viện: $from_date, ngày xuất viện:  $to_date tại ". $value->prov_name. ".";
+                        break;
+                    default:
+    
+                        break;
+                }
+            }
+        }else{
+            
+            foreach(data_get($ClaimWordSheet,'type_of_visit') as $key => $value){
+                if(data_get($value,'to') == null){
+                    $IOPDiag[] = "Chẩn đoán: " . data_get($value,'diagnosis') ." <br>
+                                Ngày khám: ".data_get($value,'from')." tại ". data_get($value,'prov_name') . ".";
 
-                    break;
-                case 'BENEFIT_TYPE_IP':
-                    $from_date = Carbon\Carbon::parse($value->incur_date_from)->format('d/m/Y');
-                    $to_date = Carbon\Carbon::parse($value->incur_date_to)->format('d/m/Y');
-                    $IOPDiag[] = "Chẩn đoán: ". $value->RT_DIAGNOSIS->diag_desc_vn ." <br>
-                            Ngày nhập viện: $from_date, ngày xuất viện:  $to_date tại ". $value->prov_name. ".";
-                    break;
-                default:
-
-                    break;
+                }else{
+                    $IOPDiag[] = "Chẩn đoán: ".data_get($value,'diagnosis') ." <br>
+                            Ngày nhập viện: ".data_get($value,'from').", ngày xuất viện:  ".data_get($value,'to')." tại ". data_get($value,'prov_name'). ".";
+                }
             }
         }
     $IOPDiag = implode('<br>', array_unique($IOPDiag));

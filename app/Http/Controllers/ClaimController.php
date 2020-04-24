@@ -821,7 +821,7 @@ class ClaimController extends Controller
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
-        $IOPDiag = IOPDiag($HBS_CL_CLAIM);
+        $IOPDiag = IOPDiag($HBS_CL_CLAIM, $claim_id);
         $benefitOfClaim = benefitOfClaim($HBS_CL_CLAIM);
         $police = $HBS_CL_CLAIM->Police;
         $policyHolder = $HBS_CL_CLAIM->policyHolder;

@@ -155,7 +155,7 @@ $(document).ready(function() {
         $('input[name="type_of_visit['+count_type+'][from]"]').val(value.from);
         $('input[name="type_of_visit['+count_type+'][to]"]').val(value.to);
         $('input[name="type_of_visit['+count_type+'][diagnosis]"]').val(value.diagnosis);
-        $('input[name="type_of_visit['+count_type+'][prov_name]"]').val(value.prov_name);
+        $('input[name="type_of_visit['+count_type+'][prov_name]"]').val(value.prov_name); 
         count_type++;
     });
     //
