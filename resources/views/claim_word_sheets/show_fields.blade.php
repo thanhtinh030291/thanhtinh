@@ -184,10 +184,45 @@
 <div>
     <p class="font-weight-bold">CLAIM ASSESSMENT</p>
     <div class="row ml-1">
-        <div class="col-md-4">
-            <h6>BENEFIT  <button class="add_benefit_button">Add Benefit</button></h6>
-            <div id="field_benefit">
+        <div class="col-md-12">
+            <div class="row">
+                <p class="col-md-1">BENEFIT </p> 
+                <div class="col-md-2">
+                    {{ Form::select('_benefit[content]', config('constants.benefit'),null, ["id" =>"benefit_content",'class'=>" select2 form-control " ]) }} 
+                </div>
+                {{ Form::text('_type_of_visit[to]', '' , ["id" =>"benefit_to",'class'=>"imask-input form-control col-md-2" ]) }}
+                {{ Form::text('_benefit[amount]', null, ["id" =>"benefit_amount",'class'=>"item-price form-control col-md-2 "]) }}
+                <button class="add_benefit_button col-md-2">Add Benefit</button>
+            </div>
+            <ul id="tab-list" class="nav nav-tabs mt-2" role="tablist">
 
+                <div id="clone-nav-link" style="display:none">
+                    <li class="nav-link"><a href="#tab_benefit" data-toggle="tab" >_benefit_title<button class="close" type="button" title="Remove this page">×</button></a></li>
+                </div>
+                
+            </ul>
+            <div class="tab-content border border-info mt-1 p-2" id="field_benefit">
+
+                <div id="clone-tab-content" style="display:none">
+                    <div class="tab-pane fade" id="tab_benefit">
+                        
+                        <div class = "row mt-2">
+                            <div class="col-sm-3">
+                                {{ Form::text('_benefit[content]', "", ['class'=>"form-control" , "readonly" ]) }}
+                            </div>
+                            {{ Form::text('_benefit[to]', '' , ['class'=>"imask-input form-control col-md-2", "readonly"]) }}
+                            {{ Form::text('_benefit[amount]', null, ['class'=>"item-price form-control col-sm-4 benefit_input", 'onchange' => 'add_amt()']) }}
+                            {{ Form::hidden('_benefit[key]', '') }}
+                            
+                        </div>
+                        <div class="col-md-12 mt-2 ">
+                            <h6>REJECT  <button type="button" class="" onclick="addInputItem('tab_benefit')">Add Reject</button></h6>
+                            @include('layouts.admin.form_reject')
+                                
+                        </div>
+                    </div>
+
+                </div>
             </div>
             <div id="clone_benefit" style="display: none">
                 <div class = "row mt-2">
@@ -200,11 +235,9 @@
             </div>
             
         </div>
-        <div class="col-md-12 mt-2">
-            <h6>REJECT  <button type="button" class="" onclick="addInputItem()">Add Reject</button></h6>
-            @include('layouts.admin.form_reject')
-                
-        </div>
+        <br>
+        <br>
+        
     </div>
     <div class="row ml-1">
         <div class="col-md-6">

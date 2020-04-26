@@ -326,6 +326,7 @@ class ClaimWordSheetController extends Controller
                         'reason_reject_id' => $request->_reasonInject[$key],
                         'content' => $request->_content[$key],
                         'amount' => $request->_amount[$key],
+                        'benefit' => $request->_benefit[$key],
                         'parameters' => data_get($request->table2_parameters, $key),
                         'created_user' => $userId,
                         'updated_user' => $userId,
@@ -335,6 +336,7 @@ class ClaimWordSheetController extends Controller
                     $data->item_of_claim[$keynew]->updated_user = $userId;
                     $data->item_of_claim[$keynew]->reason_reject_id = $request->_reasonInject[$key];
                     $data->item_of_claim[$keynew]->content = $request->_content[$key];
+                    $data->item_of_claim[$keynew]->benefit = $request->benefit[$key];
                     $data->item_of_claim[$keynew]->parameters = data_get($request->table2_parameters, $key);
                     $data->item_of_claim[$keynew]->amount = $request->_amount[$key];
                 }

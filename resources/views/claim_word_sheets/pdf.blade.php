@@ -264,21 +264,34 @@
             </tr>
         </thead>
         <tbody>
-            
+            @foreach ($claimWordSheet->benefit as $value_benefit  => $item_benefit)
             <tr>
                 <td>
-                    @foreach ($claimWordSheet->benefit as $item)
-                    <p>{{data_get($item, 'content')}} : {{formatPrice(data_get($item, 'amount'))}}</p>
-                    @endforeach
+                    <p>{{data_get($item_benefit, 'content')}} ({{data_get($item_benefit, 'to')}}): {{formatPrice(data_get($item_benefit, 'amount'))}}</p>
                 </td>
                 <td>
                     @if($claim->item_of_claim)
                         @foreach ($claim->item_of_claim as $item)
-                            <p>{{$item->content}} : {{formatPrice($item->amount)}}</p>
+                            @if(preg_replace( '/[^0-9]+/', "", $item->benefit) == data_get($item_benefit, 'key',9999))
+                                <p>{{$item->content}} : {{formatPrice($item->amount)}}</p>
+                            @endif
                         @endforeach
                     @endif
                 </td>
             </tr>
+            @endforeach
+            
+            @if($claim->item_of_claim->whereIn('benefit',[null,'defaultBenefit'])->count() > 0);
+            <tr>
+                <td>Default</td>
+                <td>
+                    @foreach ($claim->item_of_claim->whereIn('benefit',[null,'defaultBenefit']) as $item)
+                        <p>{{$item->content}} : {{formatPrice($item->amount)}}</p>
+                    @endforeach
+                </td>
+            
+            </tr>
+            @endif
             <tr align="center">
                 <th align="center">Claim AMT : {{formatPrice($claimWordSheet->claim_amt)}}</th>
                 <th align="center">PAYABLE AMT : {{formatPrice($claimWordSheet->payable_amt)}}</th>
