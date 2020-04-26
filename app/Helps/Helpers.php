@@ -334,7 +334,7 @@ function payMethod($HBS_CL_CLAIM){
             $name_reciever = " ";
             $info_reciever = " ";
             $banking = "";
-            $notify = "“Số tiền trên được thanh toán cho Quý khách bằng hình thức đóng phí bảo hiểm cho hợp đồng số ". $HBS_CL_CLAIM->Police->pocy_ref_no ."”" ;
+            $notify = " Đóng phí bảo hiểm cho hợp đồng số ". $HBS_CL_CLAIM->Police->pocy_ref_no  ;
             $not_show_table = true;
             break;
     }
@@ -361,7 +361,7 @@ function payMethod($HBS_CL_CLAIM){
                     </tbody>
                     </table>';
     if($not_show_table){
-        $payMethod = '<p style=" font-family: arial, helvetica, sans-serif ; font-size: 11pt; padding-left: 40px;"><strong>'.$notify.'</strong></p>';
+        $payMethod = '<span style=" font-family: arial, helvetica, sans-serif ; font-size: 11pt;"><strong>'.$notify.'</strong></span>';
     }
     
     return $payMethod;
