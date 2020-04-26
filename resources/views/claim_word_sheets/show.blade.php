@@ -256,8 +256,7 @@ $(document).ready(function() {
     // benefi and reject
     var data_benefit = @json($claimWordSheet->benefit);
     $.each(data_benefit, function (index, value) {
-        var bef = Object.values(value);
-        add_benefit(bef[0], bef[1], bef[2]);
+        add_benefit(value.content, value.to, value.amount);
         count_benefit++;           
     });
 
