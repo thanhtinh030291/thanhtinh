@@ -127,7 +127,7 @@ class ClaimController extends Controller
      */
     public function create()
     {
-        $listReasonReject = ReasonReject::pluck('name', 'id');
+        $listReasonReject = ReasonReject::orderBy('id', 'desc')->pluck('name', 'id');
         return view('claimManagement.create', compact('listReasonReject'));
     }
 
@@ -229,7 +229,7 @@ class ClaimController extends Controller
         $admin_list = User::getListIncharge();
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage =  $dirStorage . $data->url_file ;
-        $listReasonReject = ReasonReject::pluck('name', 'id');
+        $listReasonReject = ReasonReject::orderBy('id', 'desc')->pluck('name', 'id');
         $items = $data->item_of_claim;
         $listLetterTemplate = LetterTemplate::pluck('name', 'id');
         
@@ -338,7 +338,7 @@ class ClaimController extends Controller
     {
         $data = $claim;
         $user = Auth::user();
-        $listReasonReject = ReasonReject::pluck('name', 'id');
+        $listReasonReject = ReasonReject::orderBy('id', 'desc')->pluck('name', 'id');
         $dirStorage = Config::get('constants.formClaimStorage');
         $dataImage = [];
         $previewConfig = [];

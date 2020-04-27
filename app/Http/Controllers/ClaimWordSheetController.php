@@ -102,7 +102,7 @@ class ClaimWordSheetController extends Controller
         $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
         
         $log_history = $claimWordSheet->log;
-        $listReasonReject = ReasonReject::pluck('name', 'id');
+        $listReasonReject = ReasonReject::orderBy('id', 'desc')->pluck('name', 'id');
         $data_type_of_visit_hbs = IOPDiagWookSheet($HBS_CL_CLAIM);
         if($claimWordSheet->type_of_visit == [] || $claimWordSheet->type_of_visit == null){
             $claimWordSheet->type_of_visit = $data_type_of_visit_hbs;
