@@ -93,11 +93,13 @@ $totalAmount = 0;
                                     <div class="file-loading">
                                         <input id="url_file_sorted" type="file" name="_url_file_sorted[]" >
                                     </div>
-                                    <div class="d-flex justify-content-right">
-                                        <button type="submit" class="btn btn-primary  btnt" > {{__('message.save')}}</button> <br>
+                                    <div >
+                                        <button type="submit" class="btn btn-primary  btnt" > {{__('message.save')}}</button> 
+                                        <button type="button" onclick="upload_summary()" class="btn btn-primary m-2">Send to summary Etalk</button>
                                     </div>
                                     <!-- End file image -->
                                     {{ Form::close() }}
+                                    
                                 </div> 
                             </div>
                         </div>
@@ -589,10 +591,34 @@ $totalAmount = 0;
         $('.ex_claim_id').val(claim_id);
     
     }
+    function upload_summary(){
+        $(".loader").show();
+        axios.get("{{route('sendSummaryEtalk', $data->id)}}")
+        .then(function (response) {
+            $(".loader").fadeOut("slow");
+            console.log(response.data.status);
+            var type = response.data.status == "error" ? 'danger' : response.data.status;
+            $.notify({
+                icon: 'fa fa-bell',
+                title: '<strong>Hệ Thống</strong>',
+                message: response.data.message
+            },{
+                placement: {
+                    from: "top",
+                    align: "right"
+                },
+                type: type
+            });
+            
+        })
+        .catch(function (error) {
+            $(".loader").fadeOut("slow");
+            alert(error);
+        });
+    }
 
     $(".disableRow").find("input,textarea,select").attr("disabled", "disabled");
 
-   
 
     $(document).ready(function () {
         $('#debtBalanceTable').DataTable();

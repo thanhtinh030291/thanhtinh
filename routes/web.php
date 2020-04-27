@@ -49,6 +49,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/changeStatus','ClaimController@changeStatus')->name('changeStatus');
         Route::post('/waitCheck','ClaimController@waitCheck')->name('waitCheck');
         Route::post('/sendEtalk','ClaimController@sendEtalk')->name('sendEtalk');
+        Route::get('/sendSummaryEtalk/{id}',  'ClaimController@sendSummaryEtalk')->name('sendSummaryEtalk');
 
         
         Route::post('/addNote','ClaimController@addNote')->name('addNote');

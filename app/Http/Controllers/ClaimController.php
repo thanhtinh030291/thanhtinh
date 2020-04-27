@@ -659,7 +659,48 @@ class ClaimController extends Controller
         }
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
-
+    // send summary Etalk
+    public function sendSummaryEtalk($id){
+        
+        $claim = Claim::findOrFail($id);
+        if ($claim->url_file_sorted == null){
+            $mes = "Không có file ! vui lòng thêm và save lại..";
+            $status = 'error';
+        }else{
+            try {
+                $body = [
+                    
+                    'multipart' =>[
+                        [
+                            'name' => 'bug_id',
+                            'contents' => $claim->barcode
+                        ],
+                        [
+                            'name' => 'p_file_name',
+                            'contents' => 'sumary_'.$claim->code_claim_show.Carbon::now()->format('d-m-y').'.pdf'
+                        ],
+                        [
+                            'name'     => 'user_email',
+                            'contents' => Auth::User()->email,
+                        ],
+                        [
+                            'name' => 'p_file',
+                            'contents' => fopen(storage_path("app/public/sortedClaim/{$claim->url_file_sorted}"),'r')
+                        ]
+                    ]
+                ];
+                
+                $res = PostApiManticHasFile('api/rest/plugins/apimanagement/issues/upload_sumary/files', $body);
+                $statusCode =  $res->getStatusCode();
+                $mes = $res->getReasonPhrase();
+                $status = 'success';
+            } catch (Exception $e) {
+                $mes = $e->getMessage();
+                $status = 'error';
+            }
+        }
+        return response()->json(['status' => $status , 'message' => $mes]);
+    }
     public function searchFullText(Request $request)
     {
             $res = ['status' => 'error'];
