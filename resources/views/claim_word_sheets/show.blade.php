@@ -162,10 +162,7 @@ $('.add_benefit_button').click(function(e){ //on add input button click
     var benefit_content = $( "#benefit_content option:selected" ).text();
     var benefit_to = $( "#benefit_to" ).val();
     var benefit_amount = $( "#benefit_amount" ).val();
-    if(benefit_to == ""){
-        alert("Không được để trống giá trị ngày !!");
-        return 1;
-    }
+    
     add_benefit(benefit_content, benefit_to, benefit_amount);
 
 });
@@ -216,8 +213,7 @@ function add_benefit(benefit_content , benefit_to , benefit_amount , default_ben
         }
     add_amt();
     count_benefit++;
-    var tabFirst = $('#tab-list a:last');
-    tabFirst.tab('show');
+    
 }
 $('.remove_field').click(function(e){ //user click on remove text
     e.preventDefault(); $(this).parent('div').remove(); 
@@ -293,7 +289,8 @@ $(document).ready(function() {
             }
         });
     }
-    
+    var tabFirst = $('#tab-list a:last');
+    tabFirst.tab('show');
     add_amt();
 });
 
