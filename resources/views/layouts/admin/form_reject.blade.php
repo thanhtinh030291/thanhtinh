@@ -21,7 +21,7 @@
             </td>
             <td style="width:280px">
                 <div style="width:280px">
-                    {{ Form::select('_reasonInject_default', $listReasonReject,null, ['class' => ' form-control' ,'placeholder' => 'Not Reject' , 'onchange' => 'template(this, "template_idElement", "table2")']) }}
+                    {{ Form::select('_reasonInject_default', $listReasonReject,null, ['class' => ' form-control' , 'onchange' => 'template(this, "template_idElement", "table2")']) }}
                 </div>
             </td>
             
