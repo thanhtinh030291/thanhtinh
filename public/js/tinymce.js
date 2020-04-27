@@ -1,5 +1,6 @@
 var editor_config = {
     language: "en",
+    forced_root_block : false,
     path_absolute: "/",
     selector: "textarea.editor",
     branding: false,
@@ -219,6 +220,7 @@ tinymce.init(editor_config);
 var config2 = {
     language: "en",
     path_absolute: "/",
+    forced_root_block : false,
     selector: "textarea.editor2",
     branding: false,
     
@@ -301,6 +303,7 @@ var config3 = {
     path_absolute : "/",
     selector: "textarea.editor_default",
     branding: false,
+    forced_root_block : false,
     fontsize_formats: "8pt 10pt 11pt 12pt 14pt 16pt 18pt 20pt 24pt 36pt",
     paste_retain_style_properties: "all",
     keep_styles: true,
@@ -344,6 +347,7 @@ tinymce.init(config3);
 var config4 = {
     language: "en",
     path_absolute : "/",
+    forced_root_block : false,
     selector: "textarea.editor_default2",
     branding: false,
     plugins: [
