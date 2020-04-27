@@ -93,8 +93,8 @@ $totalAmount = 0;
                                     <div class="file-loading">
                                         <input id="url_file_sorted" type="file" name="_url_file_sorted[]" >
                                     </div>
-                                    <div >
-                                        <button type="submit" class="btn btn-primary  btnt" > {{__('message.save')}}</button> 
+                                    <div class="mt-2" >
+                                        <button type="submit" class="btn btn-primary " > {{__('message.save')}}</button> 
                                         <button type="button" onclick="upload_summary()" class="btn btn-primary m-2">Send to summary Etalk</button>
                                     </div>
                                     <!-- End file image -->
