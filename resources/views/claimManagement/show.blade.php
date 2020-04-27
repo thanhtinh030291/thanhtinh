@@ -272,6 +272,8 @@ $totalAmount = 0;
                                 @if (isset($item->wait['data']))                                
                                         {!! Form::button('<i class="fa fa-commenting"></i>' . $admin_list[$item->wait['user']], ['data-toggle' => "modal" ,  
                                         'data-target' => "#noteOrEditModal",
+                                        "data-backdrop" => "static" ,
+                                        "data-keyboard" => "false" ,
                                         'type' => 'button', 
                                         'class' => 'btn btn-success btn-xs' , 
                                         'onclick' => 'noteOrEdit(this);',
@@ -301,6 +303,8 @@ $totalAmount = 0;
                                 <div class='btn-group'>
                                     {!! Form::button('<i class="fa fa-eye-slash"></i>', ['data-toggle' => "modal" ,  
                                         'data-target' => "#previewModal",
+                                        'data-backdrop' => "static" ,
+                                        'data-keyboard' => "false", 
                                         'type' => 'button', 
                                         'class' => 'btn btn-success btn-xs' , 
                                         'onclick' => 'preview(this);',
