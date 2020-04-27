@@ -1,5 +1,5 @@
 var editor_config = {
-    language: "en",
+    language: "vi_VN",
     forced_root_block : false,
     path_absolute: "/",
     selector: "textarea.editor",
@@ -218,7 +218,7 @@ tinymce.init(editor_config);
 
 ////type 2
 var config2 = {
-    language: "en",
+    language: "vi_VN",
     path_absolute: "/",
     forced_root_block : false,
     selector: "textarea.editor2",
@@ -299,7 +299,7 @@ tinymce.init(config2);
 
 //default
 var config3 = {
-    language: "en",
+    language: "vi_VN",
     path_absolute : "/",
     selector: "textarea.editor_default",
     branding: false,
@@ -345,7 +345,7 @@ tinymce.init(config3);
 
 //text 
 var config4 = {
-    language: "en",
+    language: "vi_VN",
     path_absolute : "/",
     forced_root_block : false,
     selector: "textarea.editor_default2",
