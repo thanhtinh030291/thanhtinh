@@ -292,6 +292,11 @@ class ClaimController extends Controller
             $approve_amt = 0;
             $tranfer_amt = 0;
             $present_amt = 0;
+            $member_name = "";
+            $pocy_ref_no = "";
+            $memb_ref_no = "";
+            $payment_method = "";
+            $balance_cps = collect([]);
         }
         $can_pay_rq = json_decode(json_encode(GetApiMantic('api/rest/plugins/apimanagement/issues/finish/'.$data->barcode)),true);
         $can_pay_rq = data_get($can_pay_rq,'status') == 'success' ? 'success' : 'error';
