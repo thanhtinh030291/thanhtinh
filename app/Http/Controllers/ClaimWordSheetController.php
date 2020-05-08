@@ -20,6 +20,9 @@ use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use DB;
+use Exception;
+use Log;
 
 class ClaimWordSheetController extends Controller
 {
@@ -107,8 +110,14 @@ class ClaimWordSheetController extends Controller
         if($claimWordSheet->type_of_visit == [] || $claimWordSheet->type_of_visit == null){
             $claimWordSheet->type_of_visit = $data_type_of_visit_hbs;
         }
+        $bnf = $claim->item_of_claim->pluck('benefit')->unique();
+        $bnf = $bnf->map(function ($item, $key) {
+                return preg_replace("/[^0-9]+/", "", $item);;
+            //in your case you will check and set your image source here
+        });
+        $count_bnf = $bnf->max();
         //dd($member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first());
-        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history', 'listReasonReject'));
+        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history', 'listReasonReject','count_bnf'));
     }
 
     public function pdf(ClaimWordSheet $claimWordSheet){
@@ -311,48 +320,61 @@ class ClaimWordSheetController extends Controller
         $data = $request->except(['table2_parameters']);
         if (isset($data["benefit"])){
             $data["benefit"] = array_values($data["benefit"]);
+        }else{
+            $data["benefit"] = null;
         }
         $userId = Auth::User()->id;
         $data['updated_user'] = $userId;
-        $claim_word_sheet = ClaimWordSheet::updateOrCreate(['id' => $claimWordSheet->id], $data);
-        // add reject
-        $data = Claim::findOrFail($claimWordSheet->claim_id);
-        if ($request->_content != null) {
-            $dataItemNew = [];
-            foreach ($request->_idItem as $key => $value) {
-                if ($value == null) {
-                    $dataItemNew[] = [
-                        'claim_id' => $data->id,
-                        'reason_reject_id' => $request->_reasonInject[$key],
-                        'content' => $request->_content[$key],
-                        'amount' => $request->_amount[$key],
-                        'benefit' => $request->_benefit[$key],
-                        'parameters' => data_get($request->table2_parameters, $key),
-                        'created_user' => $userId,
-                        'updated_user' => $userId,
-                    ];
-                } else {
-                    $keynew = $key - 1;
-                    $data->item_of_claim[$keynew]->updated_user = $userId;
-                    $data->item_of_claim[$keynew]->reason_reject_id = $request->_reasonInject[$key];
-                    $data->item_of_claim[$keynew]->content = $request->_content[$key];
-                    $data->item_of_claim[$keynew]->benefit = $request->benefit[$key];
-                    $data->item_of_claim[$keynew]->parameters = data_get($request->table2_parameters, $key);
-                    $data->item_of_claim[$keynew]->amount = $request->_amount[$key];
+        
+        try {
+            DB::beginTransaction();
+            $claim_word_sheet = ClaimWordSheet::updateOrCreate(['id' => $claimWordSheet->id], $data);
+            // add reject
+            $data = Claim::findOrFail($claimWordSheet->claim_id);
+            if ($request->_content != null) {
+                $dataItemNew = [];
+                foreach ($request->_idItem as $key => $value) {
+                    if ($value == null) {
+                        $dataItemNew[] = [
+                            'claim_id' => $data->id,
+                            'reason_reject_id' => $request->_reasonInject[$key],
+                            'content' => $request->_content[$key],
+                            'amount' => $request->_amount[$key],
+                            'benefit' => $request->_benefit[$key],
+                            'parameters' => data_get($request->table2_parameters, $key),
+                            'created_user' => $userId,
+                            'updated_user' => $userId,
+                        ];
+                    } else {
+                        $keynew = $key - 1;
+                        $data->item_of_claim[$keynew]->updated_user = $userId;
+                        $data->item_of_claim[$keynew]->reason_reject_id = $request->_reasonInject[$key];
+                        $data->item_of_claim[$keynew]->content = $request->_content[$key];
+                        $data->item_of_claim[$keynew]->benefit = $request->benefit[$key];
+                        $data->item_of_claim[$keynew]->parameters = data_get($request->table2_parameters, $key);
+                        $data->item_of_claim[$keynew]->amount = $request->_amount[$key];
+                    }
                 }
-            }
-             //delete
-            $dataDel = ItemOfClaim::whereNotIn('id', array_filter($request->_idItem))->where('claim_id', $data->id);
-            $dataDel->delete();
-            // update
-            $data->push();
-            // new season price
-            $data->item_of_claim()->createMany($dataItemNew);
-        } else {
-            $dataDel = ItemOfClaim::where('claim_id', $data->id);
-            $dataDel->delete();
-        } // update and create new tour_set
-        //end
+                //delete
+                $dataDel = ItemOfClaim::whereNotIn('id', array_filter($request->_idItem))->where('claim_id', $data->id);
+                $dataDel->delete();
+                // update
+                $data->save();
+                // new season price
+                $data->item_of_claim()->createMany($dataItemNew);
+
+            } else {
+                $dataDel = ItemOfClaim::where('claim_id', $data->id);
+                $dataDel->delete();
+            } // update and create new tour_set
+            //end
+            DB::commit();
+        } catch (Exception $e) {
+            Log::error(generateLogMsg($e));
+            DB::rollback();
+            $request->session()->flash('errorStatus', __('message.update_fail'));
+            return redirect(route('claimWordSheets.show', $claimWordSheet->id));
+        }
         
         if($request->status == 1){
             $arrUserId = User::whereHas("roles", function($q){ $q->where("name", "Medical"); })->pluck('id')->toArray();

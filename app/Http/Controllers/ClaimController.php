@@ -90,8 +90,7 @@ class ClaimController extends Controller
         };
 
         $datas = Claim::findByParams($finder)
-        ->with(['export_letter_last' => $conditionExport]);
-        $datas = $datas->orderBy('id', 'desc');
+        ->with(['export_letter_last' => $conditionExport])->orderBy('id', 'desc');
         $team = $request->team;
         if($team != null){
             

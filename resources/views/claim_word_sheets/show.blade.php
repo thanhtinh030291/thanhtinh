@@ -176,7 +176,7 @@ $('#tab-list').on('click','.close',function(){
         //display first tab
         add_amt();
 });
-var count_benefit = 1;
+var count_benefit = {{$count_bnf}} == 0 ? 1 : {{$count_bnf}};
 function add_benefit(benefit_content , benefit_to , benefit_amount , default_benefit = null){
     if(default_benefit == null){
         var tabid = benefit_content+count_benefit;
