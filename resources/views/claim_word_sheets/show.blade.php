@@ -176,7 +176,7 @@ $('#tab-list').on('click','.close',function(){
         //display first tab
         add_amt();
 });
-var count_benefit = {{$count_bnf}} == 0 ? 1 : {{$count_bnf}};
+var count_benefit = 1;
 function add_benefit(benefit_content , benefit_to , benefit_amount , default_benefit = null){
     if(default_benefit == null){
         var tabid = benefit_content+count_benefit;
@@ -252,8 +252,7 @@ $(document).ready(function() {
     // benefi and reject
     var data_benefit = @json($claimWordSheet->benefit);
     $.each(data_benefit, function (index, value) {
-        add_benefit(value.content, value.to, value.amount);
-        count_benefit++;           
+        add_benefit(value.content, value.to, value.amount);          
     });
 
     var item_of_claim = @json($claim->item_of_claim);
@@ -289,7 +288,8 @@ $(document).ready(function() {
             }
         });
     }
-    
+    var tabFirst = $('#tab-list a:last');
+    tabFirst.tab('show');
     add_amt();
 });
 
