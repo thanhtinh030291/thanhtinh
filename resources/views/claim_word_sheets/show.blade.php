@@ -289,8 +289,7 @@ $(document).ready(function() {
             }
         });
     }
-    var tabFirst = $('#tab-list a:last');
-    tabFirst.tab('show');
+    
     add_amt();
 });
 
