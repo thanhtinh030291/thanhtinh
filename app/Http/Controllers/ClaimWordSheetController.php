@@ -115,7 +115,7 @@ class ClaimWordSheetController extends Controller
                 return preg_replace("/[^0-9]+/", "", $item);;
             //in your case you will check and set your image source here
         });
-        $count_bnf = $bnf->max();
+        $count_bnf = $bnf->max() == null ? 0 : $bnf->max();
         //dd($member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first());
         return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history', 'listReasonReject','count_bnf'));
     }
