@@ -95,10 +95,10 @@
                                     {{$data->member_name}}
                                 </td>
                                 <td>
-                                    {{-- @if(isset($data->export_letter[0]->status))
+                                    @if($data->export_letter_last)
                                         <h4 class="p-0 text-primary">{{ data_get($list_status,  $data->export_letter_last->status, "New") }} </h4>
                                         <span class="p-1 mb-2 bg-danger text-white col-md-8  align-middle">{{ formatPrice(data_get($data->export_letter_last->info, "approve_amt"), ' đ') }} </span>
-                                    @endif --}}
+                                    @endif
                                 </td>
                                 <td>{{ $admin_list[$data->created_user] }}</td>
                                 <td>{{ $admin_list[$data->updated_user] }}</td>
