@@ -465,6 +465,7 @@ class ClaimController extends Controller
         
         $claim_id = $request->claim_id;
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        $claim->touch();
         $id = $request->id;
         $user = Auth::User();
         $export_letter = ExportLetter::findOrFail($id);
