@@ -222,7 +222,7 @@ $totalAmount = 0;
                                 @if(isset($item->info['note']))
                                     <h6> Added on Etalk</h6>
                                     <span>Note Id : {{data_get($item->info, "note.id")}}</span><br>
-                                    <a class="btn btn-success btn-xs" href="{{config("constants.url_cps").$data->barcode}}" target="_blank">Link CPS</a>
+                                    <a class="btn btn-success btn-xs" href="{{config("constants.url_cps").'mantis/'.$data->barcode}}" target="_blank">Link CPS</a>
                                 @endif
                             </td>
                             <td>

@@ -14,6 +14,11 @@ use App\Policies\LetterTemplatePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
+use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Http\Request;
+use Tymon\JWTAuth\JWT;
+use Tymon\JWTAuth\JWTGuard;
+
 class AuthServiceProvider extends ServiceProvider
 {
     /**

@@ -104,7 +104,10 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('setting/',  'SettingController@index')->name('setting.index')->middleware(['role:Admin']);
         Route::post('setting/update','SettingController@update')->middleware(['role:Admin']);
         Route::post('setting/notifiAllUser','SettingController@notifiAllUser')->middleware(['role:Admin']);
+
+        Route::resource('uncSign', 'UncSignController');
     });
+
 });
 
 Auth::routes();

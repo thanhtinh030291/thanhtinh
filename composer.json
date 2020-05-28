@@ -30,6 +30,7 @@
         "rap2hpoutre/similar-text-finder": "^1.1",
         "spatie/laravel-activitylog": "^3.10",
         "spatie/laravel-permission": "^3.2",
+        "tymon/jwt-auth": "^1.0",
         "unisharp/laravel-filemanager": "^2.0",
         "yajra/laravel-oci8": "^6.0"
     },

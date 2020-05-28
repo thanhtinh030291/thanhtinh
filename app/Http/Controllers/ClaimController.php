@@ -48,6 +48,7 @@ class ClaimController extends Controller
      */
     public function index(Request $request)
     {
+        
         $itemPerPage = Config::get('constants.paginator.itemPerPage');
         $id_claim =  $request->code_claim;
         $admin_list = User::getListIncharge();
@@ -116,6 +117,7 @@ class ClaimController extends Controller
         
         $finder['team'] = $team;
         $finder['letter_status'] = $request->letter_status;
+        
         return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status', 'list_team', 'team'));
     }
     
@@ -616,7 +618,7 @@ class ClaimController extends Controller
             'files' => [
                 [
                     'name' => $namefile.".doc",
-                    "content" => base64_encode(data_get($export_letter->approve, 'data'))
+                    "content" => base64_encode("<html><body>" .data_get($export_letter->approve, 'data')."</body></html>")
                 ]
             ]
         ];

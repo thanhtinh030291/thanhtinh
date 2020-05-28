@@ -10,6 +10,7 @@ $max = config('constants.minMaxLength.max');
 <link href="{{ asset('css/multi_lang.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 <link href="{{ asset('css/ckeditor.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 <link href="{{ asset('css/drawingboard.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+<link href="{{ asset('css/tagsinput.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
@@ -67,6 +68,13 @@ $max = config('constants.minMaxLength.max');
                                                         <div class="form-group">
                                                             {{ Form::label('header_claim','Head of Claim', array('class' => 'labelas')) }} <span class="text-danger">*</span>
                                                             {{ Form::select('header_claim[]', $admin_list, $setting->header_claim, [ 'class' => 'form-control select2','placeholder' =>'Email', 'required', 'multiple' => 'multiple' ]) }}<br/>
+                                                        </div>
+                                                    </div>  
+
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
+                                                            {{ Form::label('header_claim','email Finance ', array('class' => 'labelas')) }} <span class="text-danger">*</span>
+                                                            {{ Form::text('finance_email', $setting->finance_email, [ 'class' => 'form-control','placeholder' =>'Email',  'data-role' => 'tagsinput']) }}<br/>
                                                         </div>
                                                     </div>  
                                                 </div>
@@ -148,6 +156,7 @@ $max = config('constants.minMaxLength.max');
 
 <script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/drawingboard.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/tagsinput.js?vision=') .$vision }}"></script>
 <script type="text/javascript">
 var customBoard2 = new DrawingBoard.Board('custom-board-2', {
 	controls: [

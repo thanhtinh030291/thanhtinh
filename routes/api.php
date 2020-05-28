@@ -13,6 +13,14 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::post('login', 'Api\AccountManagementController@login');
+Route::group([
+
+    'middleware' => ['api'],
+
+], function ($router) {
+    Route::post('requestSign', 'Api\UncSignController@requestSign');
+});
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

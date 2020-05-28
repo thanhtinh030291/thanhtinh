@@ -34,6 +34,20 @@
                         </li>
                     </ul>
                 </li>
+                {{-- UNC Sign --}}
+                @hasanyrole('Header|Manager|Admin')
+                <li class="submenu">
+                    <a href="#">
+                        <i class="fa fa-pencil-square" aria-hidden="true"></i> <span> Sign UNC </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li class="{{ setActive('admin/uncSign') }}"> 
+                            <a class="{{ setActive('admin/uncSign') }}"
+                            href="{{ url('admin/uncSign') }}"><span> Sign UNC</span></a>
+                        </li>
+                    </ul>
+                </li>
+                @endhasanyrole
                 {{-- Medical --}}
                 <li class="submenu">
                     <a href="#">
