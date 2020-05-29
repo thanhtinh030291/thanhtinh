@@ -219,9 +219,9 @@ $totalAmount = 0;
                                 {!! Form::close() !!}
                                 @endif
 
-                                @if(isset($item->info['note']))
+                                @if(isset($item->info['notes']))
                                     <h6> Added on Etalk</h6>
-                                    <span>Note Id : {{data_get($item->info, "note.id")}}</span><br>
+                                    <span>Note Id : {{data_get($item->info, "notes.id")}}</span><br>
                                     <a class="btn btn-success btn-xs" href="{{config("constants.url_cps").'mantis/'.$data->barcode}}" target="_blank">Link CPS</a>
                                 @endif
                             </td>

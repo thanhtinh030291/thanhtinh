@@ -656,7 +656,7 @@ class ClaimController extends Controller
         }
         if(data_get($res,'status') == 'success'){
             $data = $export_letter->info;
-            $data['note'] = Carbon::now()->toDateTimeString();
+            $data['notes'] = $res['data']['note'];
             $export_letter->info = $data;
             $export_letter->save();
             
