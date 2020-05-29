@@ -615,7 +615,7 @@ class ClaimController extends Controller
         $body = [
             'user_email' => $user->email,
             'issue_id' => $barcode,
-            'text_note' => "Dear DLVN, \n Đính kèm là thư : '{$export_letter->letter_template->name}' \n Thanks,",
+            'text_note' => " Dear DLVN, \n PCV gửi là thư  '{$export_letter->letter_template->name}'  và chi tiết theo như file đính kèm. \n Thanks,",
             'files' => [
                 [
                     'name' => $namefile.".doc",
