@@ -656,13 +656,10 @@ class ClaimController extends Controller
         }
         if(data_get($res,'status') == 'success'){
             $data = $export_letter->info;
-            $export_letter->info = [
-                'approve_amt' => $data['approve_amt'],
-                'deduct' => data_get($data, 'deduct'),
-                'note' => $res['data']['note']
-            ];
+            $data['note'] = Carbon::now()->toDateTimeString();
+            $export_letter->info = $data;
             $export_letter->save();
-        
+            
         }
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
