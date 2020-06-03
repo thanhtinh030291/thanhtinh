@@ -21,7 +21,6 @@ use Storage;
 use App\Http\Controllers\SendMessageController;
 class PanoramaController extends Controller
 {
-    
 
     public function __construct()
     {
