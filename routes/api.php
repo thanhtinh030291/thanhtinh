@@ -20,6 +20,7 @@ Route::group([
 
 ], function ($router) {
     Route::post('requestSign', 'Api\UncSignController@requestSign');
+    Route::get('/panorama/{mem_ref_no}',  'Api\PanoramaController@panorama')->name('panorama');
 });
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
