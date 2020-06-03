@@ -29,6 +29,7 @@ class PanoramaController extends Controller
 
     public function panorama($mem_ref_no)
     {
+        $mem_ref_no = str_pad($mem_ref_no,10,"0",STR_PAD_LEFT);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO', $mem_ref_no)->first();
         if($member == null){
             return response()->json(['status' => 'error', 'message' => 'not exit member ref no'], 200);
