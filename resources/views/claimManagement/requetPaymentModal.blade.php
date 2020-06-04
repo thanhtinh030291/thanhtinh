@@ -10,6 +10,7 @@
             {{ Form::open(array('url' => '/admin/claim/sendPayment/'.$data->id , 'method' => 'POST')) }}
                         {{ Form::hidden('cl_no', $data->code_claim_show ) }}
                 <div class="modal-body ">
+                    <p class="text-danger">Nếu số Liệu Chưa Chính xác gửi trả về , vui lòng run CSR lại và add note trên mantis </p>
                     <div class="row">
                         {{ Form::label('memb_name', 'Member Name(TÊN NGƯỜI ĐƯỢC BẢO HIỂM)', ['class' => 'labelas col-md-5 mt-1']) }}
                         {{ Form::text('memb_name', $member_name, ['class' => 'form-control col-md-5 mt-1']) }}
@@ -27,7 +28,7 @@
                         {{ Form::text('app_amt', $approve_amt, ['class' => 'form-control col-md-5 mt-1', 'readonly']) }}
                     
                         {{ Form::label('tf_amt', 'Transfer Amt(SỐ TIỀN THANH TOÁN)', ['class' => 'labelas col-md-5 mt-1']) }}
-                        {{ Form::text('tf_amt', $tranfer_amt, ['class' => 'form-control col-md-5 mt-1']) }}
+                        {{ Form::text('tf_amt', $tranfer_amt, ['class' => 'form-control col-md-5 mt-1', 'readonly']) }}
                     
                         {{ Form::label('deduct_amt', 'Deduct Amt(Tiền khách Hàng nợ được đòi)', ['class' => 'labelas col-md-5 mt-1']) }}
                         {{ Form::text('deduct_amt', $balance_cps->sum('DEBT_BALANCE'), ['class' => 'form-control col-md-5 mt-1', 'readonly']) }}

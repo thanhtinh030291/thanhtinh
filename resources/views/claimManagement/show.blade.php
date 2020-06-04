@@ -78,13 +78,13 @@ $totalAmount = 0;
                                     {{-- payment request  --}}
                                     {{ Form::label('Payment_Request', 'Payment Request', array('class' => 'labelas')) }}
                                     <p class="text-danger">Yêu cầu thanh toán chỉ hiển thị khi Issue trên Health Etalk đạt trạng thái Finish! </p>
-                                    @if($can_pay_rq == 'success'){
-                                            {{-- {!! Form::button('Yêu Cầu Finance Thanh Toán', ['data-toggle' => "modal" ,  
+                                    @if($can_pay_rq == 'success')
+                                            {!! Form::button('Yêu Cầu Finance Thanh Toán', ['data-toggle' => "modal" ,  
                                                 'data-target' => "#requetPaymentModal",
                                                 'type' => 'button', 
                                                 'class' => ' btn btn-info' , 
                                                 
-                                                ]) !!} --}}
+                                                ]) !!}
                                     @endif
                                 </div>
                                 <div class="col-md-5">
