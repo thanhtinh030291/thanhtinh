@@ -235,7 +235,7 @@ class AjaxCommonController extends Controller
             'deduct_amt' => $request->deduct_amt,
             'payment_method' => $request->payment_method,
             'mantis_id' => $request->mantis_id,
-            'username'    => Auth::user()->name
+            'username'    => 'claimassistant'
         ];
         
         $client = new \GuzzleHttp\Client([
