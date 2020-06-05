@@ -317,6 +317,7 @@ class ClaimController extends Controller
 
     public function barcode_link($barcode)
     { 
+        $barcode = str_pad($barcode,7,"0",STR_PAD_LEFT);
         $claim = Claim::where('barcode', $barcode)->first();
         if($claim){
             return redirect("admin/claim/{$claim->id}");
