@@ -99,17 +99,17 @@ return[
         'HYNO' => 'Y hoc thay thế',
         'OSTE' => 'Y hoc thay thế'
     ],
-    // 'token_mantic' => 'jGPFMpQK5nz5f4PRqARovKXe_W3fUoQC',
+    // 'token_mantic' => 'ABBKcuCHfFxFw_2v_30e1aJG1xUXhd3p',
     // 'url_mantic' => 'https://health-etalk.pacificcross.com.vn/',
-    // 'url_mantic_api' => 'http://192.168.0.235/mantis_dlvn/',
+    // 'url_mantic_api' => 'https://health-etalk.pacificcross.com.vn/',
     // 'url_cps' => 'https://cpsdlvn.pacificcross.com.vn/index.php/',
     // 'api_cps' => 'https://cpsdlvn.pacificcross.com.vn/index.php/api/',
     // 'client_id' => 'ul-2l44e7vq-3t8m-4fqeaxi-6olcepgxweq',
     // 'client_secret' => 'ukbg95yi3ifcdjiso5rc7kcjqeetxpfv',
     //test
-    'token_mantic' => 'Nl6ezAqP64CHaH3UfMMHoAFUh0HKduq4',
-    'url_mantic' => 'https://health-etalk.pacificcross.com.vn/',
-    'url_mantic_api' => 'http://manticdaichi.com/',
+    'token_mantic' => 'YeT9k0PT91IQnmC5lSUpy75s63Y8uMEu',
+    'url_mantic' => 'https://uat-etalk.pacificcross.com.vn/',
+    'url_mantic_api' => 'https://uat-etalk.pacificcross.com.vn/',
     'url_cps' => 'http://local/pacific_project/cps_dlvn/branches/Tinh_0000561/index.php/',
     'api_cps' => 'http://local/pacific_project/cps_dlvn/branches/Tinh_0000561/index.php/api/',
     'client_id' => 'ul-2l44e7vq-3t8m-4fqeaxi-6olcepgxweq',
@@ -203,6 +203,11 @@ return[
         110=>'investrequest',
         115=>'askpartner',
         120=>'readyforprocess'
+    ],
+    'status_mantic_value' => [
+        'accepted' => 11,
+        'partiallyaccepted' =>12,
+        'declined' => 13,
     ],
     'payment_method' =>[
         'TT' => 'Chuyển khoản qua ngân hàng',

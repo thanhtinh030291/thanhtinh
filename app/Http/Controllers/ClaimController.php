@@ -627,14 +627,17 @@ class ClaimController extends Controller
         if($export_letter->letter_template->status_mantis != NULL ){
             $body['status_id'] = $export_letter->letter_template->status_mantis;
         }
+        
         if($export_letter->letter_template->name == 'Thanh Toán Bổ Sung'){
+            
             $diff = $HBS_CL_CLAIM->SumPresAmt - $HBS_CL_CLAIM->SumAppAmt ;
+            
             if($HBS_CL_CLAIM->SumPresAmt == 0 ){
-                $body['status_id'] = config('constants.status_mantic.declined');
+                $body['status_id'] = config('constants.status_mantic_value.declined');
             }elseif($diff == 0){
-                $body['status_id'] = config('constants.status_mantic.accepted');
+                $body['status_id'] = config('constants.status_mantic_value.accepted');
             }else {
-                $body['status_id'] = config('constants.status_mantic.partiallyaccepted');
+                $body['status_id'] = config('constants.status_mantic_value.partiallyaccepted');
             }
         }
         if(isset($export_letter->approve['data_payment']))
