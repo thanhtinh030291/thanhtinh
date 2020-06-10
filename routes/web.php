@@ -106,6 +106,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('setting/notifiAllUser','SettingController@notifiAllUser')->middleware(['role:Admin']);
 
         Route::resource('uncSign', 'UncSignController');
+
+        //payment Histor
+        Route::resource('PaymentHistory', 'PaymentHistoryController');
+        Route::get('get_renewed_claim',  'PaymentHistoryController@get_renewed_claim');
+        
     });
 
 });

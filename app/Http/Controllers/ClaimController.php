@@ -1386,7 +1386,7 @@ class ClaimController extends Controller
     }
 
     public function sendPayment(Request $request, $id){
-        $rp = AjaxCommonController::sendPayment($request);
+        $rp = AjaxCommonController::sendPayment($request,$id);
         switch (data_get($rp,'code')) {
             case '00':
                 return redirect('/admin/claim/'.$id)->with('status', data_get($rp,'description'));

@@ -144,5 +144,17 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         return $query->with(['HBS_CL_LINE' => $condition]);
     }
     
-    
+    // show all info HBS
+    public function scopeHBSData($query){
+        $conditionPL = function($q){
+            $q->with('PD_PLAN');
+        };
+        $condition = function ($q) use ($conditionPL){
+            $q->with('RT_DIAGNOSIS');
+            $q->with('PD_BEN_HEAD');
+            $q->with(['MR_POLICY_PLAN'=>$conditionPL]);
+            $q->where('REV_DATE', null);
+        };
+        return $query->with(['HBS_CL_LINE' => $condition]);
+    }
 }

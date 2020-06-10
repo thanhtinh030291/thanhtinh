@@ -7,7 +7,34 @@
 
     <nav class="navbar-custom">
         <ul class="list-inline float-right mb-0">
-
+            <li class="list-inline-item dropdown notif">
+                <a href="#" class="border border-danger bg-warning text-white dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Finance Notice (<b>{{count($renewToClaim)}}</b>)</a>
+                <ul class="dropdown-menu notify-drop">
+                    <div class="dropdown-toolbar">
+                    <h3 class="dropdown-toolbar-title">Notifications (<span class="notif-count">{{count($renewToClaim)}}</span>)</h3>
+                </div>
+                <!-- end notify title -->
+                <!-- notify content -->
+                <div class="drop-content" style = " max-height: 300px; overflow: hidden; overflow-y: scroll;width: 450px;
+                max-width: 450px;">
+                    @foreach ($renewToClaim as $item)
+                    <li class="notification active">
+                        <div class="media">
+                            <div class="media-body">
+                            <strong class="notification-title"></strong>
+                            <p class="notification-desc text-danger">{!!$item->reason_renew!!}</p>
+                            <div class="notification-meta">
+                                <small class="timestamp">{{dateConvertToString($item->updated_at)}} - claim no : {{$item->CL_NO}}</small>
+                                <a href="{{route('claim.show',['claim'=>$item->claim_id])}}">Link Claim</a>
+                            </div>
+                            </div>
+                        </div>
+                    </li>
+                    @endforeach
+                </div>
+                
+                </ul>
+            </li>
             <li class="list-inline-item dropdown notif">
                 <a class="nav-link" href="/docs" role="button" aria-haspopup="false" aria-expanded="false">
                     Documents

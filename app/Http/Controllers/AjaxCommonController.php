@@ -7,6 +7,10 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Claim;
+use App\PaymentHistory;
+use Illuminate\Support\Facades\DB;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
 
@@ -137,8 +141,8 @@ class AjaxCommonController extends Controller
         ]);
         $response = $client->request("POST", config('constants.api_cps').'get_payment/'. $cl_no , ['form_params'=>$body]);
         $response =  json_decode($response->getBody()->getContents());
-        $response_full = collect($response)->where('TF_STATUS_NAME','!=', "NEW");
-        $response = collect($response)->where('TF_STATUS_NAME','!=', "NEW");
+        $response_full = collect($response)->where('TF_STATUS_NAME','!=', "NEW")->where('TF_STATUS_NAME','!=', "DELETED");
+        $response = collect($response)->where('TF_STATUS_NAME','!=', "NEW")->where('TF_STATUS_NAME','!=', "DELETED");
             
         $claim = Claim::where('code_claim_show',  $cl_no)->first();
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
@@ -219,7 +223,7 @@ class AjaxCommonController extends Controller
         return $response;
     }
 
-    public static function sendPayment($request){
+    public static function sendPayment($request, $id_claim){
         $token = getTokenCPS();
         $headers = [
             'Content-Type' => 'application/json',
@@ -243,6 +247,57 @@ class AjaxCommonController extends Controller
         ]);
         $response = $client->request("POST", config('constants.api_cps').'send_payment/'. $request->cl_no , ['form_params'=>$body]);
         $response =  json_decode($response->getBody()->getContents());
+        $rs=data_get($response,'code');
+        if(data_get($response,'code') == "00" && data_get($response,'data') != null){
+            try {
+                DB::beginTransaction();
+                PaymentHistory::updateOrCreate([
+                    'PAYM_ID' => data_get($response, "data.PAYM_ID"),
+                    'CL_NO' => data_get($response, "data.CL_NO"),
+                ], [
+                    'ACCT_NAME' => data_get($response, "data.ACCT_NAME"),
+                    'ACCT_NO' => data_get($response, "data.ACCT_NO"),
+                    'BANK_NAME' => data_get($response, "data.BANK_NAME"),
+                    'BANK_CITY' => data_get($response, "data.BANK_CITY"),
+                    'BANK_BRANCH' => data_get($response, "data.BANK_BRANCH"),
+                    'BENEFICIARY_NAME' => data_get($response, "data.BENEFICIARY_NAME"),
+                    'PP_DATE' => data_get($response, "data.PP_DATE"),
+                    'PP_PLACE' => data_get($response, "data.PP_PLACE"),
+                    'PP_NO' => data_get($response, "data.PP_NO"),
+                    'CL_TYPE' => data_get($response, "data.CL_TYPE"),
+                    'BEN_TYPE' => data_get($response, "data.BEN_TYPE"),
+                    'PAYMENT_TIME' => data_get($response, "data.PAYMENT_TIME"),
+                    'TF_STATUS' => data_get($response, "data.TF_STATUS_ID"),
+                    'TF_DATE' => data_get($response, "data.TF_DATE"),
+                    
+                    'VCB_SEQ' => data_get($response, "data.VCB_SEQ"),
+                    'VCB_CODE' => data_get($response, "data.VCB_CODE"),
+
+                    'MEMB_NAME' => data_get($response, "data.MEMB_NAME"),
+                    'POCY_REF_NO' => data_get($response, "data.POCY_REF_NO"),
+                    'MEMB_REF_NO' => data_get($response, "data.MEMB_REF_NO"),
+                    'PRES_AMT' => data_get($response, "data.PRES_AMT"),
+                    'APP_AMT' => data_get($response, "data.APP_AMT"),
+                    'TF_AMT' => data_get($response, "data.TF_AMT"),
+                    'DEDUCT_AMT' => data_get($response, "data.DEDUCT_AMT"),
+                    'PAYMENT_METHOD' => data_get($response, "data.PAYMENT_METHOD"),
+                    'PAYMENT_METHOD' => data_get($response, "data.PAYMENT_METHOD"),
+                    'MANTIS_ID' => data_get($response, "data.MANTIS_ID"),
+
+                    'update_file' => 0,
+                    'update_hbs' => 0,
+                    'updated_user' => Auth::user()->id,
+                    'created_user' => Auth::user()->id,
+                    'notify_renew' => 0,
+                    'reason_renew' => null,
+                    'claim_id' => $id_claim,
+                ]);
+                DB::commit();
+            } catch (Exception $e) {
+                Log::error(generateLogMsg($e));
+                DB::rollback();
+            }
+        }
         return $response;
     }
 

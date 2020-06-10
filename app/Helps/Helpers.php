@@ -53,6 +53,17 @@ function saveFile($file ,$path ,$oldFile = null)
     return $fileName;
 }
 
+function saveFileContent($file_content ,$path ,$ext,$oldFile = null)
+{
+    if($oldFile){
+        Storage::delete($path.$oldFile);
+    }
+    $fileName = uniqid() . md5(microtime()) . '.' .$ext;
+    Storage::put($path."/".$fileName, $file_content);
+    return $fileName;
+}
+
+
 function GetApiMantic($url)
 {
     $headers = [

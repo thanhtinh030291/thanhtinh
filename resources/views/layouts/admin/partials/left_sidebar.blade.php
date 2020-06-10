@@ -34,6 +34,22 @@
                         </li>
                     </ul>
                 </li>
+                <li class="submenu">
+                    <a href="#">
+                        <i class="fa fa-credit-card-alt" aria-hidden="true"></i> <span> Payment Managerment </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li class="{{ setActive('admin/PaymentHistory') }}"> 
+                            <a class="{{ setActive('admin/PaymentHistory') }}"
+                            href="{{ url('admin/PaymentHistory') }}"><span>PaymentHistory</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="{{ url('admin/get_renewed_claim') }}">
+                        <i class="fa fa-retweet text-danger" aria-hidden="true"></i> <span> Finance Return Claim </span>
+                    </a>
+                </li>
                 {{-- UNC Sign --}}
                 @hasanyrole('Header|Manager|Admin')
                 <li class="submenu">
