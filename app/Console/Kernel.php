@@ -5,6 +5,10 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\AuthPermissionCommand;
+use App\Console\Commands\GetCPS;
+use App\Console\Commands\GetHBS;
+use App\Console\Commands\GetRenewPayment;
+use App\Console\Commands\UpdateFile;
 class Kernel extends ConsoleKernel
 {
     /**
@@ -13,7 +17,11 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        AuthPermissionCommand::class
+        AuthPermissionCommand::class,
+        GetCPS::class,
+        GetHBS::class,
+        GetRenewPayment::class,
+        UpdateFile::class,
     ];
 
     /**
@@ -25,7 +33,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')
-        //          ->hourly();
+        //          ->hourly();command:GetCPS
+        $schedule->command('command:GetCPS')->everyMinute();
+        $schedule->command('command:GetHBS')->everyMinute();
+        $schedule->command('command:GetRenewPayment')->everyMinute();
+        $schedule->command('command:UpdateFile')->everyMinute();
+
     }
 
     /**

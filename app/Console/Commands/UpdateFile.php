@@ -59,5 +59,6 @@ class UpdateFile extends Command
                 $value->save();
             }
         }
+        $this->info('Cron UpdateFile Run successfully!');
     }
 }

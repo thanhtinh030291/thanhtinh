@@ -101,6 +101,7 @@ class GetRenewPayment extends Command
                 }
             }
         }
+        $this->info('Cron Get RewewPayment Run successfully!');
         
     }
 }

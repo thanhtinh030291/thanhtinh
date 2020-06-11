@@ -50,6 +50,6 @@ class GetHBS extends Command
             $payments[$key]->HBS = json_encode($HBS_CL_CLAIM->toArray(),true);
             $payments[$key]->save();
         }
-        
+        $this->info('Cron GetHBS Run successfully!');
     }
 }

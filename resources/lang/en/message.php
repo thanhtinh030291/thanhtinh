@@ -25,7 +25,7 @@ return [
     'showing' => 'Showing',
     'to' => 'to',
     'of_total' => 'of total',
-    'form_claim_ocr' => 'form claim OCR',
+    'form_claim_ocr' => 'Claim (Mem)',
     'update_fail' => 'The system have an error and please try again',
     'create' => 'Create',
     'display_result' => 'Display result',
