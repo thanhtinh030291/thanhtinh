@@ -250,7 +250,7 @@
         var dir = "{{ asset('/storage/payment/') }}"+"/";
         var url = e.dataset.file;
         var parent = $('#link_file').parent();
-        var newElement = "<iframe id='link_file' width='100%' height='500' src='https://docs.google.com/gview?url="+dir+url+"&embedded=true'></iframe>";
+        var newElement = "<embed src='"+dir+url+"' id='link_file' width='780' height='500' >";
         $('#link_file').remove();
         parent.append(newElement);
         $( '#unc_file' ).modal( 'toggle' );
