@@ -39,6 +39,9 @@ class PaymentHistoryController extends Controller
         $created_from = $data['search_params']['created_from'] ? $data['search_params']['created_from']." 00:00:00" : "1991-01-01 00:00:00";
         $created_to = $data['search_params']['created_to'] ? $data['search_params']['created_to']." 23:59:59" : "2100-01-01 23:59:59";
         $Product = $Product->whereBetween('created_at' ,[$created_from,$created_to]);
+        $data['sum_PRES_AMT'] = $Product->sum('PRES_AMT');
+        $data['sum_APP_AMT'] = $Product->sum('APP_AMT');
+        $data['sum_TF_AMT'] = $Product->sum('TF_AMT');
         $data['admin_list'] = User::getListIncharge();
         //pagination result
         $data['limit_list'] = config('constants.limit_list');

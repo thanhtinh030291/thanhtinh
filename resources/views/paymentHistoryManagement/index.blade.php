@@ -55,6 +55,11 @@
             <div class="card-header">
                 <div class="card-header">
                     <label class="font-weight-bold">{{ __('message.claim_list')}} | {{ __('message.total')}}: {{$data->total()}} </label>
+                    <label class="font-weight-bold">  items have : 
+                        Sum Pres <span class="text-danger">( {{formatPrice($sum_PRES_AMT)}} )</span> ;
+                        Sum APP <span class="text-danger">( {{formatPrice($sum_APP_AMT)}} )</span> ;
+                        Sum TF <span class="text-danger">( {{formatPrice($sum_TF_AMT)}} )</span> ;
+                    </label>
                 </div>
                 @if (count($data) > 0)
                 {{ $data->appends($search_params)->links() }}
