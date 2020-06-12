@@ -49,8 +49,9 @@
                             </tr>
                         </thead>
                         <!-- Table Body -->
-                        @foreach ($data as $value)
+                        
                         <tbody>
+                            @foreach ($data as $value)
                             <tr>
                                 <!-- ticket info -->
                                 <td>{{ data_get($value,'CL_NO') }}</td>
@@ -61,7 +62,7 @@
                                 <td class="text-danger font-weight-bold">{{ formatPrice(data_get($value,'PRES_AMT',0)) }}</td>
                                 <td class="text-danger font-weight-bold">{{ formatPrice(data_get($value,'APP_AMT',0)) }}</td>
                                 <td class="text-danger font-weight-bold">{{ formatPrice(data_get($value,'TF_AMT',0)) }}</td>
-                                <td class="text-primary font-weight-bold">{{ data_get($value,'CL_USER') }}</td>
+                                <td >{{ data_get($value,'CL_USER') }}</td>
                                 <td>{{ data_get($value,'PAYMENT_METHOD') }}</td>
                                 <td>{{ data_get($value,'ACCT_NAME') }}</td>
                                 <td>{{ data_get($value,'ACCT_NO') }}</td>
@@ -74,8 +75,9 @@
                                 <td>{{ data_get($value,'PP_NO') }}</td>
                                 
                             </tr>
+                            @endforeach
                         </tbody>
-                        @endforeach
+                        
                     </table>
                 </div>
             </div>
