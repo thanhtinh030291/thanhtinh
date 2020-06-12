@@ -26,13 +26,19 @@ class PaymentHistoryController extends Controller
     public function index(Request $request)
     {
         $data['search_params'] = [
-            'name' => $request->get('name'),
-            // 'created_user' => $request->get('created_user'),
-            // 'created_at' => $request->get('created_at'),
-            // 'updated_user' => $request->get('updated_user'),
-            // 'updated_at' => $request->get('updated_at'),
+            'CL_NO' => $request->get('CL_NO'),
+            'created_user' => $request->get('created_user'),
+            'MEMB_REF_NO' => $request->get('MEMB_REF_NO'),
+            'POCY_REF_NO' => $request->get('POCY_REF_NO'),
+            'MEMB_REF_NO' => $request->get('MEMB_REF_NO'),
         ];
         $Product = PaymentHistory::findByParams($data['search_params'])->orderBy('id', 'desc');
+        $data['search_params']['created_to'] = $request->get('created_to');
+        $data['search_params']['created_from'] = $request->get('created_from');
+
+        $created_from = $data['search_params']['created_from'] ? $data['search_params']['created_from']." 00:00:00" : "1991-01-01 00:00:00";
+        $created_to = $data['search_params']['created_to'] ? $data['search_params']['created_to']." 23:59:59" : "2100-01-01 23:59:59";
+        $Product = $Product->whereBetween('created_at' ,[$created_from,$created_to]);
         $data['admin_list'] = User::getListIncharge();
         //pagination result
         $data['limit_list'] = config('constants.limit_list');

@@ -19,22 +19,25 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">
-                            {{ Form::label('name_en', __('message.name'), ['class' => 'labelas']) }}
-                            {{ Form::text('name', $search_params['name'], ['class' => 'form-control']) }}
-                        </div>
-                        {{-- <div class="col-md-6">
+                        <div class="col-md-6">
+                            {{ Form::label('CL_NO', "Claim No", ['class' => 'labelas']) }}
+                            {{ Form::text('CL_NO', $search_params['CL_NO'], ['class' => 'form-control']) }}
                             {{ Form::label('created_user', __('message.account_create'), ['class' => 'labelas']) }}
                             {{ Form::select('created_user', $admin_list, $search_params['created_user'], ['id' => 'created_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
-                            {{ Form::label('created_at', __('message.date_created'), ['class' => 'labelas']) }}
-                            {{ Form::text('created_at', $search_params['created_at'], ['class' => 'form-control datepicker']) }}
+                            {{ Form::label('created_from', "Created From", ['class' => 'labelas']) }}
+                            {{ Form::text('created_from', $search_params['created_from'], ['class' => 'form-control datepicker']) }}
+                            
                         </div>
                         <div class="col-md-6">
-                            {{ Form::label('updated_user', __('message.account_edit'), ['class' => 'labelas']) }}
-                            {{ Form::select('updated_user', $admin_list, $search_params['updated_user'], ['id' => 'updated_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
-                            {{ Form::label('updated_at', __('message.date_updated'), ['class' => 'labelas']) }}
-                            {{ Form::text('updated_at', $search_params['updated_at'], ['class' => 'form-control datepicker']) }}
-                        </div> --}}
+                            {{ Form::label('MEMB_REF_NO', "Member ref no", ['class' => 'labelas']) }}
+                            {{ Form::text('MEMB_REF_NO', $search_params['MEMB_REF_NO'], ['class' => 'form-control']) }}
+
+                            {{ Form::label('POCY_REF_NO', "Policy ref no", ['class' => 'labelas']) }}
+                            {{ Form::text('POCY_REF_NO', $search_params['POCY_REF_NO'], ['class' => 'form-control']) }}
+
+                            {{ Form::label('created_to', "Created To", ['class' => 'labelas']) }}
+                            {{ Form::text('created_to', $search_params['created_to'], ['class' => 'form-control datepicker']) }}
+                        </div>
                     </div>
                     <br>
                     <button type="submit" class="btn btn-info">{{ __('message.search') }}</button>
@@ -50,6 +53,9 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
+                <div class="card-header">
+                    <label class="font-weight-bold">{{ __('message.claim_list')}} | {{ __('message.total')}}: {{$data->total()}} </label>
+                </div>
                 @if (count($data) > 0)
                 {{ $data->appends($search_params)->links() }}
                 @endif

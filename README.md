@@ -105,6 +105,7 @@ npm start
 # Step 9 -  Setup Script crontab
 crontab -e
  * * * * * php /var/www/html/tos_admin/artisan schedule:run >> /dev/null 2>&1
+ sudo service cron reload
 
 # Step 10 - Setup Police 
 php artisan make:policy PostPolicy --model=Post
