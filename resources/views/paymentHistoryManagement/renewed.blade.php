@@ -27,6 +27,7 @@
                         <thead>
                             <tr>
                                 <th>CL_NO</th>
+                                <th>CL_TYPE</th>
                                 <th >REASON........................................</th>
                                 <th>MEMB_NAME</th>
                                 <th>MEMB_REF_NO</th>
@@ -45,7 +46,6 @@
                                 <th>PP_DATE</th>
                                 <th>PP_PLACE</th>
                                 <th>PP_NO</th>
-                                
                             </tr>
                         </thead>
                         <!-- Table Body -->
@@ -55,6 +55,7 @@
                             <tr>
                                 <!-- ticket info -->
                                 <td>{{ data_get($value,'CL_NO') }}</td>
+                                <td>{{ data_get($value,'CL_TYPE') }}</td>
                                 <td class="text-danger font-weight-bold">{{ data_get($value,'REASON') }}</td>
                                 <td>{{ data_get($value,'MEMB_NAME') }}</td>
                                 <td>{{ data_get($value,'MEMB_REF_NO') }}</td>
@@ -96,6 +97,29 @@
 <script src="{{asset('plugins/datatables/jquery.dataTables.min.js?vision=') .$vision }}" ></script>
 <script src="{{asset('plugins/datatables/dataTables.bootstrap4.min.js?vision=') .$vision }}" ></script>
 <script>
-    $('.table').DataTable({});
+    $( document ).ready( function() {
+        var table = $('.table').DataTable();
+        var html = $( 'table thead tr' ).clone( true )[0];
+        $( 'table thead' ).append(html);
+        $( 'table thead tr:eq(1) th' ).each( function (i) {
+            if ( i == 0 ) {
+                $( this ).html( '' );
+            } else {
+                var title = $( this ).text();
+                $( this ).html( '<input type="text" class="form-control">' );
+            }
+    
+            $( 'input', this ).on( 'keyup change', function () {
+                if ( table.column( i ).search() !== this.value ) {
+                    table
+                        .column( i )
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+        
+        
+    } );
 </script>
 @endsection
