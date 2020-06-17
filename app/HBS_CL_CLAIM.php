@@ -24,7 +24,14 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         }
         return null;
     }
-
+    public function getProviderAttribute(){
+        $fisrtClLine = $this->HBS_CL_LINE->first();
+        if($fisrtClLine){
+            $prov_oid = $fisrtClLine->prov_oid;
+            return HBS_PV_PROVIDER::findOrFail($prov_oid);
+        }
+        return null;
+    }
     public function getPoliceAttribute()
     {
         $fisrtClLine = $this->HBS_CL_LINE->first();
@@ -43,6 +50,10 @@ class HBS_CL_CLAIM extends  BaseModelDB2
             return HBS_MR_POLICY_PLAN::findOrFail($popl_oid);
         }
         return null;
+    }
+
+    public function getFirstLineAttribute(){
+        return $this->HBS_CL_LINE->first();
     }
 
     public function getPlanAttribute()
@@ -114,13 +125,13 @@ class HBS_CL_CLAIM extends  BaseModelDB2
     public function getSumPresAmtAttribute(){
         $clLines = $this->HBS_CL_LINE->toArray();
         $sum = array_sum(array_column($clLines,'pres_amt'));
-        return (int)$sum;
+        return round($sum);
     }
 
     public function getSumAppAmtAttribute(){
         $clLines = $this->HBS_CL_LINE->toArray();
         $sum = array_sum(array_column($clLines,'app_amt'));
-        return (int)$sum;
+        return round($sum);
     }
     
     //show RT_DIAGNOSIS
