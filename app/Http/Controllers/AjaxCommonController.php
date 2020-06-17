@@ -155,8 +155,8 @@ class AjaxCommonController extends Controller
         $member_name = $HBS_CL_CLAIM->memberNameCap;
         return response()->json([ 'data' => $response,
                                 'data_full' => $response_full,
-                                'approve_amt' => (int)$approve_amt , 
-                                'present_amt' => (int)$present_amt ,
+                                'approve_amt' => round($approve_amt) , 
+                                'present_amt' => round($present_amt) ,
                                 'payment_method' => $payment_method,
                                 'pocy_ref_no' => $pocy_ref_no,
                                 'memb_ref_no' => $memb_ref_no,
