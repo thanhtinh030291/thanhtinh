@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-
+                <th>Type</th>
                 <th>Created User</th>
                 <th>Updated User</th>
                 <th>{{ __('message.date_created')}}</th>
@@ -15,6 +15,7 @@
         @foreach($roleChangeStatuses as $roleChangeStatus)
             <tr>
                 <td>{!! $roleChangeStatus->name !!}</td>
+                <td>{!! $roleChangeStatus->claim_type !!}</td>
                 <td>{!! data_get($admin_list ,$roleChangeStatus->created_user) !!}</td>
                 <td>{!! data_get($admin_list ,$roleChangeStatus->updated_user) !!}</td>
                 <td>{!! $roleChangeStatus->created_at !!}</td>

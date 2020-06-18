@@ -1,18 +1,18 @@
 <!-- Stored in resources/views/layouts/admin/partials/top_bar_navigation.blade.php -->
 @extends('layouts.admin.master')
-@section('title', __('message.form_claim_M'))
+@section('title', __('message.form_claim_P'))
 @section('stylesheets')
     <link href="{{ asset('css/condition_advance.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('css/ion.rangeSlider.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
 @endsection
 @section('content')
 @include('layouts.admin.breadcrumb_index', [
-    'title'       => __('message.form_claim_M'),
-    'page_name'   => __('message.form_claim_M'),
+    'title'       => __('message.form_claim_P'),
+    'page_name'   => __('message.form_claim_P'),
 ])
 <div class="row">
     <div class="col-md-12">
-        <a class="btn btn-primary pull-right" href="{{url('admin/claim/create')}}">
+        <a class="btn btn-primary pull-right" href="{{url('admin/P/claim/create')}}">
             {{ __('message.create_claim')}}
         </a>
     </div>
@@ -21,7 +21,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        {{ Form::open(array('url' => '/admin/claim', 'method' => 'get')) }}
+        {{ Form::open(array('url' => '/admin/P/claim', 'method' => 'get')) }}
         <div class="card">
             <div class="card-header">
                 <label  class="font-weight-bold" for="search"> {{ __('message.search')}}</label>
@@ -37,9 +37,6 @@
                             
                             {{ Form::label('created_at', __('message.date_created'), ['class' => 'labelas']) }}
                             {{ Form::text('created_at', data_get($finder,'created_at'), ['class' => 'form-control datepicker']) }}
-
-                            {{ Form::label('team', 'Team', ['class' => 'labelas']) }}
-                            {{ Form::select('team', $list_team, $team, ['id' => 'tearm_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
                             
                         </div>
                         <div class="col-md-6">

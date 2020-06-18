@@ -68,6 +68,7 @@
                         <thead>
                             <tr>
                                 <th>{{ __('message.name')}}</th>
+                                <th>{{__('message.claim_type')}}</th>
                                 <th>Level Change status</th>
                                 <th>{{ __('message.account_create')}}</th>
                                 <th>{{ __('message.account_edit')}}</th>
@@ -84,6 +85,7 @@
                             <tr>
                                 <!-- ticket info -->
                                 <td>{{ $value->name }}</td>
+                                <td>{{ data_get(config('constants.claim_type'),$value->claim_type) }}</td>
                                 <td>{{ data_get($list_level, $value->level, 'Automatic')}}</td>
                                 <td>{{ $admin_list[$value->created_user] }}</td>
                                 <td>{{ $admin_list[$value->updated_user] }}</td>

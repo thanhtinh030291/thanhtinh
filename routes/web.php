@@ -30,12 +30,18 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/read_all_messages', 'SendMessageController@readAll')->name('readAll');
 
         Route::resource('claim', 'ClaimController');
+        //GOP
+        Route::get('{claim_type}/claim', 'ClaimController@index')->name('claimGOP.index');
+        Route::get('{claim_type}/claim/create', 'ClaimController@create')->name('claimGOP.create');
+        Route::get('{claim_type}/claim/{claim}/edit', 'ClaimController@edit')->name('claimGOP.edit');
+
         Route::post('/claim/uploadSortedFile/{id}', 'ClaimController@uploadSortedFile')->name('uploadSortedFile');
         Route::post('/claim/sendSortedFile/{id}', 'ClaimController@sendSortedFile')->name('claim.sendSortedFile');
         Route::post('/claim/setPcvExpense/{id}', 'ClaimController@setPcvExpense')->name('claim.setPcvExpense');
         Route::post('/claim/sendPayment/{id}', 'ClaimController@sendPayment')->name('claim.sendPayment');
         Route::post('/claim/setDebt/{id}', 'ClaimController@setDebt')->name('claim.setDebt');
         Route::post('/claim/payDebt/{id}', 'ClaimController@payDebt')->name('claim.payDebt');
+        Route::post('/claim/requestManagerGOP/{id}', 'ClaimController@requestManagerGOP')->name('claim.requestManagerGOP');
         
         Route::get('/claim/barcode/{barcode}', 'ClaimController@barcode_link');
 

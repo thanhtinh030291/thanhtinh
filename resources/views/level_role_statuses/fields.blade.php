@@ -4,6 +4,11 @@
     {!! Form::text('name', null, ['class' => 'form-control']) !!}
 </div>
 
+<div class="form-group col-sm-6">
+{{ Form::label('claim_type', __('message.claim_type')) }}
+{{ Form::select('claim_type', config('constants.claim_type'),old('claim_type'), ['id' => 'claim_type', 'class' => 'form-control ']) }}<br>
+</div>
+
 <!-- Min Amount Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('min_amount', 'Min Amount:') !!}

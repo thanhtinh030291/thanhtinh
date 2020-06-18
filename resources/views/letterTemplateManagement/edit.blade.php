@@ -37,6 +37,9 @@ $max = config('constants.minMaxLength.max');
 
                 {{ Form::label('template', __('message.template')) }}
                 {{ Form::textarea('template', $data->template, ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>
+                
+                {{ Form::label('claim_type', __('message.claim_type')) }}
+                {{ Form::select('claim_type', config('constants.claim_type'),$data->claim_type, ['id' => 'claim_type', 'class' => 'form-control ']) }}<br>
 
                 <div class="text-center tour-button">
                     <a class="btn btnt btn-secondary" href="{{url('admin/letter_template')}}">

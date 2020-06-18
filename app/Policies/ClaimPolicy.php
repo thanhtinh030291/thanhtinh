@@ -9,7 +9,6 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class ClaimPolicy
 {
     use HandlesAuthorization;
-    
     /**
      * Determine whether the user can view any claims.
      *
@@ -18,6 +17,7 @@ class ClaimPolicy
      */
     public function viewAny(User $user)
     {
+        
         if ($user->can('view_claim')) {
             return true;
         }
@@ -32,7 +32,6 @@ class ClaimPolicy
      */
     public function view(User $user, Claim $claim)
     {
-        
         if ($user->can('view_claim')) {
             return true;
         }

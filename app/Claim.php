@@ -8,6 +8,9 @@ class Claim extends BaseModel
     protected $table = 'claim';
     protected static $table_static = 'claim';
     protected $dates = ['deleted_at'];
+    protected $casts = [
+        'manager_gop_accept_pay' => 'array',
+    ];
     
     
     public function export_letter()

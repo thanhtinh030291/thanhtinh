@@ -38,6 +38,7 @@ class ClaimController extends Controller
     //use Authorizable;
     public function __construct()
     {
+        
         $this->authorizeResource(Claim::class);
         parent::__construct();
     }
@@ -46,9 +47,9 @@ class ClaimController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request,$claim_type =null)
     {
-        
+        $claim_type = $claim_type ? $claim_type : "M";
         $itemPerPage = Config::get('constants.paginator.itemPerPage');
         $id_claim =  $request->code_claim;
         $admin_list = User::getListIncharge();
@@ -90,8 +91,8 @@ class ClaimController extends Controller
             $q->where('apv_amt','<=',$searchMaxRate);
         };
 
-        $datas = Claim::findByParams($finder)
-        ->with(['export_letter_last' => $conditionExport])->orderBy('id', 'desc');
+        $datas = Claim::findByParams($finder)->where('claim_type',$claim_type)
+        ->with(['export_letter_last' => $conditionExport])->orderBy('updated_at', 'desc');
         $team = $request->team;
         if($team != null){
             
@@ -107,7 +108,7 @@ class ClaimController extends Controller
         
 
         $datas = $datas->paginate($itemPerPage);
-        $list_status = RoleChangeStatus::pluck('name','id');
+        $list_status = RoleChangeStatus::where('claim_type',$claim_type)->pluck('name','id');
         try {
             $list_team = MANTIS_TEAM::pluck('name','id');
             $list_team['team_i']= 'Team Độc Lập';
@@ -117,8 +118,12 @@ class ClaimController extends Controller
         
         $finder['team'] = $team;
         $finder['letter_status'] = $request->letter_status;
+        if ($claim_type == 'P'){
+            return view('claimGOPManagement.index', compact('finder', 'datas', 'admin_list', 'list_status'));
+        }else{
+            return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status', 'list_team', 'team'));
+        }
         
-        return view('claimManagement.index', compact('finder', 'datas', 'admin_list', 'list_status', 'list_team', 'team'));
     }
     
     /**
@@ -126,10 +131,16 @@ class ClaimController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($claim_type =null)
     {
+        $claim_type = $claim_type ? $claim_type : "M";
         $listReasonReject = ReasonReject::orderBy('id', 'desc')->pluck('name', 'id');
-        return view('claimManagement.create', compact('listReasonReject'));
+        if ($claim_type == 'P'){
+            return view('claimGOPManagement.create', compact('listReasonReject'));
+        }else{
+            return view('claimManagement.create', compact('listReasonReject'));
+        }
+        
     }
 
     /**
@@ -222,7 +233,8 @@ class ClaimController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Claim $claim)
-    {
+    {  
+        $claim_type = $claim->claim_type ?  $claim->claim_type : "M";
         $data = $claim;
         //get CSR file
         $CsrFile = $claim->CsrFile;
@@ -232,12 +244,12 @@ class ClaimController extends Controller
         $dataImage =  $dirStorage . $data->url_file ;
         $listReasonReject = ReasonReject::orderBy('id', 'desc')->pluck('name', 'id');
         $items = $data->item_of_claim;
-        $listLetterTemplate = LetterTemplate::pluck('name', 'id');
+        $listLetterTemplate = LetterTemplate::where('claim_type',$claim_type)->pluck('name', 'id');
         
         $role_id = $user->roles[0]->id;
         $RoleChangeStatus = RoleChangeStatus::all();
         $list_status_full = TransactionRoleStatus::all();
-        $list_level = LevelRoleStatus::all();
+        $list_level = LevelRoleStatus::where('claim_type',$claim_type)->get();
         $list_status_ad = RoleChangeStatus::pluck('name','id');
         $export_letter = $data->export_letter;
         
@@ -301,9 +313,15 @@ class ClaimController extends Controller
         }
         $can_pay_rq = json_decode(json_encode(GetApiMantic('api/rest/plugins/apimanagement/issues/finish/'.$data->barcode)),true);
         $can_pay_rq = data_get($can_pay_rq,'status') == 'success' ? 'success' : 'error';
-        return view('claimManagement.show', compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
+        $manager_gop_accept_pay = 'error';
+        $compact = compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
-        'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq', 'CsrFile']));
+        'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq', 'CsrFile','manager_gop_accept_pay']);
+        if ($claim_type == 'P'){
+            return view('claimGOPManagement.show', $compact);
+        }else{
+            return view('claimManagement.show', $compact);
+        }
     }
 
     public function uploadSortedFile(Request $request, $id){
@@ -445,7 +463,7 @@ class ClaimController extends Controller
         return redirect('/admin/claim')->with('status', __('message.delete_claim'));
     }
     // change
-    public function getLevel($export_letter, $list_level)
+    public function getLevel($export_letter, $list_level, $claim_type = 'M')
     {
         
         if($export_letter->letter_template->level != 0){
@@ -456,6 +474,7 @@ class ClaimController extends Controller
             $level = $list_level
             ->where('min_amount','<=', removeFormatPrice(data_get($export_letter->info, 'approve_amt')) )
             ->where('max_amount','>', removeFormatPrice(data_get($export_letter->info, 'approve_amt')) )
+            ->where('claim_type', $claim_type)
             ->first();
         }
         return $level;
@@ -480,9 +499,10 @@ class ClaimController extends Controller
         }
 
         if ($request->save_letter == 'save'){
+            $create_user_sign = getUserSign($export_letter->created_user);
             $export_letter->wait = [  'user' => $user->id,
                 'created_at' => Carbon::now()->toDateTimeString(),
-                'data' => $request->template
+                'data' => str_replace('[[$per_creater_sign]]', $create_user_sign, $request->template)
             ];
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
             $approve_amt = (int)$HBS_CL_CLAIM->sumAppAmt;
@@ -524,6 +544,15 @@ class ClaimController extends Controller
                 if($user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
                     $to_user = Setting::findOrFail(1)->manager_claim;
                 }
+                
+                // Claim GOP
+                
+                if($user->hasRole('ClaimGOP') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 50000000){
+                    $to_user = Setting::findOrFail(1)->manager_gop_claim;
+                }
+                if( $user->hasRole('ManagerGOP') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
+                    $to_user = Setting::findOrFail(1)->header_claim;
+                }
 
                 if(!empty($to_user)){
                     foreach ($to_user as $key => $value) {
@@ -537,25 +566,22 @@ class ClaimController extends Controller
                     }
                     
                 }
-                
-                
             }
             
             $export_letter->status = $status_change[0];
             $list_level = LevelRoleStatus::all();
-            $level = $this->getLevel($export_letter,$list_level );
+            $level = $this->getLevel($export_letter, $list_level, $claim->claim_type);
             if($level->signature_accepted_by == $status_change[0] || ($user_create->hasRole('Claim Independent') && $user->hasRole('Manager'))){
-               
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => data_get($export_letter->wait, "data"),
                     ];
                 }else{
-                    
+                    $approve_user_sign = getUserSign($user->id);
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => data_get($export_letter->wait, "data"),
+                        'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, data_get($export_letter->wait, "data")),
                         'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content'])
                     ];
                     
@@ -595,8 +621,6 @@ class ClaimController extends Controller
                 $arr_id = [$user_create->id];
                 notifi_system($text_notifi, $arr_id);
             }
-
-            
         }
         
 
@@ -773,16 +797,15 @@ class ClaimController extends Controller
 
     public function exportLetter(Request $request){
         $export_letter = ExportLetter::findOrFail($request->export_letter_id);
+        $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
         if($export_letter->approve != null){
             $letter = LetterTemplate::findOrFail($request->letter_template_id);
-            $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
             $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
             $data['namefile'] = $namefile;
             $data['content'] = $export_letter->approve['data'];
         }elseif($export_letter->wait != null){
             $letter = LetterTemplate::findOrFail($request->letter_template_id);
-            $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
             $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
             $data['namefile'] = $namefile;
@@ -791,15 +814,38 @@ class ClaimController extends Controller
             $data = $this->letter($request->letter_template_id , $request->claim_id, $request->export_letter_id);
         }
         
-        header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-        header("Expires: 0");//no-cache
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
-        header("content-disposition: attachment;filename={$data['namefile']}.doc");
-        echo "<html>";      
-        echo "<body>";
-        echo $data['content'];
-        echo "</body>";
-        echo "</html>";
+        if($claim->claim_type == "M"){
+            header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            header("Expires: 0");//no-cache
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+            header("content-disposition: attachment;filename={$data['namefile']}.doc");
+            echo "<html>";      
+            echo "<body>";
+            echo $data['content'];
+            echo "</body>";
+            echo "</html>";
+        }else{
+            $data['content'] = "<html><body>".$data['content']."</body></html>";
+            $create_user_sign = getUserSign($export_letter->created_user);
+            $data['content'] = str_replace('[[$per_creater_sign]]', $create_user_sign, $data['content']);
+            $data['content'] = str_replace('[[$per_approve_sign]]', "", $data['content']);
+            $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
+            
+            $mpdf->WriteHTML('
+            <div style="position: absolute; right: 5px; top: 0px;font-weight: bold; ">
+                <img src="'.asset("images/header.jpg").'" alt="head">
+            </div>');
+            $mpdf->SetHTMLFooter('
+            <div style="text-align: right; font-weight: bold;">
+                <img src="'.asset("images/footer.png").'" alt="foot">
+            </div>');
+            $mpdf->WriteHTML($data['content']);
+            header("Content-Type: application/pdf");
+            header("Expires: 0");//no-cache
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+            header("content-disposition: attachment;filename={$data['namefile']}.pdf");
+            echo $mpdf->Output($data['namefile'].'.pdf',\Mpdf\Output\Destination::STRING_RETURN);
+        }
     }
 
     public function exportLetterPDF(Request $request){
@@ -883,6 +929,7 @@ class ClaimController extends Controller
         
         $CSRRemark = $CSRRemark_TermRemark['CSRRemark'];
         $TermRemark = $CSRRemark_TermRemark['TermRemark'];
+        $itemsReject = $CSRRemark_TermRemark['itemsReject'];
         $sumAppAmt = (int)$HBS_CL_CLAIM->sumAppAmt ;
         $export_letter = ExportLetter::findOrFail($export_letter_id);
         $note_pay =  note_pay($export_letter);
@@ -904,10 +951,37 @@ class ClaimController extends Controller
             $time_pay = implode("<br>",$time_pay);
             $paymentAmt = $sumAppAmt - $sum_tf_amt;
         }
-
+        $Provider = $HBS_CL_CLAIM->FirstLine;
+        $prov_address = array_filter([
+            $Provider->addr1,
+            $Provider->addr2,
+            $Provider->addr3,
+            $Provider->addr4,
+        ]);
         $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);
-
+        $incurDateTo = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_to);
+        $incurDateFrom = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_from);
+        $RBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('PD_BEN_HEAD.ben_head',['RB','ICU'])->sum('pres_amt');
+        $SURGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','SUR')->sum('pres_amt');
+        $EXTBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','EXTB')->sum('pres_amt');
+        $OTHERGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotIn('PD_BEN_HEAD.ben_head',['RB','ICU','SUR','EXTB'])->sum('pres_amt');
+        
         $content = $letter->template;
+        $content = str_replace('[[$ProvName]]', $Provider->prov_name, $content);
+        $content = str_replace('[[$bankNameProv]]', $Provider->cl_bank_name, $content);
+        $content = str_replace('[[$bankAddressProv]]', $Provider->cl_pay_bank_city, $content);
+        $content = str_replace('[[$acctNoProv]]', $Provider->cl_pay_acct_no, $content);
+        $content = str_replace('[[$payeeProv]]', $Provider->payee, $content);
+        $content = str_replace('[[$ProAddress]]', implode(",",$prov_address), $content);
+        $content = str_replace('[[$Diagnosis]]', $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn, $content);
+        $content = str_replace('[[$incurDateTo]]',$incurDateTo->format('d/m/Y'), $content);
+        $content = str_replace('[[$incurDateFrom]]', $incurDateFrom->format('d/m/Y'), $content);
+        $content = str_replace('[[$diffIncur]]', $incurDateTo->diffInDays($incurDateFrom), $content);
+        $content = str_replace('[[$RBGOP]]', formatPrice($RBGOP), $content);
+        $content = str_replace('[[$SURGOP]]', formatPrice($SURGOP), $content);
+        $content = str_replace('[[$EXTBGOP]]', formatPrice($SURGOP), $content);
+        $content = str_replace('[[$OTHERGOP]]', formatPrice($OTHERGOP), $content);
+        $content = str_replace('[[$itemsReject]]', implode(",",$itemsReject), $content);
         $content = str_replace('[[$note_pay]]', $note_pay, $content);
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
         $content = str_replace('[[$benefitOfClaim]]', $benefitOfClaim , $content);
@@ -1435,6 +1509,93 @@ class ClaimController extends Controller
             default:
                 return redirect('/admin/claim/'.$id)->with('errorStatus', 'System error !!! please try again');
                 break;
+        }
+    }
+    
+    public function requestManagerGOP(Request $request, $id){
+        $claim = Claim::itemClaimReject()->findOrFail($id);
+        $user = Auth::user();
+        if($request->type_submit == 'request'){
+            if($claim->url_file_sorted == null){
+                return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng update File vào "Tệp đã được sắp sếp" ');
+            }
+            $sumItemReject = 0 ;
+            $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($claim->code_claim_show)->getContent(),true);
+            $approve_amt = data_get($payment_history_cps,'approve_amt');
+            $present_amt = data_get($payment_history_cps,'present_amt');
+            foreach ($claim->item_of_claim as $key => $value) {
+                $sumItemReject += removeFormatPrice($value->amount);
+            }
+            if($sumItemReject != ($present_amt-$approve_amt)){
+                return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng nhập đúng những items reject ');
+            }
+            $claim->manager_gop_accept_pay = [
+                'status' => 'request',
+                'message' => '',
+                'created_by' => $user->id,
+                'created_at' => Carbon::now()->toDateTimeString(),
+            ];
+            $claim->save();
+            $to_user = Setting::findOrFail(1)->manager_gop_claim;
+
+            if (!empty($to_user)) {
+                foreach ($to_user as $key => $value) {
+                    $request2 = new Request([
+                        'user' => $value,
+                        'content' => 'Claim '.$claim->code_claim_show.' yêu cầu xác nhận "Thanh Toán" bởi '.$user->name.' Vui lòng kiểm tra lại thông tin tại : 
+                        <a href="'.route('claim.show', $id).'">'.route('claim.show', $id).'</a>'
+                    ]);
+                    $send_mes = new SendMessageController();
+                    $send_mes->sendMessage($request2);
+                }
+            }
+            return redirect('/admin/claim/'.$id)->with('status', 'Đã gửi yêu cầu thành công');
+        }
+
+        if($request->type_submit == 'accept'){
+            $to_user = [data_get($claim->manager_gop_accept_pay,'created_by')];
+            $claim->manager_gop_accept_pay = [
+                'status' => 'accept',
+                'message' => '',
+                'created_by' => $user->id,
+                'created_at' => Carbon::now()->toDateTimeString(),
+            ];
+            $claim->save();
+            if (!empty($to_user)) {
+                foreach ($to_user as $key => $value) {
+                    $request2 = new Request([
+                        'user' => $value,
+                        'content' => 'Claim '.$claim->code_claim_show.' được chấp thuận "Thanh Toán" bởi '.$user->name.' Vui lòng kiểm tra lại thông tin tại : 
+                        <a href="'.route('claim.show', $id).'">'.route('claim.show', $id).'</a>'
+                    ]);
+                    $send_mes = new SendMessageController();
+                    $send_mes->sendMessage($request2);
+                }
+            }
+            return redirect('/admin/claim/'.$id)->with('status', 'Đã gửi yêu cầu thành công');
+        }
+
+        if($request->type_submit == 'reject'){
+            $to_user = [data_get($claim->manager_gop_accept_pay,'created_by')];
+            $claim->manager_gop_accept_pay = [
+                'status' => 'reject',
+                'message' => $request->message,
+                'created_by' => $user->id,
+                'created_at' => Carbon::now()->toDateTimeString(),
+            ];
+            $claim->save();
+            if (!empty($to_user)) {
+                foreach ($to_user as $key => $value) {
+                    $request2 = new Request([
+                        'user' => $value,
+                        'content' => 'Claim '.$claim->code_claim_show.' bị từ chối "Thanh Toán" bởi '.$user->name.' Vui lòng kiểm tra lại thông tin tại : 
+                        <a href="'.route('claim.show', $id).'">'.route('claim.show', $id).'</a>'
+                    ]);
+                    $send_mes = new SendMessageController();
+                    $send_mes->sendMessage($request2);
+                }
+            }
+            return redirect('/admin/claim/'.$id)->with('status', 'Đã gửi yêu cầu thành công');
         }
     }
 }

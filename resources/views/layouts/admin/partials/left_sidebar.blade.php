@@ -12,14 +12,25 @@
                         <i class="fa fa-fw fa-ticket"></i> <span> {{__('message.claim_management')}} </span>
                     </a>
                     <ul class="list-unstyled">
+                        @hasanyrole('Header|Manager|Admin|Claim|Claim Independent')
                         <li class="{{ setActive('admin/claim') }}"> 
                             <a class="{{ setActive('admin/claim') }}"
-                            href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_ocr')}}</span></a>
+                            href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_M')}}</span></a>
                         </li>
+                        @endhasanyrole
+                        @hasanyrole('Header|ManagerGOP|Admin|ClaimGOP')
+                        <li class="{{ setActive('admin/claim') }}"> 
+                            <a class="{{ setActive('admin/claim') }}"
+                            href="{{ url('admin/P/claim') }}"><span> {{ __('message.form_claim_P')}}</span></a>
+                        </li>
+                        @endhasanyrole
+                        @hasanyrole('Header|ManagerGOP|Admin|Lead|Manager')
                         <li class="{{ setActive('admin/reason_reject') }}"> 
                             <a class="{{ setActive('admin/reason_reject') }}"
                             href="{{ url('admin/reason_reject') }}"><span> {{ __('message.reason_reject')}}</span></a>
                         </li>
+                        @endhasanyrole
+                        @hasanyrole('Header|Manager|Admin|ManagerGOP')
                         <li class="{{ setActive('admin/product') }}"> 
                             <a class="{{ setActive('admin/product') }}"
                             href="{{ url('admin/product') }}"><span> {{ __('message.product')}}</span></a>
@@ -32,6 +43,7 @@
                             <a class="{{ setActive('admin/letter_template') }}"
                             href="{{ url('admin/letter_template') }}"><span> {{ __('message.letter_template')}}</span></a>
                         </li>
+                        @endhasanyrole
                     </ul>
                 </li>
                 <li class="submenu">
@@ -51,7 +63,7 @@
                     </a>
                 </li>
                 {{-- UNC Sign --}}
-                @hasanyrole('Header|Manager|Admin')
+                @hasanyrole('Header|Manager|Admin|ManagerGOP')
                 <li class="submenu">
                     <a href="#">
                         <i class="fa fa-pencil-square" aria-hidden="true"></i> <span> Sign UNC </span>

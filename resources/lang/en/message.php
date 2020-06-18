@@ -25,7 +25,8 @@ return [
     'showing' => 'Showing',
     'to' => 'to',
     'of_total' => 'of total',
-    'form_claim_ocr' => 'Claim (Mem)',
+    'form_claim_M' => 'Claim (Mem)',
+    'form_claim_P' =>'Claim (GOP)',
     'update_fail' => 'The system have an error and please try again',
     'create' => 'Create',
     'display_result' => 'Display result',
@@ -70,6 +71,9 @@ return [
     'please_select' => '----------------------------------Please Select----------------------------------',
     'code_claim' => 'Code Claim',
     'letter' => 'Letter',
+    'claim_type' => 'Claim Type',
+    //claim GOP
+    'claim_create_GOP' => 'Create claim (GOP)',
 
     // reason_reject
     'reason_reject' => 'Reason Reject',

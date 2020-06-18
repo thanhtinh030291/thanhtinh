@@ -35,6 +35,8 @@
                     {{ Form::label('template', __('message.template')) }}
                     {{ Form::textarea('template', old('template'), ['id' => 'template_reject', 'class' => 'form-control editor']) }}<br>
 
+                    {{ Form::label('claim_type', __('message.claim_type')) }}
+                    {{ Form::select('claim_type', config('constants.claim_type'),old('claim_type'), ['id' => 'claim_type', 'class' => 'form-control ']) }}<br>
                 <div class="text-center tour-button">
                     <a class="btn btnt btn-secondary" href="{{url('admin/letter_template')}}">
                         {{ __('message.back')}}

@@ -12,10 +12,9 @@ function getUserSign($id){
     $user = User::findOrFail($id);
     $dirStorage = config('constants.signarureStorage');
     $dataImage =  $dirStorage . $user->signarure ;
-    $htm = "
-    <p><img src='{$dataImage}' alt='face' height='150' width='150'></img></p>
-    <p>$user->name</p>
-    ";
+    $htm = "<span><img src='{$dataImage}' alt='face' height='120' width='140'></img><br/>
+            $user->name
+        </span>";
     return $htm;
 }
 
@@ -478,6 +477,7 @@ function CSRRemark_TermRemark($claim){
     $hasTerm1 = null;
     
     $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
+    $itemsReject = $claim->item_of_claim->pluck('content')->toArray();
     $itemOfClaim = $claim->item_of_claim->groupBy('reason_reject_id');
     $templateHaveMeger = [];
     foreach ($itemOfClaim as $key => $value) {
@@ -535,7 +535,7 @@ function CSRRemark_TermRemark($claim){
     }
     
     
-    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $show_term];
+    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $show_term , 'itemsReject' => $itemsReject];
     
 }
 

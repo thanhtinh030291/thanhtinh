@@ -66,6 +66,13 @@ $max = config('constants.minMaxLength.max');
 
                                                     <div class="col-lg-6">
                                                         <div class="form-group">
+                                                            {{ Form::label('manager_gop_claim','Manager GOP of Claim', array('class' => 'labelas')) }} <span class="text-danger">*</span>
+                                                            {{ Form::select('manager_gop_claim[]', $admin_list, $setting->manager_gop_claim, [ 'class' => 'form-control select2','placeholder' =>'Email', 'required','multiple' => 'multiple']) }}<br/>
+                                                        </div>
+                                                    </div>  
+
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group">
                                                             {{ Form::label('header_claim','Head of Claim', array('class' => 'labelas')) }} <span class="text-danger">*</span>
                                                             {{ Form::select('header_claim[]', $admin_list, $setting->header_claim, [ 'class' => 'form-control select2','placeholder' =>'Email', 'required', 'multiple' => 'multiple' ]) }}<br/>
                                                         </div>

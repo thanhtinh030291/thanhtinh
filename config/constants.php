@@ -250,4 +250,13 @@ return[
         216	=> "RETURNED TO CLAIM",
         220	=> "DLVN CLOSED",
     ],
+    'claim_type'=>[
+        'M' => '(Member)',
+        'P' => '(GOP)',
+    ],
+    'status_request_gop_pay' => [
+        'request' => 'Đang đợi xác nhận',
+        'accept'  => 'Đã được xác nhận',
+        'reject'  => 'Đã bị từ chối',
+    ]
 ];

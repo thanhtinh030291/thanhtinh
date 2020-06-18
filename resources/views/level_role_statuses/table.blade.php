@@ -3,6 +3,7 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th>Claim Type</th>
         <th>Min Amount</th>
         <th>Max Amount</th>
         <th>Begin Status</th>
@@ -16,6 +17,7 @@
         @foreach($levelRoleStatuses as $levelRoleStatus)
             <tr>
                 <td>{!! $levelRoleStatus->name !!}</td>
+                <td>{{ data_get(config('constants.claim_type'),$levelRoleStatus->claim_type) }}</td>
             <td>{!! formatPrice($levelRoleStatus->min_amount) !!}</td>
             <td>{!! formatPrice($levelRoleStatus->max_amount) !!}</td>
             <td>{!! data_get($list_status, $levelRoleStatus->begin_status) !!}</td>
