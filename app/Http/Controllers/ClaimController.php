@@ -31,6 +31,8 @@ use App\MANTIS_TEAM;
 use App\MANTIS_USER_GROUP;
 use App\MANTIS_USER;
 use PDF;
+use App\MANTIS_BUG;
+use App\MANTIS_CUSTOM_FIELD_STRING;
 use Illuminate\Support\Arr;
 
 class ClaimController extends Controller
@@ -151,6 +153,19 @@ class ClaimController extends Controller
      */
     public function store(formClaimRequest $request)
     {
+        //validate
+        $mantis_policy = MANTIS_CUSTOM_FIELD_STRING::where('bug_id',(int)$request->barcode)->where('field_id',1)->first();
+        $pocy_ref_no = (int)HBS_CL_CLAIM::findOrFail((int)$request->code_claim)->Police->pocy_ref_no;
+        
+        if($mantis_policy){
+            if($pocy_ref_no != (int)$mantis_policy->value){
+                $request->session()->flash('errorStatus', 'Policy No trên HBS và Mantis chưa đồng nhất');
+                return redirect('/admin/claim/create')->withInput();
+            }
+        }else{
+            $request->session()->flash('errorStatus', 'Vui Lòng cập nhật Policy No trên Etalk');
+            return redirect('/admin/claim/create')->withInput();
+        }
         if ($request->_url_file_sorted) {
             saveFile($request->_url_file_sorted[0], config('constants.sortedClaimUpload'));
         }
@@ -930,6 +945,7 @@ class ClaimController extends Controller
         $CSRRemark = $CSRRemark_TermRemark['CSRRemark'];
         $TermRemark = $CSRRemark_TermRemark['TermRemark'];
         $itemsReject = $CSRRemark_TermRemark['itemsReject'];
+        $sumAmountReject = $CSRRemark_TermRemark['sumAmountReject'];
         $sumAppAmt = (int)$HBS_CL_CLAIM->sumAppAmt ;
         $export_letter = ExportLetter::findOrFail($export_letter_id);
         $note_pay =  note_pay($export_letter);
@@ -967,6 +983,8 @@ class ClaimController extends Controller
         $OTHERGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotIn('PD_BEN_HEAD.ben_head',['RB','ICU','SUR','EXTB'])->sum('pres_amt');
         
         $content = $letter->template;
+        $content = str_replace('[[$ProvPstAmt]]', formatPrice($claim->prov_gop_pres_amt), $content);
+        $content = str_replace('[[$ProDeniedAmt]]', formatPrice($sumAmountReject), $content);
         $content = str_replace('[[$ProvName]]', $Provider->prov_name, $content);
         $content = str_replace('[[$bankNameProv]]', $Provider->cl_bank_name, $content);
         $content = str_replace('[[$bankAddressProv]]', $Provider->cl_pay_bank_city, $content);
@@ -1460,6 +1478,13 @@ class ClaimController extends Controller
     }
 
     public function sendPayment(Request $request, $id){
+        $claim = Claim::findOrFail($id);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::HBSData()->findOrFail($claim->code_claim);
+        $count_policy =  $HBS_CL_CLAIM->HBS_CL_LINE->pluck("popl_oid")->unique()->count();
+        if($count_policy != 1){
+            $request->session()->flash('errorStatus', 'Claim chỉ được phép tồn tại 1 policy plan ');
+            return redirect('/admin/claim/'.$id)->withInput();
+        }
         $rp = AjaxCommonController::sendPayment($request,$id);
         switch (data_get($rp,'code')) {
             case '00':
@@ -1512,6 +1537,12 @@ class ClaimController extends Controller
         }
     }
     
+    public function setProvGOPPresAmt(Request $request, $id){
+        $claim = Claim::findOrFail($id);
+        $claim->prov_gop_pres_amt = removeFormatPrice($request->prov_gop_pres_amt);
+        $claim->save();
+        return redirect('/admin/claim/'.$id)->with('status', __('message.update_claim'));
+    }
     public function requestManagerGOP(Request $request, $id){
         $claim = Claim::itemClaimReject()->findOrFail($id);
         $user = Auth::user();
@@ -1526,8 +1557,8 @@ class ClaimController extends Controller
             foreach ($claim->item_of_claim as $key => $value) {
                 $sumItemReject += removeFormatPrice($value->amount);
             }
-            if($sumItemReject != ($present_amt-$approve_amt)){
-                return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng nhập đúng những items reject ');
+            if($sumItemReject != ($claim->prov_gop_pres_amt - $approve_amt)){
+                return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng nhập đúng những items reject hoặc số tiền yêu cầu ban đầu');
             }
             $claim->manager_gop_accept_pay = [
                 'status' => 'request',
@@ -1598,4 +1629,5 @@ class ClaimController extends Controller
             return redirect('/admin/claim/'.$id)->with('status', 'Đã gửi yêu cầu thành công');
         }
     }
+
 }

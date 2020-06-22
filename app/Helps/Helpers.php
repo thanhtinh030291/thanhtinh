@@ -478,6 +478,11 @@ function CSRRemark_TermRemark($claim){
     
     $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
     $itemsReject = $claim->item_of_claim->pluck('content')->toArray();
+    $amountsReject = $claim->item_of_claim->pluck('amount');
+    $sumAmountReject = 0;
+    foreach ($amountsReject as $key => $value) {
+        $sumAmountReject += removeFormatPrice($value);
+    }
     $itemOfClaim = $claim->item_of_claim->groupBy('reason_reject_id');
     $templateHaveMeger = [];
     foreach ($itemOfClaim as $key => $value) {
@@ -535,7 +540,7 @@ function CSRRemark_TermRemark($claim){
     }
     
     
-    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $show_term , 'itemsReject' => $itemsReject];
+    return [ 'CSRRemark' => $CSRRemark , 'TermRemark' => $show_term , 'itemsReject' => $itemsReject , 'sumAmountReject' => $sumAmountReject];
     
 }
 

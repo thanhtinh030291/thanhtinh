@@ -42,6 +42,14 @@ $totalAmount = 0;
                                     
                                     <h5 class="card-title">Request Letter</h5>
                                     <p class="card-text"></p>
+                                    {{ Form::open(array('url' => "/admin/claim/setProvGOPPresAmt/$data->id", 'method' => 'POST')) }}
+                                    {{ Form::label('prov_gop_pres_amt', "Số tiền yêu cầu ban đầu:", array('class' => 'labelas')) }}
+                                    <div class="row">
+                                        {{ Form::text('prov_gop_pres_amt', $data->prov_gop_pres_amt, ['class'=>"item-price form-control col-md-8"] ) }}
+                                        <button class="btn btn-info col-md-4" type="submit" value="save">SAVE</button>
+                                    </div>
+                                    {{ Form::close() }}
+
                                     {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
                                         {{ Form::hidden('claim_id', $data->id ) }}
                                         {{ Form::label('letter_template_id', __('message.letter_template'), array('class' => 'labelas')) }}

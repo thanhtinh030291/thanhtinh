@@ -258,5 +258,11 @@ return[
         'request' => 'Đang đợi xác nhận',
         'accept'  => 'Đã được xác nhận',
         'reject'  => 'Đã bị từ chối',
+    ],
+    'category_bug' => [
+        'Claim' => 15,
+        'MCP_Claim' => 16,
+        'CS_Claim' => 17
     ]
+
 ];
