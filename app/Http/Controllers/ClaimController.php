@@ -1752,7 +1752,7 @@ class ClaimController extends Controller
             foreach ($claim->item_of_claim as $key => $value) {
                 $sumItemReject += removeFormatPrice($value->amount);
             }
-            if($sumItemReject != ($claim->prov_gop_pres_amt - $approve_amt)){
+            if($sumItemReject != ($claim->hospital_request->prov_gop_pres_amt - $approve_amt)){
                 return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng nhập đúng những items reject hoặc số tiền yêu cầu ban đầu');
             }
             $claim->manager_gop_accept_pay = [
