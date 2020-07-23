@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 use App\HBS_CL_CLAIM;
 use App\HBS_MR_POLICY_PLAN;
+use App\HBS_PV_PROVIDER;
+use App\HBS_RT_DIAGNOSIS;
+use App\HBS_MR_MEMBER;
+use App\HBS_CL_LINE;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -16,10 +20,635 @@ use Illuminate\Http\Request;
 
 class AjaxCommonController extends Controller
 {
+    //validat GOP
+    public function AjaxValidClaim(Request $request){
+        $TYPE = $request->ben_type ? $request->ben_type : "IP";
+        $HEAD = $request->ben_head ? $request->ben_head : null;
+        $YEAR = $request->year ? $request->year : Carbon::now()->year;
+        $DIAGCODE = $request->diag_code;
+        $HBS_RT_DIAGNOSIS = HBS_RT_DIAGNOSIS::whereIn('diag_oid',$DIAGCODE)->get();
+        $DIAGNOSIS = $HBS_RT_DIAGNOSIS->pluck('diag_oid')->toArray();
+        $message = [];
+        $id_claim = $request->id_claim;
+        $claim = HBS_CL_CLAIM::IOPDiag()->findOrFail($id_claim);
+        $arr_max_bf = ["vis_yr","vis_day","amt_vis","amt_yr","amt_dis_yr","amt_life","deduct_amt","copay_pct","day_dis_yr","amt_day","deduct_amt_vis","amt_dis_vis","amt_dis_life"];
+    //check min max Type
+        $plan_all_limit = $claim->FirstLine->MR_POLICY_PLAN->PD_PLAN->PD_PLAN_LIMIT;
+        $plant_type_limits = $plan_all_limit->whereIn('limit_type',['T','CT'])->where('PD_BEN_HEAD.0.scma_oid_ben_type', 'BENEFIT_TYPE_'.$TYPE);
+        $memb_ref_no = $claim->member->memb_ref_no;
+        $HBS_MR_MEMBER = HBS_MR_MEMBER::where('memb_ref_no',$memb_ref_no)->get();
+        $memb_oids = $HBS_MR_MEMBER->pluck('memb_oid')->toArray();
+
+        $all_cl_line = HBS_CL_LINE::select(DB::raw("CL_LINE.* ,TO_CHAR( incur_date_from , 'YYYY') year"))
+        ->with('PD_BEN_HEAD')
+        ->with('RT_DIAGNOSIS')
+        ->whereIn('memb_oid',$memb_oids)
+        ->where('rev_date',null)
+        ->where('clam_oid','!=',$id_claim)->get();
+        foreach ($arr_max_bf as $max_bf) {
+            $limit_types = $plant_type_limits->where($max_bf,'!=',null);
+            if($limit_types->count() > 0)
+            {
+                
+                foreach($limit_types as $key_limit_type => $value_limit_type){
+                    $value_limit = data_get($value_limit_type, $max_bf);
+                    switch ($max_bf) {
+                        case 'vis_yr':
+                            if($value_limit_type->limit_type == "T"){
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type','BENEFIT_TYPE_'.$TYPE)
+                                ->groupBy('incur_date_from')->count();
+                                $remain = $value_limit - $count_vis;
+                                $message['T_CT']['vis_yr'] = !isset($message['T_CT']['vis_yr']) ? $remain : $remain < $message['T_CT']['vis_yr'] ?  $remain : $message['T_CT']['vis_yr'];
+                            }else{
+                                $BENEFIT_TYPES = $value_limit_type->PD_BEN_HEAD->pluck('scma_oid_ben_type')->toArray();
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->whereIn('PD_BEN_HEAD.scma_oid_ben_type',$BENEFIT_TYPES)
+                                ->groupBy('incur_date_from')->count();
+                                $remain = $value_limit - $count_vis;
+                                $message['T_CT']['vis_yr'] = !isset($message['vis_yr']) ? $remain : $remain < $message['T_CT']['vis_yr'] ?  $remain : $message['T_CT']['vis_yr'];
+                            }
+                            
+                            break;
+                        case 'vis_day':
+                            break;
+                        case 'amt_dis_yr':
+                            if($value_limit_type->limit_type == "T"){
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type','BENEFIT_TYPE_'.$TYPE)
+                                ->whereIn('diag_oid',$DIAGNOSIS)
+                                ->groupBy('diag_oid');
+                                if($count_vis->count() == 0){
+                                    collect($DIAGNOSIS)->map(function ($item, $key) use($value_limit, &$message) {
+                                        $message['T_CT']['amt_dis_yr'][$item] = $value_limit;
+                                    });
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    $message['T_CT']['amt_dis_yr'][$key_count_vis] = !isset($message['T_CT']['amt_dis_yr'][$key_count_vis]) ? $remain : $remain < $message['T_CT']['amt_dis_yr'][$key_count_vis] ?  $remain : $message['T_CT']['amt_dis_yr'][$key_count_vis];
+                                }
+                            }else{
+                                $BENEFIT_TYPES = $value_limit_type->PD_BEN_HEAD->pluck('scma_oid_ben_type')->toArray();
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->whereIn('PD_BEN_HEAD.scma_oid_ben_type',$BENEFIT_TYPES)
+                                ->whereIn('diag_oid',$DIAGNOSIS)
+                                ->groupBy('diag_oid');
+                                if($count_vis->count() == 0){
+                                    collect($DIAGNOSIS)->map(function ($item, $key) use($value_limit, &$message) {
+                                        $message['T_CT']['amt_dis_yr'][$item] = $value_limit;
+                                    });
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    $message['T_CT']['amt_dis_yr'][$key_count_vis] = !isset($message['T_CT']['amt_dis_yr'][$key_count_vis]) ? $remain : $remain < $message['T_CT']['amt_dis_yr'][$key_count_vis] ?  $remain : $message['T_CT']['amt_dis_yr'][$key_count_vis];
+                                }
+                            }
+                            break;
+                        case 'amt_dis_life':
+                        case 'amt_vis':
+                            if($value_limit_type->limit_type == "T"){
+                                $count_vis = $all_cl_line
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type','BENEFIT_TYPE_'.$TYPE)
+                                ->whereIn('diag_oid',$DIAGNOSIS)
+                                ->groupBy('diag_oid');
+                                
+                                if($count_vis->count() == 0){
+                                    collect($DIAGNOSIS)->map(function ($item, $key) use($value_limit, &$message) {
+                                        $message['T_CT']['amt_dis_life'][$item] = $value_limit;
+                                    });
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    $message['T_CT']['amt_dis_life'][$key_count_vis] = !isset($message['T_CT']['amt_dis_life'][$key_count_vis]) ? $remain : $remain < $message['T_CT']['amt_dis_life'][$key_count_vis] ?  $remain : $message['T_CT']['amt_dis_life'][$key_count_vis];
+                                }
+                            }else{
+                                $BENEFIT_TYPES = $value_limit_type->PD_BEN_HEAD->pluck('scma_oid_ben_type')->toArray();
+                                $count_vis = $all_cl_line
+                                ->whereIn('PD_BEN_HEAD.scma_oid_ben_type',$BENEFIT_TYPES)
+                                ->whereIn('diag_oid',$DIAGNOSIS)
+                                ->groupBy('diag_oid');
+                                if($count_vis->count() == 0){
+                                    collect($DIAGNOSIS)->map(function ($item, $key) use($value_limit, &$message){
+                                        $message['T_CT']['amt_dis_life'][$item] = $value_limit;
+                                    });
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    $message['T_CT']['amt_dis_life'][$key_count_vis] = !isset($message['T_CT']['amt_dis_life'][$key_count_vis]) ? $remain : $remain < $message['T_CT']['amt_dis_life'][$key_count_vis] ?  $remain : $message['T_CT']['amt_dis_life'][$key_count_vis];
+                                }
+                            }
+                            break;
+                        
+                        case 'amt_yr':
+                            if($value_limit_type->limit_type == "T"){
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type','BENEFIT_TYPE_'.$TYPE)
+                                ->sum('app_amt');
+                                $remain = $value_limit - $count_vis;
+                                $message['T_CT']['amt_yr'] = !isset($message['T_CT']['amt_yr']) ? $remain : $remain < $message['T_CT']['amt_yr'] ?  $remain : $message['T_CT']['amt_yr'];
+                            }else{
+                                $BENEFIT_TYPES = $value_limit_type->PD_BEN_HEAD->pluck('scma_oid_ben_type')->toArray();
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->whereIn('PD_BEN_HEAD.scma_oid_ben_type',$BENEFIT_TYPES)
+                                ->sum('app_amt');
+                                $remain = $value_limit - $count_vis;
+                                $message['T_CT']['amt_yr'] = !isset($message['T_CT']['amt_yr']) ? $remain : $remain < $message['T_CT']['amt_yr'] ?  $remain : $message['T_CT']['amt_yr'];
+                            }
+                            break;
+                        case 'amt_life':
+                            if($value_limit_type->limit_type == "T"){
+                                $count_vis = $all_cl_line
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type','BENEFIT_TYPE_'.$TYPE)
+                                ->sum('app_amt');
+                                $remain = $value_limit - $count_vis;
+                                $message['T_CT']['amt_life'] = !isset($message['T_CT']['amt_life']) ? $remain : $remain < $message['T_CT']['amt_life'] ?  $remain : $message['T_CT']['amt_life'];
+                            }else{
+                                $BENEFIT_TYPES = $value_limit_type->PD_BEN_HEAD->pluck('scma_oid_ben_type')->toArray();
+                                $count_vis = $all_cl_line
+                                ->whereIn('PD_BEN_HEAD.scma_oid_ben_type',$BENEFIT_TYPES)
+                                ->sum('app_amt');
+                                $remain = $value_limit - $count_vis;
+                                $message['T_CT']['amt_life'] = !isset($message['T_CT']['amt_life']) ? $remain : $remain < $message['T_CT']['amt_life'] ?  $remain : $message['T_CT']['amt_life'];
+                            }
+                            break;
+                        case 'copay_pct':
+                            
+                            break;
+                        case 'day_dis_yr':
+                            
+                            break;
+                        case 'amt_day':
+                            if($value_limit_type->limit_type == "T"){
+                                $remain = $value_limit;
+                                $message['T_CT']['amt_day'] = !isset($message['T_CT']['amt_day']) ? $remain : $remain < $message['T_CT']['amt_day'] ?  $remain : $message['T_CT']['amt_day'];
+                            }else{
+                                $remain = $value_limit ;
+                                $message['T_CT']['amt_day'] = !isset($message['T_CT']['amt_day']) ? $remain : $remain < $message['T_CT']['amt_day'] ?  $remain : $message['T_CT']['amt_day'];
+                            }
+                            break;
+                        case  'amt_dis_vis':
+                            break;
+                        case 'deduct_amt_vis':
+                            if($value_limit_type->limit_type == "T"){
+                                $remain = $value_limit;
+                                $message['T_CT']['deduct_amt_vis'] = !isset($message['T_CT']['deduct_amt_vis']) ? $remain : $remain < $message['T_CT']['deduct_amt_vis'] ?  $remain : $message['T_CT']['deduct_amt_vis'];
+                            }else{
+                                $remain = $value_limit ;
+                                $message['T_CT']['deduct_amt_vis'] = !isset($message['T_CT']['deduct_amt_vis']) ? $remain : $remain < $message['T_CT']['deduct_amt_vis'] ?  $remain : $message['T_CT']['deduct_amt_vis'];
+                            }
+                            break;
+                        case 'deduct_amt':
+                            if($value_limit_type->limit_type == "T"){
+                                $remain = $value_limit;
+                                $message['T_CT']['deduct_amt'] = !isset($message['T_CT']['deduct_amt']) ? $remain : $remain < $message['T_CT']['deduct_amt'] ?  $remain : $message['T_CT']['deduct_amt'];
+                            }else{
+                                $remain = $value_limit ;
+                                $message['T_CT']['deduct_amt'] = !isset($message['T_CT']['deduct_amt']) ? $remain : $remain < $message['T_CT']['deduct_amt'] ?  $remain : $message['T_CT']['deduct_amt'];
+                            }
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                }
+                
+            }
+
+        }
+    //end check type
+    //check min max Head
+        $plan_all_limit = $claim->FirstLine->MR_POLICY_PLAN->PD_PLAN->PD_PLAN_LIMIT;
+        $plant_type_limits = $plan_all_limit->whereIn('limit_type',['H','CH'])->where('PD_BEN_HEAD.0.scma_oid_ben_type', 'BENEFIT_TYPE_'.$TYPE);
+        foreach ($arr_max_bf as $max_bf) {
+            $limit_types = $plant_type_limits->where($max_bf,'!=',null);
+            if($limit_types->count() > 0)
+            {
+                foreach($limit_types as $key_limit_type => $value_limit_type){
+                    $value_limit = data_get($value_limit_type, $max_bf);
+                    $head = $value_limit_type->PD_BEN_HEAD->first()->ben_head;
+                    switch ($max_bf) {
+                        case 'vis_yr':
+                            break;
+                        case 'vis_day':
+                            break;
+                        case 'amt_dis_yr':
+                            if ($value_limit_type->limit_type == "H") {
+                                $count_vis = $all_cl_line->where('year', $YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type', 'BENEFIT_TYPE_'.$TYPE)
+                                ->where('PD_BEN_HEAD.ben_head', $head)
+                                ->whereIn('diag_oid', $DIAGNOSIS)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    collect($DIAGNOSIS)->map(function ($item, $key) use ($value_limit, &$message , $head) {
+                                        $message['H_CH']['amt_dis_yr'][$item][$head] = $value_limit;
+                                    });
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    $message['H_CH']['amt_dis_yr'][$key_count_vis][$head] = !isset($message['H_CH']['amt_dis_yr'][$key_count_vis][$head]) ? $remain : $remain < $message['H_CH']['amt_dis_yr'][$key_count_vis][$head] ?  $remain : $message['H_CH']['amt_dis_yr'][$key_count_vis][$head];
+                                }
+                            }else{
+                                $plant_type_ch = $value_limit_type->PD_BEN_HEAD->pluck('ben_head')->toArray();
+                                
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type',"BENEFIT_TYPE_".$TYPE)
+                                ->whereIn('PD_BEN_HEAD.ben_head', $plant_type_ch)
+                                ->whereIn('diag_oid',$DIAGNOSIS)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    collect($DIAGNOSIS)->map(function ($item, $key) use ($value_limit, &$message , $head , $plant_type_ch) {
+                                        foreach ($plant_type_ch as $keych => $valuech) {
+                                            $message['H_CH']['amt_dis_life'][$item][$valuech] = $value_limit;
+                                        }
+                                    });
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    foreach ($plant_type_ch as $key_head => $value_head) {
+                                        $message['H_CH']['amt_dis_yr'][$key_count_vis][$value_head] = !isset($message['H_CH']['amt_dis_yr'][$key_count_vis][$value_head]) ? $remain : $remain < $message['H_CH']['amt_dis_yr'][$key_count_vis][$value_head] ?  $remain : $message['H_CH']['amt_dis_yr'][$key_count_vis][$value_head];
+                                    }
+                                }
+                            }
+                            break;
+                        case 'amt_dis_life':
+                            if ($value_limit_type->limit_type == "H") {
+                                $count_vis = $all_cl_line
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type', 'BENEFIT_TYPE_'.$TYPE)
+                                ->where('PD_BEN_HEAD.ben_head', $head)
+                                ->whereIn('diag_oid', $DIAGNOSIS)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    collect($DIAGNOSIS)->map(function ($item, $key) use ($value_limit, &$message , $head) {
+                                        $message['H_CH']['amt_dis_life'][$item][$head] = $value_limit;
+                                    });
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    $message['H_CH']['amt_dis_life'][$key_count_vis][$head] = !isset($message['H_CH']['amt_dis_life'][$key_count_vis][$head]) ? $remain : $remain < $message['H_CH']['amt_dis_life'][$key_count_vis][$head] ?  $remain : $message['H_CH']['amt_dis_life'][$key_count_vis][$head];
+                                }
+                            }else{
+                                $plant_type_ch = $value_limit_type->PD_BEN_HEAD->pluck('ben_head')->toArray();
+                                
+                                $count_vis = $all_cl_line
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type',"BENEFIT_TYPE_".$TYPE)
+                                ->whereIn('PD_BEN_HEAD.ben_head', $plant_type_ch)
+                                ->whereIn('diag_oid',$DIAGNOSIS)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    collect($DIAGNOSIS)->map(function ($item, $key) use ($value_limit, &$message , $head , $plant_type_ch) {
+                                        foreach ($plant_type_ch as $keych => $valuech) {
+                                            $message['H_CH']['amt_dis_life'][$item][$valuech] = $value_limit;
+                                        }
+                                    });
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    foreach ($plant_type_ch as $key_head => $value_head) {
+                                        $message['H_CH']['amt_dis_life'][$key_count_vis][$value_head] = !isset($message['H_CH']['amt_dis_life'][$key_count_vis][$value_head]) ? $remain : $remain < $message['H_CH']['amt_dis_life'][$key_count_vis][$value_head] ?  $remain : $message['H_CH']['amt_dis_life'][$key_count_vis][$value_head];
+                                    }
+                                }
+                                
+                            }
+                        case 'amt_vis':
+                            
+                            break;
+                        
+                        case 'amt_yr':
+                            if ($value_limit_type->limit_type == "H") {
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type', 'BENEFIT_TYPE_'.$TYPE)
+                                ->where('PD_BEN_HEAD.ben_head', $head)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    $message['H_CH']['amt_yr'][$head] = $value_limit;
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    $message['H_CH']['amt_yr'][$head] = !isset($message['H_CH']['amt_yr'][$head]) ? $remain : $remain < $message['H_CH']['amt_yr'][$head] ?  $remain : $message['H_CH']['amt_yr'][$head];
+                                }
+                            }else{
+                                $plant_type_ch = $value_limit_type->PD_BEN_HEAD->pluck('ben_head')->toArray();
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type',"BENEFIT_TYPE_".$TYPE)
+                                ->whereIn('PD_BEN_HEAD.ben_head', $plant_type_ch)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    foreach ($plant_type_ch as $keych => $valuech) {
+                                        $message['H_CH']['amt_yr'][$valuech] = $value_limit;
+                                    }
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    foreach ($plant_type_ch as $key_head => $value_head) {
+                                        $message['H_CH']['amt_yr'][$value_head] = !isset($message['H_CH']['amt_yr'][$value_head]) ? $remain : $remain < $message['H_CH']['amt_yr'][$value_head] ?  $remain : $message['H_CH']['amt_yr'][$value_head];
+                                    }
+                                }
+                            }
+                            break;
+                        case 'amt_life':
+                            if ($value_limit_type->limit_type == "H") {
+                                $count_vis = $all_cl_line
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type', 'BENEFIT_TYPE_'.$TYPE)
+                                ->where('PD_BEN_HEAD.ben_head', $head)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    $message['H_CH']['amt_life'][$head] = $value_limit;
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    $message['H_CH']['amt_life'][$head] = !isset($message['H_CH']['amt_life'][$head]) ? $remain : $remain < $message['H_CH']['amt_life'][$head] ?  $remain : $message['H_CH']['amt_life'][$head];
+                                }
+                            }else{
+                                $plant_type_ch = $value_limit_type->PD_BEN_HEAD->pluck('ben_head')->toArray();
+                                $count_vis = $all_cl_line
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type',"BENEFIT_TYPE_".$TYPE)
+                                ->whereIn('PD_BEN_HEAD.ben_head', $plant_type_ch)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    foreach ($plant_type_ch as $keych => $valuech) {
+                                        $message['H_CH']['amt_life'][$valuech] = $value_limit;
+                                    }
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('app_amt');
+                                    foreach ($plant_type_ch as $key_head => $value_head) {
+                                        $message['H_CH']['amt_life'][$value_head] = !isset($message['H_CH']['amt_life'][$value_head]) ? $remain : $remain < $message['H_CH']['amt_life'][$value_head] ?  $remain : $message['H_CH']['amt_life'][$value_head];
+                                    }
+                                }
+                            }
+                            break;
+                        case 'copay_pct':
+                            
+                            break;
+                        case 'day_dis_yr':
+                            if ($value_limit_type->limit_type == "H") {
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type', 'BENEFIT_TYPE_'.$TYPE)
+                                ->where('PD_BEN_HEAD.ben_head', $head)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    $message['H_CH']['day_dis_yr'][$head] = $value_limit;
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('days');
+                                    $message['H_CH']['day_dis_yr'][$head] = !isset($message['H_CH']['day_dis_yr'][$head]) ? $remain : $remain < $message['H_CH']['day_dis_yr'][$head] ?  $remain : $message['H_CH']['day_dis_yr'][$head];
+                                }
+                            }else{
+                                $plant_type_ch = $value_limit_type->PD_BEN_HEAD->pluck('ben_head')->toArray();
+                                $count_vis = $all_cl_line->where('year',$YEAR)
+                                ->where('PD_BEN_HEAD.scma_oid_ben_type',"BENEFIT_TYPE_".$TYPE)
+                                ->whereIn('PD_BEN_HEAD.ben_head', $plant_type_ch)
+                                ->groupBy('diag_oid');
+                                if ($count_vis->count() == 0) {
+                                    foreach ($plant_type_ch as $keych => $valuech) {
+                                        $message['H_CH']['day_dis_yr'][$valuech] = $value_limit;
+                                    }
+                                }
+                                foreach ($count_vis as $key_count_vis => $value_count_vis) {
+                                    $remain = $value_limit - $value_count_vis->sum('days');
+                                    foreach ($plant_type_ch as $key_head => $value_head) {
+                                        $message['H_CH']['day_dis_yr'][$value_head] = !isset($message['H_CH']['day_dis_yr'][$value_head]) ? $remain : $remain < $message['H_CH']['day_dis_yr'][$value_head] ?  $remain : $message['H_CH']['day_dis_yr'][$value_head];
+                                    }
+                                }
+                            }
+                            break;
+                        case 'amt_day':
+                            if ($value_limit_type->limit_type == "H") {
+
+                                $remain = $value_limit;
+                                $message['H_CH']['amt_day'][$head] = !isset($message['H_CH']['amt_day'][$head]) ? $remain : $remain < $message['H_CH']['amt_day'][$head] ?  $remain : $message['H_CH']['amt_day'][$head];
+
+                            }else{
+                                $plant_type_ch = $value_limit_type->PD_BEN_HEAD->pluck('ben_head')->toArray();
+                                $plant_type_ch_string = implode("-",$plant_type_ch);
+                                $remain = $value_limit ;
+                                foreach ($plant_type_ch as $key_head => $value_head) {
+                                    $message['H_CH']['amt_day'][$value_head] = !isset($message['H_CH']['amt_day'][$value_head]) ? $remain : $remain < $message['H_CH']['amt_day'][$value_head] ?  $remain : $message['H_CH']['amt_day'][$value_head];
+                                }
+                                $message['H_CH']['amt_day'][$plant_type_ch_string] = $remain;
+                                
+                            }
+                            break;
+                        case  'amt_dis_vis':
+                            if ($value_limit_type->limit_type == "H") {
+
+                                $remain = $value_limit;
+                                $message['H_CH']['amt_dis_vis'][$head] = !isset($message['H_CH']['amt_dis_vis'][$head]) ? $remain : $remain < $message['H_CH']['amt_dis_vis'][$head] ?  $remain : $message['H_CH']['amt_dis_vis'][$head];
+
+                            }else{
+                                $plant_type_ch = $value_limit_type->PD_BEN_HEAD->pluck('ben_head')->toArray();
+                                $plant_type_ch_string = implode("-",$plant_type_ch);
+                                $remain = $value_limit ;
+                                foreach ($plant_type_ch as $key_head => $value_head) {
+                                    $message['H_CH']['amt_dis_vis'][$value_head] = !isset($message['H_CH']['amt_dis_vis'][$value_head]) ? $remain : $remain < $message['H_CH']['amt_dis_vis'][$value_head] ?  $remain : $message['H_CH']['amt_dis_vis'][$value_head];
+                                }
+                                $message['H_CH']['amt_dis_vis'][$plant_type_ch_string] = $remain;
+                                
+                            }
+                            break;
+                        case 'deduct_amt_vis':
+                            
+                            break;
+                        case 'deduct_amt':
+                            
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                }
+                
+            }
+            
+        }
+    //end check head
+        foreach ($arr_max_bf as $max_bf){
+            switch ($max_bf) {
+                case 'vis_yr':
+                    if( isset($message['T_CT']['vis_yr'])){
+                        $message['T_CT']['vis_yr'] = [
+                            'max_limit' => $message['T_CT']['vis_yr'] ,
+                            'message'     => "Giới Hạn (số lần thăm khám) yêu cầu bồi thường cho ({$TYPE}) còn lại trong năm {$YEAR} là : {$message['T_CT']['vis_yr']} ." ,
+                        ];
+                    }
+                    if( isset($message['H_CH']['vis_yr'])){
+                        $message['H_CH']['vis_yr'] = [
+                            'max_limit' => $message['H_CH']['vis_yr'] ,
+                            'message'     => "Giới Hạn (số lần thăm khám) yêu cầu bồi thường cho ({$TYPE}) còn lại trong năm {$YEAR} là : {$message['H_CH']['vis_yr']} ." ,
+                        ];
+                    }
+                    break;
+                case 'vis_day':
+                    if( isset($message['T_CT']['vis_day'])){
+                        $message['T_CT']['vis_day'] = [
+                            'max_limit' => $message['T_CT']['vis_day'] ,
+                            'message'     => "Giới Hạn (số lần nhập Viện) yêu cầu bồi thường cho ({$TYPE} còn lại trong Ngày là : {$message['T_CT']['vis_yr']} ." ,
+                        ];
+                    }
+                    if( isset($message['H_CH']['vis_day'])){
+                        $message['H_CH']['vis_day'] = [
+                            'max_limit' => $message['H_CH']['vis_day'] ,
+                            'message'     => "Giới Hạn (số lần nhập Viện) yêu cầu bồi thường cho ({$TYPE} còn lại trong Ngày là : {$message['H_CH']['vis_yr']} ." ,
+                        ];
+                    }
+                break;
+                case 'amt_dis_yr':
+                    if( isset($message['T_CT']['amt_dis_yr'])){
+                        foreach ($message['T_CT']['amt_dis_yr'] as $key => $value) {
+                            $name_diag = $HBS_RT_DIAGNOSIS->where('diag_oid',$key)->first()->diag_desc_vn;
+                            $format_value = formatPrice($value);
+                            $message['T_CT']['amt_dis_life'][$key] = [
+                                'max_limit' => $value ,
+                                'message'     => "Giới Hạn (số tiền) yêu cầu bồi thường cho bệnh ({$name_diag})-({$TYPE}) còn lại trong Năm là : {$format_value} ." 
+                            ];
+                        }
+                    }
+                    if( isset($message['H_CH']['amt_dis_yr'])){
+                        foreach ($message['H_CH']['amt_dis_yr'] as $key => $value) {
+                            $name_diag = $HBS_RT_DIAGNOSIS->where('diag_oid',$key)->first()->diag_desc_vn;
+                            foreach ($value as $key2 => $value2) {
+                                $format_value = formatPrice($value2);
+                                $message['H_CH']['amt_dis_yr'][$key][$key2] = [
+                                    'max_limit' =>  $value2 ,
+                                    'message'     => "Giới Hạn (số tiền) yêu cầu bồi thường cho ({$key2})-({$name_diag})-({$TYPE}) còn lại trong Năm là : {$format_value} ." ,
+                                ];
+                            }
+                        }
+                    }
+                break;
+                case 'amt_dis_life':
+                    if( isset($message['T_CT']['amt_dis_life'])){
+                        foreach ($message['T_CT']['amt_dis_life'] as $key => $value) {
+                            $name_diag = $HBS_RT_DIAGNOSIS->where('diag_oid',$key)->first()->diag_desc_vn;
+                            $format_value = formatPrice($value);
+                            $message['T_CT']['amt_dis_life'][$key] = [
+                                'max_limit' => $value ,
+                                'message'     =>  "Giới Hạn (số tiền) yêu cầu bồi thường cho bệnh ({$name_diag}) ({$TYPE}) còn lại  là : {$format_value} ."
+                            ];
+                        }
+                    }
+                    if( isset($message['H_CH']['amt_dis_life'])){
+                        foreach ($message['H_CH']['amt_dis_life'] as $key => $value) {
+                            $name_diag = $HBS_RT_DIAGNOSIS->where('diag_oid',$key)->first()->diag_desc_vn;
+                            foreach ($value as $key2 => $value2) {
+                                $format_value = formatPrice($value2);
+                                $message['H_CH']['amt_dis_life'][$key][$key2] = [
+                                    'max_limit' =>  $value2 ,
+                                    'message'     => "Giới Hạn (số tiền) yêu cầu bồi thường cho ({$key2})-({$name_diag})-({$TYPE}) còn lại là : {$format_value} ." ,
+                                ];
+                            }
+                        }
+                    }
+                break;
+                case 'amt_vis':
+                    if( isset($message['T_CT']['amt_vis'])){
+                        $format_value = formatPrice($message['T_CT']['amt_vis']);
+                        $message['T_CT']['amt_vis'] = [
+                            'max_limit' => $message['T_CT']['amt_vis'] ,
+                            'message'     => "Giới Hạn (số tiền)  yêu cầu bồi thường mỗi lần thăm khám cho ({$TYPE}) là : {$format_value} ." ,
+                        ];
+                    }
+                break;
+                case 'amt_yr':
+                    if( isset($message['T_CT']['amt_yr'])){
+                        $format_value = formatPrice($message['T_CT']['amt_yr']);
+                        $message['T_CT']['amt_yr'] = [
+                            'max_limit' => $message['T_CT']['amt_yr'] ,
+                            'message'     => "Giới Hạn (số tiền)  yêu cầu bồi thường cho ({$TYPE}) trong năm là : {$format_value} ." ,
+                        ];
+                    }
+                    break;
+                case 'amt_life':
+                    if( isset($message['T_CT']['amt_life'])){
+                        $format_value = formatPrice($message['T_CT']['amt_life']);
+                        $message['T_CT']['amt_life'] = [
+                            'max_limit' => $message['T_CT']['amt_life'] ,
+                            'message'     => "Giới Hạn (số tiền)  yêu cầu bồi thường cho ({$TYPE}) là : {$format_value} ." ,
+                        ];
+                    }
+                    if( isset($message['H_CH']['amt_life'])){
+                        foreach ($message['H_CH']['amt_life'] as $key => $value) {
+                            $format_value = formatPrice($value);
+                            $message['H_CH']['amt_life'][$key] = [
+                                'max_limit' =>  $value ,
+                                'message'     => "Giới Hạn (số tiền) yêu cầu bồi thường cho ({$key})-({$TYPE}) còn lại là : {$format_value} ." ,
+                            ];
+                        }
+                    }
+                    break;
+                case 'copay_pct':
+                    
+                    break;
+                case 'day_dis_yr':
+                    if( isset($message['H_CH']['day_dis_yr'])){
+                        foreach ($message['H_CH']['day_dis_yr'] as $key => $value) {
+                            $format_value = formatPrice($value);
+                            $message['H_CH']['day_dis_yr'][$key] = [
+                                'max_limit' =>  $value ,
+                                'message'     => "Giới Hạn (số ngày) yêu cầu bồi thường cho ({$key})-({$TYPE}) còn lại là : {$format_value} ." ,
+                            ];
+                        }
+                    }
+                    break;
+                case 'amt_day':
+                    if( isset($message['T_CT']['amt_day'])){
+                        $format_value = formatPrice($message['T_CT']['amt_day']);
+                        $message['T_CT']['amt_day'] = [
+                            'max_limit' => $message['T_CT']['amt_day'] ,
+                            'message'     => "Giới Hạn (số tiền)  yêu cầu bồi thường cho ({$TYPE}) mỗi ngày là : {$format_value} ." ,
+                        ];
+                    }
+                    if( isset($message['H_CH']['amt_day'])){
+                        foreach ($message['H_CH']['amt_day'] as $key => $value) {
+                            $format_value = formatPrice($value);
+                            $message['H_CH']['amt_day'][$key] = [
+                                'max_limit' =>  $value ,
+                                'message'     => "Giới Hạn (số tiền) yêu cầu bồi thường cho ({$key})-({$TYPE}) còn lại là : {$format_value} ." ,
+                            ];
+                        }
+                    }
+                    break;
+                case  'amt_dis_vis':
+                    if( isset($message['H_CH']['amt_dis_vis'])){
+                        foreach ($message['H_CH']['amt_dis_vis'] as $key => $value) {
+                            $format_value = formatPrice($value);
+                            $message['H_CH']['amt_dis_vis'][$key] = [
+                                'max_limit' =>  $value ,
+                                'message'     => "Giới Hạn (số tiền) yêu cầu bồi thường cho ({$key})-({$TYPE}) (/mỗi bệnh / mỗi lần khám )còn lại là : {$format_value} ." ,
+                            ];
+                        }
+                    }
+                    break;
+                case 'deduct_amt':
+                    if( isset($message['T_CT']['deduct_amt'])){
+                        $format_value = formatPrice($message['T_CT']['deduct_amt']);
+                        $message['T_CT']['deduct_amt'] = [
+                            'min_limit' => $message['deduct_amt']['amt_day'] ,
+                            'message'     => "Giới Hạn (số tiền)  yêu cầu bồi thường cho ({$TYPE}) phải lớn hơn : {$format_value} ." ,
+                        ];
+                    }
+                    break;
+                case 'deduct_amt_vis':
+                    if( isset($message['T_CT']['deduct_amt_vis'])){
+                        $format_value = formatPrice($message['T_CT']['deduct_amt_vis']);
+                        $message['T_CT']['deduct_amt_vis'] = [
+                            'min_limit' => $message['deduct_amt_vis']['amt_day'] ,
+                            'message'     => "Giới Hạn (số tiền)  yêu cầu bồi thường cho ({$TYPE}) phải lớn hơn : {$format_value} ." ,
+                        ];
+                    }
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
+        return $message;
+        
+    }
     //ajax load ID claim auto complate 
     public function dataAjaxHBSClaim(Request $request)
     {
-        
         $data = [];
         if($request->has('q')){
             $search = $request->q;
@@ -31,6 +660,57 @@ class AjaxCommonController extends Controller
         return response()->json($data);
     }
 
+    public function dataAjaxHBSGOPClaim(Request $request)
+    {
+        $data = [];
+        $conditionGOP = function($q) {
+            $q->where('SCMA_OID_CL_TYPE', 'CL_TYPE_P');
+        };
+        if($request->has('q')){
+            $search = $request->q;
+            $datas = HBS_CL_CLAIM::where('cl_no','LIKE',"%$search%")
+                    ->whereHas('HBS_CL_LINE' ,$conditionGOP)
+                    ->select('clam_oid as id', 'cl_no as text')
+                    ->limit(20)->get();
+            return response()->json($datas);
+        }
+        return response()->json($data);
+    }
+
+    public function dataAjaxHBSDiagnosis(Request $request)
+    {
+        $data = [];
+        if($request->has('q')){
+            $search = mb_strtolower($request->q);
+            $datas = HBS_RT_DIAGNOSIS::where('diag_desc_vn','LIKE',"%$search%")->orWhere('diag_code','LIKE',"%$search%")
+                    ->select(DB::raw("diag_oid  as id, diag_code ||'-'|| diag_desc_vn as text"))
+                    ->limit(100)->get();
+            
+            
+            return response()->json($datas);
+        }
+        return response()->json($data);
+    }
+
+    public function dataAjaxHBSProvByClaim($claim_oid){
+        $data = HBS_CL_CLAIM::findOrFail($claim_oid)->provider;
+        return response()->json($data);
+    }
+
+    //ajax load provider
+    public function dataAjaxHBSProv(Request $request)
+    {
+        $data = [];
+        if($request->has('q')){
+            $search = mb_strtoupper($request->q);
+            $datas = HBS_PV_PROVIDER::where('prov_name','LIKE',"%$search%")
+                    ->select('prov_oid as id', 'prov_name as text')
+                    ->limit(50)->get();
+            return response()->json($datas);
+        }
+        return response()->json($data);
+    }
+    
     // jax load info of claim
     public function loadInfoAjaxHBSClaim(Request $request)
     {  
@@ -140,6 +820,7 @@ class AjaxCommonController extends Controller
             'headers' => $headers
         ]);
         $response = $client->request("POST", config('constants.api_cps').'get_payment/'. $cl_no , ['form_params'=>$body]);
+        
         $response =  json_decode($response->getBody()->getContents());
         $response_full = collect($response)->where('TF_STATUS_NAME','!=', "NEW")->where('TF_STATUS_NAME','!=', "DELETED");
         $response = collect($response)->where('TF_STATUS_NAME','!=', "NEW")->where('TF_STATUS_NAME','!=', "DELETED");

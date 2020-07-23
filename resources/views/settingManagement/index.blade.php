@@ -4,7 +4,7 @@ $min = config('constants.minMaxLength.min');
 $max = config('constants.minMaxLength.max');
 @endphp
 @extends('layouts.admin.master')
-@section('title','My Profile')
+@section('title','Setting Management')
 @section('stylesheets')
 <link rel="stylesheet" type="text/css" href="{{asset('css/jquery-ui.min.css?vision=') .$vision }}">
 <link href="{{ asset('css/multi_lang.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
@@ -146,11 +146,35 @@ $max = config('constants.minMaxLength.max');
                                             </div>
                                         </div>							
                                     </form>										
-                                        
                                 </div>
                             </div>
                         </div>
-                            <!-- end col -->	                                  
+                            <!-- end col -->	  
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h3><i class="fa fa-user"></i> Check Update Claim </h3>								
+                                        </div>
+                                            
+                                        <div class="card-body">
+                                            
+                                        {{ Form::open(array('url' => "admin/setting/checkUpdateClaim", 'method' => 'post' ,'files' => true, 'id' => 'drawing-form')) }}
+                            
+                                            <div class="row">
+                                                <div class="col-lg-9 col-xl-9">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>							
+                                        </form>										
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- end col -->	                                  
                     </div>
                     <!-- end row -->	
                 </div>

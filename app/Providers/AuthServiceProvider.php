@@ -11,6 +11,8 @@ use App\ReasonReject;
 use App\Policies\ReasonRejectPolicy;
 use App\LetterTemplate;
 use App\Policies\LetterTemplatePolicy;
+use App\Provider;
+use App\Policies\ProviderPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 

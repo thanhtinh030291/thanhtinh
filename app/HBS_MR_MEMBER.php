@@ -81,6 +81,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
         $client = new \GuzzleHttp\Client([
             'headers' => $headers
         ]);
+        
         try {
             $request = $client->get(config('constants.url_query_online').$this->memb_ref_no);
             $response = $request->getBody()->getContents();
@@ -94,7 +95,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
             }else{
                 return "";
             }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch ( Exception $e) {
             return "";
         }
     }
@@ -112,7 +113,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
             $response = $request->getBody()->getContents();
             return $response;
 
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
+        } catch (Exception $e) {
             return "";
         }
     }

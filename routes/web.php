@@ -43,6 +43,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/claim/payDebt/{id}', 'ClaimController@payDebt')->name('claim.payDebt');
         Route::post('/claim/setProvGOPPresAmt/{id}', 'ClaimController@setProvGOPPresAmt')->name('claim.setProvGOPPresAmt');
         Route::post('/claim/requestManagerGOP/{id}', 'ClaimController@requestManagerGOP')->name('claim.requestManagerGOP');
+        Route::post('/claim/sendMailProvider', 'ClaimController@sendMailProvider')->name('claim.sendMailProvider');
         
         Route::get('/claim/barcode/{barcode}', 'ClaimController@barcode_link');
 
@@ -87,6 +88,13 @@ Route::group(['prefix' => 'admin'], function () {
         //ajax
         Route::get('/dataAjaxHBSClaim', 'AjaxCommonController@dataAjaxHBSClaim')->name('dataAjaxHBSClaim');
         Route::post('/loadInfoAjaxHBSClaim', 'AjaxCommonController@loadInfoAjaxHBSClaim')->name('loadInfoAjaxHBSClaim');
+        Route::get('/dataAjaxHBSProv', 'AjaxCommonController@dataAjaxHBSProv')->name('dataAjaxHBSProv');
+        Route::get('/dataAjaxHBSGOPClaim', 'AjaxCommonController@dataAjaxHBSGOPClaim')->name('dataAjaxHBSGOPClaim');
+        Route::get('/dataAjaxHBSProvByClaim/{claim_oid}', 'AjaxCommonController@dataAjaxHBSProvByClaim')->name('dataAjaxHBSProvByClaim');
+        Route::get('/dataAjaxHBSDiagnosis', 'AjaxCommonController@dataAjaxHBSDiagnosis')->name('dataAjaxHBSDiagnosis');
+        Route::get('/AjaxValidClaim', 'AjaxCommonController@AjaxValidClaim')->name('AjaxValidClaim');
+        
+        
 
         Route::get('/dataAjaxHBSClaimRB', 'AjaxCommonController@dataAjaxHBSClaimRB')->name('dataAjaxHBSClaimRB');
         Route::post('/loadInfoAjaxHBSClaimRB', 'AjaxCommonController@loadInfoAjaxHBSClaimRB')->name('loadInfoAjaxHBSClaimRB');
@@ -111,12 +119,16 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('setting/',  'SettingController@index')->name('setting.index')->middleware(['role:Admin']);
         Route::post('setting/update','SettingController@update')->middleware(['role:Admin']);
         Route::post('setting/notifiAllUser','SettingController@notifiAllUser')->middleware(['role:Admin']);
+        Route::post('setting/checkUpdateClaim','SettingController@checkUpdateClaim')->middleware(['role:Admin']);
 
         Route::resource('uncSign', 'UncSignController');
 
         //payment Histor
         Route::resource('PaymentHistory', 'PaymentHistoryController');
         Route::get('get_renewed_claim',  'PaymentHistoryController@get_renewed_claim');
+
+        //provider
+        Route::resource('providers', 'ProviderController');
         
     });
 
@@ -144,6 +156,3 @@ Route::post(
 Route::post('check_subscriptions', 'PushController@check_subscriptions');
 Route::post('subscriptions', 'PushController@update');
 Route::post('subscriptions/delete', 'PushController@destroy');
-
-
-

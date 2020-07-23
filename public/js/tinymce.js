@@ -381,7 +381,7 @@ var editor_readonly = {
     readonly : 1,
     menubar:false,
     toolbar:false,
-    height : "200",
+    height : "500",
     };
 tinymce.init(editor_readonly);
 

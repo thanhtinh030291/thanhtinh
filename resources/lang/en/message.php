@@ -72,6 +72,9 @@ return [
     'code_claim' => 'Code Claim',
     'letter' => 'Letter',
     'claim_type' => 'Claim Type',
+    'barcode' => 'Barcode',
+    'memb_ref_no' => 'Member Ref No',
+    'prov_name' => 'Provider Name',
     //claim GOP
     'claim_create_GOP' => 'Create claim (GOP)',
 

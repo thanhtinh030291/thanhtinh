@@ -4,8 +4,13 @@ namespace App\Http\Controllers;
 use App\User;
 use Auth;
 use App\Setting;
+use App\Claim;
+use App\HBS_CL_CLAIM;
+use App\Provider;
+use App\HBS_PV_PROVIDER;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use DB;
 
 
 class SettingController extends Controller
@@ -57,6 +62,22 @@ class SettingController extends Controller
         $text_notifi = $request->message;
         $arr_id = User::pluck('id');
         notifi_system($text_notifi, $arr_id);
+    }
+
+    public function checkUpdateClaim(Request $request){
+        $claims = Claim::where('code_claim_show',null)->orWhere('barcode', null)->pluck('code_claim')->toArray();
+        $claims_chunk = array_chunk($claims, 500);
+        foreach ($claims_chunk as $key => $value) {
+            $HBS_CL_CLAIM = HBS_CL_CLAIM::whereIn('clam_oid',$value)->get();
+            foreach ($HBS_CL_CLAIM as $key2 => $value2) {
+                DB::table('claim')->where('code_claim',$value2->clam_oid)->update([
+                    'code_claim_show' => $value2->cl_no,
+                    'barcode' => $value2->barcode
+                ]);
+            }
+        }
+        $request->session()->flash('status', "setting update success"); 
+        return redirect('/admin/setting');
     }
 
 }

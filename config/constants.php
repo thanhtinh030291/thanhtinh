@@ -171,7 +171,7 @@ return[
         'HMEO' => 'HMEO',
         'HYNO' => 'HYNO',
         'OSTE' => 'OSTE',
-        'DT/DENT' => 'DT/DENT',
+        'DT_DENT' => 'DT_DENT',
         'OE1' => 'OE1',
         'DENT' => 'DENT',
     ],
@@ -263,6 +263,14 @@ return[
         'Claim' => 15,
         'MCP_Claim' => 16,
         'CS_Claim' => 17
+    ],
+    'not_provider' => [
+        '2095143'
+    ],
+    'gop_type' =>
+    [
+        0 => "Accepted: GOP acceptance letter is attached (Chấp nhận: Thư bảo lãnh viện phí được gửi đính kèm)",
+        1 => "Client can Pay and Claim (Khách hàng tự thanh toán và gửi hồ sơ yêu cầu bồi thường cho công ty)",
+        2 => "Treatment not Covered (Điều trị không được bảo hiểm)"
     ]
-
 ];

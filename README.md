@@ -115,6 +115,7 @@ php artisan make:policy PostPolicy --model=Post
 php artisan auth:permission claim
 php artisan auth:permission product
 php artisan auth:permission term
+php artisan auth:permission provider
 
 # step 12 - pusher notifition
 add to .env

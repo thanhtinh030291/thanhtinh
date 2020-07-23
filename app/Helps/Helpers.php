@@ -3,6 +3,7 @@ use Illuminate\Support\Str;
 use App\User;
 use App\Message;
 use App\Setting;
+use App\ItemOfClaim;
 use App\Events\Notify;
 use App\Notifications\PushNotification;
 use Pusher\Pusher;
@@ -13,6 +14,16 @@ function getUserSign($id){
     $dirStorage = config('constants.signarureStorage');
     $dataImage =  $dirStorage . $user->signarure ;
     $htm = "<span><img src='{$dataImage}' alt='face' height='120' width='140'></img><br/>
+            $user->name
+        </span>";
+    return $htm;
+}
+
+function getUserSignThumb($id){
+    $user = User::findOrFail($id);
+    $dirStorage = config('constants.signarureStorage');
+    $dataImage =  $dirStorage . $user->signarure ;
+    $htm = "<span><img src='{$dataImage}' alt='face' height='73' width='100'></img><br/>
             $user->name
         </span>";
     return $htm;
@@ -133,6 +144,30 @@ function sendEmail($user_send, $data , $template , $subject)
         ], function ($mail) use ($user_send, $app_name, $app_email, $subject) {
             $mail->from($app_email, $app_name)
                 ->to($user_send->email, $user_send->name)
+                ->subject($subject);
+        }
+    );
+    return true;
+}
+
+function sendEmailProvider($user_send, $to_email , $to_name, $subject, $data , $template)
+{
+    if (!data_get($user_send, 'email')) {
+        return false;
+    }
+    $app_name  = config('constants.appName');
+    $app_email = config('constants.appEmail');
+    Mail::send(
+        $template, 
+        [
+            'user' => $user_send, 
+            'data' => isset($data) ?  $data : []
+        ], function ($mail) use ($user_send, $to_email, $to_name, $subject, $app_name, $app_email, $data) {
+            $mail->from($user_send->email, $user_send->name)
+                ->to( $to_email,  $to_email)
+                ->cc([$user_send->email])
+                ->replyTo($user_send->email, $user_send->name)
+                ->attachData(base64_decode($data['attachment']['base64']), $data['attachment']['filename'], ['mime' => $data['attachment']['filetype']])
                 ->subject($subject);
         }
     );
@@ -477,8 +512,9 @@ function CSRRemark_TermRemark($claim){
     $hasTerm1 = null;
     
     $arrKeyRep = [ '[##nameItem##]' , '[##amountItem##]' , '[##Date##]' , '[##Text##]' ];
-    $itemsReject = $claim->item_of_claim->pluck('content')->toArray();
-    $amountsReject = $claim->item_of_claim->pluck('amount');
+    $item = ItemOfClaim::where('claim_id', $claim->id)->where('status',1)->get();
+    $itemsReject = $item->pluck('content')->toArray();
+    $amountsReject = $item->pluck('amount');
     $sumAmountReject = 0;
     foreach ($amountsReject as $key => $value) {
         $sumAmountReject += removeFormatPrice($value);
@@ -647,4 +683,14 @@ function getTokenCPS(){
         $setting->save();
     }
     return  $setting->token_cps;
+}
+
+function typeGop($value){
+    $rp = "";
+    foreach (config('constants.gop_type') as $key_type => $value_type) {
+        $checked = $value == $key_type ? 'checked' : '';
+        $rp .=   "<input type='radio' {$checked}>
+                <span style='font-family: serif; font-size: 10pt;'>{$value_type}</span><br>";
+    }
+    return $rp;
 }

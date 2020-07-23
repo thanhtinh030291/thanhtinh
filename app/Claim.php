@@ -12,7 +12,11 @@ class Claim extends BaseModel
         'manager_gop_accept_pay' => 'array',
     ];
     
-    
+    public function hospital_request()
+    {
+        return $this->hasOne('App\HospitalRequest', 'claim_id')->orderBy('id', 'desc');
+    }
+
     public function export_letter()
     {
         return $this->hasMany('App\ExportLetter', 'claim_id')->orderBy('id', 'desc');

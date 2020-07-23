@@ -143,7 +143,7 @@ $(window).load(function() {
     $('.code_claim').select2({          
         minimumInputLength: 2,
         ajax: {
-        url: "/admin/dataAjaxHBSClaim",
+        url: "/admin/dataAjaxHBSGOPClaim",
             dataType: 'json',
             data: function (params) {
                 return {

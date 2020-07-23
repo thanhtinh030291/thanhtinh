@@ -170,3 +170,7 @@
     <a href="{!! route('claimWordSheets.index') !!}"><i class="fa fa-edit"></i><span>Claim Word Sheets</span></a>
 </li>
 
+<li class="{{ Request::is('providers*') ? 'active' : '' }}">
+    <a href="{!! route('providers.index') !!}"><i class="fa fa-edit"></i><span>Providers</span></a>
+</li>
+

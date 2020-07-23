@@ -16,6 +16,7 @@ function loadDatepicker() {
             $(this).val('');
         }
     });
+    
 
     $(".datepicker2").daterangepicker({
         locale: {
@@ -35,6 +36,7 @@ function loadDatepicker() {
         }
     });
 }
+
 
 
 function loadDateTimePicker() {

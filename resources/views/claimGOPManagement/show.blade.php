@@ -20,6 +20,10 @@ $totalAmount = 0;
         .modal-lg {
             max-width: 1200px !important;
         }
+        span.select2 {
+            width: 100% !important;
+            height: auto !important;
+        }
     </style>
 @endsection
 @section('content')
@@ -42,13 +46,12 @@ $totalAmount = 0;
                                     
                                     <h5 class="card-title">Request Letter</h5>
                                     <p class="card-text"></p>
-                                    {{ Form::open(array('url' => "/admin/claim/setProvGOPPresAmt/$data->id", 'method' => 'POST')) }}
-                                    {{ Form::label('prov_gop_pres_amt', "Số tiền yêu cầu ban đầu:", array('class' => 'labelas')) }}
-                                    <div class="row">
-                                        {{ Form::text('prov_gop_pres_amt', $data->prov_gop_pres_amt, ['class'=>"item-price form-control col-md-8"] ) }}
-                                        <button class="btn btn-info col-md-4" type="submit" value="save">SAVE</button>
-                                    </div>
-                                    {{ Form::close() }}
+                                    {{ Form::label('prov_gop_pres_amt', "Nhập dữ liều đầu vào:", array('class' => 'labelas')) }}
+                                    {!! Form::button('Input Data', ['data-toggle' => "modal" ,  
+                                        'data-target' => "#requestGOPModal",
+                                        'type' => 'button', 
+                                        'class' => ' btn btn-info' , 
+                                    ]) !!}
 
                                     {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
                                         {{ Form::hidden('claim_id', $data->id ) }}
@@ -260,7 +263,7 @@ $totalAmount = 0;
                             <td>
                                 {{$item->letter_template->name}}
                                 @if($item->status == $item->end_status && !isset($item->info['note']) && $item->created_user == $user->id )
-                                {{-- {{ Form::open(array('url' => '/admin/sendEtalk', 'method' => 'POST', 'class' => 'form-inline')) }}
+                                {{ Form::open(array('url' => '/admin/sendEtalk', 'method' => 'POST', 'class' => 'form-inline')) }}
                                     <div>
                                         {{ Form::hidden('id', $item->id) }}
                                         {{ Form::hidden('barcode', $data->barcode) }}
@@ -271,7 +274,22 @@ $totalAmount = 0;
                                             'class' => 'btn btn-info btn-md' 
                                         ]) !!}
                                     </div>
-                                {!! Form::close() !!} --}}
+                                {!! Form::close() !!}
+                                @endif
+                                @if($item->status == $item->end_status && $item->created_user == $user->id )
+                                {!! Form::button('<i class="fa fa-paper-plane-o"></i>Sent Prov', ['data-toggle' => "modal" ,  
+                                        'data-target' => "#sendMailModal",
+                                        'data-backdrop' => "static" ,
+                                        'data-keyboard' => "false", 
+                                        'type' => 'button', 
+                                        'class' => 'btn btn-success btn-xs' , 
+                                        'onclick' => 'sendMailModal(this);',
+                                        'data-claim_id' => $data->id,
+                                        'data-letter_template_id' => $item->letter_template->id,
+                                        'data-status' => $item->status,
+                                        'data-id' => $item->id
+                                        ]) 
+                                !!}
                                 @endif
 
                                 @if(isset($item->info['notes']))
@@ -385,6 +403,7 @@ $totalAmount = 0;
                                         {!! Form::button('<i class="fa fa-file-pdf-o"></i>', ['type' => 'submit', 'class' => 'btn btn-info btn-xs']) !!}
                                     {!! Form::close() !!} 
                                 @endif
+                                
                             </td>
                         </tr>
                     @endforeach
@@ -464,9 +483,9 @@ $totalAmount = 0;
 </div>
 
 {{-- Modal preview--}}
-@include('claimManagement.previewModal')
+@include('claimGOPManagement.previewModal')
 {{-- noteOrEditModal--}}
-@include('claimManagement.noteOrEditModal')
+@include('claimGOPManagement.noteOrEditModal')
 
 {{-- Modal viewFile--}}
 @include('claimManagement.viewFileModal')
@@ -483,7 +502,11 @@ $totalAmount = 0;
 {{-- Modal CSR File--}}
 @include('claimManagement.csrModal')
 
+{{-- Modal input  Hospital request--}}
+@include('claimGOPManagement.requestGOPModal')
 
+{{-- Modal preview--}}
+@include('claimGOPManagement.sendMailModal')
 @endsection
 
 
@@ -495,7 +518,19 @@ $totalAmount = 0;
 <script src="{{asset('plugins/datatables/jquery.dataTables.min.js?vision=') .$vision }}" ></script>
 <script src="{{asset('plugins/datatables/dataTables.bootstrap4.min.js?vision=') .$vision }}" ></script>
 <script src="{{ asset('js/tinymce.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/jquery.validate.min.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/moment.min.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/request_form_gop.js?vision=') .$vision }}"></script>
 <script>
+
+    function sendMailModal(e){
+        var claim_id =  e.dataset.claim_id;
+        var id = e.dataset.id;
+
+        $('#letter_email_id').val(id);
+        $('.claim_id').val(claim_id);
+    }
+
     function preview(e){
         $(".loader").show();
         var claim_id =  e.dataset.claim_id;
@@ -624,6 +659,31 @@ $totalAmount = 0;
         $("#empty_item").before(clone);
         
     }
+    function addValueItemReject(content, amount, count, idItem = ""){
+        $('input[name="_content['+count+']"]').val(content);
+        $('input[name="_amount['+count+']"]').val(amount);
+        $('input[name="_idItem['+count+']"]').val(idItem);
+    }
+    //btn delete table item 
+    $(document).on("click", ".delete_btn", function(){
+        $(this).closest('tr').remove();
+        gop_pres_amt_change();
+    });
+    //add input item
+    var count = 1;
+    function addInputItemReject(){
+        let clone =  '<tr id="row-'+count+'">';
+        clone += '<input name = "_idItem['+count+']" type="hidden" >';
+        clone +=  $("#clone_item_reject").clone().html() + '</tr>';
+        //repalace name
+        clone = clone.replace("_content_default", "_content["+count+"]");
+        clone = clone.replace("_amount_default", "_amount["+count+"]");
+        
+        $("#empty_item_reject").before(clone);
+        $('input[name="_content['+count+']"]').attr({"required": "true"});
+        $('input[name="_amount['+count+']"]').attr({"required": "true"});
+        count++;
+    }
     function amount_letter_print(){
         var total = 0;
         var hbs_amt = parseInt(removeFormatPrice($('#apv_hbs_in').val()));
@@ -671,11 +731,29 @@ $totalAmount = 0;
             alert(error);
         });
     }
+    
+    function gop_pres_amt_change(){
+        $('.valid_gop').val('error');
+        var prov_gop_pres_amt = Number(removeFormatPrice($('.prov_gop_pres_amt').val()));
+        var sum_reject_input = 0;
+        $('.reject_input').each(function() {
+            sum_reject_input += Number(removeFormatPrice($(this).val()));
+        });
 
+        $('.app_amt_gop').val(formatPrice(prov_gop_pres_amt-sum_reject_input));
+    }
     $(".disableRow").find("input,textarea,select").attr("disabled", "disabled");
 
 
     $(document).ready(function () {
+        var item_of_claim = @json($data->item_of_claim);
+        if(item_of_claim != null){
+            $.each(item_of_claim, function (index, value) {
+                addInputItemReject();
+                addValueItemReject(value.content,value.amount,count-1,value.id);
+            });
+            gop_pres_amt_change();
+        }
         $('#debtBalanceTable').DataTable();
         $('.nav-toggle').click(function () {
             var collapse_content_selector = $(this).attr('href');
@@ -737,6 +815,27 @@ $totalAmount = 0;
                 img_keywords: "happy, places"
             }
         });
+        var url_form_request = '{{ data_get($hospital_request,"url_form_request") ?  asset("") . config('constants.sotedClaimStorage') . data_get($hospital_request,"url_form_request") . "?v=" . time()  : ''}}' ;
+        var form_reques_file_name = '{{data_get($hospital_request,"url_form_request")}}';
+        $("#url_form_request").fileinput({
+            uploadAsync: false,
+            
+            maxFileCount: 1,
+            overwriteInitial: true,
+            initialPreview: [ url_form_request ],
+            initialPreviewAsData: true, // identify if you are sending preview data only and not the raw markup
+            initialPreviewFileType: 'image', // image is the default and can be overridden in config below
+            initialPreviewDownloadUrl: 'https://kartik-v.github.io/bootstrap-fileinput-samples/samples/{filename}', // includes the dynamic `filename` tag to be replaced for each config
+            initialPreviewConfig: [
+                {type: 'pdf', size: 8000, caption: form_reques_file_name,  key: 1, downloadUrl: url_form_request}, // disable download
+            ],
+            purifyHtml: true, // this by default purifies HTML data for preview
+            uploadExtraData: {
+                img_key: "1000",
+                img_keywords: "happy, places"
+            }
+        });
     });
+    gop_pres_amt_change();
 </script>
 @endsection

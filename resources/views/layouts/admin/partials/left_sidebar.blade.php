@@ -48,7 +48,7 @@
                 </li>
                 <li class="submenu">
                     <a href="#">
-                        <i class="fa fa-credit-card-alt" aria-hidden="true"></i> <span> Payment Managerment </span>
+                        <i class="fa fa-credit-card-alt" aria-hidden="true"></i> <span> Payment Management </span>
                     </a>
                     <ul class="list-unstyled">
                         <li class="{{ setActive('admin/PaymentHistory') }}"> 
@@ -64,7 +64,7 @@
                 </li>
                 {{-- UNC Sign --}}
                 @hasanyrole('Header|Manager|Admin|ManagerGOP')
-                <li class="submenu">
+                {{-- <li class="submenu">
                     <a href="#">
                         <i class="fa fa-pencil-square" aria-hidden="true"></i> <span> Sign UNC </span>
                     </a>
@@ -74,8 +74,22 @@
                             href="{{ url('admin/uncSign') }}"><span> Sign UNC</span></a>
                         </li>
                     </ul>
+                </li> --}}
+                @endhasanyrole
+                @hasanyrole('Header|Admin|ManagerGOP')
+                <li class="submenu">
+                    <a href="#">
+                        <i class="fa fa-hospital-o" aria-hidden="true"></i> <span> Provide Management </span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li class="{{ setActive('admin/providers') }}"> 
+                            <a class="{{ setActive('admin/providers') }}"
+                            href="{{ url('admin/providers') }}"><span>Provide Info</span></a>
+                        </li>
+                    </ul>
                 </li>
                 @endhasanyrole
+                
                 {{-- Medical --}}
                 <li class="submenu">
                     <a href="#">
