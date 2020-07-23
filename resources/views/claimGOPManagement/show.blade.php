@@ -101,7 +101,7 @@ $totalAmount = 0;
                                                             {!! Form::button('Manager Chấp Nhận', ['type' => 'submit','name'=>'type_submit','value' => 'accept','class' => ' btn btn-info' ]) !!}
                                                     {{ Form::close() }}
                                                     {!! Form::button('Manager Từ Chối', ['data-toggle' => "modal" ,  
-                                                        'data-target' => "#requestManagerModal",
+                                                        'data-target' => "#rejectPayModal",
                                                         'type' => 'button', 
                                                         'class' => ' btn btn-danger' , 
                                                     ]) !!}
@@ -507,6 +507,10 @@ $totalAmount = 0;
 
 {{-- Modal preview--}}
 @include('claimGOPManagement.sendMailModal')
+
+
+{{-- reject PayModal--}}
+@include('claimGOPManagement.rejectPayModal')
 @endsection
 
 

@@ -1518,7 +1518,6 @@ class ClaimController extends Controller
 
         //get file 
         if($export_letter->approve != null){
-           
             $data['content_letter'] = $export_letter->approve['data'];
             $data['content_payment'] =  isset($export_letter->approve['data_payment']) ? base64_decode($export_letter->approve['data_payment']) : null;
         }else{
@@ -1739,7 +1738,7 @@ class ClaimController extends Controller
         }
     }
     public function requestManagerGOP(Request $request, $id){
-        $claim = Claim::itemClaimReject()->findOrFail($id);
+        $claim = Claim::findOrFail($id);
         $user = Auth::user();
         if($request->type_submit == 'request'){
             if($claim->url_file_sorted == null){

@@ -65,7 +65,6 @@ class Claim extends BaseModel
     public function scopeItemClaimReject($query)
     {
         $conditionTerm = function ($q) {
-
             $q->with('term');
         };
         $condition = function ($q) use ($conditionTerm) {
