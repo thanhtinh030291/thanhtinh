@@ -99,11 +99,10 @@ class ClaimWordSheetController extends Controller
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
-        $claim_line = $member->CL_LINE;
+        $claim_line = $member->ClaimLine;
         //rmove claim line curent
         $arr_clli_oid = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('clli_oid')->toArray();
         $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
-        
         $log_history = $claimWordSheet->log;
         $listReasonReject = ReasonReject::orderBy('id', 'desc')->pluck('name', 'id');
         $data_type_of_visit_hbs = IOPDiagWookSheet($HBS_CL_CLAIM);
@@ -125,7 +124,7 @@ class ClaimWordSheetController extends Controller
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
-        $claim_line = $member->CL_LINE;
+        $claim_line = $member->ClaimLine;
         //rmove claim line curent
         $arr_clli_oid = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('clli_oid')->toArray();
         $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
@@ -150,7 +149,7 @@ class ClaimWordSheetController extends Controller
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
-        $claim_line = $member->CL_LINE;
+        $claim_line = $member->ClaimLine;
         //rmove claim line curent
         $arr_clli_oid = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('clli_oid')->toArray();
         $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
@@ -237,7 +236,7 @@ class ClaimWordSheetController extends Controller
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
-        $claim_line = $member->CL_LINE;
+        $claim_line = $member->ClaimLine;
         //rmove claim line curent
         $arr_clli_oid = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('clli_oid')->toArray();
         $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);

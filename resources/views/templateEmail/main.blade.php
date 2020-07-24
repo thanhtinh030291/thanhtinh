@@ -13,7 +13,13 @@
                 <table align="center" border="0" cellpadding="0" cellspacing="0" width="800" style="border: 1px solid #cccccc; border-collapse: collapse;">
                     <tr>
                         <td align="center" bgcolor="#70bbd9" style="padding: 40px 0 30px 0; color: #153643; font-size: 28px; font-weight: bold; font-family: Arial, sans-serif;">
-                            <img src="{{$message->embed(public_path(Config::get('constants.appLogo'))) }}" alt="{{url('')}}" width="100" height="100" style="display: block;" />
+                            <section type ="font-size: 40px;
+                                font-weight: 400;
+                                font-family: 'Audiowide', cursive;
+                                color: #007ACE;
+                                text-shadow: 3px 3px 0px #222, 5px 5px 0px #378fe5;">
+                                <h1>Pacific Cross</h1>
+                            </section>
                         </td>
                     </tr>
                     <tr>

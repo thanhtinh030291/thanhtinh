@@ -530,9 +530,23 @@ $totalAmount = 0;
     function sendMailModal(e){
         var claim_id =  e.dataset.claim_id;
         var id = e.dataset.id;
-
+        $(".loader").show();
         $('#letter_email_id').val(id);
         $('.claim_id').val(claim_id);
+        tinymce.get("content_email").setContent("");
+        axios.post("/admin/renderEmailProv",{
+                'claim_id' : claim_id ,
+                'export_letter_id' : id,
+        })
+        .then(function (response) {
+            $(".loader").fadeOut("slow");
+            tinymce.get("content_email").setContent(response.data.data);
+        })
+        .catch(function (error) {
+            $(".loader").fadeOut("slow");
+            alert(error);
+            
+        });
     }
 
     function preview(e){

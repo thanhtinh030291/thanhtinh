@@ -45,6 +45,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/claim/requestManagerGOP/{id}', 'ClaimController@requestManagerGOP')->name('claim.requestManagerGOP');
         Route::post('/claim/sendMailProvider', 'ClaimController@sendMailProvider')->name('claim.sendMailProvider');
         
+        
         Route::get('/claim/barcode/{barcode}', 'ClaimController@barcode_link');
 
         Route::post('/search', 'ClaimController@searchFullText')->name('search');
@@ -93,7 +94,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/dataAjaxHBSProvByClaim/{claim_oid}', 'AjaxCommonController@dataAjaxHBSProvByClaim')->name('dataAjaxHBSProvByClaim');
         Route::get('/dataAjaxHBSDiagnosis', 'AjaxCommonController@dataAjaxHBSDiagnosis')->name('dataAjaxHBSDiagnosis');
         Route::get('/AjaxValidClaim', 'AjaxCommonController@AjaxValidClaim')->name('AjaxValidClaim');
-        
+        Route::post('/renderEmailProv', 'AjaxCommonController@renderEmailProv')->name('renderEmailProv');
         
 
         Route::get('/dataAjaxHBSClaimRB', 'AjaxCommonController@dataAjaxHBSClaimRB')->name('dataAjaxHBSClaimRB');

@@ -34,7 +34,7 @@ class PanoramaController extends Controller
         if($member == null){
             return response()->json(['status' => 'error', 'message' => 'not exit member ref no'], 200);
         }
-        $claim_line = $member->CL_LINE;
+        $claim_line = $member->ClaimLine;
         $data['full_name'] = $member->mbr_last_name ." " . $member->mbr_first_name;
         $data['dob'] = Carbon::parse($member->dob)->format('d/m/Y');
         $data['sex'] = str_replace("SEX_", "",$member->scma_oid_sex);

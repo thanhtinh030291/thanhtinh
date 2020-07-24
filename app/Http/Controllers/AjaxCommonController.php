@@ -7,6 +7,7 @@ use App\HBS_PV_PROVIDER;
 use App\HBS_RT_DIAGNOSIS;
 use App\HBS_MR_MEMBER;
 use App\HBS_CL_LINE;
+use App\ExportLetter;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -1019,5 +1020,36 @@ class AjaxCommonController extends Controller
         $response = $client->request("POST", config('constants.api_cps').'pay_debt/'. $request->memb_ref_no , ['form_params'=>$body]);
         $response =  json_decode($response->getBody()->getContents());
         return $response;
+    }
+
+    public function renderEmailProv(Request $request){
+        $claim_id = $request->claim_id;
+        $id = $request->export_letter_id;
+        $export_letter = ExportLetter::findOrFail($id);
+        $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $diag_code = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('diag_oid')->unique()->toArray();
+        $match_form_gop = preg_match('/(FORM GOP)/', $export_letter->letter_template->name , $matches);
+        $template = $match_form_gop ? 'templateEmail.sendProviderTemplate_input' : 'templateEmail.sendProviderTemplate_output';
+        
+        $data['diag_text'] = implode(",",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('RT_DIAGNOSIS.diag_desc_vn')->unique()->toArray());
+        $incurDateTo = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_to);
+        $incurDateFrom = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_from);
+        $data['incurDateTo'] = $incurDateTo->format('d-m-Y');
+        $data['incurDateFrom'] = $incurDateFrom->format('d-m-Y');
+        $data['diffIncur'] =  $incurDateTo->diffInDays($incurDateFrom);
+        //benifit
+        $request2 = new Request([
+            'diag_code' => $diag_code,
+            'id_claim' => $claim->code_claim
+        ]);
+        $AjaxValidClaim = new AjaxCommonController();
+        $benefit = $AjaxValidClaim->AjaxValidClaim($request2);
+        
+        $data['benefit'] = $benefit;
+
+        $data['HBS_CL_CLAIM'] = $HBS_CL_CLAIM;
+        $html = view($template, compact('data'))->render();
+        return response()->json([ 'data' => $html]);
     }
 }

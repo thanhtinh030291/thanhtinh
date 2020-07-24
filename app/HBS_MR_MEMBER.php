@@ -18,9 +18,12 @@ class HBS_MR_MEMBER extends  BaseModelDB2
     {
         return $this->hasMany('App\HBS_MR_MEMBER_EVENT', 'memb_oid', 'memb_oid');
     }
-    public function CL_LINE()
+    public function getClaimLineAttribute()
     {
-        return $this->hasMany('App\HBS_CL_LINE', 'memb_oid', 'memb_oid')->where('REV_DATE', null);
+        $memb_ref_no = $this->memb_ref_no;
+        $HBS_MR_MEMBER = HBS_MR_MEMBER::where('memb_ref_no',$memb_ref_no)->pluck('memb_oid')->toArray();
+        $CL_LINE = HBS_CL_LINE::whereIn('memb_oid',$HBS_MR_MEMBER)->where('REV_DATE', null)->get();
+        return $CL_LINE;
     }
     public function CL_MBR_EVENT()
     {
