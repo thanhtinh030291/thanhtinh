@@ -24,6 +24,13 @@
                             <input id="url_form_request" type="file" name="_url_form_request" >
                         </div>
                     </div>
+
+                    {{ Form::label('prov_gop_pres_amt', 'Đính kèm email (attach email .msg)', ['class' => 'labelas col-md-4 mt-1']) }}
+                    <div class="col-md-5">
+                        <div class="file-loading">
+                            <input id="url_attach_email" type="file" name="_url_attach_email" >
+                        </div>
+                    </div>
                     
                     {{ Form::label('type_gop', 'Kết Quả Bảo Lãnh', ['class' => 'labelas col-md-4 mt-1']) }}
                     {{ Form::select('type_gop', config('constants.gop_type'),data_get($hospital_request,'type_gop'), ['class' => 'form-control col-md-5 mt-1 ', "required"]) }}

@@ -55,3 +55,6 @@
     </tr>
   </table>
 @endsection
+@section('old_msg')
+    {!! data_get($data,'old_msg') !!}
+@endsection

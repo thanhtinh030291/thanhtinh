@@ -853,6 +853,27 @@ $totalAmount = 0;
                 img_keywords: "happy, places"
             }
         });
+
+        var url_attach_email = '{{ data_get($hospital_request,"url_attach_email") ?  asset("") . config('constants.sotedClaimStorage') . data_get($hospital_request,"url_attach_email") . "?v=" . time()  : ''}}' ;
+        var url_attach_email_file_name = '{{data_get($hospital_request,"url_attach_email")}}';
+        $("#url_attach_email").fileinput({
+            uploadAsync: false,
+            
+            maxFileCount: 1,
+            overwriteInitial: true,
+            initialPreview: [ url_attach_email ],
+            initialPreviewAsData: true, // identify if you are sending preview data only and not the raw markup
+            initialPreviewFileType: 'image', // image is the default and can be overridden in config below
+            initialPreviewDownloadUrl: 'https://kartik-v.github.io/bootstrap-fileinput-samples/samples/{filename}', // includes the dynamic `filename` tag to be replaced for each config
+            initialPreviewConfig: [
+                {type: 'pdf', size: 8000, caption: url_attach_email_file_name,  key: 1, downloadUrl: url_attach_email}, // disable download
+            ],
+            purifyHtml: true, // this by default purifies HTML data for preview
+            uploadExtraData: {
+                img_key: "1000",
+                img_keywords: "happy, places"
+            }
+        });
     });
     gop_pres_amt_change();
 </script>

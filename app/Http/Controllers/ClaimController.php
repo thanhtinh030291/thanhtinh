@@ -38,6 +38,8 @@ use App\MANTIS_BUG;
 use App\MANTIS_CUSTOM_FIELD_STRING;
 use Illuminate\Support\Arr;
 use App\HBS_MR_MEMBER_PLAN;
+use Hfig\MAPI;
+use Hfig\MAPI\OLE\Pear;
 
 class ClaimController extends Controller
 {
@@ -1675,6 +1677,15 @@ class ClaimController extends Controller
             $url_form_request = saveFile($request->_url_form_request, config('constants.sortedClaimUpload'));
             $dataUpdate['url_form_request'] =  $url_form_request;
         }
+
+        if($hospital_request && $request->_url_attach_email){
+            $url_attach_email = saveFile($request->_url_attach_email, config('constants.sortedClaimUpload'),$hospital_request->url_attach_email);
+            $dataUpdate['url_attach_email'] =  $url_attach_email;
+        }elseif($request->_url_attach_email){
+            $url_attach_email = saveFile($request->_url_attach_email, config('constants.sortedClaimUpload'));
+            $dataUpdate['url_attach_email'] =  $url_attach_email;
+        }
+
         if($request->_url_form_request){
             $patch_file_upload = storage_path("app/public/sortedClaim")."/". $url_form_request;
             $patch_file_convert = storage_path("app/public/sortedClaim")."/". 'cv_'.$url_form_request;
@@ -1830,6 +1841,7 @@ class ClaimController extends Controller
         $export_letter = ExportLetter::findOrFail($id);
         $user = Auth::User();
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $diag_code = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('diag_oid')->unique()->toArray();
         $namefile = Str::slug("{$export_letter->letter_template->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
@@ -1875,6 +1887,19 @@ class ClaimController extends Controller
             </div>');
             $mpdf->WriteHTML(data_get($export_letter->approve, 'data'));
         }
+        $old_msg = "";
+        // Read email
+        if($claim->hospital_request->url_attach_email){
+            $messageFactory = new MAPI\MapiMessageFactory();
+            $documentFactory = new Pear\DocumentFactory(); 
+            $ole = $documentFactory->createFromFile(storage_path("app/public/sortedClaim")."/".$claim->hospital_request->url_attach_email);
+            $message = $messageFactory->parseMessage($ole);
+            $old_msg = $message->getBody();
+            preg_match('/(RE:)/',  $message->properties['subject'], $matches_re, PREG_OFFSET_CAPTURE);
+            $subject = $matches_re ? $message->properties['subject'] : "RE: " . $message->properties['subject'];
+            $old_msg  = str_replace("\r\n", "<br>", $old_msg);
+        }
+
         $user = Auth::User();
         $data = [];
         $incurDateTo = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_to);
@@ -1885,6 +1910,7 @@ class ClaimController extends Controller
         $data['incurDateFrom'] = $incurDateFrom->format('d-m-Y');
         $data['diffIncur'] = $diffIncur;
         $data['benefit'] = $benefit;
+        $data['old_msg'] = $old_msg;
         $data['HBS_CL_CLAIM'] = $HBS_CL_CLAIM;
         $data['attachment']['base64'] =  base64_encode($mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN)) ;
         $data['attachment']['filename'] = $namefile . ".pdf";

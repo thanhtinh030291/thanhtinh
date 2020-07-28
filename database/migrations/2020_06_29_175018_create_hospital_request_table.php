@@ -19,6 +19,7 @@ class CreateHospitalRequestTable extends Migration
             $table->bigInteger('prov_gop_pres_amt')->default('0');
             $table->text('url_form_request')->nullable();
             $table->text('url_corner_profile')->nullable();
+            $table->text('url_attach_email')->nullable();
             $table->integer('type_gop')->default('0');
             $table->text('note')->nullable();
             $table->integer('is_deleted')->default('0');
