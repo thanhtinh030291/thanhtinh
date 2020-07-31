@@ -74,4 +74,9 @@ class ExportLetter extends BaseModel
         return $log;
     }
 
+    public function log_hbs_approved()
+    {
+        return $this->hasOne('App\LogHbsApproved', 'export_letter_id', 'id');
+    }
+
 }

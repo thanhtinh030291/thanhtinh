@@ -89,10 +89,10 @@
         @endforeach
     </p>
     <p><span  class="font-weight-bold">Loading:</span> 
-        {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first() ? $member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc : "" }}
+        {{$member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first() ? $member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc : "" }}
     </p>
     <p><span  class="font-weight-bold">Exclusion:</span> 
-        {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first() ? $member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc : ""}}
+        {{$member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first() ? $member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc : ""}}
     </p>
     <p><span  class="font-weight-bold">Etalk Link:</span>
         <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$claim->barcode }}">Link</a>
@@ -169,8 +169,8 @@
             <th>Description</th>
         </thead>
         <tbody>
-            @if(!empty($member->CL_MBR_EVENT))
-                @foreach ($member->CL_MBR_EVENT as $item)
+            @if(!empty($member->ClaimMemberEvent))
+                @foreach ($member->ClaimMemberEvent as $item)
                     <tr>
                         <td>{{Carbon\Carbon::parse($item->eff_date)->format('d/m/Y')}}</td>
                         <td>{{$item->event_desc}}</td>

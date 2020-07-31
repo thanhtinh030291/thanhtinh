@@ -595,6 +595,19 @@ class ClaimController extends Controller
                                     'PCV_EXPENSE' => data_get($export_letter->info,'PCV_EXPENSE') , 
                                     "DEBT_BALANCE" => data_get($export_letter->info,'DEBT_BALANCE') ];
             $export_letter->apv_amt = preg_replace('/[^0-9]/', "", $approve_amt);
+            //save log hbs approve
+            if($export_letter->log_hbs_approved){
+                $export_letter->log_hbs_approved()->update([
+                    'cl_no' => $claim->code_claim_show,
+                    'hbs' => json_encode(HBS_CL_CLAIM::HBSData()->where('CL_NO',$claim->code_claim_show)->first()->toArray(),true)
+                ]);
+            }else{
+                $export_letter->log_hbs_approved()->create([
+                    'cl_no' => $claim->code_claim_show,
+                    'hbs' => json_encode(HBS_CL_CLAIM::HBSData()->where('CL_NO',$claim->code_claim_show)->first()->toArray(),true)
+                ]);
+            }
+
         }else{
             $status_change = $request->status_change;
             $status_change = explode("-",$status_change);
@@ -671,6 +684,14 @@ class ClaimController extends Controller
                     ];
                     
                 }
+                //save log approve 
+                
+                $export_letter->log_hbs_approved()->update([
+                    'approve' => json_encode([
+                        'user' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                    ])
+                ]);
             }elseif($user_create->hasRole('Claim Independent')){
                 if($request->status_change == 14 || $request->status_change == 7 ){
                     if($export_letter->letter_template->letter_payment == null){
@@ -686,6 +707,13 @@ class ClaimController extends Controller
                         ];
                         
                     }
+                    //save log approve 
+                    $export_letter->log_hbs_approved()->update([
+                        'approve' => json_encode([
+                            'user' => $user->id,
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                        ])
+                    ]);
                 }
             }
             

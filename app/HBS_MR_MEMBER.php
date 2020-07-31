@@ -25,9 +25,20 @@ class HBS_MR_MEMBER extends  BaseModelDB2
         $CL_LINE = HBS_CL_LINE::whereIn('memb_oid',$HBS_MR_MEMBER)->where('REV_DATE', null)->get();
         return $CL_LINE;
     }
-    public function CL_MBR_EVENT()
+    public function getMrMemberEventAttribute()
     {
-        return $this->hasMany('App\HBS_CL_MBR_EVENT', 'memb_oid', 'memb_oid');
+        $memb_ref_no = $this->memb_ref_no;
+        $HBS_MR_MEMBER = HBS_MR_MEMBER::where('memb_ref_no',$memb_ref_no)->pluck('memb_oid')->toArray();
+        $MR_MBR_EVENT = HBS_MR_MEMBER_EVENT::whereIn('memb_oid',$HBS_MR_MEMBER)->get();
+        return $MR_MBR_EVENT;
+    }
+
+    public function getClaimMemberEventAttribute()
+    {
+        $memb_ref_no = $this->memb_ref_no;
+        $HBS_MR_MEMBER = HBS_MR_MEMBER::where('memb_ref_no',$memb_ref_no)->pluck('memb_oid')->toArray();
+        $CL_MBR_EVENT = HBS_CL_MBR_EVENT::whereIn('memb_oid',$HBS_MR_MEMBER)->get();
+        return $CL_MBR_EVENT;
     }
     
     public function getPocyEffdateAttribute()
@@ -121,4 +132,18 @@ class HBS_MR_MEMBER extends  BaseModelDB2
         }
     }
 
+    public function getBankNameChangeAttribute()
+    {
+        $HBS_SY_SYS_CODE = HBS_SY_SYS_CODE::selectRaw("scma_oid , hbs.FN_GET_SYS_CODE_DESC(scma_oid, 'en') name")->where("scma_oid","LIKE","%MEMB_BANK_NAME_%")->pluck("name","scma_oid");
+        preg_match('/(MEMB_BANK_NAME_)/', $this->bank_name, $matches, PREG_OFFSET_CAPTURE);
+
+        return $matches ? data_get($HBS_SY_SYS_CODE ,$this->bank_name) : $this->bank_name;
+    }
+    
+    public function getCashBankNameChangeAttribute()
+    {
+        $HBS_SY_SYS_CODE = HBS_SY_SYS_CODE::selectRaw("scma_oid , hbs.FN_GET_SYS_CODE_DESC(scma_oid, 'en') name")->where("scma_oid","LIKE","%MEMB_BANK_NAME_%")->pluck("name","scma_oid");
+        preg_match('/(MEMB_BANK_NAME_)/', $this->cash_bank_name, $matches, PREG_OFFSET_CAPTURE);
+        return $matches ? data_get($HBS_SY_SYS_CODE,$this->cash_bank_name) : $this->cash_bank_name;
+    }
 }

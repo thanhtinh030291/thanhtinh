@@ -174,10 +174,10 @@
         @endforeach
     </p>
     <p><span  class="font-weight-bold">Loading:</span> 
-        {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first() ? $member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc : "" }}
+        {{$member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first() ? $member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc : "" }}
     </p>
     <p><span  class="font-weight-bold">Exclusion:</span> 
-        {{$member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first() ? $member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc : ""}}
+        {{$member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first() ? $member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc : ""}}
     </p>
 </div>
 
@@ -232,7 +232,7 @@
 
 <div style="margin-left: 10px;">
     <p class="font-weight-bold">MEMBER CLAIM EVENT</p>
-    @if(!empty($member->CL_MBR_EVENT))
+    @if(!empty($member->ClaimMemberEvent))
         <table>
             <thead>
                 <tr>
@@ -242,7 +242,7 @@
             </thead>
             <tbody>
                 
-                    @foreach ($member->CL_MBR_EVENT as $item)
+                    @foreach ($member->ClaimMemberEvent as $item)
                         <tr>
                             <td>{{Carbon\Carbon::parse($item->eff_date)->format('d/m/Y')}}</td>
                             <td>{{$item->event_desc}}</td>
