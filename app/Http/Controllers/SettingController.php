@@ -8,6 +8,7 @@ use App\Claim;
 use App\HBS_CL_CLAIM;
 use App\Provider;
 use App\HBS_PV_PROVIDER;
+use App\LogHbsApproved;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use DB;
@@ -73,6 +74,24 @@ class SettingController extends Controller
                 DB::table('claim')->where('code_claim',$value2->clam_oid)->update([
                     'code_claim_show' => $value2->cl_no,
                     'barcode' => $value2->barcode
+                ]);
+            }
+        }
+        $request->session()->flash('status', "setting update success"); 
+        return redirect('/admin/setting');
+    }
+
+    public function checkUpdateLogApproved(Request $request){
+        $claims = LogHbsApproved::where('MANTIS_ID',null)->orWhere('MEMB_NAME', null)->orWhere('POCY_REF_NO', null)->orWhere('MEMB_REF_NO', null)->pluck('cl_no')->toArray();
+        $claims_chunk = array_chunk($claims, 500);
+        foreach ($claims_chunk as $key => $value) {
+            $HBS_CL_CLAIM = HBS_CL_CLAIM::whereIn('cl_no',$value)->get();
+            foreach ($HBS_CL_CLAIM as $key2 => $value2) {
+                DB::table('log_hbs_approved')->where('cl_no',$value2->cl_no)->update([
+                    'MANTIS_ID' => $value2->barcode,
+                    'MEMB_NAME' => $value2->MemberNameCap,
+                    'POCY_REF_NO' => $value2->police->pocy_ref_no,
+                    'MEMB_REF_NO' => $value2->member->memb_ref_no
                 ]);
             }
         }

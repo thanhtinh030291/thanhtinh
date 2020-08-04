@@ -358,10 +358,21 @@ class ClaimController extends Controller
         $hospital_request = $claim->hospital_request;
         $list_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('text', 'id') : [];
         $selected_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('id') : null;
+        $fromEmail = null;
+        if($claim->hospital_request->url_attach_email){
+            $messageFactory = new MAPI\MapiMessageFactory();
+            $documentFactory = new Pear\DocumentFactory(); 
+            $ole = $documentFactory->createFromFile(storage_path("app/public/sortedClaim")."/".$claim->hospital_request->url_attach_email);
+            $message = $messageFactory->parseMessage($ole);
+            $fromEmail = collect($message->getRecipients())->map(function ($item, $key) {
+                return $item->getEmail();
+            });
+            $fromEmail = implode(",", $fromEmail->unique()->toArray());
+        }
         $compact = compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
         'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq',
-        'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis']);
+        'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail']);
         if ($claim_type == 'P'){
             return view('claimGOPManagement.show', $compact);
         }else{
@@ -599,12 +610,21 @@ class ClaimController extends Controller
             if($export_letter->log_hbs_approved){
                 $export_letter->log_hbs_approved()->update([
                     'cl_no' => $claim->code_claim_show,
-                    'hbs' => json_encode(HBS_CL_CLAIM::HBSData()->where('CL_NO',$claim->code_claim_show)->first()->toArray(),true)
+                    'hbs' => json_encode(HBS_CL_CLAIM::HBSData()->where('CL_NO',$claim->code_claim_show)->first()->toArray(),true),
+                    'MANTIS_ID' => $claim->barcode,
+                    'MEMB_NAME' => $HBS_CL_CLAIM->MemberNameCap,
+                    'POCY_REF_NO' =>  $HBS_CL_CLAIM->police->pocy_ref_no,
+                    'MEMB_REF_NO' => $HBS_CL_CLAIM->member->memb_ref_no,
                 ]);
             }else{
                 $export_letter->log_hbs_approved()->create([
                     'cl_no' => $claim->code_claim_show,
-                    'hbs' => json_encode(HBS_CL_CLAIM::HBSData()->where('CL_NO',$claim->code_claim_show)->first()->toArray(),true)
+                    'hbs' => json_encode(HBS_CL_CLAIM::HBSData()->where('CL_NO',$claim->code_claim_show)->first()->toArray(),true),
+                    'MANTIS_ID' => $claim->barcode,
+                    'MEMB_NAME' => $HBS_CL_CLAIM->MemberNameCap,
+                    'POCY_REF_NO' =>  $HBS_CL_CLAIM->police->pocy_ref_no,
+                    'MEMB_REF_NO' => $HBS_CL_CLAIM->member->memb_ref_no,
+
                 ]);
             }
 
@@ -690,6 +710,10 @@ class ClaimController extends Controller
                     'approve' => json_encode([
                         'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
+                        'MANTIS_ID' => $claim->barcode,
+                        'MEMB_NAME' => $HBS_CL_CLAIM->MemberNameCap,
+                        'POCY_REF_NO' =>  $HBS_CL_CLAIM->police->pocy_ref_no,
+                        'MEMB_REF_NO' => $HBS_CL_CLAIM->member->memb_ref_no,
                     ])
                 ]);
             }elseif($user_create->hasRole('Claim Independent')){
@@ -712,6 +736,10 @@ class ClaimController extends Controller
                         'approve' => json_encode([
                             'user' => $user->id,
                             'created_at' => Carbon::now()->toDateTimeString(),
+                            'MANTIS_ID' => $claim->barcode,
+                            'MEMB_NAME' => $HBS_CL_CLAIM->MemberNameCap,
+                            'POCY_REF_NO' =>  $HBS_CL_CLAIM->police->pocy_ref_no,
+                            'MEMB_REF_NO' => $HBS_CL_CLAIM->member->memb_ref_no,
                         ])
                     ]);
                 }
@@ -1943,7 +1971,8 @@ class ClaimController extends Controller
         $data['attachment']['base64'] =  base64_encode($mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN)) ;
         $data['attachment']['filename'] = $namefile . ".pdf";
         $data['attachment']['filetype'] = "application/pdf";
-        sendEmailProvider($user, $request->email_to, 'provider', $subject, $data,$template);
+        $email_to = explode(",", $request->email_to);
+        sendEmailProvider($user, $email_to, 'provider', $subject, $data,$template);
         return redirect('/admin/claim/'.$claim_id)->with('status', 'Đã gửi thư cho provider thành công');
     }
 }

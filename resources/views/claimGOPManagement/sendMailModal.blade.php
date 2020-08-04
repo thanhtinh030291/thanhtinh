@@ -12,7 +12,7 @@
                 {{ Form::hidden('export_letter_id', null ,['id' => 'letter_email_id']) }}
                 {{ Form::hidden('claim_id', $data->id ,['class' => 'claim_id']) }}
                 {{ Form::label('email_to', 'To Email', ['class' => 'labelas mt-1']) }}
-                {{ Form::email('email_to', null, array('id' => 'email_to','class' => 'form-control', 'required')) }}<br>
+                {{ Form::text('email_to', $fromEmail, array('id' => 'email_to','class' => 'form-control ', 'required', 'data-role' => 'tagsinput')) }}<br>
                 {{ Form::label('content', 'Content', ['class' => 'labelas mt-1']) }}
                 {{ Form::textarea('content',null, ['id' => 'content_email', 'class' => 'form-control editor_readonly']) }}<br>
                 <div class="row">

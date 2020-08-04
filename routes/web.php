@@ -121,6 +121,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('setting/update','SettingController@update')->middleware(['role:Admin']);
         Route::post('setting/notifiAllUser','SettingController@notifiAllUser')->middleware(['role:Admin']);
         Route::post('setting/checkUpdateClaim','SettingController@checkUpdateClaim')->middleware(['role:Admin']);
+        Route::post('setting/checkUpdateLogApproved','SettingController@checkUpdateLogApproved')->middleware(['role:Admin']);
 
         Route::resource('uncSign', 'UncSignController');
 

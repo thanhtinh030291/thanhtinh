@@ -10,6 +10,7 @@ $totalAmount = 0;
     <link href="{{asset('css/formclaim.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('css/ckeditor.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('plugins/datatables/dataTables.bootstrap4.min.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/tagsinput.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <style>
         .disableRow {
             background-color: lightslategrey;
@@ -525,6 +526,7 @@ $totalAmount = 0;
 <script src="{{ asset('js/jquery.validate.min.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/moment.min.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/request_form_gop.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/tagsinput.js?vision=') .$vision }}"></script>
 <script>
 
     function sendMailModal(e){
