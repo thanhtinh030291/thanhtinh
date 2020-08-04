@@ -359,7 +359,7 @@ class ClaimController extends Controller
         $list_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('text', 'id') : [];
         $selected_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('id') : null;
         $fromEmail = null;
-        if($claim->hospital_request->url_attach_email){
+        if(data_get($claim->hospital_request, 'url_attach_email')){
             $messageFactory = new MAPI\MapiMessageFactory();
             $documentFactory = new Pear\DocumentFactory(); 
             $ole = $documentFactory->createFromFile(storage_path("app/public/sortedClaim")."/".$claim->hospital_request->url_attach_email);
