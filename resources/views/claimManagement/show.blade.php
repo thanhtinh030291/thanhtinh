@@ -227,6 +227,18 @@ $totalAmount = 0;
                                     <h6> Added on Etalk</h6>
                                     <span>Note Id : {{data_get($item->info, "notes.id")}}</span><br>
                                     <a class="btn btn-success btn-xs" href="{{config("constants.url_cps").'mantis/'.$data->barcode}}" target="_blank">Link CPS</a>
+                                    {{ Form::open(array('url' => '/admin/changeStatusEtalk', 'method' => 'POST', 'class' => 'form-inline')) }}
+                                        <div>
+                                            {{ Form::hidden('id', $item->id) }}
+                                            {{ Form::hidden('barcode', $data->barcode) }}
+                                            {{ Form::hidden('claim_id', $item->claim_id) }}
+                                            {{ Form::hidden('message', 'Cập nhật lại status') }}
+                                            {!! Form::button('Update Status Etalk', 
+                                            [   'type' => 'submit', 
+                                                'class' => 'btn btn-info btn-md' 
+                                            ]) !!}
+                                        </div>
+                                    {!! Form::close() !!}
                                 @endif
                             </td>
                             <td>

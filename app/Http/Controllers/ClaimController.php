@@ -360,14 +360,17 @@ class ClaimController extends Controller
         $selected_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('id') : null;
         $fromEmail = null;
         if(data_get($claim->hospital_request, 'url_attach_email')){
-            $messageFactory = new MAPI\MapiMessageFactory();
-            $documentFactory = new Pear\DocumentFactory(); 
-            $ole = $documentFactory->createFromFile(storage_path("app/public/sortedClaim")."/".$claim->hospital_request->url_attach_email);
-            $message = $messageFactory->parseMessage($ole);
-            $fromEmail = collect($message->getRecipients())->map(function ($item, $key) {
-                return $item->getEmail();
-            });
-            $fromEmail = implode(",", $fromEmail->unique()->toArray());
+            try {
+                $messageFactory = new MAPI\MapiMessageFactory();
+                $documentFactory = new Pear\DocumentFactory(); 
+                $ole = $documentFactory->createFromFile(storage_path("app/public/sortedClaim")."/".$claim->hospital_request->url_attach_email);
+                $message = $messageFactory->parseMessage($ole);
+                $fromEmail = collect($message->getRecipients())->map(function ($item, $key) {
+                    return $item->getEmail();
+                });
+                $fromEmail = implode(",", $fromEmail->unique()->toArray());
+            } catch (Exception $e) {
+            }    
         }
         $compact = compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
@@ -561,11 +564,11 @@ class ClaimController extends Controller
             $conditionMPL = function ($q) use($conditionMPPB){
                 $q->with(['MR_POLICY_PLAN_BENEFIT' => $conditionMPPB]);
             };
-            $HBS_MR_MEMBER_PLAN = HBS_MR_MEMBER_PLAN::whereIn('memb_oid',$all_memb_oid)
+            $HBS_MR_MEMBER_PLAN = HBS_MR_MEMBER_PLAN::where('memb_oid',$all_memb_oid)
             ->where('eff_date','<=',$now)
             ->where('exp_date','>=',$now)
             ->with(['MR_POLICY_PLAN' => $conditionMPL])
-            ->where('status', "!=", "D")
+            ->where('status', null)
             ->where('term_date',null)->get();
             if($HBS_MR_MEMBER_PLAN->count() > 1){
                 $all_pl = [];
@@ -850,6 +853,60 @@ class ClaimController extends Controller
                 'content' => $export_letter->approve['data_payment']
             ];
         }
+        try {
+            $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
+            $res = json_decode($res->getBody(),true);
+        } catch (Exception $e) {
+
+            $request->session()->flash(
+                'errorStatus', 
+                generateLogMsg($e)
+            );
+            return redirect('/admin/claim/'.$claim_id)->withInput();
+        }
+        if(data_get($res,'status') == 'success'){
+            $data = $export_letter->info;
+            $data['notes'] = $res['data']['note'];
+            $export_letter->info = $data;
+            $export_letter->save();
+            
+        }
+        return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
+    }
+
+     // change Etalk 
+     public function changeStatusEtalk(sendEtalkRequest $request){
+        $claim_id = $request->claim_id;
+        $barcode = $request->barcode;
+        $id = $request->id;
+        $export_letter = ExportLetter::findOrFail($id);
+        $user = Auth::User();
+        $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $namefile = Str::slug("{$export_letter->letter_template->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
+        $body = [
+            'user_email' => $user->email,
+            'issue_id' => $barcode,
+            'text_note' => $request->message,
+
+        ];
+        if($export_letter->letter_template->status_mantis != NULL ){
+            $body['status_id'] = $export_letter->letter_template->status_mantis;
+        }
+        
+        if($export_letter->letter_template->name == 'Thanh Toán Bổ Sung'){
+            
+            $diff = $HBS_CL_CLAIM->SumPresAmt - $HBS_CL_CLAIM->SumAppAmt ;
+            
+            if($HBS_CL_CLAIM->SumPresAmt == 0 ){
+                $body['status_id'] = config('constants.status_mantic_value.declined');
+            }elseif($diff == 0){
+                $body['status_id'] = config('constants.status_mantic_value.accepted');
+            }else {
+                $body['status_id'] = config('constants.status_mantic_value.partiallyaccepted');
+            }
+        }
+        
         try {
             $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
             $res = json_decode($res->getBody(),true);
