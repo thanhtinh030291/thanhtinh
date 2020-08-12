@@ -11,6 +11,7 @@ $totalAmount = 0;
     <link href="{{asset('css/ckeditor.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{asset('plugins/datatables/dataTables.bootstrap4.min.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('css/tagsinput.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/dropzone.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <style>
         .disableRow {
             background-color: lightslategrey;
@@ -527,8 +528,11 @@ $totalAmount = 0;
 <script src="{{ asset('js/moment.min.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/request_form_gop.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/tagsinput.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/dropzone.min.js?vision=') .$vision }}"></script>
 <script>
-
+    
+    
+    
     function sendMailModal(e){
         var claim_id =  e.dataset.claim_id;
         var id = e.dataset.id;
@@ -763,9 +767,12 @@ $totalAmount = 0;
         $('.app_amt_gop').val(formatPrice(prov_gop_pres_amt-sum_reject_input));
     }
     $(".disableRow").find("input,textarea,select").attr("disabled", "disabled");
-
-
+    
     $(document).ready(function () {
+        
+        var myDropzone = new Dropzone("#requestGOPForm", {url: "{{ url('admin/attachEmail') }}/{{$data->id}}"});
+        
+
         var item_of_claim = @json($data->item_of_claim);
         if(item_of_claim != null){
             $.each(item_of_claim, function (index, value) {

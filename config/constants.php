@@ -18,6 +18,7 @@ return[
     'PUSHER_APP_CLUSTER' => env('PUSHER_APP_CLUSTER'),
     'VAPID_PUBLIC_KEY' => env('VAPID_PUBLIC_KEY'),
     
+    'attachUpload'   => '/public/attachEmail/',
     
     'paginator' => [
         'itemPerPage' => '10',

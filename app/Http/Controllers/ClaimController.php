@@ -361,14 +361,17 @@ class ClaimController extends Controller
         $fromEmail = null;
         if(data_get($claim->hospital_request, 'url_attach_email')){
             try {
-                $messageFactory = new MAPI\MapiMessageFactory();
-                $documentFactory = new Pear\DocumentFactory(); 
-                $ole = $documentFactory->createFromFile(storage_path("app/public/sortedClaim")."/".$claim->hospital_request->url_attach_email);
-                $message = $messageFactory->parseMessage($ole);
-                $fromEmail = collect($message->getRecipients())->map(function ($item, $key) {
-                    return $item->getEmail();
-                });
-                $fromEmail = implode(",", $fromEmail->unique()->toArray());
+                if(file_exists(storage_path("app/public/attachEmail")."/".$claim->hospital_request->url_attach_email)){
+                    $messageFactory = new MAPI\MapiMessageFactory();
+                    $documentFactory = new Pear\DocumentFactory(); 
+                    $ole = $documentFactory->createFromFile(storage_path("app/public/attachEmail")."/".$claim->hospital_request->url_attach_email);
+                    $message = $messageFactory->parseMessage($ole);
+                    $fromEmail = collect($message->getRecipients())->map(function ($item, $key) {
+                        return $item->getEmail();
+                    });
+                    $fromEmail = implode(",", $fromEmail->unique()->toArray());
+                }
+                
             } catch (Exception $e) {
             }    
         }
@@ -1777,26 +1780,29 @@ class ClaimController extends Controller
         }
     }
     
+    public function attachEmail(Request $request, $id){
+        $file = $request->file;
+        $fileName = "attach_{$id}" . '.msg';
+        $file->storeAs(config('constants.attachUpload'), $fileName);
+    }
+
     public function setProvGOPPresAmt(InputGOPRequest $request, $id){
         $data = $claim = Claim::findOrFail($id);
         $userId = Auth::User()->id;
         $hospital_request = $claim->hospital_request;
         $url_form_request = null;
         $dataUpdate = [];
+        if(file_exists( storage_path()."/app/public/attachEmail/"."/attach_{$id}" . '.msg')){
+            $dataUpdate['url_attach_email'] =  "attach_{$id}" . '.msg';
+        }
+        
+
         if($hospital_request && $request->_url_form_request){
             $url_form_request = saveFile($request->_url_form_request, config('constants.sortedClaimUpload'),$hospital_request->url_form_request);
             $dataUpdate['url_form_request'] =  $url_form_request;
         }elseif($request->_url_form_request){
             $url_form_request = saveFile($request->_url_form_request, config('constants.sortedClaimUpload'));
             $dataUpdate['url_form_request'] =  $url_form_request;
-        }
-
-        if($hospital_request && $request->_url_attach_email){
-            $url_attach_email = saveFile($request->_url_attach_email, config('constants.sortedClaimUpload'),$hospital_request->url_attach_email);
-            $dataUpdate['url_attach_email'] =  $url_attach_email;
-        }elseif($request->_url_attach_email){
-            $url_attach_email = saveFile($request->_url_attach_email, config('constants.sortedClaimUpload'));
-            $dataUpdate['url_attach_email'] =  $url_attach_email;
         }
 
         if($request->_url_form_request){
@@ -2002,15 +2008,18 @@ class ClaimController extends Controller
         }
         $old_msg = "";
         // Read email
-        if($claim->hospital_request->url_attach_email){
-            $messageFactory = new MAPI\MapiMessageFactory();
-            $documentFactory = new Pear\DocumentFactory(); 
-            $ole = $documentFactory->createFromFile(storage_path("app/public/sortedClaim")."/".$claim->hospital_request->url_attach_email);
-            $message = $messageFactory->parseMessage($ole);
-            $old_msg = $message->getBody();
-            preg_match('/(RE:)/',  $message->properties['subject'], $matches_re, PREG_OFFSET_CAPTURE);
-            $subject = $matches_re ? $message->properties['subject'] : "RE: " . $message->properties['subject'];
-            $old_msg  = str_replace("\r\n", "<br>", $old_msg);
+        if($claim->hospital_request->url_attach_email && file_exists(storage_path("app/public/attachEmail")."/".$claim->hospital_request->url_attach_email)){
+            try {
+                $messageFactory = new MAPI\MapiMessageFactory();
+                $documentFactory = new Pear\DocumentFactory(); 
+                $ole = $documentFactory->createFromFile(storage_path("app/public/attachEmail")."/".$claim->hospital_request->url_attach_email);
+                $message = $messageFactory->parseMessage($ole);
+                $old_msg = $message->getBody();
+                preg_match('/(RE:)/',  $message->properties['subject'], $matches_re, PREG_OFFSET_CAPTURE);
+                $subject = $matches_re ? $message->properties['subject'] : "RE: " . $message->properties['subject'];
+                $old_msg  = str_replace("\r\n", "<br>", $old_msg);
+            } catch (Exception $e) {
+            }
         }
 
         $user = Auth::User();

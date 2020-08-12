@@ -3,18 +3,20 @@
         
         <!-- Modal content-->
         <div class="modal-content">
-            {{ Form::open(array('url' => '/admin/claim/setProvGOPPresAmt/'.$data->id , 'method' => 'POST','files' => true, "id" =>  'requestGOPForm')) }}
+            
             <div class="modal-header">
                 <h4 class="modal-title">Nhập Dữ Liệu Đầu Vào</h4>
 
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                {{ Form::hidden('cl_no', $data->code_claim_show ) }}
-                {{ Form::hidden('id_claim', $data->code_claim ,['class' => 'id_claim']) }}
+                
                 
             </div>    
                         
             <div class="modal-body ">
+                {{ Form::open(array('url' => '/admin/claim/setProvGOPPresAmt/'.$data->id , 'method' => 'POST','files' => true, "id" =>  'requestGOPForm', 'class' => 'dropzone')) }}
                 <div class="row">
+                    {{ Form::hidden('cl_no', $data->code_claim_show ) }}
+                    {{ Form::hidden('id_claim', $data->code_claim ,['class' => 'id_claim']) }}
                     {{ Form::label('prov_gop_pres_amt', 'Tổng Số Tiền Yêu Cầu Ban Đầu', ['class' => 'labelas col-md-4 mt-1']) }}
                     {{ Form::text('prov_gop_pres_amt', data_get($hospital_request,'prov_gop_pres_amt'), ['class' => 'item-price form-control col-md-5 mt-1 prov_gop_pres_amt', 'oninput' => 'gop_pres_amt_change()',"required"]) }}
 
@@ -25,13 +27,6 @@
                         </div>
                     </div>
 
-                    {{ Form::label('prov_gop_pres_amt', 'Đính kèm email (attach email .msg)', ['class' => 'labelas col-md-4 mt-1']) }}
-                    <div class="col-md-5">
-                        <div class="file-loading">
-                            <input id="url_attach_email" type="file" name="_url_attach_email" >
-                        </div>
-                    </div>
-                    
                     {{ Form::label('type_gop', 'Kết Quả Bảo Lãnh', ['class' => 'labelas col-md-4 mt-1']) }}
                     {{ Form::select('type_gop', config('constants.gop_type'),data_get($hospital_request,'type_gop'), ['class' => 'form-control col-md-5 mt-1 ', "required"]) }}
 
@@ -75,18 +70,28 @@
 
                     {{ Form::label('APPAMTGOP', 'Chi Phí Bảo Lãnh Dự Kiến', ['class' => 'labelas col-md-4 mt-1']) }}
                     {{ Form::text('APPAMTGOP', null, ['class' => 'app_amt_gop item-price form-control col-md-5 mt-1', 'readonly']) }}
+                    {{ Form::label('prov_gop_pres_amt', 'Đính kèm email (attach email .msg)', ['class' => 'labelas col-md-4 mt-1']) }}
+
+                        
+                        
+
+                    
                 </div>
+                <div class="fallback">
+                    <input name="file" type="file" />
+
+                </div>
+                {!! Form::close() !!}
             </div>
             <div class="modal-footer">
                 <div class="row">
-                    <div id = 'button_save' class="pull-right">
-                        <button class="btn btn-danger" name="save_letter" value="save"> Submit</button> 
+                    <div  class="pull-right">
+                        <button class="btn btn-danger" name="save_letter"  id="btn_submit" onclick="document.getElementById('requestGOPForm').submit();" value="save" > Submit</button> 
                         <button type="button" class="btn btn-secondary btn-cancel-delete" 
                             data-dismiss="modal">Close</button>
                     </div><br>
                 </div>
             </div>
-            {!! Form::close() !!}
         </div>
     </div>
 </div>
