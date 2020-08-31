@@ -55,6 +55,21 @@ class Claim extends BaseModel
         return $csr;
     }
 
+    //get reject code hbs
+    public function getRejectCodeAttribute(){
+        $condition_re = function ($q){
+            $q->selectRaw("HBS.fn_get_sys_code_desc_vn(SCMA_OID_CL_REJ_CODE) content, rej_amt amount , (null) id , clli_oid");
+        };
+
+        $condition = function ($q) use ($condition_re){
+            $q->with(['HBS_CL_LINE_REJ' => $condition_re]);
+        };
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::with(['HBS_CL_LINE' => $condition])->findOrFail($this->code_claim);
+        
+        
+        return $HBS_CL_CLAIM->HBS_CL_LINE->pluck('HBS_CL_LINE_REJ')->toArray();
+    }
+
     public static function storeFile($file ,  $dirUpload){
         $imageName = time() . md5($file->getClientOriginalName()) . '.' . $file->getClientOriginalExtension();
         $file->storeAs($dirUpload, $imageName);

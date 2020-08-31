@@ -75,6 +75,9 @@ $totalAmount = 0;
                                     {{ Form::label('CSR_File', 'CSR File ', array('class' => 'labelas')) }}<br>
                                     {!! Form::button('CSR File', ['data-toggle' => "modal" ,  'data-target' => "#csrModal", 'type' => 'button', 'class' => ' btn btn-info' ]) !!}<br>
 
+                                    {{ Form::label('confirm_contract_status', 'Confirm Contract Status ', array('class' => 'labelas')) }}<br>
+                                    {!! Form::button('confirm', ['data-toggle' => "modal" ,  'data-target' => "#confirmContractModal", 'type' => 'button', 'class' => ' btn btn-info' ]) !!}<br>
+
                                     {{-- payment request  --}}
                                     {{ Form::label('Payment_Request', 'Payment Request', array('class' => 'labelas')) }}
                                     <p class="text-danger">Yêu cầu thanh toán chỉ hiển thị khi Issue trên Health Etalk đạt trạng thái Finish! </p>
@@ -96,6 +99,12 @@ $totalAmount = 0;
                                     <div class="mt-2" >
                                         <button type="submit" class="btn btn-primary " > {{__('message.save')}}</button> 
                                         <button type="button" onclick="upload_summary()" class="btn btn-primary m-2">Send to summary Etalk</button>
+                                        {!! Form::button('Delete pages', ['data-toggle' => "modal" ,  
+                                                'data-target' => "#deletePagesModal",
+                                                'type' => 'button', 
+                                                'class' => ' btn text-danger' , 
+                                                'onclick' => 'comfirmPayment(this);',
+                                                ]) !!}
                                     </div>
                                     <!-- End file image -->
                                     {{ Form::close() }}
@@ -444,6 +453,12 @@ $totalAmount = 0;
 {{-- Modal CSR File--}}
 @include('claimManagement.csrModal')
 
+
+{{-- deletePagesModal--}}
+@include('claimManagement.deletePagesModal')
+
+{{-- confirmContractModal --}}
+@include('claimManagement.confirmContractModal')
 
 @endsection
 

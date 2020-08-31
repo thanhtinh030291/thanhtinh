@@ -18,7 +18,11 @@
                     {{ Form::hidden('cl_no', $data->code_claim_show ) }}
                     {{ Form::hidden('id_claim', $data->code_claim ,['class' => 'id_claim']) }}
                     {{ Form::label('prov_gop_pres_amt', 'Tổng Số Tiền Yêu Cầu Ban Đầu', ['class' => 'labelas col-md-4 mt-1']) }}
-                    {{ Form::text('prov_gop_pres_amt', data_get($hospital_request,'prov_gop_pres_amt'), ['class' => 'item-price form-control col-md-5 mt-1 prov_gop_pres_amt', 'oninput' => 'gop_pres_amt_change()',"required"]) }}
+                    {{ Form::text('prov_gop_pres_amt', data_get($hospital_request,'prov_gop_pres_amt') ? data_get($hospital_request,'prov_gop_pres_amt') : $present_amt, ['class' => 'item-price form-control col-md-5 mt-1 prov_gop_pres_amt', 'oninput' => 'gop_pres_amt_change()',"required"]) }}
+
+                    {{ Form::label('prov_gop_pres_amt_hbs', 'Present Amt(HBS)', ['class' => 'labelas col-md-4 mt-1']) }}
+                    {{ Form::text('_prov_gop_pres_amt_hbs', $present_amt, ['class' => 'item-price form-control col-md-5 mt-1 prov_gop_pres_amt', 'oninput' => 'gop_pres_amt_change()',"readonly"]) }}
+
 
                     {{ Form::label('prov_gop_pres_amt', 'File Yêu Cầu Bảo Đảm Viện Phí (PDF)', ['class' => 'labelas col-md-4 mt-1']) }}
                     <div class="col-md-5">
@@ -69,7 +73,7 @@
                     
 
                     {{ Form::label('APPAMTGOP', 'Chi Phí Bảo Lãnh Dự Kiến', ['class' => 'labelas col-md-4 mt-1']) }}
-                    {{ Form::text('APPAMTGOP', null, ['class' => 'app_amt_gop item-price form-control col-md-5 mt-1', 'readonly']) }}
+                    {{ Form::text('APPAMTGOP', $approve_amt, ['class' => 'app_amt_gop item-price form-control col-md-5 mt-1', 'readonly']) }}
                     {{ Form::label('prov_gop_pres_amt', 'Đính kèm email (attach email .msg)', ['class' => 'labelas col-md-4 mt-1']) }}
 
                         

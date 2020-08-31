@@ -327,7 +327,10 @@ class ClaimController extends Controller
             }
             
         }
+       
         try {
+            $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+            $MessageComfirmConract = $HBS_CL_CLAIM->member->MessageComfirmConract;
             $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($data->code_claim_show)->getContent(),true);
             $payment_history = data_get($payment_history_cps,'data_full',[]);
             $approve_amt = data_get($payment_history_cps,'approve_amt');
@@ -342,6 +345,7 @@ class ClaimController extends Controller
             $tranfer_amt = (int)$approve_amt - (int)collect($payment_history)->sum('TF_AMT')-$balance_cps->sum('DEBT_BALANCE');
             
         } catch (\Throwable $th) {
+            $MessageComfirmConract ="";
             $payment_history = [];
             $approve_amt = 0;
             $tranfer_amt = 0;
@@ -375,10 +379,11 @@ class ClaimController extends Controller
             } catch (Exception $e) {
             }    
         }
+        $reject_code = collect($claim->RejectCode)->flatten(1)->values()->all();
         $compact = compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
         'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq',
-        'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail']);
+        'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail','reject_code','MessageComfirmConract']);
         if ($claim_type == 'P'){
             return view('claimGOPManagement.show', $compact);
         }else{
@@ -921,13 +926,34 @@ class ClaimController extends Controller
             );
             return redirect('/admin/claim/'.$claim_id)->withInput();
         }
-        if(data_get($res,'status') == 'success'){
-            $data = $export_letter->info;
-            $data['notes'] = $res['data']['note'];
-            $export_letter->info = $data;
-            $export_letter->save();
-            
+        return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
+    }
+    // confirm contract
+    public function confirmContract(Request $request){
+        $claim_id = $request->claim_id;
+        $id = $request->id;
+        $user = Auth::User();
+        $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        $barcode = $claim->barcode;
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $member = $HBS_CL_CLAIM->member;
+        $body = [
+            'user_email' => $user->email,
+            'issue_id' => $barcode,
+            'text_note' => $request->message,
+        ];
+        try {
+            $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
+            $res = json_decode($res->getBody(),true);
+        } catch (Exception $e) {
+
+            $request->session()->flash(
+                'errorStatus', 
+                generateLogMsg($e)
+            );
+            return redirect('/admin/claim/'.$claim_id)->withInput();
         }
+
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
     // send summary Etalk
@@ -1677,7 +1703,7 @@ class ClaimController extends Controller
                     $file_name_man_output =  md5(Str::random(9).time());
                     $FirstPage = $claim->old_number_page_send + 1 ;
                     $removed = array_pop($path_file);
-                    $cm_run ="gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dFirstPage={$FirstPage} -sOutputFile=". storage_path("app/public/cache/$file_name_man_output") ." ".storage_path("app/public/cache/$file_name_man");
+                    $cm_run ="gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -sOutputFile=". storage_path("app/public/cache/$file_name_man_output") ." ".storage_path("app/public/cache/$file_name_man");
                     exec($cm_run);
                     Storage::delete(str_replace(storage_path("app")."/", "", $removed));
                     $path_file[] = storage_path("app/public/cache/$file_name_man_output");
@@ -1700,6 +1726,74 @@ class ClaimController extends Controller
         $claim->old_number_page_send = $count_page;
         $claim->save();
         Storage::delete($path_file);
+        return redirect('/admin/claim/'.$id)->with('status', __('message.update_claim'));
+    }
+
+    public function sendCSRFile(Request $request, $id){
+
+        $claim  = Claim::itemClaimReject()->findOrFail($id);
+        $CsrFile = $claim->CsrFile->where('rpid_oid',$request->rpid_oid)->first();
+        $url_csr = storage_path("../../dlvnprod" . $CsrFile->path . $CsrFile->filename);
+        $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
+        $pagecount = $mpdf->SetSourceFile(storage_path("../../dlvnprod" . $CsrFile->path . $CsrFile->filename));
+        $file_name_cat =  md5(Str::random(14).time());
+        $path_file_name_cat = storage_path("app/public/cache/$file_name_cat");
+        $cm_run = "gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -dFirstPage=1 -dLastPage={$pagecount} -sOutputFile={$path_file_name_cat} {$url_csr}" ;
+        exec($cm_run);
+        $path_file[] = $path_file_name_cat;
+        if($claim->url_file_sorted && file_exists(storage_path('app/public/sortedClaim/'. $claim->url_file_sorted))){
+            $filename_sorted = storage_path('app/public/sortedClaim/'. $claim->url_file_sorted);
+            $handle = fopen($filename_sorted, "r");
+            $file_contents = stream_get_contents($handle);
+            fclose($handle);
+            if($file_contents != ""){
+                $file_name_man =  md5(Str::random(10).time());
+                Storage::put('public/cache/' . $file_name_man, $file_contents);
+                $path_file[] = storage_path("app/public/cache/$file_name_man") ;
+            }
+        }else{
+            $file_name =  md5(Str::random(13).time());
+            Storage::put('public/sortedClaim/' . $file_name .'.pdf', "");
+            $claim->url_file_sorted = $file_name .'.pdf';
+            $claim->push();
+        }
+        $cm_run = "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile=".storage_path("app/public/sortedClaim/{$claim->url_file_sorted}"). 
+        " -dBATCH " . implode(" ",$path_file);
+        exec($cm_run);
+        array_shift($path_file);
+        foreach ($path_file as $key => $value){
+            $path_file[$key]  = str_replace(storage_path("app")."/", "", $value);
+        }
+        Storage::delete($path_file);
+        return redirect('/admin/claim/'.$id)->with('status', __('message.update_claim'));
+    }
+
+    public function deletePage(Request $request, $id){
+        $claim  = Claim::itemClaimReject()->findOrFail($id);
+        if($claim->url_file_sorted && file_exists(storage_path('app/public/sortedClaim/'. $claim->url_file_sorted))){
+            $filename_sorted = storage_path('app/public/sortedClaim/'. $claim->url_file_sorted);
+            $patch_file_convert = storage_path('app/public/cache/'. $claim->url_file_sorted);
+            $cm_run ="gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -sOutputFile=". $patch_file_convert ." ".$filename_sorted;
+            exec($cm_run);
+            $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
+            $pagecount = $mpdf->SetSourceFile($patch_file_convert);
+            
+            $allpage =  range(1,$pagecount);
+            $page_delete = range($request->from , $request->to);
+            $result=array_diff($allpage,$page_delete);
+            $pageList = implode(",",$result);
+            $file_name =  md5(Str::random(13).time());
+            Storage::put('public/sortedClaim/' . $file_name .'.pdf', "");
+            $path_file_name = storage_path('app/public/sortedClaim/'. $file_name.'.pdf');
+            $cm_run = "gs -q -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -sPageList={$pageList} -sOutputFile={$path_file_name} {$patch_file_convert}";
+            exec($cm_run);
+            Storage::delete('/public/sortedClaim/'.$claim->url_file_sorted);
+            Storage::delete('/public/cache/'.$claim->url_file_sorted);
+            $claim->url_file_sorted = $file_name .'.pdf';
+            $claim->push();
+        }else{
+            return redirect('/admin/claim/'.$id)->with('errorStatus', "Không tồn Tại file đã sắp xếp");
+        }
         return redirect('/admin/claim/'.$id)->with('status', __('message.update_claim'));
     }
 

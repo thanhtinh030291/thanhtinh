@@ -6,6 +6,7 @@ use App\PaymentHistory;
 use App\ExportLetter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class UpdateFile extends Command
 {
@@ -40,7 +41,9 @@ class UpdateFile extends Command
      */
     public function handle()
     {
-        $payments = PaymentHistory::where('update_file',0)->get();
+        $dt = Carbon::now();
+        $dt_check  = $dt->subDays(10)->format('Y-m-d h:i:s');
+        $payments = PaymentHistory::where('update_file',0)->where('created_at','>=', $dt_check)->get();
         $path = '/public/payment/';
         foreach ($payments as $key => $value) {
             

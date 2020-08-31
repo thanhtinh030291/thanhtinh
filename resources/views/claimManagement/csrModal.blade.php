@@ -33,6 +33,12 @@
                                             <td>{{$item->upd_date}}</td>
                                             <td>
                                                 <a href="{{config('constants.mount_dlvn'). $item->path . $item->filename}}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                                {{ Form::open(array('url' => '/admin/claim/sendCSRFile/'.$data->id, 'method'=>'post', 'files' => true, 'style' => 'width: 100%;'))}}
+                                                    <div class="row">
+                                                        {{ Form::hidden('rpid_oid',  $item->rpid_oid ) }}
+                                                        <button class=""><i class="fa fa-print col-md-4" aria-hidden="true"></i>Lưu vào tệp đã sắp xếp</button>
+                                                    </div>
+                                                {{ Form::close() }}
                                             </td>
                                         </tr>
                                     @endforeach

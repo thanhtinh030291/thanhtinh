@@ -25,5 +25,10 @@ class HBS_CL_LINE extends BaseModelDB2
     {
         return $this->belongsTo('App\HBS_MR_POLICY_PLAN', 'popl_oid', 'popl_oid');
     }
+
+    public function HBS_CL_LINE_REJ()
+    {
+        return $this->hasMany('App\HBS_CL_LINE_REJ', 'clli_oid', 'clli_oid');
+    }
     
 }

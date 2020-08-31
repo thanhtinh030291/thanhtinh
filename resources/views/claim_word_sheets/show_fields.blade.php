@@ -92,7 +92,12 @@
         {{$member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first() ? $member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first()->event_desc : "" }}
     </p>
     <p><span  class="font-weight-bold">Exclusion:</span> 
-        {{$member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first() ? $member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXCL')->first()->event_desc : ""}}
+        @php
+            $exclu = $member->MrMemberEvent->where('scma_oid_event_code', 'EVENT_CODE_EXCL');
+        @endphp
+        @foreach ($exclu as $item)
+            <p>{{$item->event_desc}}--({{$item->event_date}})</p>
+        @endforeach
     </p>
     <p><span  class="font-weight-bold">Etalk Link:</span>
         <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$claim->barcode }}">Link</a>
@@ -153,6 +158,32 @@
                     <td>{{$item->RT_DIAGNOSIS->diag_desc_vn}}</td>
                     <td>{{str_replace("BENEFIT_TYPE_", "", $item->PD_BEN_HEAD->scma_oid_ben_type)}} - {{$item->PD_BEN_HEAD->ben_head}} </td>
                     <td>{{formatPrice($item->app_amt)}}</td>
+                </tr>
+            @endforeach
+            @endif
+                
+        </tbody>
+    </table>
+</div>
+<div>
+    <p class="font-weight-bold">CALL LOG HISTORY (Last 7 Days)</p>
+    <table class="table table-striped header-fixed w-75">
+        <thead>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Phone</th>
+            <th>Description</th>
+        </thead>
+        <tbody>
+            @if(!empty($MANTIS_BUG))
+            @foreach ($MANTIS_BUG as $item)
+                <tr>
+                    <td><a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$item->id }}">{{$item->id}}</a></td>
+                    <td width="150">{{ date("d-m-Y", data_get($item,'CUSTOM_FIELD_STRING.0.value')) }}</td>
+                    <td width="100">{{ data_get($item,'CUSTOM_FIELD_STRING.1.value') }}</td>
+                    <td width="150">{{ data_get($item,'CUSTOM_FIELD_STRING.2.value') }}</td>
+                    <td>{{ data_get($item,'BUG_TEXT.description') }}</td>
                 </tr>
             @endforeach
             @endif
