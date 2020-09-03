@@ -606,7 +606,8 @@ class ClaimController extends Controller
         }
 
         if ($request->save_letter == 'save'){
-            $create_user_sign = $claim_type == "P" ? getUserSignThumb($export_letter->created_user) : getUserSign($export_letter->created_user);
+            //$create_user_sign = $claim_type == "P" ? getUserSignThumb($export_letter->created_user) : getUserSign($export_letter->created_user);
+            $create_user_sign = $user_create->name;
             $export_letter->wait = [  'user' => $user->id,
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'data' => str_replace('[[$per_creater_sign]]', $create_user_sign, $request->template)
@@ -1063,6 +1064,7 @@ class ClaimController extends Controller
     public function exportLetter(Request $request){
         $export_letter = ExportLetter::findOrFail($request->export_letter_id);
         $claim  = Claim::itemClaimReject()->findOrFail($request->claim_id);
+        $user_create = User::findOrFail($export_letter->created_user);
         if($export_letter->approve != null){
             $letter = LetterTemplate::findOrFail($request->letter_template_id);
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
@@ -1091,7 +1093,8 @@ class ClaimController extends Controller
             echo "</html>";
         }else{
             $data['content'] = "<html><body>".$data['content']."</body></html>";
-            $create_user_sign = getUserSignThumb($export_letter->created_user);
+            //$create_user_sign = getUserSignThumb($export_letter->created_user);
+            $create_user_sign = $user_create->name;
             $data['content'] = str_replace('[[$per_creater_sign]]', $create_user_sign, $data['content']);
             $data['content'] = str_replace('[[$per_approve_sign]]', "", $data['content']);
             $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/'), 'margin_top' => 225, 'margin_left' => 22]);
@@ -1159,8 +1162,10 @@ class ClaimController extends Controller
         
         $data = $this->letter($letter_template_id , $claim_id,  $export_letter_id);
         $export_letter = ExportLetter::findOrFail($export_letter_id);
+        $user_create = User::findOrFail($export_letter->created_user);
         
-        $create_user_sign = getUserSign($export_letter->created_user);
+        //$create_user_sign = getUserSign($export_letter->created_user);
+        $create_user_sign = $user_create->name;
         $data['content'] = str_replace('[[$per_creater_sign]]', $create_user_sign, $data['content']);
 
         if($approve != null){
