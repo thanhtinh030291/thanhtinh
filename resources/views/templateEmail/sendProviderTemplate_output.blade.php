@@ -64,7 +64,7 @@
                         </table>
                         <p class="MsoNormal"><span style="font-size: 12.0pt; font-family: 'Times New Roman',serif; color: red;">Vui lòng lưu ý: Mọi hình thức viết: Dai-Ichi hoặc Daiichi là chưa chính xác:</span></p>
                         <p class="MsoNormal"><span style="font-size: 12.0pt; font-family: 'Californian FB',serif; color: #1f3864;">&nbsp;</span></p>
-                        <p class="MsoNormal"><span style="font-family: 'Segoe UI Emoji',sans-serif; mso-bidi-font-family: 'Segoe UI Emoji'; color: #0070c0; background: white;">❤</span> <span style="font-family: 'Californian FB',serif; color: black; mso-fareast-language: EN-GB;">Thanks &amp; Best Regards,</span></p>
+                        <p class="MsoNormal"><span style="font-family: 'Californian FB',serif; color: black; mso-fareast-language: EN-GB;">Thanks &amp; Best Regards,</span></p>
                     </td>
                   </tr>
                 </table>

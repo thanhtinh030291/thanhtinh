@@ -18,7 +18,7 @@
                       <p>Dear Team,</p>
                       <p>PCV xác nhận bảo lãnh cho KH <span style="font-weight: bold">{{$data['HBS_CL_CLAIM']->MemberNameCap}}</span> với tổng chi phí dự kiến là <span style="font-weight: bold">{{formatPrice($data['HBS_CL_CLAIM']->SumAppAmt)}}</span> đồng.</p>
                       <p>Lưu ý: Thời gian bảo lãnh: {{$data['incurDateFrom']}} – {{$data['incurDateTo']}} ({{$data['diffIncur']}} ngày)</p>
-                      @foreach (data_get($data,'benefit.T_CT.amt_dis_life') as $item)
+                      {{-- @foreach (data_get($data,'benefit.T_CT.amt_dis_life') as $item)
                         @if (data_get($item,'message'))
                           <p>-         {{data_get($item,'message')}}</p>
                         @endif
@@ -32,7 +32,7 @@
                         @if (data_get($item,'IMIS.message'))
                           <p>-         {{data_get($item,'RB.message')}}</p>
                         @endif
-                      @endforeach
+                      @endforeach --}}
                       <p>-         Thư bảo lãnh viện phí thực tế sẽ được gửi khi KH xuất viện.</p>
                       <p>-         Trước khi KH xuất viện, vui lòng gửi cho PCV Chi phí thực tế, Giấy ra viện, Cận lâm sàng và các chứng từ y tế có liên quan khác.</p>
                       <p></p>
@@ -40,7 +40,7 @@
                       <p>1.       Tóm tắt Bệnh án/Báo cáo y tế có ghi rõ tình trạng hiện tại của KH, lý do cần lưu viện thêm và thời gian cần lưu viện thêm,</p>
                       <p>2.       Request form có ghi ngày xuất viện dự kiến,</p>
                       <p>3.       Các Kết quả Cận Lâm sàng thực hiện thêm (nếu có).</p>
-                      <p>❤ Thanks & Best Regards,</p>
+                      <p> Thanks & Best Regards,</p>
                     </td>
                   </tr>
                 </table>
