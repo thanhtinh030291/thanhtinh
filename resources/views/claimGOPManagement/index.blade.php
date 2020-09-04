@@ -1,6 +1,6 @@
 <!-- Stored in resources/views/layouts/admin/partials/top_bar_navigation.blade.php -->
 @extends('layouts.admin.master')
-@section('title', __('message.form_claim_P'))
+@section('title', __('message.form_claim_M'))
 @section('stylesheets')
     <link href="{{ asset('css/condition_advance.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('css/ion.rangeSlider.css?vision=') .$vision }}" media="all" rel="stylesheet" type="text/css"/>
@@ -28,7 +28,7 @@
             </div>
             <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             {{ Form::label('name', __('message.id_claim'), array('class' => 'labelas')) }}
                             {{ Form::select('code_claim',[], $finder['code_claim'], ['class' => 'code_claim form-control']) }}
 
@@ -37,9 +37,10 @@
                             
                             {{ Form::label('created_at', __('message.date_created'), ['class' => 'labelas']) }}
                             {{ Form::text('created_at', data_get($finder,'created_at'), ['class' => 'form-control datepicker']) }}
+
                             
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             {{ Form::label('letter_status', 'Latest Letter status', ['class' => 'labelas']) }}
                             {{ Form::select('letter_status', $list_status, data_get($finder, 'letter_status'), ['id' => 'letter_status', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
 
@@ -53,6 +54,16 @@
                             {{ Form::checkbox('budget_check', 'value',isset($finder['budget_check']) ? true : false ,['class' => 'labelas']) }}
                             {{ Form::text('budget', isset($finder['budget']) ? $finder['budget'] : '', ['id' => "rangePrimary",'class' => ' form-control', 'placeholder' => '']) }}
                             <p id="priceRangeSelected"></P>
+                        </div>
+                        <div class="col-md-4">
+                            {{ Form::label('barcode', __('message.barcode'), ['class' => 'labelas']) }}
+                            {{ Form::text('barcode', data_get($finder,'barcode'), ['class' => 'form-control']) }}
+
+                            {{ Form::label('memb_ref_no', __('message.memb_ref_no'), ['class' => 'labelas']) }}
+                            {{ Form::text('memb_ref_no', data_get($finder,'memb_ref_no'), ['class' => 'form-control']) }}
+
+                            {{ Form::label('name', __('message.prov_name'), array('class' => 'labelas')) }}
+                            {{ Form::select('prov_name',[], $finder['prov_name'], ['class' => 'prov_name form-control']) }}
                         </div>
                     </div>
                     <br>
@@ -143,7 +154,26 @@ $(window).load(function() {
     $('.code_claim').select2({          
         minimumInputLength: 2,
         ajax: {
-        url: "/admin/dataAjaxHBSGOPClaim",
+        url: "/admin/dataAjaxHBSClaim",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
+
+    $('.prov_name').select2({          
+        minimumInputLength: 2,
+        ajax: {
+        url: "/admin/dataAjaxHBSProv",
             dataType: 'json',
             data: function (params) {
                 return {
