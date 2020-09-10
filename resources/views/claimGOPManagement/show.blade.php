@@ -771,8 +771,10 @@ $totalAmount = 0;
     $(document).ready(function () {
         
         
-        $("div#requestGOPForm").dropzone({url: "{{ url('admin/attachEmail') }}/{{$data->id}}"});
-        
+        //$("div#requestGOPForm").dropzone({url: "{{ url('admin/attachEmail') }}/{{$data->id}}"});
+        Dropzone.options.requestGOPForm = {
+            url: "{{ url('admin/attachEmail') }}/{{$data->id}}"
+        }
 
         var item_of_claim = @json($reject_code);
         if(item_of_claim != null){
