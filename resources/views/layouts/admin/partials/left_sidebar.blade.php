@@ -12,7 +12,7 @@
                         <i class="fa fa-fw fa-ticket"></i> <span> {{__('message.claim_management')}} </span>
                     </a>
                     <ul class="list-unstyled">
-                        @hasanyrole('Header|Manager|Admin|Claim|Claim Independent')
+                        @hasanyrole('Header|Manager|Admin|Claim|Claim Independent|Lead|QC|Supper')
                         <li class="{{ setActive('admin/claim') }}"> 
                             <a class="{{ setActive('admin/claim') }}"
                             href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_M')}}</span></a>
@@ -148,10 +148,17 @@
                             <a  class="{{ setActive('admin/transactionRoleStatuses') }}" href="{{ url('admin/transactionRoleStatuses') }}">
                             <span> Transaction Approved</span></a>
                         </li>
+
+                        <li class="{{ setActive('admin/groupUsers') }}">
+                            <a  class="{{ setActive('admin/groupUsers') }}" href="{{ url('admin/groupUsers') }}">
+                            <span> Group of Users</span></a>
+                        </li>
+                        
                         <li class="{{ setActive('admin/setting') }}">
                             <a  class="{{ setActive('admin/setting') }}" href="{{ url('admin/setting') }}">
                             <span> Setting App</span></a>
                         </li>
+
                     </ul>
                 </li>
                 @endrole

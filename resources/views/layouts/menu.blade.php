@@ -174,3 +174,7 @@
     <a href="{!! route('providers.index') !!}"><i class="fa fa-edit"></i><span>Providers</span></a>
 </li>
 
+<li class="{{ Request::is('groupUsers*') ? 'active' : '' }}">
+    <a href="{!! route('groupUsers.index') !!}"><i class="fa fa-edit"></i><span>Group Users</span></a>
+</li>
+

@@ -49,6 +49,10 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function group_users()
+    {
+        return $this->belongsTo('App\GroupUser', 'group', 'id');
+    }
 
     public static function getListIncharge()
     {
@@ -84,11 +88,50 @@ class User extends Authenticatable implements JWTSubject
 
     public function getLeaderAttribute()
     {
-        try {
-            $user_mantis = MANTIS_USER::where('email', $this->email)->first();
-            $leader_mantis_email = $user_mantis->USER_GROUP->TEAM->leadInfo->email;
-            return User::where('email', $leader_mantis_email)->first();
-        } catch (\Throwable $th) {
+        $group = $this->group_users;
+        if($group){
+            return $group->lead;
+        }else{
+            return null;
+        }
+    }
+
+    public function getSupperAttribute()
+    {
+        $group = $this->group_users;
+        if($group){
+            return $group->supper;
+        }else{
+            return null;
+        }
+    }
+
+    public function getAssistantManagerAttribute()
+    {
+        $group = $this->group_users;
+        if($group){
+            return $group->assistant_manager;
+        }else{
+            return null;
+        }
+    }
+
+    public function getManagerAttribute()
+    {
+        $group = $this->group_users;
+        if($group){
+            return $group->manager;
+        }else{
+            return null;
+        }
+    }
+
+    public function getHeaderAttribute()
+    {
+        $group = $this->group_users;
+        if($group){
+            return $group->header;
+        }else{
             return null;
         }
     }

@@ -137,6 +137,9 @@ Route::group(['prefix' => 'admin'], function () {
 
         //provider
         Route::resource('providers', 'ProviderController');
+
+        //Group mem
+        Route::resource('groupUsers', 'GroupUserController');
         
     });
 
@@ -164,3 +167,4 @@ Route::post(
 Route::post('check_subscriptions', 'PushController@check_subscriptions');
 Route::post('subscriptions', 'PushController@update');
 Route::post('subscriptions/delete', 'PushController@destroy');
+

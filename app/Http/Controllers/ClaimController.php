@@ -653,11 +653,11 @@ class ClaimController extends Controller
                 $export_letter->note = $data;
                 $export_letter->approve = null;
             }
-            if($status_change[1] == 'approved'){
+            if($status_change[1] == 'approved'){ //nofice
                 if($user->hasRole('Claim')){
                     $leader = $user->Leader;
                     if($leader != null){
-                        $to_user = [$leader->id];
+                        $to_user = [$leader];
                     }
                 }
                 if($user->hasRole('Lead') || $user->hasRole('Claim Independent')){
@@ -665,14 +665,19 @@ class ClaimController extends Controller
                     $to_user = [Arr::random($to_user)];
                 }
                 if(($user_create->hasRole('Claim') || $user_create->hasRole('Lead')) && $user->hasRole('QC') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 30000000){
-                    $to_user = Setting::findOrFail(1)->manager_claim;
+                    $to_user = [$user_create->supper];
                 }
+                
+                if( $user->hasRole('Supper') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 50000000){
+                    $to_user = [$user_create->manager];
+                }
+
                 if( $user->hasRole('Manager') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
-                    $to_user = Setting::findOrFail(1)->header_claim;
+                    $to_user = [$user_create->header];
                 }
                 // Claim Independent
                 if($user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
-                    $to_user = Setting::findOrFail(1)->manager_claim;
+                    $to_user = [$user_create->supper];
                 }
                 
                 // Claim GOP
@@ -884,7 +889,7 @@ class ClaimController extends Controller
     }
 
      // change Etalk 
-     public function changeStatusEtalk(sendEtalkRequest $request){
+    public function changeStatusEtalk(sendEtalkRequest $request){
         $claim_id = $request->claim_id;
         $barcode = $request->barcode;
         $id = $request->id;
