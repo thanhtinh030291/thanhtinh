@@ -320,7 +320,7 @@ class ClaimController extends Controller
             }
             $user_create = User::findOrFail($value->created_user);
 
-            if( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 100000000){
+            if( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000){
                 $export_letter[$key]['end_status'] = 26;
             }else{
                 $export_letter[$key]['end_status'] = $level->end_status;
