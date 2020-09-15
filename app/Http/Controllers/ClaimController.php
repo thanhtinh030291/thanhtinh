@@ -321,7 +321,7 @@ class ClaimController extends Controller
             $user_create = User::findOrFail($value->created_user);
 
             if( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 100000000){
-                $export_letter[$key]['end_status'] = 7;
+                $export_letter[$key]['end_status'] = 26;
             }else{
                 $export_letter[$key]['end_status'] = $level->end_status;
             }
@@ -734,7 +734,7 @@ class ClaimController extends Controller
                     ])
                 ]);
             }elseif($user_create->hasRole('Claim Independent')){
-                if($request->status_change == 14 || $request->status_change == 7 ){
+                if($request->status_change == 14 || $request->status_change == 26 ){
                     if($export_letter->letter_template->letter_payment == null){
                         $export_letter->approve = [  'user' => $user->id,
                             'created_at' => Carbon::now()->toDateTimeString(),
@@ -1913,7 +1913,7 @@ class ClaimController extends Controller
             $patch_file_upload = storage_path("app/public/sortedClaim")."/". $url_form_request;
             $patch_file_convert = storage_path("app/public/sortedClaim")."/". 'cv_'.$url_form_request;
             
-            $cm_run ="gs -sDEVICE=pdfwrite -dNOPAUSE -dQUIET -dBATCH -sOutputFile=". $patch_file_convert ." ".$patch_file_upload;
+            $cm_run ="gs -sDEVICE=pdfwrite -sPAPERSIZE=a4 -dFIXEDMEDIA -dNOPAUSE -dQUIET -dBATCH -sOutputFile=". $patch_file_convert ." ".$patch_file_upload;
             $dataUpdate['url_form_request'] =  'cv_'.$url_form_request;
             exec($cm_run, $output);
         }
