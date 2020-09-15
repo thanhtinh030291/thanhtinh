@@ -287,7 +287,7 @@ class ClaimController extends Controller
         $items = $data->item_of_claim;
         $listLetterTemplate = LetterTemplate::where('claim_type',$claim_type)->pluck('name', 'id');
         
-        $role_id = $user->roles[0]->id;
+        $role_id = $user->roles->pluck('id')->toArray();
         $RoleChangeStatus = RoleChangeStatus::all();
         $list_status_full = TransactionRoleStatus::all();
         $list_level = LevelRoleStatus::where('claim_type',$claim_type)->get();
@@ -306,10 +306,10 @@ class ClaimController extends Controller
                 ->first();
             }
             
-            if($role_id != 1){
+            if(!in_array(1,$role_id)){
                 $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
                 $list_status =  $list_status_full
-                                ->where('role', $role_id)
+                                ->whereIn('role', $role_id)
                                 ->where('level_role_status_id', $level->id)
                                 ->where('current_status', $curren_status)
                                 ->pluck('to_status');
