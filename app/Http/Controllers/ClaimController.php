@@ -668,7 +668,7 @@ class ClaimController extends Controller
                     $to_user = [$user_create->supper];
                 }
                 
-                if( $user->hasRole('Supper') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 50000000){
+                if( $request->status_change != 4  && $user->hasRole('Supper') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 50000000){
                     $to_user = [$user_create->manager];
                 }
 
@@ -1911,10 +1911,11 @@ class ClaimController extends Controller
 
         if($request->_url_form_request){
             $patch_file_upload = storage_path("app/public/sortedClaim")."/". $url_form_request;
-            $patch_file_convert = storage_path("app/public/sortedClaim")."/". 'cv_'.$url_form_request;
+            $patch_file_convert = storage_path("app/public/sortedClaim")."/". 'cv_'. explode(".",$url_form_request)[0] .".pdf";
             
-            $cm_run ="gs -sDEVICE=pdfwrite -sPAPERSIZE=a4 -dFIXEDMEDIA -dNOPAUSE -dQUIET -dBATCH -sOutputFile=". $patch_file_convert ." ".$patch_file_upload;
-            $dataUpdate['url_form_request'] =  'cv_'.$url_form_request;
+            $cm_run ="convert  ". $patch_file_convert." " .$patch_file_upload;
+            $dataUpdate['url_form_request'] =  'cv_'.$url_form_request.".pdf";
+
             exec($cm_run, $output);
         }
         $dataUpdate +=  [
