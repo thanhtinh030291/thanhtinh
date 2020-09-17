@@ -572,12 +572,13 @@ class ClaimController extends Controller
             $conditionMPL = function ($q) use($conditionMPPB){
                 $q->with(['MR_POLICY_PLAN_BENEFIT' => $conditionMPPB]);
             };
-            $HBS_MR_MEMBER_PLAN = HBS_MR_MEMBER_PLAN::where('memb_oid',$all_memb_oid)
-            ->where('eff_date','<=',$now)
-            ->where('exp_date','>=',$now)
+            $HBS_MR_MEMBER_PLAN = HBS_MR_MEMBER_PLAN::whereIn('memb_oid',$all_memb_oid)
+            ->where('MR_MEMBER_PLAN.EFF_DATE','<=',$now)
+            ->where('MR_MEMBER_PLAN.EXP_DATE','>=',$now)
             ->with(['MR_POLICY_PLAN' => $conditionMPL])
             ->where('status', null)
             ->where('term_date',null)->get();
+            
             if($HBS_MR_MEMBER_PLAN->count() > 1){
                 $all_pl = [];
                 foreach ($HBS_MR_MEMBER_PLAN as $key => $value) {
@@ -591,6 +592,7 @@ class ClaimController extends Controller
                     return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại đồng thời Plan trùng nhau Vui lòng báo NB Terminate ');
                 }
             }
+            dd("1");
         //end Validate
         $claim->touch();
         $id = $request->id;
