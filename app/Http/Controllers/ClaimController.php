@@ -660,7 +660,7 @@ class ClaimController extends Controller
                         $to_user = [$leader];
                     }
                 }
-                if($user->hasRole('Lead') || $user->hasRole('Claim Independent')){
+                if($request->status_change != 26 && ($user->hasRole('Lead') || $user->hasRole('Claim Independent'))){
                     $to_user = User::whereHas("roles", function($q){ $q->where("name", "QC"); })->get()->pluck('id')->toArray();
                     $to_user = [Arr::random($to_user)];
                 }
