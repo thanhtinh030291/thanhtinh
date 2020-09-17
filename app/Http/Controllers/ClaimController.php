@@ -592,7 +592,6 @@ class ClaimController extends Controller
                     return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại đồng thời Plan trùng nhau Vui lòng báo NB Terminate ');
                 }
             }
-            dd("1");
         //end Validate
         $claim->touch();
         $id = $request->id;
