@@ -48,6 +48,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/claim/deletePage/{id}', 'ClaimController@deletePage')->name('claim.deletePage');
         Route::post('/claim/downloadFinishFile/{id}', 'ClaimController@downloadFinishFile')->name('claim.downloadFinishFile');
         Route::post('/claim/confirmContract', 'ClaimController@confirmContract')->name('claim.confirmContract');
+        Route::post('/claim/setJetcase/{id}', 'ClaimController@setJetcase')->name('claim.setJetcase');
         
         
         Route::get('/claim/barcode/{barcode}', 'ClaimController@barcode_link');

@@ -676,9 +676,16 @@ class ClaimController extends Controller
                 if( $user->hasRole('Manager') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
                     $to_user = [$user_create->header];
                 }
+
                 // Claim Independent
                 if($user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
                     $to_user = [$user_create->supper];
+                }
+                
+                //jetcase
+                if($claim->jetcase == 1 && ($user->hasRole('Claim Independent') || $user->hasRole('Lead') || $user->hasRole('Lead') )){
+                    $to_user = User::whereHas("roles", function($q){ $q->where("name", "QC"); })->get()->pluck('id')->toArray();
+                    $to_user = [Arr::random($to_user)];
                 }
                 
                 // Claim GOP
@@ -707,7 +714,35 @@ class ClaimController extends Controller
             $export_letter->status = $status_change[0];
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter, $list_level, $claim->claim_type);
-            if($level->signature_accepted_by == $status_change[0] || ($user_create->hasRole('Claim Independent') && $user->hasRole('Manager'))){
+            if($claim->jetcase == 1 && $user->hasRole('QC')){
+                $approve_user_sign = $claim_type == "P" ? getUserSignThumb($user_create->supper) : getUserSign($user_create->supper);
+                if($export_letter->letter_template->letter_payment == null){
+                    $export_letter->approve = [  'user' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, data_get($export_letter->wait, "data")),
+                    ];
+                }else{
+                    $export_letter->approve = [  'user' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, data_get($export_letter->wait, "data")),
+                        'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content'])
+                    ];
+                    
+                }
+                //save log approve 
+                
+                $export_letter->log_hbs_approved()->update([
+                    'approve' => json_encode([
+                        'user' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                        'MANTIS_ID' => $claim->barcode,
+                        'MEMB_NAME' => $HBS_CL_CLAIM->MemberNameCap,
+                        'POCY_REF_NO' =>  $HBS_CL_CLAIM->police->pocy_ref_no,
+                        'MEMB_REF_NO' => $HBS_CL_CLAIM->member->memb_ref_no,
+                    ])
+                ]);
+
+            }elseif($level->signature_accepted_by == $status_change[0] || ($user_create->hasRole('Claim Independent') && $user->hasRole('Manager'))){
                 $approve_user_sign = $claim_type == "P" ? getUserSignThumb($user->id) : getUserSign($user->id);
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
@@ -2146,5 +2181,13 @@ class ClaimController extends Controller
         $email_to = explode(",", $request->email_to);
         sendEmailProvider($user, $email_to, 'provider', $subject, $data,$template);
         return redirect('/admin/claim/'.$claim_id)->with('status', 'Đã gửi thư cho provider thành công');
+    }
+
+    public function setJetcase(Request $request, $id){
+
+        $claim = Claim::findOrFail($id);
+        $claim->jetcase = $request->jetcase ? $request->jetcase : 0;
+        $claim->save();
+        return redirect('/admin/claim/'.$id)->with('status', 'Đã cập nhật thành công');
     }
 }

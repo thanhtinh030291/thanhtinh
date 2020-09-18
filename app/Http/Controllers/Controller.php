@@ -22,7 +22,7 @@ class Controller extends BaseController
         $this->middleware(function ($request, $next) {
             $user = Auth::user()  ;
             $listUser = User::pluck('email', 'id');
-            $vision = 24;
+            $vision = 35;
             if($user){
                 $messages = $user->messagesReceiver;
                 $renewToClaim = PaymentHistory::where('notify_renew', 1)->where('created_user',$user->id)->get();

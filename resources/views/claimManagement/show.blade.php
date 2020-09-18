@@ -40,7 +40,7 @@ $totalAmount = 0;
                             <div class="card-body row">
                                 <div class="col-md-7">
                                     
-                                    <h5 class="card-title">Request Letter</h5>
+                                    <h5 class="card-title">Request Letter @if($data->jetcase == 1) <span class="ml-5 button_flight">JETCASE</span> @endif</h5>
                                     <p class="card-text"></p>
                                     {{ Form::open(array('url' => '/admin/requestLetter', 'method' => 'POST')) }}
                                         {{ Form::hidden('claim_id', $data->id ) }}
@@ -77,7 +77,21 @@ $totalAmount = 0;
 
                                     {{ Form::label('confirm_contract_status', 'Confirm Contract Status ', array('class' => 'labelas')) }}<br>
                                     {!! Form::button('confirm', ['data-toggle' => "modal" ,  'data-target' => "#confirmContractModal", 'type' => 'button', 'class' => ' btn btn-info' ]) !!}<br>
-
+                                    
+                                    {{ Form::label('jet_case', 'Set Claim Is JETCASE: ', array('class' => 'labelas')) }}<br>
+                                    {{ Form::open(array('url' => '/admin/claim/setJetcase/'.$data->id, 'method' => 'POST')) }}
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" class="custom-control-input" id="customRadio" name="jetcase" value="0" checked >
+                                            <label class="custom-control-label" for="customRadio">No</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" class="custom-control-input" id="customRadio2" name="jetcase" value="1" @if($data->jetcase == 1 ) checked @endif>
+                                            <label class="custom-control-label" for="customRadio2">YES</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <button class="btn btn-info" type="submit" value="save">Save</button> 
+                                        </div>
+                                    {{ Form::close() }}
                                     {{-- payment request  --}}
                                     {{ Form::label('Payment_Request', 'Payment Request', array('class' => 'labelas')) }}
                                     <p class="text-danger">Yêu cầu thanh toán chỉ hiển thị khi Issue trên Health Etalk đạt trạng thái Finish! </p>
@@ -109,7 +123,7 @@ $totalAmount = 0;
                                     <!-- End file image -->
                                     {{ Form::close() }}
                                     
-                                </div> 
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1422,3 +1422,60 @@ input:checked + .slider:before {
     z-index: 100;
     margin-right: 12px; font-size: 18px;}
 #cmess a.chat_fb:hover{color: yellow; text-decoration: none;}
+
+.button_flight {
+  
+    background-color: #004A7F;
+  
+    -webkit-border-radius: 10px;
+  
+    border-radius: 10px;
+    
+    border: none;
+    
+    color: #FFFFFF;
+    
+    cursor: pointer;
+    
+    display: inline-block;
+    
+    font-family: Arial;
+    
+    font-size: 20px;
+    
+    padding: 5px 10px;
+    
+    text-align: center;
+    
+    text-decoration: none;
+}
+@-webkit-keyframes glowing {
+  0% { background-color: #f58c03; -webkit-box-shadow: 0 0 3px #f58c03; }
+  50% { background-color: #0094FF; -webkit-box-shadow: 0 0 10px #0094FF; }
+  100% { background-color: #f58c03; -webkit-box-shadow: 0 0 3px #f58c03; }
+}
+
+@-moz-keyframes glowing {
+  0% { background-color: #f58c03; -moz-box-shadow: 0 0 3px #f58c03; }
+  50% { background-color: #0094FF; -moz-box-shadow: 0 0 10px #0094FF; }
+  100% { background-color: #f58c03; -moz-box-shadow: 0 0 3px #f58c03; }
+}
+
+@-o-keyframes glowing {
+  0% { background-color: #f58c03; box-shadow: 0 0 3px #f58c03; }
+  50% { background-color: #0094FF; box-shadow: 0 0 10px #0094FF; }
+  100% { background-color: #f58c03; box-shadow: 0 0 3px #f58c03; }
+}
+
+@keyframes glowing {
+  0% { background-color: #f58c03; box-shadow: 0 0 3px #f58c03; }
+  50% { background-color: #0094FF; box-shadow: 0 0 10px #0094FF; }
+  100% { background-color: #f58c03; box-shadow: 0 0 3px #f58c03; }
+}
+
+.button_flight {
+  -webkit-animation: glowing 1500ms infinite;
+  -moz-animation: glowing 1500ms infinite;
+  -o-animation: glowing 1500ms infinite;
+  animation: glowing 1500ms infinite;
+}
