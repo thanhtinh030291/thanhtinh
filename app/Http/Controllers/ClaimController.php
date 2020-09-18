@@ -293,6 +293,7 @@ class ClaimController extends Controller
         $list_level = LevelRoleStatus::where('claim_type',$claim_type)->get();
         $list_status_ad = RoleChangeStatus::pluck('name','id');
         $export_letter = $data->export_letter;
+        $user = Auth::User();
         
         foreach ($export_letter as $key => $value) {
             if($value->letter_template->level != 0){
@@ -305,8 +306,16 @@ class ClaimController extends Controller
                 ->where('max_amount','>', removeFormatPrice(data_get($value->info, 'approve_amt') ) )
                 ->first();
             }
-            
-            if(!in_array(1,$role_id)){
+            if($claim->jetcase == 1 && $user->hasRole('QC')){
+                $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
+                $list_status =  $list_status_full
+                                ->whereIn('role', $role_id)
+                                ->where('level_role_status_id', $level->id)
+                                ->where('current_status', 4)
+                                ->pluck('to_status');
+                $list_status = $RoleChangeStatus->whereIn('id' , $list_status)->pluck('name','id');
+                $export_letter[$key]['list_status'] = $list_status;
+            }elseif(!in_array(1,$role_id)){
                 $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
                 $list_status =  $list_status_full
                                 ->whereIn('role', $role_id)
