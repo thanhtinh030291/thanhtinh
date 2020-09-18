@@ -319,8 +319,10 @@ class ClaimController extends Controller
                 $export_letter[$key]['list_status'] = $list_status_ad;
             }
             $user_create = User::findOrFail($value->created_user);
-
-            if( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000){
+            if($claim->jetcase == 1){
+                $export_letter[$key]['end_status'] = 10;
+            }
+            elseif( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000){
                 $export_letter[$key]['end_status'] = 26;
             }else{
                 $export_letter[$key]['end_status'] = $level->end_status;
@@ -683,7 +685,7 @@ class ClaimController extends Controller
                 }
                 
                 //jetcase
-                if($claim->jetcase == 1 && ($user->hasRole('Claim Independent') || $user->hasRole('Lead') || $user->hasRole('Lead') )){
+                if($claim->jetcase == 1 && ($user->hasRole('Claim Independent') || $user->hasRole('Lead') || $user->hasRole('Claim') )){
                     $to_user = User::whereHas("roles", function($q){ $q->where("name", "QC"); })->get()->pluck('id')->toArray();
                     $to_user = [Arr::random($to_user)];
                 }
