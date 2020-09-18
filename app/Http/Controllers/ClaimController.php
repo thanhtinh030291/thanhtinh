@@ -726,7 +726,7 @@ class ClaimController extends Controller
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter, $list_level, $claim->claim_type);
             if($claim->jetcase == 1 && $user->hasRole('QC')){
-                $approve_user_sign = $claim_type == "P" ? getUserSignThumb($user_create->supper) : getUserSign($user_create->supper);
+                $approve_user_sign = $claim_type == "P" ? getUserSignThumb($user->id) : getUserSign($user->id);
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
@@ -736,7 +736,7 @@ class ClaimController extends Controller
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
                         'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, data_get($export_letter->wait, "data")),
-                        'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content'])
+                        'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1, $user_create->supper)['content'])
                     ];
                     
                 }
@@ -1210,7 +1210,7 @@ class ClaimController extends Controller
     }
 
     // leter_payment
-    public function letterPayment($letter_template_id , $claim_id ,$export_letter_id, $approve = null){
+    public function letterPayment($letter_template_id , $claim_id ,$export_letter_id, $approve = null , $id_user_sign = null){
         
         $data = $this->letter($letter_template_id , $claim_id,  $export_letter_id);
         $export_letter = ExportLetter::findOrFail($export_letter_id);
@@ -1222,7 +1222,7 @@ class ClaimController extends Controller
 
         if($approve != null){
             $user = Auth::user();
-            $approve_user_sign = getUserSign($user->id);
+            $approve_user_sign = $id_user_sign == null ? getUserSign($user->id) : getUserSign($id_user_sign);
             $data['content'] = str_replace('[[$per_approve_sign]]', $approve_user_sign, $data['content']);
         }else{
             $data['content'] = str_replace('[[$per_approve_sign]]', "", $data['content']);
