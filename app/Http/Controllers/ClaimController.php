@@ -178,17 +178,18 @@ class ClaimController extends Controller
      */
     public function store(formClaimRequest $request)
     {
+        $claim_type = $request->claim_type;
         //validate
         $mantis_policy = MANTIS_CUSTOM_FIELD_STRING::where('bug_id',(int)$request->barcode)->where('field_id',1)->first();
         $pocy_ref_no = (int)HBS_CL_CLAIM::findOrFail((int)$request->code_claim)->Police->pocy_ref_no;
         if($mantis_policy){
             if($pocy_ref_no != (int)$mantis_policy->value){
                 $request->session()->flash('errorStatus', 'Policy No trên HBS và Mantis chưa đồng nhất');
-                return redirect('/admin/claim/create')->withInput();
+                return $claim_type == "P" ? redirect('/admin/P/claim/create')->withInput() : redirect('/admin/claim/create')->withInput() ;
             }
         }else{
             $request->session()->flash('errorStatus', 'Vui Lòng cập nhật Policy No trên Etalk');
-            return redirect('/admin/claim/create')->withInput();
+            return $claim_type == "P" ? redirect('/admin/P/claim/create')->withInput() : redirect('/admin/claim/create')->withInput() ;
         }
 
         //end valid
@@ -263,7 +264,7 @@ class ClaimController extends Controller
             Log::error(generateLogMsg($e));
             DB::rollback();
             $request->session()->flash('errorStatus', __('message.update_fail'));
-            return redirect('/admin/claim/create')->withInput();
+            return $claim_type == "P" ? redirect('/admin/P/claim/create')->withInput() : redirect('/admin/claim/create')->withInput() ;
         }
     }
 
@@ -325,6 +326,7 @@ class ClaimController extends Controller
                 $list_status = $RoleChangeStatus->whereIn('id' , $list_status)->pluck('name','id');
                 $export_letter[$key]['list_status'] = $list_status;
             }else{
+                $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
                 $export_letter[$key]['list_status'] = $list_status_ad;
             }
             $user_create = User::findOrFail($value->created_user);
@@ -336,7 +338,9 @@ class ClaimController extends Controller
             }else{
                 $export_letter[$key]['end_status'] = $level->end_status;
             }
-            
+            if($curren_status ==  $export_letter[$key]['end_status'] && !$user->hasRole('Admin')){
+                $export_letter[$key]['list_status'] = collect([]);
+            }
         }
        
         try {
@@ -689,7 +693,7 @@ class ClaimController extends Controller
                 }
 
                 // Claim Independent
-                if($user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
+                if($claim->jetcase != 1 && $user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
                     $to_user = [$user_create->supper];
                 }
                 
@@ -1960,10 +1964,10 @@ class ClaimController extends Controller
             $patch_file_upload = storage_path("app/public/sortedClaim")."/". $url_form_request;
             $patch_file_convert = storage_path("app/public/sortedClaim")."/". 'cv_'. explode(".",$url_form_request)[0] .".pdf";
             
-            $cm_run ="convert  ". $patch_file_convert." " .$patch_file_upload;
-            $dataUpdate['url_form_request'] =  'cv_'.$url_form_request.".pdf";
-
+            $cm_run ="convert  ". $patch_file_upload." -background white -page a4 " .$patch_file_convert;
+            $dataUpdate['url_form_request'] =   'cv_'. explode(".",$url_form_request)[0] .".pdf";
             exec($cm_run, $output);
+            unlink($patch_file_upload);
         }
         $dataUpdate +=  [
             'prov_gop_pres_amt' => removeFormatPrice($request->prov_gop_pres_amt),
@@ -2133,7 +2137,7 @@ class ClaimController extends Controller
         if($match_form_gop){
             $template = 'templateEmail.sendProviderTemplate_input';
             $subject = 'Thư bảo lãnh đầu vào KH: '.$HBS_CL_CLAIM->MemberNameCap;
-            $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/'), 'margin_top' => 225, 'margin_left' => 22]);
+            $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/'), 'margin_top' => 35]);
             $fileName = storage_path("app/public/sortedClaim")."/". $claim->hospital_request->url_form_request;
             
             $pagesInFile = $mpdf->SetSourceFile($fileName);
@@ -2141,9 +2145,26 @@ class ClaimController extends Controller
                 $mpdf->AddPage();
                 $tplId = $mpdf->ImportPage($i);
                 $mpdf->UseTemplate($tplId);
+                $mpdf->WriteHTML('<div style="position: absolute; bottom: 0;
+                right:5"><barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />
+                <div style="text-align: center">'.$claim->barcode.'</div></div>');
+                
             }
-            //$mpdf->AddPage();
-            $mpdf->WriteHTML('<div style="color: #847f7f">'.data_get($export_letter->approve, 'data'). '</div>');
+            $mpdf->AddPage();
+            $mpdf->WriteHTML('
+            <div style="position: absolute; right: 5px; top: 0px;font-weight: bold; ">
+                <img src="'.asset("images/header.jpg").'" alt="head">
+            </div>');
+            $mpdf->SetHTMLFooter('
+            <div style="text-align: right; font-weight: bold;">
+                <img src="'.asset("images/footer.png").'" alt="foot">
+            </div>');
+            $mpdf->WriteHTML('<div style="position: absolute; top: 9;
+                right:5"><barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />
+                <div style="text-align: center">'.$claim->barcode.'</div></div>');
+            $mpdf->WriteHTML(data_get($export_letter->approve, 'data'));
+
+            $mpdf->Output();
         }else{
             $template = 'templateEmail.sendProviderTemplate_output';
             $subject = 'Thư bảo lãnh đầu ra KH: '.$HBS_CL_CLAIM->MemberNameCap;
