@@ -529,6 +529,8 @@ $totalAmount = 0;
 <script src="{{ asset('js/request_form_gop.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/tagsinput.js?vision=') .$vision }}"></script>
 <script src="{{ asset('js/dropzone.min.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/DataStream.js?vision=') .$vision }}"></script>
+<script src="{{ asset('js/msg.reader.js?vision=') .$vision }}"></script>
 <script>
     
     
@@ -766,6 +768,54 @@ $totalAmount = 0;
 
         $('.app_amt_gop').val(formatPrice(prov_gop_pres_amt-sum_reject_input));
     }
+    function isSupportedFileAPI() {
+        return window.File && window.FileReader && window.FileList && window.Blob;
+    }
+
+    function parseEmail(file) {
+        if (isSupportedFileAPI()) {
+            var selectedFile = file;
+            if (!selectedFile) {
+            $('.msg-info, .incorrect-type').hide();
+            return;
+            }
+            if (selectedFile.name.indexOf('.msg') == -1) {
+            $('.msg-info').hide();
+            $('.incorrect-type').show();
+            return;
+            }
+            $('.msg-example .msg-file-name').html(selectedFile.name);
+            $('.incorrect-type').hide();
+
+            // read file...
+            var fileReader = new FileReader();
+            fileReader.onload = function (evt) {
+
+                var buffer = evt.target.result;
+                var msgReader = new MSGReader(buffer);
+                var fileData = msgReader.getFileData();
+                if (!fileData.error) {
+                    console.log(fileData.senderEmail);
+                    $('.from_email').html(fileData.senderEmail);
+                    $('.to_email').html(jQuery.map(fileData.recipients, function (recipient, i) {
+                    return recipient.email;
+                    }).join(','));
+                    $('.subject_email').html(fileData.subject);
+                    $('.body_email').html(fileData.body);
+                    
+
+                    // Use msgReader.getAttachment to access attachment content ...
+                    // msgReader.getAttachment(0) or msgReader.getAttachment(fileData.attachments[0])
+                } 
+                };
+            fileReader.readAsArrayBuffer(selectedFile);
+
+        } else {
+            $('.msg-example').hide();
+            $('.file-api-not-available').show();
+        }
+    };
+
     $(".disableRow").find("input,textarea,select").attr("disabled", "disabled");
     
     $(document).ready(function () {
@@ -773,7 +823,10 @@ $totalAmount = 0;
         
         //$("div#requestGOPForm").dropzone({url: "{{ url('admin/attachEmail') }}/{{$data->id}}"});
         Dropzone.options.requestGOPForm = {
-            url: "{{ url('admin/attachEmail') }}/{{$data->id}}"
+            url: "{{ url('admin/attachEmail') }}/{{$data->id}}",
+            accept: function(file, done) {
+                parseEmail(file);
+            }
         }
 
         var item_of_claim = @json($reject_code);
@@ -886,7 +939,8 @@ $totalAmount = 0;
                 img_keywords: "happy, places"
             }
         });
-    });
-    gop_pres_amt_change();
+        });
+        gop_pres_amt_change();
+        
 </script>
 @endsection

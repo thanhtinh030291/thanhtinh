@@ -342,7 +342,6 @@ class ClaimController extends Controller
                 $export_letter[$key]['list_status'] = collect([]);
             }
         }
-       
         try {
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
             $MessageComfirmConract = $HBS_CL_CLAIM->member->MessageComfirmConract;
@@ -377,23 +376,8 @@ class ClaimController extends Controller
         $hospital_request = $claim->hospital_request;
         $list_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('text', 'id') : [];
         $selected_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('id') : null;
-        $fromEmail = null;
-        if(data_get($claim->hospital_request, 'url_attach_email')){
-            try {
-                if(file_exists(storage_path("app/public/attachEmail")."/".$claim->hospital_request->url_attach_email)){
-                    $messageFactory = new MAPI\MapiMessageFactory();
-                    $documentFactory = new Pear\DocumentFactory(); 
-                    $ole = $documentFactory->createFromFile(storage_path("app/public/attachEmail")."/".$claim->hospital_request->url_attach_email);
-                    $message = $messageFactory->parseMessage($ole);
-                    $fromEmail = collect($message->getRecipients())->map(function ($item, $key) {
-                        return $item->getEmail();
-                    });
-                    $fromEmail = implode(",", $fromEmail->unique()->toArray());
-                }
-                
-            } catch (Exception $e) {
-            }    
-        }
+        $fromEmail = $claim->inbox_email ? $claim->inbox_email->from . "," . implode(",", $claim->inbox_email->to) : "";
+        
         $reject_code = collect($claim->RejectCode)->flatten(1)->values()->all();
         $compact = compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
@@ -1945,6 +1929,7 @@ class ClaimController extends Controller
         $data = $claim = Claim::findOrFail($id);
         $userId = Auth::User()->id;
         $hospital_request = $claim->hospital_request;
+        $claim->inbox_email()->updateOrCreate([],['from' => $request->from, 'to' =>  explode(",",$request->to), 'subject' => "$request->subject", 'body' => $request->body]);;
         $url_form_request = null;
         $dataUpdate = [];
         if(file_exists( storage_path()."/app/public/attachEmail/"."/attach_{$id}" . '.msg')){
@@ -2164,7 +2149,6 @@ class ClaimController extends Controller
                 <div style="text-align: center">'.$claim->barcode.'</div></div>');
             $mpdf->WriteHTML(data_get($export_letter->approve, 'data'));
 
-            $mpdf->Output();
         }else{
             $template = 'templateEmail.sendProviderTemplate_output';
             $subject = 'Thư bảo lãnh đầu ra KH: '.$HBS_CL_CLAIM->MemberNameCap;
@@ -2181,20 +2165,13 @@ class ClaimController extends Controller
         }
         $old_msg = "";
         // Read email
-        if($claim->hospital_request->url_attach_email && file_exists(storage_path("app/public/attachEmail")."/".$claim->hospital_request->url_attach_email)){
-            try {
-                $messageFactory = new MAPI\MapiMessageFactory();
-                $documentFactory = new Pear\DocumentFactory(); 
-                $ole = $documentFactory->createFromFile(storage_path("app/public/attachEmail")."/".$claim->hospital_request->url_attach_email);
-                $message = $messageFactory->parseMessage($ole);
-                $old_msg = $message->getBody();
-                preg_match('/(RE:)/',  $message->properties['subject'], $matches_re, PREG_OFFSET_CAPTURE);
-                $subject = $matches_re ? $message->properties['subject'] : "RE: " . $message->properties['subject'];
-                $old_msg  = str_replace("\r\n", "<br>", $old_msg);
-            } catch (Exception $e) {
-            }
+        if($claim->inbox_email){
+            
+            $old_msg = $claim->inbox_email->body;
+            preg_match('/(RE:)/',  $claim->inbox_email->subject, $matches_re, PREG_OFFSET_CAPTURE);
+            $subject = $matches_re ? $claim->inbox_email->subject : "RE: " . $claim->inbox_email->subject;
+            $old_msg  = str_replace("\r\n", "<br>", $old_msg);
         }
-
         $user = Auth::User();
         $data = [];
         $incurDateTo = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_to);

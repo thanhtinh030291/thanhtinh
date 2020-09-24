@@ -74,15 +74,18 @@
 
                     {{ Form::label('APPAMTGOP', 'Chi Phí Bảo Lãnh Dự Kiến', ['class' => 'labelas col-md-4 mt-1']) }}
                     {{ Form::text('APPAMTGOP', $approve_amt, ['class' => 'app_amt_gop item-price form-control col-md-5 mt-1', 'readonly']) }}
-                    {{ Form::label('prov_gop_pres_amt', 'Đính kèm email (attach email .msg)', ['class' => 'labelas col-md-4 mt-1']) }}
-
-                        
-                        
 
                     
+                    {{ Form::textarea('from', data_get($data->inbox_email, "from"), ['style' => 'display:none','class' => 'from_email form-control col-md-5 mt-1']) }}
+                    {{ Form::textarea('to', implode("," ,data_get($data->inbox_email, "to",[])) , ['style' => 'display:none','class' => 'to_email  form-control col-md-5 mt-1']) }}    
+                    {{ Form::textarea('subject', data_get($data->inbox_email, "subject") , ['style' => 'display:none','class' => 'subject_email  form-control col-md-5 mt-1']) }}
+                    {{ Form::textarea('body', data_get($data->inbox_email, "body") , ['style' => 'display:none','class' => 'body_email form-control col-md-5 mt-1']) }}   
+
+                    {{ Form::label('prov_gop_pres_amt', 'Đính kèm email (attach email .msg)', ['class' => 'labelas col-md-4 mt-1']) }}
+
                 </div>
                 <div class="fallback">
-                    <input name="file" type="file" />
+                    <input name="file" type="file" class="src-file"/>
 
                 </div>
                 {!! Form::close() !!}
