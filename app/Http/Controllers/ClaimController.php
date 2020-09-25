@@ -918,15 +918,17 @@ class ClaimController extends Controller
             $data['notes'] = $res['data']['note'];
             $export_letter->info = $data;
             $export_letter->save();
-            $claim->finish_and_pay()->updateOrCreate([],[
-                'cl_no' => $claim->code_claim_show, 
-                'mantis_id' =>  $claim->barcode,
-                'approve_amt' => $export_letter->apv_amt,
-                'finished' => 0,
-                'payed' => 0,
-                'user' => $user->id,
-                'notify' => 1,
-            ]);
+            if ($export_letter->apv_amt > 0) {
+                $claim->finish_and_pay()->updateOrCreate([], [
+                    'cl_no' => $claim->code_claim_show,
+                    'mantis_id' =>  $claim->barcode,
+                    'approve_amt' => $export_letter->apv_amt,
+                    'finished' => 0,
+                    'payed' => 0,
+                    'user' => $user->id,
+                    'notify' => 1,
+                ]);
+            }
         }
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
