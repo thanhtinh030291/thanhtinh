@@ -918,7 +918,15 @@ class ClaimController extends Controller
             $data['notes'] = $res['data']['note'];
             $export_letter->info = $data;
             $export_letter->save();
-            
+            $claim->finish_and_pay()->updateOrCreate([],[
+                'cl_no' => $claim->code_claim_show, 
+                'mantis_id' =>  $claim->barcode,
+                'approve_amt' => $export_letter->apv_amt,
+                'finished' => 0,
+                'payed' => 0,
+                'user' => $user->id,
+                'notify' => 1,
+            ]);
         }
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
@@ -1929,7 +1937,7 @@ class ClaimController extends Controller
         $data = $claim = Claim::findOrFail($id);
         $userId = Auth::User()->id;
         $hospital_request = $claim->hospital_request;
-        $claim->inbox_email()->updateOrCreate([],['from' => $request->from, 'to' =>  explode(",",$request->to), 'subject' => "$request->subject", 'body' => $request->body]);;
+        $claim->inbox_email()->updateOrCreate([],['from' => $request->from, 'to' =>  explode(",",$request->to), 'subject' => "$request->subject", 'body' => $request->body]);
         $url_form_request = null;
         $dataUpdate = [];
         if(file_exists( storage_path()."/app/public/attachEmail/"."/attach_{$id}" . '.msg')){
