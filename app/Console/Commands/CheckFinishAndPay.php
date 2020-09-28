@@ -53,7 +53,7 @@ class CheckFinishAndPay extends Command
             }
         }
         if(!empty($array_update)){
-            FinishAndPay::whereIn('notify',$array_update)->update(['finished' => 1]);
+            FinishAndPay::whereIn('id',$array_update)->update(['finished' => 1]);
         }
         
         $non_pay = FinishAndPay::where('notify',1)->where('finished', 1)->where('payed', 0)->pluck('cl_no')->toArray();
