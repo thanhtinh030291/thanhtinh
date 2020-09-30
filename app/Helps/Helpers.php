@@ -163,7 +163,7 @@ function sendEmailProvider($user_send, $to_email , $to_name, $subject, $data , $
             'user' => $user_send, 
             'data' => isset($data) ?  $data : []
         ], function ($mail) use ($user_send, $to_email, $to_name, $subject, $app_name, $app_email, $data) {
-            $mail->from($user_send->email, $user_send->name)
+            $mail
                 ->to( $to_email)
                 ->cc([$user_send->email])
                 ->replyTo($user_send->email, $user_send->name)
@@ -696,4 +696,9 @@ function typeGop($value){
                 <span style='font-family: serif; font-size: 10pt;'>{$value_type}</span><br>";
     }
     return $rp;
+}
+
+function CSR_REMASK_ALL_LINE($HBS_CL_CLAIM){
+    $all_remask = $HBS_CL_CLAIM->HBS_CL_LINE->where('remark',"!=",null)->pluck('remark')->toArray();
+    return  empty($all_remask) ? " " : implode("<br>",$arr);
 }
