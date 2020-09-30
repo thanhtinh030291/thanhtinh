@@ -1260,7 +1260,7 @@ class ClaimController extends Controller
         $CSRRemark_TermRemark = CSRRemark_TermRemark($claim);
 
         $plan = $HBS_CL_CLAIM->plan;
-        $CSR_REMASK_ALL_LINE = CSR_REMASK_ALL_LINE($HBS_CL_CLAIM);
+        $CSR_REMASK_ALL_LINE = $HBS_CL_CLAIM->remark;
         $CSRRemark = $CSRRemark_TermRemark['CSRRemark'];
         $TermRemark = $CSRRemark_TermRemark['TermRemark'];
         $itemsReject = $CSRRemark_TermRemark['itemsReject'];
@@ -1316,7 +1316,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$Diagnosis]]', $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn, $content);
         $content = str_replace('[[$incurDateTo]]',$incurDateTo->format('d/m/Y'), $content);
         $content = str_replace('[[$incurDateFrom]]', $incurDateFrom->format('d/m/Y'), $content);
-        $content = str_replace('[[$diffIncur]]', $incurDateTo->diffInDays($incurDateFrom) + 1 , $content);
+        $content = str_replace('[[$diffIncur]]', $incurDateTo->diffInDays($incurDateFrom) == 0 ? 1 : $incurDateTo->diffInDays($incurDateFrom) , $content);
         $content = str_replace('[[$CSR_REMASK_ALL_LINE]]', $CSR_REMASK_ALL_LINE , $content);
         $content = str_replace('[[$RBGOP]]', formatPrice($RBGOP), $content);
         $content = str_replace('[[$SURGOP]]', formatPrice($SURGOP), $content);

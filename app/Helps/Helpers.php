@@ -698,7 +698,4 @@ function typeGop($value){
     return $rp;
 }
 
-function CSR_REMASK_ALL_LINE($HBS_CL_CLAIM){
-    $all_remask = $HBS_CL_CLAIM->HBS_CL_LINE->where('remark',"!=",null)->pluck('remark')->toArray();
-    return  empty($all_remask) ? " " : implode("<br>",$arr);
-}
+
