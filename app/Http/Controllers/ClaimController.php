@@ -1320,7 +1320,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$CSR_REMASK_ALL_LINE]]', $CSR_REMASK_ALL_LINE , $content);
         $content = str_replace('[[$RBGOP]]', formatPrice($RBGOP), $content);
         $content = str_replace('[[$SURGOP]]', formatPrice($SURGOP), $content);
-        $content = str_replace('[[$EXTBGOP]]', formatPrice($SURGOP), $content);
+        $content = str_replace('[[$EXTBGOP]]', formatPrice($EXTBGOP), $content);
         $content = str_replace('[[$OTHERGOP]]', formatPrice($OTHERGOP), $content);
         $content = str_replace('[[$ProApvAmt]]', formatPrice($ProApvAmt), $content);
         $content = str_replace('[[$itemsReject]]', implode(",",$itemsReject), $content);

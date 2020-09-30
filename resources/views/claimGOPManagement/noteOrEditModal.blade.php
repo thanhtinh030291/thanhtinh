@@ -11,7 +11,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    {{ Form::textarea('template', old('template'), ['id' => 'note_letter', 'class' => 'form-control editor_readonly']) }}<br>
+                    {{ Form::textarea('template', old('template'), ['id' => 'note_letter', 'class' => 'form-control editor_default']) }}<br>
                     {{ Form::hidden('status', config('constants.statusExport.note_save'), ['id' => 'statusSubmit']) }}<br>
                     <div class="row">
                         <div id = 'button_save' class="pull-right">
