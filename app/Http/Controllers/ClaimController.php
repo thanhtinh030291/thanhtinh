@@ -1334,6 +1334,8 @@ class ClaimController extends Controller
         $content = str_replace('[[$PhName]]', $policyHolder->poho_name_1, $content);
         $content = str_replace('[[$memberNameCap]]', $HBS_CL_CLAIM->memberNameCap, $content);
         $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
+        $content = str_replace('[[$nowDay]]', Carbon\Carbon::now()->toDateString(), $content);
+
         $content = str_replace('[[$pstAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt), $content);
         $content = str_replace('[[$payMethod]]', $payMethod, $content);
         $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - (int)$sumAppAmt) , $content);
