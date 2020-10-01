@@ -1335,7 +1335,6 @@ class ClaimController extends Controller
         $content = str_replace('[[$memberNameCap]]', $HBS_CL_CLAIM->memberNameCap, $content);
         $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
         $content = str_replace('[[$nowDay]]', Carbon::now()->toDateString(), $content);
-
         $content = str_replace('[[$pstAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt), $content);
         $content = str_replace('[[$payMethod]]', $payMethod, $content);
         $content = str_replace('[[$deniedAmt]]', formatPrice($HBS_CL_CLAIM->sumPresAmt - (int)$sumAppAmt) , $content);
@@ -1962,7 +1961,7 @@ class ClaimController extends Controller
             $patch_file_upload = storage_path("app/public/sortedClaim")."/". $url_form_request;
             $patch_file_convert = storage_path("app/public/sortedClaim")."/". 'cv_'. explode(".",$url_form_request)[0] .".pdf";
             
-            $cm_run ="convert  ". $patch_file_upload." -background white -page a4 " .$patch_file_convert;
+            $cm_run ="convert  ". $patch_file_upload." -quality 100  " .$patch_file_convert;
             $dataUpdate['url_form_request'] =   'cv_'. explode(".",$url_form_request)[0] .".pdf";
             exec($cm_run, $output);
             unlink($patch_file_upload);
@@ -2139,10 +2138,12 @@ class ClaimController extends Controller
             $fileName = storage_path("app/public/sortedClaim")."/". $claim->hospital_request->url_form_request;
             
             $pagesInFile = $mpdf->SetSourceFile($fileName);
+
+
             for ($i = 1; $i <= $pagesInFile; $i++) {
                 $mpdf->AddPage();
                 $tplId = $mpdf->ImportPage($i);
-                $mpdf->UseTemplate($tplId);
+                $mpdf->UseTemplate($tplId, 1, 1, 200, 285);
                 $mpdf->WriteHTML('<div style="position: absolute; bottom: 0;
                 right:5"><barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />
                 <div style="text-align: center">'.$claim->barcode.'</div></div>');
@@ -2176,6 +2177,7 @@ class ClaimController extends Controller
             </div>');
             $mpdf->WriteHTML(data_get($export_letter->approve, 'data'));
         }
+        
         $old_msg = "";
         // Read email
         if($claim->inbox_email){
