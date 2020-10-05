@@ -522,11 +522,16 @@ class ClaimController extends Controller
     public function destroy(Claim $claim)
     {
         $data = $claim;
+        $claim_type = $claim->claim_type ?  $claim->claim_type : "M";
         $dirUpload = Config::get('constants.formClaimUpload');
         Storage::delete($dirUpload . $data->url_file);
         $data->item_of_claim()->delete();
         $data->delete();
-        return redirect('/admin/claim')->with('status', __('message.delete_claim'));
+        if ($claim_type == 'P'){
+            return redirect('/admin/P/claim')->with('status', __('message.delete_claim'));
+        }else{
+            return redirect('/admin/claim')->with('status', __('message.delete_claim'));
+        }
     }
     // change
     public function getLevel($export_letter, $list_level, $claim_type = 'M')
@@ -1316,7 +1321,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$Diagnosis]]', $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn, $content);
         $content = str_replace('[[$incurDateTo]]',$incurDateTo->format('d/m/Y'), $content);
         $content = str_replace('[[$incurDateFrom]]', $incurDateFrom->format('d/m/Y'), $content);
-        $content = str_replace('[[$diffIncur]]', $incurDateTo->diffInDays($incurDateFrom) == 0 ? 1 : $incurDateTo->diffInDays($incurDateFrom) , $content);
+        $content = str_replace('[[$diffIncur]]',data_get($claim->hospital_request,'incur_time') ?  data_get($claim->hospital_request,'incur_time') : $incurDateTo->diffInDays($incurDateFrom) == 0 ? 1 : $incurDateTo->diffInDays($incurDateFrom) , $content);
         $content = str_replace('[[$CSR_REMASK_ALL_LINE]]', $CSR_REMASK_ALL_LINE , $content);
         $content = str_replace('[[$RBGOP]]', formatPrice($RBGOP), $content);
         $content = str_replace('[[$SURGOP]]', formatPrice($SURGOP), $content);
@@ -2202,6 +2207,7 @@ class ClaimController extends Controller
         $data['attachment']['base64'] =  base64_encode($mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN)) ;
         $data['attachment']['filename'] = $namefile . ".pdf";
         $data['attachment']['filetype'] = "application/pdf";
+        $data['email_reply'] = $user->email;
         $email_to = explode(",", $request->email_to);
         sendEmailProvider($user, $email_to, 'provider', $subject, $data,$template);
         return redirect('/admin/claim/'.$claim_id)->with('status', 'Đã gửi thư cho provider thành công');

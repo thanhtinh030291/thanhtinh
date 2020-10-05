@@ -1023,6 +1023,7 @@ class AjaxCommonController extends Controller
     }
 
     public function renderEmailProv(Request $request){
+        $user = Auth::User();
         $claim_id = $request->claim_id;
         $id = $request->export_letter_id;
         $export_letter = ExportLetter::findOrFail($id);
@@ -1038,6 +1039,7 @@ class AjaxCommonController extends Controller
         $data['incurDateTo'] = $incurDateTo->format('d-m-Y');
         $data['incurDateFrom'] = $incurDateFrom->format('d-m-Y');
         $data['diffIncur'] =  $incurDateTo->diffInDays($incurDateFrom);
+        $data['email_reply'] = $user->email;
         //benifit
         $request2 = new Request([
             'diag_code' => $diag_code,

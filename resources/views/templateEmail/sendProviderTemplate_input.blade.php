@@ -40,6 +40,7 @@
                       <p>1.       Tóm tắt Bệnh án/Báo cáo y tế có ghi rõ tình trạng hiện tại của KH, lý do cần lưu viện thêm và thời gian cần lưu viện thêm,</p>
                       <p>2.       Request form có ghi ngày xuất viện dự kiến,</p>
                       <p>3.       Các Kết quả Cận Lâm sàng thực hiện thêm (nếu có).</p>
+                      <p>Xin đừng trả lời trực tiếp email này. Nếu bạn có bất kỳ câu hỏi hoặc nhận xét nào về email này, vui lòng liên hệ với chúng tôi theo địa chỉ: <span style="color:blue">{{$data['email_reply']}}</span><p>
                       <p> Thanks & Best Regards,</p>
                     </td>
                   </tr>
