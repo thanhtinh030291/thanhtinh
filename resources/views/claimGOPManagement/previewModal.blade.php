@@ -11,7 +11,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    {{ Form::textarea('template', old('template'), ['id' => 'preview_letter', 'class' => 'form-control editor_default']) }}<br>
+                    {{ Form::textarea('template', old('template'), ['id' => 'preview_letter', 'class' => 'form-control editor_readonly']) }}<br>
                 </div>
                 <div class="modal-footer">
                     {{ Form::hidden('status', config('constants.statusExport.new')) }}<br>

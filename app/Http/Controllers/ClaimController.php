@@ -1154,7 +1154,6 @@ class ClaimController extends Controller
             $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/'), 'margin_top' => 225, 'margin_left' => 22]);
             $match_form_gop = preg_match('/(FORM GOP)/', $export_letter->letter_template->name , $matches);
             if($match_form_gop){
-              
                 $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/'), 'margin_top' => 35]);
                 $fileName = storage_path("app/public/sortedClaim")."/". $claim->hospital_request->url_form_request;
                 
@@ -1185,7 +1184,6 @@ class ClaimController extends Controller
                 $mpdf->WriteHTML($data['content']);
     
             }else{
-               
                 $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
                 $mpdf->WriteHTML('
                 <div style="position: absolute; right: 5px; top: 0px;font-weight: bold; ">
@@ -1197,7 +1195,6 @@ class ClaimController extends Controller
                 </div>');
                 $mpdf->WriteHTML($data['content']);
             }
-            
             
             header("Content-Type: application/pdf");
             header("Expires: 0");//no-cache
@@ -1330,7 +1327,11 @@ class ClaimController extends Controller
         $ProApvAmt = data_get($claim->hospital_request,'prov_gop_pres_amt',0) - $sumAmountReject;
         $typeGOP = typeGop(data_get($claim->hospital_request,'type_gop',0));
         $noteGOP = data_get($claim->hospital_request,'note',"");
-        
+        $total_incur_hbs = $incurDateTo->diffInDays($incurDateFrom) == 0 ? "1 Ngày" : $incurDateTo->diffInDays($incurDateFrom) . "Ngày";
+        $diffIncur = data_get($claim->hospital_request,'incur_time',null) ?  data_get($claim->hospital_request,'incur_time') : $total_incur_hbs ;
+        $incurDateTo = data_get($claim->hospital_request,'incur_to',null) ?  data_get($claim->hospital_request,'incur_to') : $incurDateTo->format('d/m/Y') ;
+        $incurDateFrom = data_get($claim->hospital_request,'incur_from',null) ?  data_get($claim->hospital_request,'incur_from') : $incurDateFrom->format('d/m/Y') ;
+        $Diagnosis = data_get($claim->hospital_request,'diagnosis',null) ?  data_get($claim->hospital_request,'diagnosis') : $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn;
         $content = $letter->template;
         $content = str_replace('[[$ProvPstAmt]]', formatPrice(data_get($claim->hospital_request,'prov_gop_pres_amt')), $content);
         $content = str_replace('[[$ProDeniedAmt]]', formatPrice($sumAmountReject), $content);
@@ -1340,10 +1341,10 @@ class ClaimController extends Controller
         $content = str_replace('[[$acctNoProv]]', $Provider->cl_pay_acct_no, $content);
         $content = str_replace('[[$payeeProv]]', $Provider->payee, $content);
         $content = str_replace('[[$ProAddress]]', implode(",",$prov_address), $content);
-        $content = str_replace('[[$Diagnosis]]', $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn, $content);
-        $content = str_replace('[[$incurDateTo]]',$incurDateTo->format('d/m/Y'), $content);
-        $content = str_replace('[[$incurDateFrom]]', $incurDateFrom->format('d/m/Y'), $content);
-        $content = str_replace('[[$diffIncur]]',data_get($claim->hospital_request,'incur_time') ?  data_get($claim->hospital_request,'incur_time') : $incurDateTo->diffInDays($incurDateFrom) == 0 ? 1 : $incurDateTo->diffInDays($incurDateFrom) , $content);
+        $content = str_replace('[[$Diagnosis]]', $Diagnosis, $content);
+        $content = str_replace('[[$incurDateTo]]',$incurDateTo, $content);
+        $content = str_replace('[[$incurDateFrom]]', $incurDateFrom, $content);
+        $content = str_replace('[[$diffIncur]]', $diffIncur , $content);
         $content = str_replace('[[$CSR_REMASK_ALL_LINE]]', $CSR_REMASK_ALL_LINE , $content);
         $content = str_replace('[[$RBGOP]]', formatPrice($RBGOP), $content);
         $content = str_replace('[[$SURGOP]]', formatPrice($SURGOP), $content);
@@ -1968,7 +1969,7 @@ class ClaimController extends Controller
         $data = $claim = Claim::findOrFail($id);
         $userId = Auth::User()->id;
         $hospital_request = $claim->hospital_request;
-        $claim->inbox_email()->updateOrCreate([],['from' => $request->from, 'to' =>  explode(",",$request->to), 'subject' => "$request->subject", 'body' => $request->body]);
+        $claim->inbox_email()->updateOrCreate([],['from' => $request->from, 'to' =>  explode(",",$request->to), 'subject' => "$request->subject", 'body' => $request->body ]);
         $url_form_request = null;
         $dataUpdate = [];
         if(file_exists( storage_path()."/app/public/attachEmail/"."/attach_{$id}" . '.msg')){
@@ -1999,6 +2000,10 @@ class ClaimController extends Controller
             'updated_user' => $userId,
             'type_gop' => 	$request->type_gop,
             'note' => 	$request->note,
+            'incur_time' => $request->incur_time,
+            'incur_to' => $request->incur_to,
+            'incur_from' => $request->incur_from,
+            'diagnosis' => $request->diagnosis,
         ];
         try {
             

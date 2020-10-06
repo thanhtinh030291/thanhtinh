@@ -23,8 +23,17 @@
                     {{ Form::label('prov_gop_pres_amt_hbs', 'Present Amt(HBS)', ['class' => 'labelas col-md-4 mt-1']) }}
                     {{ Form::text('_prov_gop_pres_amt_hbs', $present_amt, ['class' => 'item-price form-control col-md-5 mt-1 prov_gop_pres_amt', 'oninput' => 'gop_pres_amt_change()',"readonly"]) }}
 
-                    {{ Form::label('type_gop', 'Thời Gian nằm viện', ['class' => 'labelas col-md-4 mt-1']) }}
-                    {{ Form::text('type_gop', data_get($hospital_request,'incur_time'), ['class' => 'form-control col-md-5 mt-1 ', "required"]) }}
+                    {{ Form::label('incur_to', 'Thời Gian nằm viện Từ ', ['class' => 'labelas col-md-4 mt-1']) }}
+                    {{ Form::text('incur_to', data_get($hospital_request,'incur_to'), ['class' => 'form-control col-md-5 mt-1 ']) }}
+
+                    {{ Form::label('incur_from', 'Thời Gian nằm viện Đến', ['class' => 'labelas col-md-4 mt-1']) }}
+                    {{ Form::text('incur_from', data_get($hospital_request,'incur_from'), ['class' => 'form-control col-md-5 mt-1 ']) }}
+
+                    {{ Form::label('incur_time', 'Tổng Thời Gian nằm viện', ['class' => 'labelas col-md-4 mt-1']) }}
+                    {{ Form::text('incur_time', data_get($hospital_request,'incur_time'), ['class' => 'form-control col-md-5 mt-1 ']) }}
+
+                    {{ Form::label('diagnosis', 'Chuẩn Đoán', ['class' => 'labelas col-md-4 mt-1']) }}
+                    {{ Form::text('diagnosis', data_get($hospital_request,'diagnosis'), ['class' => 'form-control col-md-5 mt-1 ']) }}
                     
 
                     {{ Form::label('prov_gop_pres_amt', 'File Yêu Cầu Bảo Đảm Viện Phí (PDF)', ['class' => 'labelas col-md-4 mt-1']) }}
