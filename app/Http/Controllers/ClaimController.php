@@ -1320,10 +1320,10 @@ class ClaimController extends Controller
         $incurDateTo = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_to);
         $incurDateFrom = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_from);
         $RBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('PD_BEN_HEAD.ben_head',['RB','ICU'])->sum('app_amt');
-        $SURGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','SUR')->sum('app_amt');
+        $SURGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('PD_BEN_HEAD.ben_head',['SUR','OPR','ANES'])->sum('app_amt');
         $EXTBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','EXTB')->sum('app_amt');
         $ICUGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','ICU')->sum('app_amt');
-        $OTHERGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotIn('PD_BEN_HEAD.ben_head',['RB','SUR','EXTB'])->sum('app_amt');
+        $OTHERGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotIn('PD_BEN_HEAD.ben_head',['RB','SUR','EXTB','ICU','OPR','ANES'])->sum('app_amt');
         $ProApvAmt = data_get($claim->hospital_request,'prov_gop_pres_amt',0) - $sumAmountReject;
         $typeGOP = typeGop(data_get($claim->hospital_request,'type_gop',0));
         $noteGOP = data_get($claim->hospital_request,'note',"");
