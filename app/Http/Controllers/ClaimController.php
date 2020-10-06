@@ -1278,7 +1278,6 @@ class ClaimController extends Controller
         $benefitOfClaim = benefitOfClaim($HBS_CL_CLAIM);
         $police = $HBS_CL_CLAIM->Police;
         $policyHolder = $HBS_CL_CLAIM->policyHolder;
-
         $payMethod = payMethod($HBS_CL_CLAIM);
 
         $CSRRemark_TermRemark = CSRRemark_TermRemark($claim);
@@ -1320,10 +1319,11 @@ class ClaimController extends Controller
         $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);
         $incurDateTo = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_to);
         $incurDateFrom = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_from);
-        $RBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('PD_BEN_HEAD.ben_head',['RB','ICU'])->sum('pres_amt');
-        $SURGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','SUR')->sum('pres_amt');
-        $EXTBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','EXTB')->sum('pres_amt');
-        $OTHERGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotIn('PD_BEN_HEAD.ben_head',['RB','ICU','SUR','EXTB'])->sum('pres_amt');
+        $RBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('PD_BEN_HEAD.ben_head',['RB','ICU'])->sum('app_amt');
+        $SURGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','SUR')->sum('app_amt');
+        $EXTBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','EXTB')->sum('app_amt');
+        $ICUGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','ICU')->sum('app_amt');
+        $OTHERGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotIn('PD_BEN_HEAD.ben_head',['RB','SUR','EXTB'])->sum('app_amt');
         $ProApvAmt = data_get($claim->hospital_request,'prov_gop_pres_amt',0) - $sumAmountReject;
         $typeGOP = typeGop(data_get($claim->hospital_request,'type_gop',0));
         $noteGOP = data_get($claim->hospital_request,'note',"");
@@ -1348,8 +1348,9 @@ class ClaimController extends Controller
         $content = str_replace('[[$CSR_REMASK_ALL_LINE]]', $CSR_REMASK_ALL_LINE , $content);
         $content = str_replace('[[$RBGOP]]', formatPrice($RBGOP), $content);
         $content = str_replace('[[$SURGOP]]', formatPrice($SURGOP), $content);
+        $content = str_replace('[[$SURGOP]]', formatPrice($SURGOP), $content);
         $content = str_replace('[[$EXTBGOP]]', formatPrice($EXTBGOP), $content);
-        $content = str_replace('[[$OTHERGOP]]', formatPrice($OTHERGOP), $content);
+        $content = str_replace('[[$ICUGOP]]', formatPrice($ICUGOP), $content);
         $content = str_replace('[[$ProApvAmt]]', formatPrice($ProApvAmt), $content);
         $content = str_replace('[[$itemsReject]]', implode(",",$itemsReject), $content);
         $content = str_replace('[[$typeGOP]]', $typeGOP, $content);
