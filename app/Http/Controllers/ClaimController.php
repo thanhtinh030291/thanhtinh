@@ -852,17 +852,35 @@ class ClaimController extends Controller
             $mpdf = null;
             $match_form_gop = preg_match('/(FORM GOP)/', $export_letter->letter_template->name , $matches);
             if($match_form_gop){
-                $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/'), 'margin_top' => 225, 'margin_left' => 22]);
+                $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/'), 'margin_top' => 35]);
                 $fileName = storage_path("app/public/sortedClaim")."/". $claim->hospital_request->url_form_request;
                 
                 $pagesInFile = $mpdf->SetSourceFile($fileName);
+    
+    
                 for ($i = 1; $i <= $pagesInFile; $i++) {
                     $mpdf->AddPage();
                     $tplId = $mpdf->ImportPage($i);
-                    $mpdf->UseTemplate($tplId);
+                    $mpdf->UseTemplate($tplId, 1, 1, 200, 285);
+                    $mpdf->WriteHTML('<div style="position: absolute; bottom: 0;
+                    right:5"><barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />
+                    <div style="text-align: center">'.$claim->barcode.'</div></div>');
+                    
                 }
-                //$mpdf->AddPage();
-                $mpdf->WriteHTML('<div style="color: #847f7f">'.data_get($export_letter->approve, 'data'). '</div>');
+                $mpdf->AddPage();
+                $mpdf->WriteHTML('
+                <div style="position: absolute; right: 5px; top: 0px;font-weight: bold; ">
+                    <img src="'.asset("images/header.jpg").'" alt="head">
+                </div>');
+                $mpdf->SetHTMLFooter('
+                <div style="text-align: right; font-weight: bold;">
+                    <img src="'.asset("images/footer.png").'" alt="foot">
+                </div>');
+                $mpdf->WriteHTML('<div style="position: absolute; top: 9;
+                    right:5"><barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />
+                    <div style="text-align: center">'.$claim->barcode.'</div></div>');
+                $mpdf->WriteHTML(data_get($export_letter->approve, 'data'));
+    
             }else{
                 $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
                 $mpdf->WriteHTML('
@@ -875,6 +893,7 @@ class ClaimController extends Controller
                 </div>');
                 $mpdf->WriteHTML(data_get($export_letter->approve, 'data'));
             }
+            
 
             $body['files'] = [
                 [
