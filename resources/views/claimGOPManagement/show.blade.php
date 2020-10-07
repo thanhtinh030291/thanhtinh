@@ -795,10 +795,21 @@ $totalAmount = 0;
                 var msgReader = new MSGReader(buffer);
                 var fileData = msgReader.getFileData();
                 if (!fileData.error) {
-                    console.log(fileData.senderEmail);
-                    $('.from_email').html(fileData.senderEmail);
+                    console.log(fileData.senderName);
+                    if(fileData.senderName.match(/@/g)){
+                        $('.from_email').html(fileData.senderName);
+                    }else{
+                        $('.from_email').html(fileData.senderEmail);
+                    }
+                    
                     $('.to_email').html(jQuery.map(fileData.recipients, function (recipient, i) {
-                    return recipient.email;
+
+                        if(recipient.name.match(/@/g)){
+                            return recipient.name;
+                        }else{
+                            return recipient.email;
+                        }
+                        
                     }).join(','));
                     $('.subject_email').html(fileData.subject);
                     $('.body_email').html(fileData.body);
