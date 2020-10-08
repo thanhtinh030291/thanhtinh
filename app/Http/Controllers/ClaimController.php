@@ -904,6 +904,12 @@ class ClaimController extends Controller
         }
         if($export_letter->letter_template->status_mantis != NULL ){
             $body['status_id'] = $export_letter->letter_template->status_mantis;
+            $match_form_gop = preg_match('/(FORM GOP)/', $export_letter->letter_template->name , $matches);
+            if($match_form_gop){
+                if($HBS_CL_CLAIM->SumAppAmt == 0){
+                    $body['status_id'] = config('constants.status_mantic_value.declined');
+                }
+            }
         }
         
         if($export_letter->letter_template->name == 'Thanh Toán Bổ Sung'){
@@ -1298,7 +1304,8 @@ class ClaimController extends Controller
         $police = $HBS_CL_CLAIM->Police;
         $policyHolder = $HBS_CL_CLAIM->policyHolder;
         $payMethod = payMethod($HBS_CL_CLAIM);
-
+        $barcode = '<barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />'
+        .'<p style="text-align: right;">'.$claim->barcode.'</p>';
         $CSRRemark_TermRemark = CSRRemark_TermRemark($claim);
 
         $plan = $HBS_CL_CLAIM->plan;
@@ -1351,6 +1358,7 @@ class ClaimController extends Controller
         $incurDateTo = data_get($claim->hospital_request,'incur_to',null) ?  data_get($claim->hospital_request,'incur_to') : $incurDateTo->format('d/m/Y') ;
         $incurDateFrom = data_get($claim->hospital_request,'incur_from',null) ?  data_get($claim->hospital_request,'incur_from') : $incurDateFrom->format('d/m/Y') ;
         $Diagnosis = data_get($claim->hospital_request,'diagnosis',null) ?  data_get($claim->hospital_request,'diagnosis') : $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn;
+        $diffIncur_extb = data_get($claim->hospital_request,'incur_time_extb',null) ?  "/".data_get($claim->hospital_request,'incur_time_extb') : "" ;
         $content = $letter->template;
         $content = str_replace('[[$ProvPstAmt]]', formatPrice(data_get($claim->hospital_request,'prov_gop_pres_amt')), $content);
         $content = str_replace('[[$ProDeniedAmt]]', formatPrice($sumAmountReject), $content);
@@ -1364,6 +1372,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$incurDateTo]]',$incurDateTo, $content);
         $content = str_replace('[[$incurDateFrom]]', $incurDateFrom, $content);
         $content = str_replace('[[$diffIncur]]', $diffIncur , $content);
+        $content = str_replace('[[$diffIncur_extb]]', $diffIncur_extb , $content);
         $content = str_replace('[[$CSR_REMASK_ALL_LINE]]', $CSR_REMASK_ALL_LINE , $content);
         $content = str_replace('[[$RBGOP]]', formatPrice($RBGOP), $content);
         $content = str_replace('[[$SURGOP]]', formatPrice($SURGOP), $content);
@@ -1373,7 +1382,8 @@ class ClaimController extends Controller
         $content = str_replace('[[$ProApvAmt]]', formatPrice($ProApvAmt), $content);
         $content = str_replace('[[$itemsReject]]', implode(",",$itemsReject), $content);
         $content = str_replace('[[$typeGOP]]', $typeGOP, $content);
-        $content = str_replace('[[$noteGOP]]', $noteGOP, $content);   
+        $content = str_replace('[[$noteGOP]]', $noteGOP, $content);
+        $content = str_replace('[[$barcode]]', $barcode, $content);  
         $content = str_replace('[[$note_pay]]', $note_pay, $content);
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
         $content = str_replace('[[$benefitOfClaim]]', $benefitOfClaim , $content);
@@ -2024,6 +2034,7 @@ class ClaimController extends Controller
             'incur_to' => $request->incur_to,
             'incur_from' => $request->incur_from,
             'diagnosis' => $request->diagnosis,
+            'incur_time_extb' => $request->incur_time_extb,
         ];
         try {
             
