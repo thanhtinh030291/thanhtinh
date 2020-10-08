@@ -2176,6 +2176,10 @@ class ClaimController extends Controller
         $export_letter = ExportLetter::findOrFail($id);
         $user = Auth::User();
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        if($claim->hospital_request->url_form_request == null || $claim->hospital_request->url_form_request == ""){
+            $request->session()->flash('errorStatus', 'Vui Lòng upload File "Claim Form" vào khu vực input data');
+            return redirect('/admin/claim/'.$id)->withInput();
+        }
 
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $diag_code = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('diag_oid')->unique()->toArray();
