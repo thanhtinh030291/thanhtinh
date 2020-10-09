@@ -36,6 +36,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('{claim_type}/claim/{claim}/edit', 'ClaimController@edit')->name('claimGOP.edit');
 
         Route::post('/claim/uploadSortedFile/{id}', 'ClaimController@uploadSortedFile')->name('uploadSortedFile');
+        Route::post('/claim/uploadSortedFileGOP/{id}', 'ClaimController@uploadSortedFileGOP')->name('uploadSortedFileGOP');
         Route::post('/claim/sendSortedFile/{id}', 'ClaimController@sendSortedFile')->name('claim.sendSortedFile');
         Route::post('/claim/setPcvExpense/{id}', 'ClaimController@setPcvExpense')->name('claim.setPcvExpense');
         Route::post('/claim/sendPayment/{id}', 'ClaimController@sendPayment')->name('claim.sendPayment');

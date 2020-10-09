@@ -399,6 +399,48 @@ class ClaimController extends Controller
         return redirect('/admin/claim/'.$id);
     }
 
+    public function uploadSortedFileGOP(Request $request, $id){
+        $claim = Claim::findOrFail($id);
+        $user = Auth::User();
+        if ($request->_url_file_sorted) {
+            $dataUpdate['url_file_sorted'] = saveFile($request->_url_file_sorted[0], config('constants.sortedClaimUpload'),$claim->url_file_sorted);
+            Claim::updateOrCreate(['id' => $id], $dataUpdate);
+            $request2 = new Request([
+                'user' => $claim->created_user,
+                'content' => 'Hồ sơ gốc của claim '.$claim->code_claim_show.' được cập nhật bởi '.$user->name.' Vui lòng kiểm tra lại thông tin tại : 
+                <a href="'.route('claim.show',$claim->id).'">'.route('claim.show',$claim->id).'</a>'
+            ]);
+            $send_mes = new SendMessageController();
+            $send_mes->sendMessage($request2);
+            $body = [
+                'user_email' => $user->email,
+                'issue_id' => $claim->barcode,
+                'text_note' => " Dear DLVN, \n Đính kèm là hồ sơ GOP. \n Thanks,",
+            ];
+            $handle = fopen(storage_path("app/public/sortedClaim/{$dataUpdate['url_file_sorted']}"),'r');
+            $treamfile = stream_get_contents($handle);
+            fclose($handle);
+            $body['files'] = [
+                [
+                    'name' => "hosogop.pdf",
+                    "content" => base64_encode($treamfile)
+                ]
+                ];
+            try {
+                    $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
+                    $res = json_decode($res->getBody(),true);
+            } catch (Exception $e) {
+        
+                $request->session()->flash(
+                    'errorStatus', 
+                    generateLogMsg($e)
+                );
+                return redirect('/admin/claim/'.$id)->withInput();
+            }
+        }
+        return redirect('/admin/claim/'.$id);
+    }
+
     public function barcode_link($barcode)
     { 
         $barcode = str_pad($barcode,7,"0",STR_PAD_LEFT);
@@ -2177,7 +2219,6 @@ class ClaimController extends Controller
         $user = Auth::User();
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         
-
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $diag_code = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('diag_oid')->unique()->toArray();
         $namefile = Str::slug("{$export_letter->letter_template->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');

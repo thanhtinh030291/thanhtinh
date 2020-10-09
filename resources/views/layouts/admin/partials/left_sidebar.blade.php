@@ -18,7 +18,7 @@
                             href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_M')}}</span></a>
                         </li>
                         @endhasanyrole
-                        @hasanyrole('Header|ManagerGOP|Admin|ClaimGOP')
+                        @hasanyrole('Header|ManagerGOP|Admin|ClaimGOP|AdminClaim')
                         <li class="{{ setActive('admin/claim') }}"> 
                             <a class="{{ setActive('admin/claim') }}"
                             href="{{ url('admin/P/claim') }}"><span> {{ __('message.form_claim_P')}}</span></a>

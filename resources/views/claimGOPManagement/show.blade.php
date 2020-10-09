@@ -144,13 +144,15 @@ $totalAmount = 0;
                                     @endif
                                 </div>
                                 <div class="col-md-5">
-                                    {{ Form::open(array('url' => '/admin/claim/uploadSortedFile/'.$data->id, 'method'=>'post', 'files' => true))}}
-                                    <h5 class="card-title">Tệp đã được sắp sếp</h5>
+                                    {{ Form::open(array('url' => '/admin/claim/uploadSortedFileGOP/'.$data->id, 'method'=>'post', 'files' => true))}}
+                                    <h5 class="card-title">Tệp đã được sắp sếp(Hồ sơ Gốc Scan)</h5>
                                     <div class="file-loading">
                                         <input id="url_file_sorted" type="file" name="_url_file_sorted[]" >
                                     </div>
                                     <div class="mt-2" >
-                                        <button type="submit" class="btn btn-primary " > {{__('message.save')}}</button> 
+                                        @hasanyrole('Header|Admin|AdminClaim')
+                                            <button type="submit" class="btn btn-primary " > {{__('message.save')}}</button>
+                                        @endhasanyrole
                                         {{-- <button type="button" onclick="upload_summary()" class="btn btn-primary m-2">Send to summary Etalk</button> --}}
                                     </div>
                                     <!-- End file image -->
