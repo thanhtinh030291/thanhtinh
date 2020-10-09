@@ -438,6 +438,7 @@ class ClaimController extends Controller
                 return redirect('/admin/claim/'.$id)->withInput();
             }
         }
+        $request->session()->flash('status', 'Đã Cập nhật hồ sơ GOP Thành Công');
         return redirect('/admin/claim/'.$id);
     }
 
