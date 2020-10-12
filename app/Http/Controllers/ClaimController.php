@@ -198,7 +198,8 @@ class ClaimController extends Controller
         }
         $file = $request->file;
         $dataNew = $request->except(['file','file2','table2_parameters', 'table1_parameters']);
-        $userId = Auth::User()->id;
+        $user = Auth::User();
+        $userId = $user->id;
         $dirUpload = Config::get('constants.formClaimUpload');
         
         // store file
@@ -210,7 +211,9 @@ class ClaimController extends Controller
             'created_user' =>  $userId,
             'updated_user' =>  $userId,
         ];
-
+        if($user->hasRole('ClaimGOP')){
+            $dataNew['claim_type'] = "P";
+        }
         $dataItems = [];
         // get value item orc
 
