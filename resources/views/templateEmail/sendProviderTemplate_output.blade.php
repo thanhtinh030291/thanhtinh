@@ -17,7 +17,7 @@
                     <td>
                       <p>Dear Team,</p>
                       <p>PCV xác nhận bảo lãnh thực tế cho khách hàng  <span style="font-weight: bold">{{$data['HBS_CL_CLAIM']->MemberNameCap}}</span>  tại {{$data['HBS_CL_CLAIM']->Provider->prov_name}} từ  {{$data['incurDateFrom']}} đến {{$data['incurDateTo']}} , số tiền: <span style="font-weight: bold">{{formatPrice($data['HBS_CL_CLAIM']->SumAppAmt)}}</span> đồng. (chi tiết như file đính kèm)
-                        <span style="font-weight: bold">{{formatPrice($data['HBS_CL_CLAIM']->SumAppAmt)}}</span> đồng.</p>
+                        </p>
                         <p class="MsoNormal"><strong><em><u><span style="font-size: 10.0pt; font-family: 'Times New Roman',serif; color: #c00000;">Lưu ý:</span></u></em></strong></p>
                         <ol style="margin-top: 0in;" start="1" type="1">
                         <li class="MsoNormal" style="color: #c00000; mso-list: l0 level1 lfo1;"><span style="font-size: 10.0pt; font-family: 'Times New Roman',serif; mso-fareast-font-family: 'Times New Roman';">PCV sẽ không thanh toán cho các hồ sơ quá hạn 30 ngày kể từ ngày xác nhận bảo lãnh chi phí thực tế.</span></li>
