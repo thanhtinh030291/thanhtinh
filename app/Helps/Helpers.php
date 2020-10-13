@@ -142,7 +142,7 @@ function sendEmail($user_send, $data , $template , $subject)
             'user' => $user_send, 
             'data' => $data 
         ], function ($mail) use ($user_send, $app_name, $app_email, $subject) {
-            $mail->from($app_email, $app_name)
+            $mail
                 ->to($user_send->email, $user_send->name)
                 ->subject($subject);
         }
