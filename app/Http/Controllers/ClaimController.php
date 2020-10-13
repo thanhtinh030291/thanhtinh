@@ -2045,7 +2045,7 @@ class ClaimController extends Controller
         $data = $claim = Claim::findOrFail($id);
         $userId = Auth::User()->id;
         $hospital_request = $claim->hospital_request;
-        $claim->inbox_email()->updateOrCreate([],['from' => $request->from, 'to' =>  explode(",",$request->to), 'subject' => "$request->subject", 'body' => $request->body ]);
+        $claim->inbox_email()->updateOrCreate([],['from' => $request->from, 'to' =>  explode(",",$request->to), 'subject' => "$request->subject", 'body' => utf8_encode($request->body) ]);
         $url_form_request = null;
         $dataUpdate = [];
         if(file_exists( storage_path()."/app/public/attachEmail/"."/attach_{$id}" . '.msg')){
@@ -2294,7 +2294,7 @@ class ClaimController extends Controller
             $old_msg = $claim->inbox_email->body;
             preg_match('/(RE:)/',  $claim->inbox_email->subject, $matches_re, PREG_OFFSET_CAPTURE);
             $subject = $matches_re ? $claim->inbox_email->subject : "RE: " . $claim->inbox_email->subject;
-            $old_msg  = str_replace("\r\n", "<br>", $old_msg);
+            $old_msg  = str_replace("\r\n", "<br>", utf8_decode($old_msg));
         }
         $user = Auth::User();
         $data = [];
