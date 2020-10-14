@@ -2308,6 +2308,7 @@ class ClaimController extends Controller
         $data['benefit'] = $benefit;
         $data['old_msg'] = $old_msg;
         $data['HBS_CL_CLAIM'] = $HBS_CL_CLAIM;
+        $data['Diagnosis'] = data_get($claim->hospital_request,'diagnosis',null) ?  data_get($claim->hospital_request,'diagnosis') : $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn;
         $data['attachment']['base64'] =  base64_encode($mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN)) ;
         $data['attachment']['filename'] = $namefile . ".pdf";
         $data['attachment']['filetype'] = "application/pdf";
