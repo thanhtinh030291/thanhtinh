@@ -34,7 +34,7 @@
                                     <div class="row">
                                         @if (!is_array($valueatt))
                                         <div class="col-md-6 bg-primary">{!!$keyatt .":" .$valueatt!!}</div>
-                                        <div class="col-md-6 bg-warning">{!!$keyatt .":" .$item->properties['old'][$keyatt]!!}</div>
+                                        <div class="col-md-6 bg-warning">{!!$keyatt .":" .data_get($item->properties,"old.".$keyatt)!!}</div>
                                         @else
                                             <div class="col-md-6 bg-primary">{!!$keyatt .":" .json_encode($valueatt,true)!!}</div>
                                             <div class="col-md-6 bg-warning">{!!$keyatt .":" .json_encode($item->properties['old'][$keyatt],true)!!}</div>

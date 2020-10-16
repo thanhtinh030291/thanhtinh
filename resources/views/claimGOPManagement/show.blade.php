@@ -263,6 +263,7 @@ $totalAmount = 0;
                     
                     @foreach ($data->export_letter as $item)
                         <tr class = "{{isset($item->info['note']) ? "disableRow" : ""}} " >
+                            
                             <td>{{$item->id}}</td>
                             <td>
                                 {{$item->letter_template->name}}
@@ -295,7 +296,7 @@ $totalAmount = 0;
                                         ]) 
                                 !!}
                                 @endif
-
+                                
                                 @if(isset($item->info['notes']))
                                     <h6> Added on Etalk</h6>
                                     <span>Note Id : {{data_get($item->info, "notes.id")}}</span><br>

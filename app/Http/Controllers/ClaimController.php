@@ -2180,22 +2180,30 @@ class ClaimController extends Controller
                 'created_at' => Carbon::now()->toDateTimeString(),
             ];
             $claim->save();
-            // $letter_template_id = LetterTemplate::where('name','Letter Payment (GOP)')->first()->id;
-            // $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+            $letter_template_id = LetterTemplate::where('name','Letter Payment (GOP)')->first()->id;
+            $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
 
-            // $export_letter = $claim->export_letter()->create([
-            //     'letter_template_id' => $letter_template_id,
-            //     'created_user' => $claim->created_user,
-            //     'updated_user' => $user->id,
-            //     'apv_amt' =>  $HBS_CL_CLAIM->sumAppAmt,
-            // ]);
-
-            // $export_letter->update(['wait' => [
-            //     'user' => $claim->created_user,
-            //     'created_at' =>  Carbon::now()->toDateTimeString(),
-            //     'data' => $this->letter($letter_template_id ,  $claim->id ,$export_letter->id)
-            //     ]
-            // ]);
+            $export_letter = $claim->export_letter()->create([
+                'letter_template_id' => $letter_template_id,
+                'created_user' => $claim->created_user,
+                'updated_user' => $user->id,
+                'apv_amt' =>  $HBS_CL_CLAIM->sumAppAmt,
+                'status' => 0,
+            ]);
+            $approve_user_sign = getUserSignThumb($user->id);
+            $data_htm = $this->letter($letter_template_id ,  $claim->id ,$export_letter->id)['content'];
+            $export_letter->update(['wait' => [
+                'user' => $claim->created_user,
+                'created_at' =>  Carbon::now()->toDateTimeString(),
+                'data' => $data_htm
+            ],
+                'status' => 23, // Manager GOP approved
+                'approve' =>[
+                    'user' => $user->id,
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, $data_htm),
+                ]
+            ]);
             
             
             if (!empty($to_user)) {
