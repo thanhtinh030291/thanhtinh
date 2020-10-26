@@ -4,7 +4,7 @@
             <tr class="bg-info text-white">
                 <th scope="col" class="noVis">STT</th>
                 <th scope="col" class="noVis">Finish</th>
-                <th scope="col" class="noVis">Link</th>
+                <th scope="col" class="noVis">Link (ID Etalk)</th>
                 <th scope="col" class="noVis">Claimant</th>
                 <th scope="col" class="noVis">Product</th>
                 <th scope="col" class="noVis">CL No</th>
@@ -20,7 +20,7 @@
             @foreach ($reportAdmin as $key => $item)
             <td>{!! $key + 1 !!}</td>
             <td>{!! $item->REQUEST_SEND == 0 ? '<div class="p-3 mb-2 bg-danger text-white">No</div>' : '<div class="p-3 mb-2 bg-success text-white">Yes</div>' !!}</td>
-            <td><a target="_blank" rel="noopener" href="{!! url('/admin/claim/'.$item->claim_id) !!}">Link</a></td>
+            <td><a target="_blank" rel="noopener" href="{!! url('/admin/claim/'.$item->claim_id) !!}">Link Etalk "{{$item->barcode}}"</a></td>
             <td>{!! $item->MEMB_NAME !!}</td>
             <td>DLVN</td>	
             <td>{!! $item->CL_NO !!}</td>

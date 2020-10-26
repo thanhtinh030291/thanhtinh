@@ -90,7 +90,7 @@ class ReportAdminController extends Controller
     public function show($datereportAdmin)
     {
         $date = \Carbon\Carbon::createFromFormat('d-m-Y', $datereportAdmin);
-        $reportAdmin = ReportAdmin::where('RECEIVE_DATE', $date->toDateString())->get();
+        $reportAdmin = ReportAdmin::join('claim', 'claim.id', '=', 'claim_id')->where('RECEIVE_DATE', $date->toDateString())->get();
         $admin_list = User::getListIncharge();
         return view('report_admins.show', compact('reportAdmin','admin_list'));
     }

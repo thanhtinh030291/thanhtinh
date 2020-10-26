@@ -134,7 +134,7 @@ key: efaa761e84c08024d437f370eaa2a564
 
 
 # bao tri
-php artisan down --message="hệ thống bảo trì đôt xuất ! cập nhật backup trong 5 phút." --retry=60  --allow=192.168.0.16
+php artisan down --message="hệ thống bảo trì đôt xuất ! cập nhật backup trong 3 phút." --retry=60  --allow=192.168.0.16
 php artisan up 
 php artisan down --allow=::1 
 
