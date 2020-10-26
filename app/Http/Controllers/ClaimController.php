@@ -404,6 +404,7 @@ class ClaimController extends Controller
 
     public function uploadSortedFileGOP(Request $request, $id){
         $claim = Claim::findOrFail($id);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::findOrFail($claim->code_claim);
         $user = Auth::User();
         if ($request->_url_file_sorted) {
             $dataUpdate['url_file_sorted'] = saveFile($request->_url_file_sorted[0], config('constants.sortedClaimUpload'),$claim->url_file_sorted);
@@ -440,7 +441,22 @@ class ClaimController extends Controller
                 );
                 return redirect('/admin/claim/'.$id)->withInput();
             }
+
         }
+        $claim->report_admin()->updateOrCreate([],
+            [   
+                'MEMB_NAME' => $HBS_CL_CLAIM->MemberNameCap,
+                'POCY_REF_NO' => $HBS_CL_CLAIM->police->pocy_ref_no,
+                'MEMB_REF_NO' => $HBS_CL_CLAIM->member->memb_ref_no,
+                'PRES_AMT' => $HBS_CL_CLAIM->sumPresAmt,
+                'INV_NO' => $HBS_CL_CLAIM->invNo,
+                'PROV_NAME' => $HBS_CL_CLAIM->FirstLine->prov_name,
+                'RECEIVE_DATE' => Carbon::now()->toDateString(),
+                'created_user' => $user->id,
+                'updated_user' => $user->id,
+                'CL_NO' => $claim->code_claim_show, 
+            ]
+        );
         $request->session()->flash('status', 'Đã Cập nhật hồ sơ GOP Thành Công');
         return redirect('/admin/claim/'.$id);
     }
@@ -2204,6 +2220,21 @@ class ClaimController extends Controller
                     'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, $data_htm),
                 ]
             ]);
+            // notifi admin claim
+            $claim->report_admin()->updateOrCreate(['claim_id' => $claim->id]
+                ,['REQUEST_SEND' => 1]);
+            $to_admin_claim = User::whereHas("roles", function($q){ $q->where("name", "AdminClaim"); })->get()->pluck('id')->toArray();
+            if (!empty($to_admin_claim)) {
+                foreach ($to_admin_claim as $key => $value) {
+                    $request2 = new Request([
+                        'user' => $value,
+                        'content' => 'Claim '.$claim->code_claim_show.' Đã Hoàn tất Vui lòng kiểm tra lại thông tin tại : 
+                        <a href="'.route('claim.show', $claim->id).'">'.route('claim.show', $claim->id).'</a>'
+                    ]);
+                    $send_mes = new SendMessageController();
+                    $send_mes->sendMessage($request2);
+                }
+            }
             
             
             if (!empty($to_user)) {

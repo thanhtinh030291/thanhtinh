@@ -22,6 +22,11 @@ class Claim extends BaseModel
         return $this->hasOne('App\InboxEmail', 'claim_id')->orderBy('id', 'desc');
     }
 
+    public function report_admin()
+    {
+        return $this->hasOne('App\ReportAdmin', 'claim_id')->orderBy('id', 'desc');
+    }
+
     public function finish_and_pay()
     {
         return $this->hasOne('App\FinishAndPay', 'claim_id')->orderBy('id', 'desc');

@@ -142,6 +142,9 @@ Route::group(['prefix' => 'admin'], function () {
 
         //Group mem
         Route::resource('groupUsers', 'GroupUserController');
+
+        //report for admin claim
+        Route::resource('reportAdmins', 'ReportAdminController');
         
     });
 
@@ -169,4 +172,6 @@ Route::post(
 Route::post('check_subscriptions', 'PushController@check_subscriptions');
 Route::post('subscriptions', 'PushController@update');
 Route::post('subscriptions/delete', 'PushController@destroy');
+
+
 

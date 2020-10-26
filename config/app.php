@@ -181,7 +181,6 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         \InfyOm\GeneratorBuilder\GeneratorBuilderServiceProvider::class,
         
-
         
     ],
 

@@ -133,6 +133,12 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         $sum = array_sum(array_column($clLines,'app_amt'));
         return round($sum);
     }
+
+    public function getInvNoAttribute(){
+        $clLines = $this->HBS_CL_LINE->toArray();
+        $kq = implode(",",array_column($clLines,'inv_no'));
+        return $kq;
+    }
     
     //show RT_DIAGNOSIS
     public function scopeIOPDiag($query){
