@@ -18,18 +18,20 @@
         </thead>
         <tbody>
             @foreach ($reportAdmin as $key => $item)
-            <td>{!! $key + 1 !!}</td>
-            <td>{!! $item->REQUEST_SEND == 0 ? '<div class="p-3 mb-2 bg-danger text-white">No</div>' : '<div class="p-3 mb-2 bg-success text-white">Yes</div>' !!}</td>
-            <td><a target="_blank" rel="noopener" href="{!! url('/admin/claim/'.$item->claim_id) !!}">Link Etalk "{{$item->barcode}}"</a></td>
-            <td>{!! $item->MEMB_NAME !!}</td>
-            <td>DLVN</td>	
-            <td>{!! $item->CL_NO !!}</td>
-            <td>{!! $item->POCY_REF_NO !!}</td>
-            <td>{!! $item->MEMB_REF_NO !!}</td>
-            <td>{!! $item->INV_NO !!}</td>
-            <td>{!! $item->PRES_AMT !!}</td>
-            <td>{!! $item->PROV_NAME !!}</td>
-            <td>{!! data_get($admin_list,$item->created_user) !!}</td>
+            <tr>
+                <td>{!! $key + 1 !!}</td>
+                <td>{!! $item->REQUEST_SEND == 0 ? '<div class="p-3 mb-2 bg-danger text-white">No</div>' : '<div class="p-3 mb-2 bg-success text-white">Yes</div>' !!}</td>
+                <td><a target="_blank" rel="noopener" href="{!! url('/admin/claim/'.$item->claim_id) !!}">Link Etalk "{{$item->barcode}}"</a></td>
+                <td>{!! $item->MEMB_NAME !!}</td>
+                <td>DLVN</td>	
+                <td>{!! $item->CL_NO !!}</td>
+                <td>{!! $item->POCY_REF_NO !!}</td>
+                <td>{!! $item->MEMB_REF_NO !!}</td>
+                <td>{!! $item->INV_NO !!}</td>
+                <td>{!! $item->PRES_AMT !!}</td>
+                <td>{!! $item->PROV_NAME !!}</td>
+                <td>{!! data_get($admin_list,$item->created_user) !!}</td>
+            </tr>
             @endforeach
         </tbody>
     </table>
