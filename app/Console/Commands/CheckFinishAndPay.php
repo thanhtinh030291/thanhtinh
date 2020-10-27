@@ -44,7 +44,7 @@ class CheckFinishAndPay extends Command
     {
         $dt = Carbon::now();
         $dt_check  = $dt->subDays(10)->format('Y-m-d h:i:s');
-        $FinishAndPay = FinishAndPay::where('notify',1)->join('claim', 'claim.id', '=', 'claim_id')->where('claim_type', 'M')->where('finished', 0)->get();
+        $FinishAndPay = FinishAndPay::where('notify',1)->where('finished', 0)->get();
         $array_update = [];
         foreach ($FinishAndPay as $key => $value) {
             $can_pay_rq = json_decode(json_encode(GetApiMantic('api/rest/plugins/apimanagement/issues/finish/'.$value->mantis_id)),true);
