@@ -110,7 +110,6 @@ function PostApiMantic($url,$body) {
             'headers' => $headers
         ]);
     $response = $client->request("POST", config('constants.url_mantic_api').$url , ['form_params'=>$body]);
-
     return $response;
 }
 

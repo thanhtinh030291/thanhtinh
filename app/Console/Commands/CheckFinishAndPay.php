@@ -8,6 +8,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Exception;
+use App\User;
 
 class CheckFinishAndPay extends Command
 {
@@ -44,17 +46,22 @@ class CheckFinishAndPay extends Command
     {
         $dt = Carbon::now();
         $dt_check  = $dt->subDays(10)->format('Y-m-d h:i:s');
-        $FinishAndPay = FinishAndPay::where('notify',1)->where('finished', 0)->get();
-        $array_update = [];
-        foreach ($FinishAndPay as $key => $value) {
-            $can_pay_rq = json_decode(json_encode(GetApiMantic('api/rest/plugins/apimanagement/issues/finish/'.$value->mantis_id)),true);
-            $can_pay_rq = data_get($can_pay_rq,'status') == 'success' ? 'success' : 'error';
-            if($can_pay_rq == 'success'){
-                $array_update[] = $value->id;
-            }
+        $FinishAndPay = FinishAndPay::join('claim','claim.id','=','claim_id')->where('claim_type',"M")->where('notify',1)->where('finished', 0)->pluck('mantis_id')->toArray();
+        echo "số lượng ban đầu: " . count($FinishAndPay);
+        $body = [
+            'issue_ids' => [$FinishAndPay],
+        ];
+        try {
+            $res = PostApiMantic('api/rest/plugins/apimanagement/issues/issues_finish_status',$body);
+            $res = json_decode($res->getBody(),true);
+        } catch (Exception $e) {
+            $user = User::where('email','tinhnguyen@pacificcross.com.vn')->first();
+            $data['content_error'] = $e->getMessage();
+            sendEmail($user, $data, 'templateEmail.errorTemplate' , 'LOG ERROR Hệ Thống Claim Assistant');
         }
-        if(!empty($array_update)){
-            FinishAndPay::whereIn('id',$array_update)->update(['finished' => 1]);
+        echo "  số lượng thay đổi: " . count($res);
+        if(!empty($res)){
+            FinishAndPay::whereIn('mantis_id',$res)->update(['finished' => 1]);
         }
         
         $non_pay = FinishAndPay::where('notify',1)->where('finished', 1)->where('payed', 0)->pluck('cl_no')->toArray();
