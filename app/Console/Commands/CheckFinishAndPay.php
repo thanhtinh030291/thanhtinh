@@ -47,7 +47,6 @@ class CheckFinishAndPay extends Command
         $dt = Carbon::now();
         $dt_check  = $dt->subDays(10)->format('Y-m-d h:i:s');
         $FinishAndPay = FinishAndPay::join('claim','claim.id','=','claim_id')->where('claim_type',"M")->where('notify',1)->where('finished', 0)->pluck('mantis_id')->toArray();
-        echo "số lượng ban đầu: " . count($FinishAndPay);
         $body = [
             'issue_ids' => $FinishAndPay,
         ];
@@ -59,7 +58,6 @@ class CheckFinishAndPay extends Command
             $data['content_error'] = $e->getMessage();
             sendEmail($user, $data, 'templateEmail.errorTemplate' , 'LOG ERROR Hệ Thống Claim Assistant');
         }
-        echo "  số lượng thay đổi: " . count($res);
         if(!empty($res)){
             FinishAndPay::whereIn('mantis_id',$res)->update(['finished' => 1]);
         }
