@@ -49,7 +49,7 @@ class CheckFinishAndPay extends Command
         $FinishAndPay = FinishAndPay::join('claim','claim.id','=','claim_id')->where('claim_type',"M")->where('notify',1)->where('finished', 0)->pluck('mantis_id')->toArray();
         echo "số lượng ban đầu: " . count($FinishAndPay);
         $body = [
-            'issue_ids' => [$FinishAndPay],
+            'issue_ids' => $FinishAndPay,
         ];
         try {
             $res = PostApiMantic('api/rest/plugins/apimanagement/issues/issues_finish_status',$body);
