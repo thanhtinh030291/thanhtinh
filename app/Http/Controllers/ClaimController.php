@@ -298,6 +298,7 @@ class ClaimController extends Controller
         $list_status_ad = RoleChangeStatus::pluck('name','id');
         $export_letter = $data->export_letter;
         $user = Auth::User();
+        $IS_FREEZED = 0;
         
         foreach ($export_letter as $key => $value) {
             if($value->letter_template->level != 0){
@@ -347,6 +348,7 @@ class ClaimController extends Controller
         }
         try {
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+            $IS_FREEZED = $HBS_CL_CLAIM->is_freezed == null ? 0 : $HBS_CL_CLAIM->is_freezed;
             $MessageComfirmConract = $HBS_CL_CLAIM->member->MessageComfirmConract;
             $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($data->code_claim_show)->getContent(),true);
             $payment_history = data_get($payment_history_cps,'data_full',[]);
@@ -380,12 +382,13 @@ class ClaimController extends Controller
         $list_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('text', 'id') : [];
         $selected_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('id') : null;
         $fromEmail = $claim->inbox_email ? $claim->inbox_email->from . "," . implode(",", $claim->inbox_email->to) : "";
-        
-        $reject_code = collect($claim->RejectCode)->flatten(1)->values()->all();
+
+        //$reject_code = collect($claim->RejectCode)->flatten(1)->values()->all();
         $compact = compact(['data', 'dataImage', 'items', 'admin_list', 'listReasonReject', 
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
         'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq',
-        'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail','reject_code','MessageComfirmConract']);
+        'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail','reject_code',
+        'MessageComfirmConract','IS_FREEZED']);
         if ($claim_type == 'P'){
             return view('claimGOPManagement.show', $compact);
         }else{
@@ -2004,6 +2007,7 @@ class ClaimController extends Controller
         $rp = AjaxCommonController::sendPayment($request,$id);
         switch (data_get($rp,'code')) {
             case '00':
+                HBS_CL_CLAIM::where('CLAM_OID',$claim->code_claim)->update(['IS_FREEZED'=>1]);
                 return redirect('/admin/claim/'.$id)->with('status', data_get($rp,'description'));
                 break;
             case '01':
@@ -2384,5 +2388,19 @@ class ClaimController extends Controller
         $claim->jetcase = $request->jetcase ? $request->jetcase : 0;
         $claim->save();
         return redirect('/admin/claim/'.$id)->with('status', 'Đã cập nhật thành công');
+    }
+
+    public function unfreezed(Request $request, $id){
+        $claim = Claim::findOrFail($id);
+        $user = Auth::User();
+        HBS_CL_CLAIM::where('CLAM_OID',$claim->code_claim)->update(['IS_FREEZED'=>0]);
+        $claim->log_unfreezed()->create([
+            'cl_no' => $claim->code_claim_show,
+            'reason' => $request->reason,
+            'desc' => $request->desc,
+            'created_user' => $user->id,
+            'updated_user' => $user->id,
+        ]);
+        return redirect('/admin/claim/'.$id)->with('status', 'Đã mở khóa thành công');
     }
 }

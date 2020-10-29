@@ -109,9 +109,9 @@ return[
     // 'client_secret' => 'ukbg95yi3ifcdjiso5rc7kcjqeetxpfv',
     // 'url_hbs' => 'http://192.168.148.3:8010/',
     //test
-    'token_mantic' => 'YeT9k0PT91IQnmC5lSUpy75s63Y8uMEu',
-    'url_mantic' => 'https://uat-etalk.pacificcross.com.vn/',
-    'url_mantic_api' => 'https://uat-etalk.pacificcross.com.vn/',
+    'token_mantic' => 'Zetp5xpmA4ULk3MjQJjWaDbpS7L2wVwJ',
+    'url_mantic' => 'http://local/pacific_project/mantis_dlvn/',
+    'url_mantic_api' => 'http://local/pacific_project/mantis_dlvn/',
     'url_cps' => 'http://local/pacific_project/cps_dlvn/branches/Tinh_0000561/index.php/',
     'api_cps' => 'http://local/pacific_project/cps_dlvn/branches/Tinh_0000561/index.php/api/',
     'client_id' => 'ul-2l44e7vq-3t8m-4fqeaxi-6olcepgxweq',
@@ -273,5 +273,12 @@ return[
         0 => "Accepted: GOP acceptance letter is attached (Chấp nhận: Thư bảo lãnh viện phí được gửi đính kèm)",
         1 => "Client can Pay and Claim (Khách hàng tự thanh toán và gửi hồ sơ yêu cầu bồi thường cho công ty)",
         2 => "Treatment not Covered (Điều trị không được bảo hiểm)"
+    ],
+
+    'reason_unfreezed' => [
+        'Additional Payment' => 'Thanh toán bổ sung',
+        'Reduce payment'     => 'Giảm Thanh Toán',
+        'Correct Info'       => 'Thay đổi thông tin',
+        'Reverse due to wrong Member' => 'Reverse do sai Member',
     ]
 ];

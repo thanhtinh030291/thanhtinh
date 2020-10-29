@@ -195,7 +195,13 @@ $totalAmount = 0;
                     </div>
                 </div>
                 <div class="d-flex justify-content-center mt-3">
-                    <a class="btn btn-secondary btnt" href="{{url('admin/claim')}}">{{ __('message.back')}}</a>
+                    
+                    @if($IS_FREEZED == 0)
+                    <button type="button" class="btn btn-success btn-circle btn-lg"><i style="font-size: 28px" class="fa fa-unlock text-warning font-weight-bolder" aria-hidden="true"></i></button>
+                    @else
+                    <button type="button" data-toggle="modal" data-target="#unfreezedModal"  class="btn btn-danger btn-circle btn-lg"><i style="font-size: 28px" class="fa fa-lock text-warning font-weight-bolder" aria-hidden="true"></i></button>
+                    
+                    @endif
                 </div>
                 <!-- End file image -->
             </div>
@@ -473,6 +479,9 @@ $totalAmount = 0;
 
 {{-- confirmContractModal --}}
 @include('claimManagement.confirmContractModal')
+
+{{-- unfreezedModal --}}
+@include('claimManagement.unfreezedModal')
 
 @endsection
 
