@@ -127,6 +127,34 @@ return [
             ],
         ],
 
+        'mysql_cps' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => '192.168.0.245',
+            'port' => '3306',
+            'database' => 'payment_dlvn',
+            'username' => 'tinh',
+            'password' => 'AFF797zRCF28AgP',
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+            'modes'       => [
+                'ONLY_FULL_GROUP_BY',
+                'STRICT_TRANS_TABLES',
+                'NO_ZERO_IN_DATE',
+                'NO_ZERO_DATE',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_ENGINE_SUBSTITUTION',
+            ],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),

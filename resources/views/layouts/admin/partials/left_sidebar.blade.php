@@ -30,6 +30,12 @@
                             href="{{ url('admin/reportAdmins') }}"><span> Report for Admin Claim</span></a>
                         </li>
                         @endhasanyrole
+                        @hasanyrole('Header|ManagerGOP|Admin|ClaimGOP')
+                        <li class="{{ setActive('admin/reportGop') }}"> 
+                            <a class="{{ setActive('admin/reportGop') }}"
+                            href="{{ url('admin/reportGop') }}"><span> Report for GOP Claim</span></a>
+                        </li>
+                        @endhasanyrole
                         @hasanyrole('Header|ManagerGOP|Admin|Lead|Manager')
                         <li class="{{ setActive('admin/reason_reject') }}"> 
                             <a class="{{ setActive('admin/reason_reject') }}"

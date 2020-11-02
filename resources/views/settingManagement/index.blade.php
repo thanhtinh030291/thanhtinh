@@ -200,6 +200,32 @@ $max = config('constants.minMaxLength.max');
                                 </div>
                             </div>
                         </div>
+                    <!-- end col -->	     
+                    <!-- begin col -->	  
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h3><i class="fa fa-user"></i> Check Update Freezed </h3>								
+                                    </div>
+                                        
+                                    <div class="card-body">
+                                        
+                                    {{ Form::open(array('url' => "admin/setting/updateFreezed", 'method' => 'post' ,'files' => true, 'id' => 'drawing-form')) }}
+                        
+                                        <div class="row">
+                                            <div class="col-lg-9 col-xl-9">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>							
+                                    </form>										
+                                </div>
+                            </div>
+                        </div>
                     <!-- end col -->	                                  
                     </div>
                     <!-- end row -->	
