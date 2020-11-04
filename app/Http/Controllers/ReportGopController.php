@@ -48,7 +48,7 @@ class ReportGopController extends Controller
         $limit_list = config('constants.limit_list');
         $limit = $request->get('limit');
         $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
-        $HBS_PV_PROVIDER = HBS_PV_PROVIDER::where('cl_pay_acct_no','!=', null)->where('SCMA_OID_NETWORK','!=', null)->pluck('prov_name','cl_pay_acct_no');
+        $HBS_PV_PROVIDER = HBS_PV_PROVIDER::where('cl_pay_acct_no','!=', null)->pluck('prov_name','cl_pay_acct_no');
         $condition = function ($q) {
 
         };
