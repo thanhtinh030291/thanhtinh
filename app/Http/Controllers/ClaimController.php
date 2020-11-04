@@ -783,16 +783,17 @@ class ClaimController extends Controller
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter, $list_level, $claim->claim_type);
             if($claim->jetcase == 1 && $user->hasRole('QC')){
-                $approve_user_sign = $claim_type == "P" ? getUserSignThumb($user->id) : getUserSign($user->id);
+                $per_approve_sign_replace = $claim_type == "P" ? getUserSignThumb() : getUserSign();
+                $approve_user_sign = $user->name;
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, data_get($export_letter->wait, "data")),
+                        'data' => str_replace(['[[$per_approve_sign]]','[[$per_approve_sign_replace]]'], [$approve_user_sign,$per_approve_sign_replace], data_get($export_letter->wait, "data")),
                     ];
                 }else{
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, data_get($export_letter->wait, "data")),
+                        'data' => str_replace(['[[$per_approve_sign]]','[[$per_approve_sign_replace]]'], [$approve_user_sign,$per_approve_sign_replace], data_get($export_letter->wait, "data")),
                         'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1, $user_create->supper)['content'])
                     ];
                     
@@ -811,16 +812,17 @@ class ClaimController extends Controller
                 ]);
 
             }elseif($level->signature_accepted_by == $status_change[0] || ($user_create->hasRole('Claim Independent') && $user->hasRole('Manager'))){
-                $approve_user_sign = $claim_type == "P" ? getUserSignThumb($user->id) : getUserSign($user->id);
+                $per_approve_sign_replace = $claim_type == "P" ? getUserSignThumb() : getUserSign();
+                $approve_user_sign = $user->name;
                 if($export_letter->letter_template->letter_payment == null){
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, data_get($export_letter->wait, "data")),
+                        'data' => str_replace(['[[$per_approve_sign]]','[[$per_approve_sign_replace]]'], [$approve_user_sign,$per_approve_sign_replace], data_get($export_letter->wait, "data")),
                     ];
                 }else{
                     $export_letter->approve = [  'user' => $user->id,
                         'created_at' => Carbon::now()->toDateTimeString(),
-                        'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, data_get($export_letter->wait, "data")),
+                        'data' => str_replace(['[[$per_approve_sign]]','[[$per_approve_sign_replace]]'], [$approve_user_sign,$per_approve_sign_replace], data_get($export_letter->wait, "data")),
                         'data_payment' => base64_encode($this->letterPayment($export_letter->letter_template->letter_payment , $request->claim_id , $id, 1)['content'])
                     ];
                     
@@ -1327,15 +1329,17 @@ class ClaimController extends Controller
         $data = $this->letter($letter_template_id , $claim_id,  $export_letter_id);
         $export_letter = ExportLetter::findOrFail($export_letter_id);
         $user_create = User::findOrFail($export_letter->created_user);
-        
+        $claim  = Claim::findOrFail($claim_id);
+        $claim_type = $claim->claim_type;
         //$create_user_sign = getUserSign($export_letter->created_user);
         $create_user_sign = $user_create->name;
         $data['content'] = str_replace('[[$per_creater_sign]]', $create_user_sign, $data['content']);
 
         if($approve != null){
             $user = Auth::user();
-            $approve_user_sign = $id_user_sign == null ? getUserSign($user->id) : getUserSign($id_user_sign);
-            $data['content'] = str_replace('[[$per_approve_sign]]', $approve_user_sign, $data['content']);
+            $per_approve_sign_replace = $claim_type == "P" ? getUserSignThumb() : getUserSign();
+            $approve_user_sign = $user->name;
+            $data['content'] = str_replace(['[[$per_approve_sign]]','[[$per_approve_sign_replace]]'], [$approve_user_sign,$per_approve_sign_replace], $data['content']);
         }else{
             $data['content'] = str_replace('[[$per_approve_sign]]', "", $data['content']);
         }
@@ -2210,7 +2214,8 @@ class ClaimController extends Controller
                 'apv_amt' =>  $HBS_CL_CLAIM->sumAppAmt,
                 'status' => 0,
             ]);
-            $approve_user_sign = getUserSignThumb($user->id);
+            //$approve_user_sign = getUserSignThumb($user->id);
+            $approve_user_sign = $user->name;
             $data_htm = $this->letter($letter_template_id ,  $claim->id ,$export_letter->id)['content'];
             $export_letter->update(['wait' => [
                 'user' => $claim->created_user,

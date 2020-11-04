@@ -9,8 +9,9 @@ use App\Notifications\PushNotification;
 use Pusher\Pusher;
 use Illuminate\Support\Facades\Storage;
 
-function getUserSign($id){
-    $user = User::findOrFail($id);
+function getUserSign(){ // for member claim 
+    $Setting = Setting::findOrFail('1');
+    $user = User::findOrFail($Setting->manager_claim[0]);
     $dirStorage = config('constants.signarureStorage');
     $dataImage =  $dirStorage . $user->signarure ;
     $htm = "<span><img src='{$dataImage}' alt='face' height='120' width='140'></img><br/>
@@ -19,8 +20,9 @@ function getUserSign($id){
     return $htm;
 }
 
-function getUserSignThumb($id){
-    $user = User::findOrFail($id);
+function getUserSignThumb(){ // for provider claim
+    $Setting = Setting::findOrFail('1');
+    $user = User::findOrFail($Setting->manager_gop_claim[0]);
     $dirStorage = config('constants.signarureStorage');
     $dataImage =  $dirStorage . $user->signarure ;
     $htm = "<span><img src='{$dataImage}' alt='face' height='73' width='100'></img><br/>
