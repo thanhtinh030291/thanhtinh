@@ -2157,6 +2157,8 @@ class ClaimController extends Controller
     }
     public function requestManagerGOP(Request $request, $id){
         $claim = Claim::findOrFail($id);
+        $claim_type = $claim->claim_type;
+        
         $user = Auth::user();
         if($request->type_submit == 'request'){
             if($claim->url_file_sorted == null){
@@ -2216,6 +2218,7 @@ class ClaimController extends Controller
             ]);
             //$approve_user_sign = getUserSignThumb($user->id);
             $approve_user_sign = $user->name;
+            $per_approve_sign_replace = $claim_type == "P" ? getUserSignThumb() : getUserSign();
             $data_htm = $this->letter($letter_template_id ,  $claim->id ,$export_letter->id)['content'];
             $export_letter->update(['wait' => [
                 'user' => $claim->created_user,
@@ -2226,7 +2229,7 @@ class ClaimController extends Controller
                 'approve' =>[
                     'user' => $user->id,
                     'created_at' => Carbon::now()->toDateTimeString(),
-                    'data' => str_replace('[[$per_approve_sign]]', $approve_user_sign, $data_htm),
+                    'data' => str_replace(['[[$per_approve_sign]]','[[$per_approve_sign_replace]]'], [$approve_user_sign,$per_approve_sign_replace], $data_htm),
                 ]
             ]);
             // notifi admin claim
