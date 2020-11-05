@@ -250,7 +250,7 @@
                     @foreach ($member->ClaimMemberEvent as $item)
                         <tr>
                             <td>{{Carbon\Carbon::parse($item->eff_date)->format('d/m/Y')}}</td>
-                            <td>{{$item->event_desc}}</td>
+                            <td>{{ formatVN($item->event_desc) }}</td>
                         </tr>
                     @endforeach
                 

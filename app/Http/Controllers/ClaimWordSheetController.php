@@ -129,7 +129,7 @@ class ClaimWordSheetController extends Controller
     }
 
     public function pdf(ClaimWordSheet $claimWordSheet){
-        
+
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
@@ -140,7 +140,6 @@ class ClaimWordSheetController extends Controller
 
         $log_history = $claimWordSheet->log;
         $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
-        //return view('claim_word_sheets.pdf', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history'));
         $mpdf->WriteHTML(view('claim_word_sheets.pdf', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history'))->render());
         $mpdf->SetHTMLFooter('
         <div style="text-align: right; font-weight: bold;">

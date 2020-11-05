@@ -240,6 +240,12 @@ function formatPrice($number, $symbol = '', $insert_before = false)
     $parts[0] = preg_replace($pattern, ".", $parts[0]);
     return $insert_before == true ? $symbol.implode(".", $parts) : implode(".", $parts).$symbol;
 }
+
+function formatVN($string)
+{
+    $pattern  = '/[^a-z0-9A-Z_[:space:]ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂ ưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]/u';
+    return preg_replace($pattern, "", $string);;
+}
 /**
  * Remove format price become string
  *
