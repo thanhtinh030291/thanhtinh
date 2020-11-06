@@ -1845,10 +1845,11 @@ class ClaimController extends Controller
         $user = Auth::User();
         $claim  = Claim::itemClaimReject()->findOrFail($id);
         $count_page = 0;
-
+        $claim_type = $claim->claim_type;
+        $per_approve_sign_replace = $claim_type == "P" ? getUserSignThumb() : getUserSign();
         //get file 
         if($export_letter->approve != null){
-            $data['content_letter'] = $export_letter->approve['data'];
+            $data['content_letter'] = str_replace('[[$per_approve_sign_replace]]',$per_approve_sign_replace,$export_letter->approve['data']);
             $data['content_payment'] =  isset($export_letter->approve['data_payment']) ? base64_decode($export_letter->approve['data_payment']) : null;
         }else{
             
@@ -2293,7 +2294,9 @@ class ClaimController extends Controller
         $export_letter = ExportLetter::findOrFail($id);
         $user = Auth::User();
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
-        
+        $claim_type = $claim->claim_type;
+        $per_approve_sign_replace = $claim_type == "P" ? getUserSignThumb() : getUserSign();
+
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $diag_code = $HBS_CL_CLAIM->HBS_CL_LINE->pluck('diag_oid')->unique()->toArray();
         $namefile = Str::slug("{$export_letter->letter_template->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
@@ -2341,7 +2344,7 @@ class ClaimController extends Controller
             $mpdf->WriteHTML('<div style="position: absolute; top: 9;
                 right:5"><barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />
                 <div style="text-align: center">'.$claim->barcode.'</div></div>');
-            $mpdf->WriteHTML(data_get($export_letter->approve, 'data'));
+            $mpdf->WriteHTML(str_replace("[[$per_approve_sign_replace]]",$per_approve_sign_replace,data_get($export_letter->approve, 'data')));
 
         }else{
             $template = 'templateEmail.sendProviderTemplate_output';
@@ -2355,7 +2358,7 @@ class ClaimController extends Controller
             <div style="text-align: right; font-weight: bold;">
                 <img src="'.asset("images/footer.png").'" alt="foot">
             </div>');
-            $mpdf->WriteHTML(data_get($export_letter->approve, 'data'));
+            $mpdf->WriteHTML(str_replace("[[$per_approve_sign_replace]]",$per_approve_sign_replace,data_get($export_letter->approve, 'data')));
         }
         
         $old_msg = "";
