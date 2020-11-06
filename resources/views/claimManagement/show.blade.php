@@ -162,9 +162,9 @@ $totalAmount = 0;
                                 @foreach ($payment_history as $key => $value )
                                 <p>Lần {{data_get($value, 'PAYMENT_TIME')}} : ({!!data_get($value, 'TF_DATE') ? '<span class="text-success font-weight-bold">Đã thanh toán </span>' . data_get($value, 'TF_DATE') : '<span class="text-info font-weight-bold">Đang Chờ Thanh Toán</span>'!!})
                                     <span class="text-danger font-weight-bold">{{formatPrice(data_get($value, 'TF_AMT'), " đ")}}</span>
-                                    {{-- <button class="btn btn-primary p-1" data-toggle="collapse" data-target="#collapse{{data_get($value, 'PAYM_ID')}}" aria-expanded="true" aria-controls="collapseOne">
+                                    <button class="btn btn-primary p-1" data-toggle="collapse" data-target="#collapse{{data_get($value, 'PAYM_ID')}}" aria-expanded="true" aria-controls="collapseOne">
                                         <i class="fa fa-share-square-o" aria-hidden="true"></i> CPS
-                                    </button> --}}
+                                    </button>
                                     <div id="collapse{{data_get($value, 'PAYM_ID')}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                                         
                                             {{ Form::open(array('url' => '/admin/claim/setPcvExpense/'.$data->id, 'method'=>'post', 'files' => true, 'style' => 'width: 100%;'))}}
