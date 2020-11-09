@@ -2414,4 +2414,44 @@ class ClaimController extends Controller
         ]);
         return redirect('/admin/claim/'.$id)->with('status', 'Đã mở khóa thành công');
     }
+
+    public function closeClaim(Request $request, $id){
+        $user = Auth::User();
+        $claim = Claim::findOrFail($id);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $count_orther_close = $HBS_CL_CLAIM->HBS_CL_LINE->where('scma_oid_cl_line_status',"!=",'CL_LINE_STATUS_CL')->count();
+        if($count_orther_close > 0){
+            return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Vui lòng kiểm tra HBS tất cả claim line phải chuyển sang trang thái Close ');
+        }
+
+        $body = [
+            'user_email' => $user->email,
+            'issue_id' => $claim->barcode,
+            'text_note' => $request->desc,
+            'status_id' =>  config('constants.status_mantic_value.closed'),
+        ];
+
+        try {
+            $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
+            $res = json_decode($res->getBody(),true);
+        } catch (Exception $e) {
+
+            $request->session()->flash(
+                'errorStatus', 
+                generateLogMsg($e)
+            );
+            return redirect('/admin/claim/'.$claim_id)->withInput();
+        }
+
+        
+        HBS_CL_CLAIM::where('CLAM_OID',$claim->code_claim)->update(['IS_FREEZED'=>1]);
+        $claim->log_unfreezed()->create([
+            'cl_no' => $claim->code_claim_show,
+            'reason' => 'Close',
+            'desc' => $request->desc,
+            'created_user' => $user->id,
+            'updated_user' => $user->id,
+        ]);
+        return redirect('/admin/claim/'.$id)->with('status', 'Đã Close Claim thành công');
+    }
 }
