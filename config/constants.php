@@ -211,6 +211,7 @@ return[
         'accepted' => 11,
         'partiallyaccepted' =>12,
         'declined' => 13,
+        'closed' => 90,
     ],
     'payment_method' =>[
         'TT' => 'Chuyển khoản qua ngân hàng',
