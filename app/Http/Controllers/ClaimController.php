@@ -983,7 +983,7 @@ class ClaimController extends Controller
             
             $diff = $HBS_CL_CLAIM->SumPresAmt - $HBS_CL_CLAIM->SumAppAmt ;
             
-            if($HBS_CL_CLAIM->SumPresAmt == 0 ){
+            if($HBS_CL_CLAIM->SumAppAmt == 0 ){
                 $body['status_id'] = config('constants.status_mantic_value.declined');
             }elseif($diff == 0){
                 $body['status_id'] = config('constants.status_mantic_value.accepted');
@@ -1043,7 +1043,7 @@ class ClaimController extends Controller
 
         ];
         $diff = $HBS_CL_CLAIM->SumPresAmt - $HBS_CL_CLAIM->SumAppAmt ;
-        if($HBS_CL_CLAIM->SumPresAmt == 0 ){
+        if($HBS_CL_CLAIM->SumAppAmt == 0 ){
                 $body['status_id'] = config('constants.status_mantic_value.declined');
         }elseif($diff == 0){
                 $body['status_id'] = config('constants.status_mantic_value.accepted');
@@ -2238,7 +2238,7 @@ class ClaimController extends Controller
                     ];
             $diff = $HBS_CL_CLAIM->SumPresAmt - $HBS_CL_CLAIM->SumAppAmt ;
             
-            if($HBS_CL_CLAIM->SumPresAmt == 0 ){
+            if($HBS_CL_CLAIM->SumAppAmt == 0 ){
                 $body['status_id'] = config('constants.status_mantic_value.declined');
             }elseif($diff == 0){
                 $body['status_id'] = config('constants.status_mantic_value.accepted');
