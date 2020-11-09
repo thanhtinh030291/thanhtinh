@@ -1035,7 +1035,7 @@ class ClaimController extends Controller
         $user = Auth::User();
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $barcode = $claim->barcode;
-        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($barcode);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $body = [
             'user_email' => $user->email,
             'issue_id' => $barcode,
