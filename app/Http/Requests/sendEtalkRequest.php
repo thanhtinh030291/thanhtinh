@@ -27,7 +27,7 @@ class sendEtalkRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'barcode'      => 'required',
+            
         ];
         return $rules;
     }
