@@ -892,7 +892,7 @@ class ClaimController extends Controller
         return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
     }
     // send Etalk 
-    public function sendEtalk(sendEtalkRequest $request){
+    public function sendEtalk(Request $request){
         $claim_id = $request->claim_id;
         $barcode = $request->barcode;
         $id = $request->id;
@@ -1032,34 +1032,23 @@ class ClaimController extends Controller
      // change Etalk 
     public function changeStatusEtalk(sendEtalkRequest $request){
         $claim_id = $request->claim_id;
-        $barcode = $request->barcode;
-        $id = $request->id;
-        $export_letter = ExportLetter::findOrFail($id);
         $user = Auth::User();
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
-        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        $namefile = Str::slug("{$export_letter->letter_template->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
+        $barcode = $claim->barcode;
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($barcode);
         $body = [
             'user_email' => $user->email,
             'issue_id' => $barcode,
-            'text_note' => $request->message,
+            'text_note' => 'Cập nhật lại status',
 
         ];
-        if($export_letter->letter_template->status_mantis != NULL ){
-            $body['status_id'] = $export_letter->letter_template->status_mantis;
-        }
-        
-        if($export_letter->letter_template->name == 'Thanh Toán Bổ Sung'){
-            
-            $diff = $HBS_CL_CLAIM->SumPresAmt - $HBS_CL_CLAIM->SumAppAmt ;
-            
-            if($HBS_CL_CLAIM->SumPresAmt == 0 ){
+        $diff = $HBS_CL_CLAIM->SumPresAmt - $HBS_CL_CLAIM->SumAppAmt ;
+        if($HBS_CL_CLAIM->SumPresAmt == 0 ){
                 $body['status_id'] = config('constants.status_mantic_value.declined');
-            }elseif($diff == 0){
+        }elseif($diff == 0){
                 $body['status_id'] = config('constants.status_mantic_value.accepted');
-            }else {
+        }else {
                 $body['status_id'] = config('constants.status_mantic_value.partiallyaccepted');
-            }
         }
         
         try {
@@ -2221,6 +2210,55 @@ class ClaimController extends Controller
             $approve_user_sign = $user->name;
             $per_approve_sign_replace = $claim_type == "P" ? getUserSignThumb() : getUserSign();
             $data_htm = $this->letter($letter_template_id ,  $claim->id ,$export_letter->id)['content'];
+            $user_create = User::findOrFail($claim->created_user);
+            $data_htm_apv = str_replace(['[[$per_approve_sign]]','[[$per_approve_sign_replace]]','[[$per_creater_sign]]'], [$approve_user_sign,$per_approve_sign_replace,$user_create->name], $data_htm);
+            
+            //sent Etalk 
+            $body = [
+                'user_email' => $user->email,
+                'issue_id' => $claim->barcode,
+                'text_note' => " Dear DLVN, \n PCV gửi là thông tin thanh toán và chi tiết theo như file đính kèm. \n Thanks,",
+    
+            ];
+            $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
+                $mpdf->WriteHTML('
+                <div style="position: absolute; right: 5px; top: 0px;font-weight: bold; ">
+                    <img src="'.asset("images/header.jpg").'" alt="head">
+                </div>');
+                $mpdf->SetHTMLFooter('
+                <div style="text-align: right; font-weight: bold;">
+                    <img src="'.asset("images/footer.png").'" alt="foot">
+                </div>');
+                $mpdf->WriteHTML($data_htm_apv);
+            $body['files'] = [
+                        [
+                            'name' => "letter_payment.pdf",
+                            "content" => base64_encode($mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN))
+                        ]
+                    ];
+            $diff = $HBS_CL_CLAIM->SumPresAmt - $HBS_CL_CLAIM->SumAppAmt ;
+            
+            if($HBS_CL_CLAIM->SumPresAmt == 0 ){
+                $body['status_id'] = config('constants.status_mantic_value.declined');
+            }elseif($diff == 0){
+                $body['status_id'] = config('constants.status_mantic_value.accepted');
+            }else {
+                $body['status_id'] = config('constants.status_mantic_value.partiallyaccepted');
+            }
+
+            try {
+                $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
+                $res = json_decode($res->getBody(),true);
+            } catch (Exception $e) {
+    
+                $request->session()->flash(
+                    'errorStatus', 
+                    generateLogMsg($e)
+                );
+                return redirect('/admin/claim/'.$id)->withInput();
+            }
+
+            //updata db
             $export_letter->update(['wait' => [
                 'user' => $claim->created_user,
                 'created_at' =>  Carbon::now()->toDateTimeString(),
@@ -2230,9 +2268,10 @@ class ClaimController extends Controller
                 'approve' =>[
                     'user' => $user->id,
                     'created_at' => Carbon::now()->toDateTimeString(),
-                    'data' => str_replace(['[[$per_approve_sign]]','[[$per_approve_sign_replace]]'], [$approve_user_sign,$per_approve_sign_replace], $data_htm),
+                    'data' => $data_htm_apv,
                 ]
             ]);
+
             // notifi admin claim
             $claim->report_admin()->updateOrCreate(['claim_id' => $claim->id]
                 ,['REQUEST_SEND' => 1]);
