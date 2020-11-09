@@ -2460,7 +2460,7 @@ class ClaimController extends Controller
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $count_orther_close = $HBS_CL_CLAIM->HBS_CL_LINE->where('scma_oid_cl_line_status',"!=",'CL_LINE_STATUS_CL')->count();
         if($count_orther_close > 0){
-            return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Vui lòng kiểm tra HBS tất cả claim line phải chuyển sang trang thái Close ');
+            return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng kiểm tra HBS tất cả claim line phải chuyển sang trang thái Close ');
         }
 
         $body = [
@@ -2479,7 +2479,7 @@ class ClaimController extends Controller
                 'errorStatus', 
                 generateLogMsg($e)
             );
-            return redirect('/admin/claim/'.$claim_id)->withInput();
+            return redirect('/admin/claim/'.$id)->withInput();
         }
 
         
