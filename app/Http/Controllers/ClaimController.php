@@ -2350,8 +2350,7 @@ class ClaimController extends Controller
             'diag_code' => $diag_code,
             'id_claim' => $claim->code_claim
         ]);
-        $AjaxValidClaim = new AjaxCommonController();
-        $benefit = $AjaxValidClaim->AjaxValidClaim($request2);
+
         
         if($match_form_gop){
             $template = 'templateEmail.sendProviderTemplate_input';
@@ -2418,7 +2417,6 @@ class ClaimController extends Controller
         $data['incurDateTo'] = $incurDateTo->format('d-m-Y');
         $data['incurDateFrom'] = $incurDateFrom->format('d-m-Y');
         $data['diffIncur'] = $diffIncur;
-        $data['benefit'] = $benefit;
         $data['old_msg'] = $old_msg;
         $data['HBS_CL_CLAIM'] = $HBS_CL_CLAIM;
         $data['Diagnosis'] = data_get($claim->hospital_request,'diagnosis',null) ?  data_get($claim->hospital_request,'diagnosis') : $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn;
@@ -2469,7 +2467,6 @@ class ClaimController extends Controller
             'text_note' => $request->desc,
             'status_id' =>  config('constants.status_mantic_value.closed'),
         ];
-
         try {
             $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
             $res = json_decode($res->getBody(),true);
