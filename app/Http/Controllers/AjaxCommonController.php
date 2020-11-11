@@ -1045,10 +1045,6 @@ class AjaxCommonController extends Controller
             'diag_code' => $diag_code,
             'id_claim' => $claim->code_claim
         ]);
-        $AjaxValidClaim = new AjaxCommonController();
-        $benefit = $AjaxValidClaim->AjaxValidClaim($request2);
-        
-        $data['benefit'] = $benefit;
 
         $data['HBS_CL_CLAIM'] = $HBS_CL_CLAIM;
         $data['Diagnosis'] = data_get($claim->hospital_request,'diagnosis',null) ?  data_get($claim->hospital_request,'diagnosis') : $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn;
