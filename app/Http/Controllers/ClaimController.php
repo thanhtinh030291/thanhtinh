@@ -1859,6 +1859,17 @@ class ClaimController extends Controller
         $file_name_letter =  md5(Str::random(11).time());
         $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
         $mpdf->WriteHTML( $data['content_letter']);
+        if($export_letter->letter_template->name == 'Letter Payment (GOP)'){
+            $mpdf->WriteHTML('
+                <div style="position: absolute; right: 5px; top: 0px;font-weight: bold; ">
+                    <img src="'.asset("images/header.jpg").'" alt="head">
+                </div>');
+            $mpdf->SetHTMLFooter('
+                    <div style="text-align: right; font-weight: bold;">
+                        <img src="'.asset("images/footer.png").'" alt="foot">
+                    </div>');
+        }
+        
         $pdf = $mpdf->Output('filename.pdf',\Mpdf\Output\Destination::STRING_RETURN);
         Storage::put('public/cache/' . $file_name_letter, $pdf);
         $path_file[] = storage_path("app/public/cache/$file_name_letter") ;
