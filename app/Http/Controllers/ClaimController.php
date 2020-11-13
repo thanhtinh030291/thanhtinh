@@ -2464,7 +2464,7 @@ class ClaimController extends Controller
         $body = [
             'user_email' => $user->email,
             'issue_id' => $claim->barcode,
-            'text_note' => $request->desc,
+            'text_note' => '.',
             'status_id' =>  config('constants.status_mantic_value.closed'),
         ];
         try {
