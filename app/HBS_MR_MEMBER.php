@@ -123,74 +123,73 @@ class HBS_MR_MEMBER extends  BaseModelDB2
             'headers' => $headers
         ]);
         
-        // try {
-        //     $request = $client->get(config('constants.url_query_online').$this->memb_ref_no);
-        //     $response = $request->getBody()->getContents();
-        //     $response = json_decode($response,true);
+        try {
+            $request = $client->get(config('constants.url_query_online').$this->memb_ref_no);
+            $response = $request->getBody()->getContents();
+            $response = json_decode($response,true);
 
-        //     if(data_get($response, 'response_msg.msg_code') == "DLVN0"){
-        //         $client_info = collect($response['client_info'])->whereNotIn('sStatus', ['Not-Taken']);
-        //         $all_lapse_process_date = collect($response['all_lapse_process_date']);
-        //         $all_lapse_effective_date = collect($response['all_lapse_effective_date']);
-        //         $all_reinstate_date = collect($response['all_reinstate_date']);
-        //         //dd($client_info);
-        //         $map_ql = $client_info->map(function ($item, $key) {
-        //             $t = "";
-        //             switch (substr(trim(data_get($item,'sPlanID')), 3,1)) {
-        //                 case 'O':
-        //                     $t = "OP";
-        //                     break;
-        //                 case 'I':
-        //                     $t = "IP";   
-        //                     break;
-        //                 default:
-        //                     $t = "DT";
-        //                     break;
-        //             }
-        //             return  $t ."-" .substr(trim(data_get($item,'dFaceAmount')),0,3);
-        //         });
+            if(data_get($response, 'response_msg.msg_code') == "DLVN0"){
+                $client_info = collect($response['client_info'])->whereNotIn('sStatus', ['Not-Taken']);
+                $all_lapse_process_date = collect($response['all_lapse_process_date']);
+                $all_lapse_effective_date = collect($response['all_lapse_effective_date']);
+                $all_reinstate_date = collect($response['all_reinstate_date']);
+                $map_ql = $client_info->map(function ($item, $key) {
+                    $t = "";
+                    switch (substr(trim(data_get($item,'sPlanID')), 3,1)) {
+                        case 'O':
+                            $t = "OP";
+                            break;
+                        case 'I':
+                            $t = "IP";   
+                            break;
+                        default:
+                            $t = "DT";
+                            break;
+                    }
+                    return  $t ."-" .substr(trim(data_get($item,'dFaceAmount')),0,3);
+                });
                 
-        //         $html = 'Dear DLVN ' . "\n". "\n";
-        //         $html .= 'Vui lòng xác nhận tình trạng hợp đồng.' . "\n";
-        //         $html .= "Quyền lợi: " .implode(", ",$map_ql->toArray()) . "\n";
-        //         $html .= "Hiệu lực: " . Carbon::parse($client_info->first()['sCoverageIssueDate'])->format('d/m/Y') . "\n";
-        //         $html .= "Tình trạng: ". $client_info->first()['sStatus'] . "\n". "\n";
-        //         if($all_lapse_effective_date->count() > 0 ){
-        //             $html .=  "Lapse effective: ".Carbon::parse($all_lapse_effective_date->first()['sDate'])->format('d/m/Y') . "\n";
-        //         }
-        //         if($all_lapse_process_date->count() > 0 ){
-        //             $html .=  "Lapse process: ".Carbon::parse($all_lapse_process_date->first()['sDate'])->format('d/m/Y') . "\n";
-        //         }
-        //         if($all_reinstate_date->count() > 0 ){
-        //             $html .=  "Reinstate: ".Carbon::parse($all_reinstate_date->first()['sDate'])->format('d/m/Y') . "\n";
-        //         }
-        //         $html .=  "\n"."Thanks." . "\n";
-        //         return $html;
-        //     }else{
-        //         return "";
-        //     }
-        // } catch ( Exception $e) {
-        //     return "";
-        // }
-        return "";
+                $html = 'Dear DLVN ' . "\n". "\n";
+                $html .= 'Vui lòng xác nhận tình trạng hợp đồng.' . "\n";
+                $html .= "Quyền lợi: " .implode(", ",$map_ql->toArray()) . "\n";
+                $html .= "Hiệu lực: " . Carbon::parse($client_info->first()['sCoverageIssueDate'])->format('d/m/Y') . "\n";
+                $html .= "Tình trạng: ". $client_info->first()['sStatus'] . "\n". "\n";
+                if($all_lapse_effective_date->count() > 0 ){
+                    $html .=  "Lapse effective: ".Carbon::parse($all_lapse_effective_date->first()['sDate'])->format('d/m/Y') . "\n";
+                }
+                if($all_lapse_process_date->count() > 0 ){
+                    $html .=  "Lapse process: ".Carbon::parse($all_lapse_process_date->first()['sDate'])->format('d/m/Y') . "\n";
+                }
+                if($all_reinstate_date->count() > 0 ){
+                    $html .=  "Reinstate: ".Carbon::parse($all_reinstate_date->first()['sDate'])->format('d/m/Y') . "\n";
+                }
+                $html .=  "\n"."Thanks." . "\n";
+                return $html;
+            }else{
+                return "";
+            }
+        } catch ( Exception $e) {
+            return "";
+        }
+        
     }
 
     public function getQueryOnlineAttribute(){
-        //return " ";
-        // $headers = [
-        //     'Content-Type' => 'application/json',
-        // ];
-        // $client = new \GuzzleHttp\Client([
-        //     'headers' => $headers
-        // ]);
-        // try {
-        //     $request = $client->get(config('constants.url_query_online').$this->memb_ref_no);
-        //     $response = $request->getBody()->getContents();
-        //     return $response;
+        
+        $headers = [
+            'Content-Type' => 'application/json',
+        ];
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        try {
+            $request = $client->get(config('constants.url_query_online').$this->memb_ref_no);
+            $response = $request->getBody()->getContents();
+            return $response;
 
-        // } catch (Exception $e) {
+        } catch (Exception $e) {
             return "";
-        // }
+        }
     }
 
     public function getBankNameChangeAttribute()
