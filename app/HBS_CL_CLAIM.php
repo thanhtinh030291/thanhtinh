@@ -12,7 +12,9 @@ class HBS_CL_CLAIM extends  BaseModelDB2
 
     public function HBS_CL_LINE()
     {
-        return $this->hasMany('App\HBS_CL_LINE', 'clam_oid', 'clam_oid')->whereNull('rev_date');
+        return $this->hasMany('App\HBS_CL_LINE', 'clam_oid', 'clam_oid')->whereNull('rev_date')->where(function ($query) {
+            $query->whereNull('STAGE_IDX')->orWhere('STAGE_IDX', '!=', 'PV');
+        });
     }
 
     public function getMemberAttribute()
