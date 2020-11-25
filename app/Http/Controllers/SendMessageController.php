@@ -30,10 +30,10 @@ class SendMessageController extends Controller
         $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
         $user = Auth::user();
         $data = Message::findByParams($search_params)->where('user_to', $user->id);
-        if($request->get('is_read') == 0){
-            $data = $data->orderBy('id', 'ASC');
-        }else{
+        if($request->get('is_read') == 1 ||  $request->get('is_read') == null){
             $data = $data->orderBy('id', 'DESC');
+        }else{
+            $data = $data->orderBy('id', 'ASC');
         }
         $admin_list = User::getListIncharge();
         $data  = $data->paginate($per_page);
