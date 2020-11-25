@@ -29,7 +29,12 @@ class SendMessageController extends Controller
         $limit = $request->get('limit');
         $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
         $user = Auth::user();
-        $data = Message::findByParams($search_params)->where('user_to', $user->id)->latest();
+        $data = Message::findByParams($search_params)->where('user_to', $user->id);
+        if($request->get('is_read') == 0){
+            $data = $data->orderBy('id', 'ASC');
+        }else{
+            $data = $data->orderBy('id', 'DESC');
+        }
         $admin_list = User::getListIncharge();
         $data  = $data->paginate($per_page);
         return view('messageManagement/index',compact('search_params', 'admin_list', 'limit', 'limit_list','data','admin_list'));
