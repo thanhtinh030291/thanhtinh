@@ -101,7 +101,7 @@ class SettingController extends Controller
 
     
     public function updateFreezed(Request $request){
-        $HBS_CL_CLAIM = HBS_CL_CLAIM::where("CL_NO","<",2000000000)->update(['IS_FREEZED'=>1]);
+        //$HBS_CL_CLAIM = HBS_CL_CLAIM::where("CL_NO","<",2000000000)->update(['IS_FREEZED'=>1]);
         
     }
     

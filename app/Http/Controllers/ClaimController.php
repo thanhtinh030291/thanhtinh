@@ -299,8 +299,19 @@ class ClaimController extends Controller
         $export_letter = $data->export_letter;
         $user = Auth::User();
         $IS_FREEZED = 0;
+        $setting = Setting::findOrFail(1);
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         
         foreach ($export_letter as $key => $value) {
+
+            $check_claim_5m = false;
+            $apv_amt = $HBS_CL_CLAIM->sumAppAmt;
+            $all_memb_5m = $setting->memb_five_5m;
+            if(!empty($all_memb_5m)){
+                if($apv_amt <= 5000000 && in_array($value->created_user, $all_memb_5m)){
+                    $check_claim_5m = true;
+                }
+            }
             if($value->letter_template->level != 0){
                 $level = $list_level
                 ->where('id','=', $value->letter_template->level)
@@ -311,7 +322,7 @@ class ClaimController extends Controller
                 ->where('max_amount','>', removeFormatPrice(data_get($value->info, 'approve_amt') ) )
                 ->first();
             }
-            if($claim->jetcase == 1 && $user->hasRole('QC')){
+            if(($check_claim_5m || $claim->jetcase == 1) && $user->hasRole('QC')){
                 $curren_status = $value->status == 0 ? $level->begin_status : $value->status ;
                 $list_status =  $list_status_full
                                 ->whereIn('role', $role_id)
@@ -334,7 +345,7 @@ class ClaimController extends Controller
                 $export_letter[$key]['list_status'] = $list_status_ad;
             }
             $user_create = User::findOrFail($value->created_user);
-            if($claim->jetcase == 1){
+            if($check_claim_5m || $claim->jetcase == 1){
                 $export_letter[$key]['end_status'] = 10;
             }
             elseif( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000){
@@ -347,7 +358,7 @@ class ClaimController extends Controller
             }
         }
         try {
-            $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+            
             $IS_FREEZED = $HBS_CL_CLAIM->is_freezed == null ? 0 : $HBS_CL_CLAIM->is_freezed;
             $MessageComfirmConract = $HBS_CL_CLAIM->member->MessageComfirmConract;
             $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($data->code_claim_show)->getContent(),true);
@@ -621,6 +632,7 @@ class ClaimController extends Controller
         
         $claim_id = $request->claim_id;
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        $setting = Setting::findOrFail(1);
         $claim_type = $claim->claim_type;
         //validate
             $now = Carbon::now()->toDateTimeString();
@@ -710,6 +722,14 @@ class ClaimController extends Controller
             }
 
         }else{
+            $check_claim_5m = false;
+            $apv_amt = $HBS_CL_CLAIM->sumAppAmt;
+            $all_memb_5m = $setting->memb_five_5m;
+            if(!empty($all_memb_5m)){
+                if($apv_amt <= 5000000 && in_array($user_create->id, $all_memb_5m)){
+                    $check_claim_5m = true;
+                }
+            }
             $status_change = $request->status_change;
             $status_change = explode("-",$status_change);
             $to_user = [];
@@ -746,12 +766,13 @@ class ClaimController extends Controller
                 }
 
                 // Claim Independent
-                if($claim->jetcase != 1 && $user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
+                if( (!$check_claim_5m || $claim->jetcase != 1) && $user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
                     $to_user = [$user_create->supper];
                 }
                 
-                //jetcase
-                if($claim->jetcase == 1 && ($user->hasRole('Claim Independent') || $user->hasRole('Lead') || $user->hasRole('Claim') )){
+                //jetcase & 5M
+                
+                if( ( $check_claim_5m || $claim->jetcase == 1 ) && ($user->hasRole('Claim Independent') || $user->hasRole('Lead') || $user->hasRole('Claim') )){
                     $to_user = User::whereHas("roles", function($q){ $q->where("name", "QC"); })->get()->pluck('id')->toArray();
                     $to_user = [Arr::random($to_user)];
                 }
@@ -759,10 +780,10 @@ class ClaimController extends Controller
                 // Claim GOP
                 
                 if($user->hasRole('ClaimGOP') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 50000000){
-                    $to_user = Setting::findOrFail(1)->manager_gop_claim;
+                    $to_user = $setting->manager_gop_claim;
                 }
                 if( $user->hasRole('ManagerGOP') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
-                    $to_user = Setting::findOrFail(1)->header_claim;
+                    $to_user = $setting->header_claim;
                 }
 
                 if(!empty($to_user)){
@@ -782,7 +803,7 @@ class ClaimController extends Controller
             $export_letter->status = $status_change[0];
             $list_level = LevelRoleStatus::all();
             $level = $this->getLevel($export_letter, $list_level, $claim->claim_type);
-            if($claim->jetcase == 1 && $user->hasRole('QC')){
+            if(( $check_claim_5m || $claim->jetcase == 1 ) && $user->hasRole('QC')){
                 $per_approve_sign_replace = $claim_type == "P" ? getUserSignThumb() : getUserSign();
                 $approve_user_sign = $user->name;
                 if($export_letter->letter_template->letter_payment == null){

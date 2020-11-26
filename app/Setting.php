@@ -18,6 +18,7 @@ class Setting extends Model
         'manager_claim' => 'array',
         'header_claim' => 'array',
         'manager_gop_claim' => 'array',
+        'memb_five_5m' => 'array',
     ];
     protected function castAttribute($key, $value)
     {
