@@ -684,12 +684,13 @@ function getTokenCPS(){
     $now = Carbon\Carbon::now();
     $totalDuration = $startTime->diffInSeconds($now);
     if($setting->token_cps == null || $totalDuration >= 3500){
-        $client = new \GuzzleHttp\Client([
-            'headers' => $headers
-        ]);
-        $response = $client->request("POST", config('constants.api_cps').'get_token' , ['form_params'=>$body]);
-        $response =  json_decode($response->getBody()->getContents());
-        $setting->token_cps = data_get($response , 'access_token');
+        // $client = new \GuzzleHttp\Client([
+        //     'headers' => $headers
+        // ]);
+        // $response = $client->request("POST", config('constants.api_cps').'get_token' , ['form_params'=>$body]);
+        // $response =  json_decode($response->getBody()->getContents());
+        //$setting->token_cps = data_get($response , 'access_token');
+        $setting->token_cps = "47b34f9f1507e72b0711e7c7be684dcb189b0f62";
         $setting->save();
     }
     return  $setting->token_cps;
