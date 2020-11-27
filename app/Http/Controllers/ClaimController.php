@@ -766,7 +766,7 @@ class ClaimController extends Controller
                 }
 
                 // Claim Independent
-                if( (!$check_claim_5m || $claim->jetcase != 1) && $user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
+                if(  !$check_claim_5m  && $claim->jetcase != 1 && $user_create->hasRole('Claim Independent') && $user->hasRole('QC')){
                     $to_user = [$user_create->supper];
                 }
                 
