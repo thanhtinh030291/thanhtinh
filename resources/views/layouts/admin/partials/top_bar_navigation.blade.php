@@ -7,11 +7,14 @@
 
     <nav class="navbar-custom">
         <ul class="list-inline float-right mb-0">
-            <li class="list-inline-item dropdown notif">
-                <a href="#" class="border {!! count($finishAndPay) > 0 ? 'button_flight' : "" !!} text-white dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Finish but don't pay (<b>{{count($finishAndPay)}}</b>)</a>
+            <li class="list-inline-item dropdown notif dropdown-finish">
+                <a href="#" class="border {!! count($finishAndPay) > 0 ? 'button_flight' : "" !!} text-white dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Finish but don't pay 
+                    <i data-count="{{count($finishAndPay)}}" class="fa fa-bullhorn notification-icon text-warning"></i>
+                </a>
                 <ul class="dropdown-menu notify-drop">
                     <div class="dropdown-toolbar">
-                    <h3 class="dropdown-toolbar-title ">Notifications (<span class="notif-count">{{count($finishAndPay)}}</span>)</h3>
+                    <h3 class="dropdown-toolbar-title ">Notifications</h3>
                 </div>
                 <!-- end notify title -->
                 <!-- notify content -->
@@ -26,6 +29,7 @@
                             <div class="notification-meta">
                                 <small class="timestamp">{{dateConvertToString($item->updated_at)}} - claim no : {{$item->cl_no}}</small>
                                 <a href="{{route('claim.show',['claim'=>$item->claim_id])}}">Link Claim</a>
+                            <button type="button" data-id="{{$item->id}}" class="ml-5 btn btn-danger off-finish">OFF</button>
                             </div>
                             </div>
                         </div>

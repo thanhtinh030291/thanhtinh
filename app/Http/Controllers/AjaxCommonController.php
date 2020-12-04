@@ -16,6 +16,7 @@ use App\PaymentHistory;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use App\FinishAndPay;
 
 use Illuminate\Http\Request;
 
@@ -1050,5 +1051,13 @@ class AjaxCommonController extends Controller
         $data['Diagnosis'] = data_get($claim->hospital_request,'diagnosis',null) ?  data_get($claim->hospital_request,'diagnosis') : $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn;
         $html = view($template, compact('data'))->render();
         return response()->json([ 'data' => $html]);
+    }
+
+    public function offNotifyFinish(Request $request){
+        
+        $data = FinishAndPay::findOrFail($request->id);
+        $data->notify = 0;
+        $data->save();
+        return response()->json(['message' => 'success']);
     }
 }

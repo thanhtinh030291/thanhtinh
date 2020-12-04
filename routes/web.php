@@ -105,6 +105,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/dataAjaxHBSDiagnosis', 'AjaxCommonController@dataAjaxHBSDiagnosis')->name('dataAjaxHBSDiagnosis');
         Route::get('/AjaxValidClaim', 'AjaxCommonController@AjaxValidClaim')->name('AjaxValidClaim');
         Route::post('/renderEmailProv', 'AjaxCommonController@renderEmailProv')->name('renderEmailProv');
+        Route::post('/offNotifyFinish', 'AjaxCommonController@offNotifyFinish')->name('offNotifyFinish');
         
 
         Route::get('/dataAjaxHBSClaimRB', 'AjaxCommonController@dataAjaxHBSClaimRB')->name('dataAjaxHBSClaimRB');
