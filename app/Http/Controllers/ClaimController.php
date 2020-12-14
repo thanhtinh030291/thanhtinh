@@ -357,6 +357,7 @@ class ClaimController extends Controller
                 $export_letter[$key]['list_status'] = collect([]);
             }
         }
+
         try {
             
             $IS_FREEZED = $HBS_CL_CLAIM->is_freezed == null ? 0 : $HBS_CL_CLAIM->is_freezed;
@@ -386,6 +387,7 @@ class ClaimController extends Controller
             $payment_method = "";
             $balance_cps = collect([]);
         }
+        
         $can_pay_rq = json_decode(json_encode(GetApiMantic('api/rest/plugins/apimanagement/issues/finish/'.$data->barcode)),true);
         $can_pay_rq = data_get($can_pay_rq,'status') == 'success' ? 'success' : 'error';
         $manager_gop_accept_pay = 'error';
@@ -640,6 +642,11 @@ class ClaimController extends Controller
             $count_provider_not = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('prov_oid',config('constants.not_provider'))->count();
             if($count_provider_not > 0){
                 return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại provider: "BUMRUNGRAD INTERNATIONAL HOSPITAL" vui lòng cập nhật lại HBS ');
+            }
+            $count_policy =  $HBS_CL_CLAIM->HBS_CL_LINE->pluck("MR_POLICY_PLAN.MR_POLICY.pocy_ref_no")->unique()->count();
+            if($count_policy != 1){
+                $request->session()->flash('errorStatus', 'Claim chỉ được phép tồn tại 1 policy plan ');
+                return redirect('/admin/claim/'.$claim_id)->withInput();
             }
             $memb_ref_no = $HBS_CL_CLAIM->member->memb_ref_no;
             $all_memb_oid = HBS_MR_MEMBER::where('memb_ref_no', $memb_ref_no)->pluck('memb_oid')->toArray();
