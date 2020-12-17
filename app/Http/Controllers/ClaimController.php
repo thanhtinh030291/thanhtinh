@@ -357,7 +357,7 @@ class ClaimController extends Controller
                 $export_letter[$key]['list_status'] = collect([]);
             }
         }
-
+        
         try {
             
             $IS_FREEZED = $HBS_CL_CLAIM->is_freezed == null ? 0 : $HBS_CL_CLAIM->is_freezed;
@@ -402,6 +402,7 @@ class ClaimController extends Controller
         'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq',
         'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail','reject_code',
         'MessageComfirmConract','IS_FREEZED']);
+        
         if ($claim_type == 'P'){
             return view('claimGOPManagement.show', $compact);
         }else{
@@ -1545,6 +1546,7 @@ class ClaimController extends Controller
                     break;
             }
         }
+        
         $html .= '<tbody>';
             // nội trú
         foreach ($IP as $keyIP => $valueIP) {
@@ -1717,7 +1719,7 @@ class ClaimController extends Controller
                     $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_DT');
                     if ($array->count() > 0) {
                         $data['amt_yr'] = $valuet->amt_yr == null ? 0 : $valuet->amt_yr;
-                        $data['amt'] = $valuet->amt_vis == null ? 0 : $valuet->amt_vis;
+                        $data['amt'] = $valuet->deduct_amt_vis == null ? 0 : $valuet->deduct_amt_vis;
                     }
                 }
             }
