@@ -82,7 +82,7 @@
                             <tr>
                                 <!-- ticket info -->
                                 <td>{{ $value->name }}</td>
-                                <td>{{ $value->description }}</td>
+                                <td>{{ truncate(html_entity_decode(strip_tags($value->description))) }}</td>
                                 <td>{{ $value->created_at }}</td>
                                 <td>{{ $value->updated_at }}</td>
                                 <td class='text-center'>
