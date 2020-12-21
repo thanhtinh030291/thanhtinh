@@ -30,19 +30,19 @@
                             href="{{ url('admin/reportAdmins') }}"><span> Report for Admin Claim</span></a>
                         </li>
                         @endhasanyrole
-                        @hasanyrole('Header|ManagerGOP|Admin|ClaimGOP')
+                        @hasanyrole('Header|ManagerGOP|Admin|ClaimGOP|QC')
                         <li class="{{ setActive('admin/reportGop') }}"> 
                             <a class="{{ setActive('admin/reportGop') }}"
                             href="{{ url('admin/reportGop') }}"><span> Report for GOP Claim</span></a>
                         </li>
                         @endhasanyrole
-                        @hasanyrole('Header|ManagerGOP|Admin|Lead|Manager')
+                        @hasanyrole('Header|ManagerGOP|Admin|Lead|Manager|QC')
                         <li class="{{ setActive('admin/reason_reject') }}"> 
                             <a class="{{ setActive('admin/reason_reject') }}"
                             href="{{ url('admin/reason_reject') }}"><span> {{ __('message.reason_reject')}}</span></a>
                         </li>
                         @endhasanyrole
-                        @hasanyrole('Header|Manager|Admin|ManagerGOP')
+                        @hasanyrole('Header|Manager|Admin|ManagerGOP|QC')
                         <li class="{{ setActive('admin/product') }}"> 
                             <a class="{{ setActive('admin/product') }}"
                             href="{{ url('admin/product') }}"><span> {{ __('message.product')}}</span></a>
