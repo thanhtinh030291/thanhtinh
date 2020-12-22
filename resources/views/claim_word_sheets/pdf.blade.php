@@ -140,7 +140,11 @@
 
     <tr>
         <td>
-            <p class="font-weight-bold">Plan: </p>
+            <p class="font-weight-bold">Plan: 
+                @if ($copay)
+                Đồng thanh toán 20%
+                @endif
+            </p>
             <div style="margin-left: 25px;">
                 @foreach ($member->plan as $item)
                     <p>{{$item}}</p>

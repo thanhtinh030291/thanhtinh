@@ -31,7 +31,9 @@
 
 <div class="row">
     <div class="col-md-4">
-    <p class="font-weight-bold">Policy No: {{$HBS_CL_CLAIM->Police->pocy_ref_no}}</p>
+    <p class="font-weight-bold">
+        Policy No: {{$HBS_CL_CLAIM->Police->pocy_ref_no}}
+    </p>
     </div>
     <div class="col-md-4">
     <p class="font-weight-bold">Member No: {{ $member->memb_ref_no}}</p>
@@ -56,7 +58,11 @@
 </div>
 <div class="row">
     <div class="col-md-6">
-        <p class="font-weight-bold">Plan: </p>
+        <p class="font-weight-bold">Plan: 
+            @if ($copay)
+            Đồng thanh toán 20%
+            @endif
+        </p>
         <div class="ml-5">
             @foreach ($member->plan as $item)
                 <p>{{$item}}</p>

@@ -99,6 +99,7 @@ class ClaimWordSheetController extends Controller
         
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $copay = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotNull('copay_amt')->count();
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $condition_field = function($q) use ($claimWordSheet){
             $q->where('field_id', '4');
@@ -125,13 +126,14 @@ class ClaimWordSheetController extends Controller
         });
         $count_bnf = $bnf->max() == null ? 0 : $bnf->max();
         //dd($member->MR_MEMBER_EVENT->where('scma_oid_event_code', 'EVENT_CODE_EXPL')->first());
-        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history', 'listReasonReject','count_bnf', 'MANTIS_BUG'));
+        return view('claim_word_sheets.show', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history', 'listReasonReject','count_bnf', 'MANTIS_BUG', 'copay'));
     }
 
     public function pdf(ClaimWordSheet $claimWordSheet){
 
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $copay = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotNull('copay_amt')->count();
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $claim_line = $member->ClaimLine;
         //rmove claim line curent
@@ -140,7 +142,7 @@ class ClaimWordSheetController extends Controller
 
         $log_history = $claimWordSheet->log;
         $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
-        $mpdf->WriteHTML(view('claim_word_sheets.pdf', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history'))->render());
+        $mpdf->WriteHTML(view('claim_word_sheets.pdf', compact('copay','claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line', 'log_history'))->render());
         $mpdf->SetHTMLFooter('
         <div style="text-align: right; font-weight: bold;">
             <img src="'.asset("images/footer.png").'" alt="foot">
@@ -243,6 +245,7 @@ class ClaimWordSheetController extends Controller
         $path_file = [] ;
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $copay = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotNull('copay_amt')->count();
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $claim_line = $member->ClaimLine;
         //rmove claim line curent
@@ -250,7 +253,7 @@ class ClaimWordSheetController extends Controller
         $claim_line = $claim_line->whereNotIn('clli_oid',$arr_clli_oid);
         
         $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/')]);
-        $mpdf->WriteHTML(view('claim_word_sheets.pdf', compact('claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line'))->render());
+        $mpdf->WriteHTML(view('claim_word_sheets.pdf', compact('copay','claimWordSheet', 'claim', 'HBS_CL_CLAIM', 'member','claim_line'))->render());
         $mpdf->SetHTMLFooter('
         <div style="text-align: right; font-weight: bold;">
             <img src="'.asset("images/footer.png").'" alt="foot">
