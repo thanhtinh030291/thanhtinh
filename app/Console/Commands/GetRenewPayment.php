@@ -8,6 +8,7 @@ use App\PaymentHistory;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class GetRenewPayment extends Command
 {
@@ -42,6 +43,8 @@ class GetRenewPayment extends Command
      */
     public function handle()
     {
+        dump("JoBName :  GetHBS");
+        dump("start : " . Carbon::now());
         $token = getTokenCPS();
         $headers = [
             'Content-Type' => 'application/json',
@@ -101,6 +104,7 @@ class GetRenewPayment extends Command
                 }
             }
         }
+        dump("End : " . Carbon::now());
         $this->info('Cron Get RewewPayment Run successfully!');
         
     }

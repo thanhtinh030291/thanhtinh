@@ -7,7 +7,7 @@ use App\PaymentHistory;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
-
+use Carbon\Carbon;
 class GetCPS extends Command
 {
     /**
@@ -41,6 +41,8 @@ class GetCPS extends Command
      */
     public function handle()
     {
+        dump("JoBName : GetCPS");
+        dump("start : " . Carbon::now());
         $token = getTokenCPS();
         $paym_ids = PaymentHistory::whereNotIn('TF_STATUS',[200,205,210,215,220,10])->pluck('PAYM_ID');
         $headers = [
@@ -100,6 +102,8 @@ class GetCPS extends Command
                 }
             }
         }
+        dump("End : " . Carbon::now());
         $this->info('Cron GetCPS Run successfully!');
+        
     }
 }

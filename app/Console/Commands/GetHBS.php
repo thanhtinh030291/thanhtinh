@@ -9,6 +9,7 @@ use App\HBS_CL_CLAIM;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class GetHBS extends Command
 {
@@ -43,6 +44,8 @@ class GetHBS extends Command
      */
     public function handle()
     {
+        dump("JoBName :  GetHBS");
+        dump("start : " . Carbon::now());
         $payments = PaymentHistory::where('update_hbs',0)->get();
         foreach ($payments as $key => $value) {
             $HBS_CL_CLAIM = HBS_CL_CLAIM::HBSData()->where('CL_NO',$value->CL_NO)->first();
@@ -50,6 +53,7 @@ class GetHBS extends Command
             $payments[$key]->HBS = json_encode($HBS_CL_CLAIM->toArray(),true);
             $payments[$key]->save();
         }
+        dump("End : " . Carbon::now());
         $this->info('Cron GetHBS Run successfully!');
     }
 }

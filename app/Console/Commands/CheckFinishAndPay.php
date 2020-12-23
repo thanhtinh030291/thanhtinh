@@ -44,6 +44,8 @@ class CheckFinishAndPay extends Command
      */
     public function handle()
     {
+        dump("JoBName : CheckFinishAndPay");
+        dump("start : " . Carbon::now());
         $dt = Carbon::now();
         $dt_check  = $dt->subDays(10)->format('Y-m-d h:i:s');
         $FinishAndPay = FinishAndPay::join('claim','claim.id','=','claim_id')->where('claim_type',"M")->where('notify',1)->where('finished', 0)->pluck('mantis_id')->toArray();
@@ -67,6 +69,6 @@ class CheckFinishAndPay extends Command
         $history = PaymentHistory::whereIn('CL_NO', $non_pay)->pluck('CL_NO')->toArray();
 
         FinishAndPay::whereIn('cl_no', $history)->update(['payed' => 1]);
-
+        dump("End : " . Carbon::now());
     }
 }
