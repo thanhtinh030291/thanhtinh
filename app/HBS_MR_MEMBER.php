@@ -146,7 +146,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
                             $t = "DT";
                             break;
                     }
-                    return  $t ."-" .substr(trim(data_get($item,'dFaceAmount')),0,3);
+                    return  $t ."-" . (int)trim(data_get($item,'dFaceAmount')) / 1000000;
                 });
                 
                 $html = 'Dear DLVN ' . "\n". "\n";
