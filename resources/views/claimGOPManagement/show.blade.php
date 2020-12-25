@@ -236,7 +236,10 @@ $totalAmount = 0;
                     <button type="button" data-toggle="modal" data-target="#unfreezedModal"  class="btn btn-danger btn-circle btn-lg"><i style="font-size: 24px" class="fa fa-lock text-warning font-weight-bolder" aria-hidden="true"></i></button>
                     @endif
                     <button type="button" data-toggle="modal" data-target="#closeClaimModal"  class="btn btn-danger btn-circle btn-lg"><i style="font-size: 24px" class="fa fa-window-close-o text-warning font-weight-bolder" aria-hidden="true"></i>Close Claim</button>
-                    <button type="button" data-toggle="modal" data-target="#updateStatusEtalkModal"  class="btn btn-info btn-circle btn-lg"><i style="font-size: 24px" class="fa fa-stack-overflow font-weight-bolder" aria-hidden="true"></i>Update Status Etalk</button>
+                    {{-- <button type="button" data-toggle="modal" data-target="#updateStatusEtalkModal"  class="btn btn-info btn-circle btn-lg"><i style="font-size: 24px" class="fa fa-stack-overflow font-weight-bolder" aria-hidden="true"></i>Update Status Etalk</button> --}}
+                    @if($is_declined)
+                    <button type="button" data-toggle="modal" data-target="#declinedClaimModal"  class="btn btn-warning btn-circle btn-lg"><i style="font-size: 24px" class="fa fa-stack-overflow font-weight-bolder" aria-hidden="true"></i>Declined Claim</button>
+                    @endif
                 </div>
                 <!-- End file image -->
             </div>
@@ -532,6 +535,9 @@ $totalAmount = 0;
 
 {{-- updateStatusEtalkModal --}}
 @include('claimManagement.updateStatusEtalkModal')
+
+{{-- declinedClaimModal --}}
+@include('claimManagement.declinedClaimModal')
 
 @endsection
 

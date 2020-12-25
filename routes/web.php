@@ -69,6 +69,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/attachEmail/{id}',  'ClaimController@attachEmail')->name('attachEmail');
         Route::post('/unfreezed/{id}',  'ClaimController@unfreezed')->name('unfreezed');
         Route::post('/closeClaim/{id}',  'ClaimController@closeClaim')->name('closeClaim');
+        Route::post('/changeStatusEtalk','ClaimController@changeStatusEtalk')->name('changeStatusEtalk');
         
         
         Route::post('/addNote','ClaimController@addNote')->name('addNote');

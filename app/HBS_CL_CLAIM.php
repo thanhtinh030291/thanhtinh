@@ -174,4 +174,12 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         };
         return $query->with(['HBS_CL_LINE' => $condition]);
     }
+
+    public function getIsDeclinedAttribute()
+    {
+        if($this->scma_oid_cl_status = 'CL_STATUS_FC' && $this->SumAppAmt == 0){
+            return true;
+        }
+        return false;
+    }
 }

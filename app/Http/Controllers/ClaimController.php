@@ -299,6 +299,7 @@ class ClaimController extends Controller
         $export_letter = $data->export_letter;
         $user = Auth::User();
         $IS_FREEZED = 0;
+        $is_declined = 0;
         $setting = Setting::findOrFail(1);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         
@@ -361,6 +362,7 @@ class ClaimController extends Controller
         try {
             
             $IS_FREEZED = $HBS_CL_CLAIM->is_freezed == null ? 0 : $HBS_CL_CLAIM->is_freezed;
+            $is_declined = $HBS_CL_CLAIM->isDeclined;
             $MessageComfirmConract = $HBS_CL_CLAIM->member->MessageComfirmConract;
             $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($data->code_claim_show)->getContent(),true);
             $payment_history = data_get($payment_history_cps,'data_full',[]);
@@ -401,7 +403,7 @@ class ClaimController extends Controller
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
         'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq',
         'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail','reject_code',
-        'MessageComfirmConract','IS_FREEZED']);
+        'MessageComfirmConract','IS_FREEZED','is_declined']);
         
         if ($claim_type == 'P'){
             return view('claimGOPManagement.show', $compact);
@@ -640,6 +642,7 @@ class ClaimController extends Controller
         //validate
             $now = Carbon::now()->toDateTimeString();
             $HBS_CL_CLAIM = HBS_CL_CLAIM::findOrFail($claim->code_claim);
+            
             $count_provider_not = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('prov_oid',config('constants.not_provider'))->count();
             if($count_provider_not > 0){
                 return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại provider: "BUMRUNGRAD INTERNATIONAL HOSPITAL" vui lòng cập nhật lại HBS ');
@@ -679,6 +682,16 @@ class ClaimController extends Controller
                 if( count($all_pl) != count(array_unique($all_pl))){
                     return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại đồng thời Plan trùng nhau Vui lòng báo NB Terminate ');
                 }
+            }
+
+            $mantis_policy = MANTIS_CUSTOM_FIELD_STRING::where('bug_id',(int)$HBS_CL_CLAIM->barcode)->where('field_id',1)->first();
+            $pocy_ref_no = (int)HBS_CL_CLAIM::findOrFail((int)$request->code_claim)->Police->pocy_ref_no;
+            if($mantis_policy){
+                if($pocy_ref_no != (int)$mantis_policy->value){
+                    return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Policy No trên HBS và Mantis chưa đồng nhất');
+                }
+            }else{
+                return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Vui Lòng cập nhật Policy No trên Etalk');
             }
         //end Validate
         $claim->touch();
@@ -1063,6 +1076,9 @@ class ClaimController extends Controller
         $claim_id = $request->claim_id;
         $user = Auth::User();
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        if($claim->url_file_sorted == null){
+            return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Vui lòng update File vào "Tệp đã được sắp sếp" ');
+        }
         $barcode = $claim->barcode;
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
         $body = [
@@ -1080,6 +1096,30 @@ class ClaimController extends Controller
                 $body['status_id'] = config('constants.status_mantic_value.partiallyaccepted');
         }
         
+        try {
+            $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
+            $res = json_decode($res->getBody(),true);
+        } catch (Exception $e) {
+
+            $request->session()->flash(
+                'errorStatus', 
+                generateLogMsg($e)
+            );
+            return redirect('/admin/claim/'.$claim_id)->withInput();
+        }
+        return redirect('/admin/claim/'.$claim_id)->with('status', __('message.update_claim'));
+    }
+
+    // declined Etalk 
+    public function declinedStatusEtalk(sendEtalkRequest $request){
+        $claim_id = $request->claim_id;
+        $user = Auth::User();
+        $body = [
+            'user_email' => $user->email,
+            'issue_id' => $barcode,
+            'text_note' => 'Cập nhật lại status',
+        ];
+        $body['status_id'] = config('constants.status_mantic_value.declined');
         try {
             $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
             $res = json_decode($res->getBody(),true);
