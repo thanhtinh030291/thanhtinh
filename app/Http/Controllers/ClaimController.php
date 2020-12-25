@@ -681,15 +681,7 @@ class ClaimController extends Controller
                 }
             }
 
-            $mantis_policy = MANTIS_CUSTOM_FIELD_STRING::where('bug_id',(int)$request->barcode)->where('field_id',1)->first();
-            $pocy_ref_no = (int)HBS_CL_CLAIM::findOrFail((int)$request->code_claim)->Police->pocy_ref_no;
-            if($mantis_policy){
-                if($pocy_ref_no != (int)$mantis_policy->value){
-                    return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Policy No trên HBS và Mantis chưa đồng nhất');
-                }
-            }else{
-                return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Vui Lòng cập nhật Policy No trên Etalk');
-            }
+           
         //end Validate
         $claim->touch();
         $id = $request->id;
