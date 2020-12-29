@@ -18,4 +18,20 @@ class MANTIS_BUG extends BaseModelMantisDLVN
     {
         return $this->hasOne('App\MANTIS_BUG_TEXT', 'id', 'bug_text_id');
     }
+
+    public function PROJECT(){
+        return $this->hasOne('App\MANTIS_PROJECT', 'id', 'project_id');
+    }
+
+    public function handler(){
+        return $this->hasOne('App\MANTIS_USER', 'id', 'handler_id');
+    }
+
+    public function history(){
+        return $this->hasOne('App\MANTIS_BUG_HISTORY', 'bug_id', 'id')->where('field_name','status')->orderBy('id','DESC');
+    }
+
+    public function HBS_DATA(){
+        return $this->hasOne('App\MANTIS_HBS_DATA', 'bug_id', 'id');
+    }
 }

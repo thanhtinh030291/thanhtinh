@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MANTIS_TEAM extends BaseModelMantis
+class MANTIS_TEAM extends BaseModelMantisDLVN
 {
     protected $table = 'mantis_plugin_advancedgroup_team_table';
     protected $guarded = ['id'];
