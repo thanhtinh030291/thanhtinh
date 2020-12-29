@@ -2,6 +2,13 @@
 @extends('layouts.admin.master')
 @section('title', 'PanciFic-Cross-Admin')
 @section('content')
+    <style>
+        .table td, .table th {
+            padding: .2rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
     <div class="row">
         <div class="col-xl-12">
             <div class="breadcrumb-holder">
@@ -23,6 +30,12 @@
                             <h1 class="m-b-20 text-white counter">{{$sumClaim}}</h1>
                             <span class="text-white">{{$sumClaimToDate}} New Orders To Date</span>
                     </div>
+                    <div class="card-box noradius noborder bg-info">
+                        <i class="fa fa-user-o float-right text-white"></i>
+                        <h6 class="text-white text-uppercase m-b-20">Users</h6>
+                        <h1 class="m-b-20 text-white counter">{{$sumMember}}</h1>
+                        <span class="text-white">{{$sumMember}} New Users</span>
+                    </div>
             </div>
 
             <div class="col-xs-12 col-md-6 col-lg-6 col-xl-3">
@@ -30,26 +43,40 @@
                             <i class="fa fa-bar-chart float-right text-white"></i>
                             <h6 class="text-white text-uppercase m-b-20">IP Address</h6>
                             <h1 class="m-b-20 text-white counter">{{250}}</h1>
-                    <span class="text-white">My IP: {{$Ipclient}}</span>
+                        <span class="text-white">My IP: {{$Ipclient}}</span>
                     </div>
-            </div>
-
-            <div class="col-xs-12 col-md-6 col-lg-6 col-xl-3">
-                    <div class="card-box noradius noborder bg-info">
-                            <i class="fa fa-user-o float-right text-white"></i>
-                            <h6 class="text-white text-uppercase m-b-20">Users</h6>
-                            <h1 class="m-b-20 text-white counter">{{$sumMember}}</h1>
-                            <span class="text-white">{{$sumMember}} New Users</span>
-                    </div>
-            </div>
-
-            <div class="col-xs-12 col-md-6 col-lg-6 col-xl-3">
                     <div class="card-box noradius noborder bg-danger">
-                            <i class="fa fa-bell-o float-right text-white"></i>
-                            <h6 class="text-white text-uppercase m-b-20">Alerts</h6>
-                            <h1 class="m-b-20 text-white counter">58</h1>
-                            <span class="text-white">5 New Alerts</span>
+                        <i class="fa fa-bell-o float-right text-white"></i>
+                        <h6 class="text-white text-uppercase m-b-20">Alerts</h6>
+                        <h1 class="m-b-20 text-white counter">58</h1>
+                        <span class="text-white">5 New Alerts</span>
                     </div>
+            </div>
+            <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
+                <table class="table table-bordered table-hover display">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($PENDING_LIST as $data2)
+                        @php $c = $COUNT_PENDING->where('status', $data2)->count(); @endphp
+                        @if($c != 0)
+                            <tr>
+                                <td>{{data_get(config('constants.status_mantic'), $data2)}}</td>
+                                <td>{{$c}}</td>
+                            </tr>
+                        @endif
+                        @endforeach
+                        <tr>
+                            <th>Total</th>
+                            <td>{{$COUNT_PENDING->count()}}</td>
+                        </tr>
+                        
+                    </tbody>
+                    </table>
             </div>
     </div>
 
@@ -62,38 +89,71 @@
                 <div class="card-body">
                     
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table id="example4" class="table table-bordered table-hover display">
                             <thead>
                                 <tr>
                                     <th>LINK ETALK</th>
-                                    <th>Claim No</th>
+                                    <th>CA Link</th>
                                     <th>Summary</th>
                                     <th>Date Submitted</th>
                                     <th>Last Updated</th>
-                                    <th>Days</th>
+                                    <th style="width: 77px !important;">Days</th>
                                     <th>Current Status</th>
                                     <th>Reason For Pending</th>
                                 </tr>
                             </thead>
-                            @foreach ($MANTIS_BUG as $data)
                             <tbody>
+                            @foreach ($MANTIS_BUG as $data)
+                            
                                 <tr bgcolor={{ data_get($STATUS_COLOR_LIST,$data->status) }}>
                                     <td>
                                         <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->id }}">{{$data->id}}</a>
                                     </td>
-                                    <td>{{data_get($data->HBS_DATA,'cl_no')}}</td>
+                                    <td>
+                                        <a href="/admin/claim/barcode/{{$data->id}}" target="_blank">{{data_get($data->HBS_DATA,'cl_no')}}</a>
+                                    </td>
                                     <td>{{$data->summary}}</td>
                                     <td>{{date("Y-m-d H:i:s",$data->date_submitted)}}</td>
                                     <td>{{date("Y-m-d H:i:s",$data->last_updated)}}</td>
-                                    <td>{{ Carbon\Carbon::parse(date("Y-m-d H:i:s",$data->date_submitted))->diffInDays(Carbon\Carbon::now())}}</td>
+                                    <td style="width: 77px !important;">{{ Carbon\Carbon::parse(date("Y-m-d H:i:s",$data->date_submitted))->diffInDays(Carbon\Carbon::now())}}</td>
                                     <td>{{data_get(config('constants.status_mantic'),$data->status)}}</td>
                                     <td>{{data_get($data->CUSTOM_FIELD_STRING,'0.value')}}</td>
                                 </tr>
-                            </tbody>
+                            
                             @endforeach
+                            </tbody>
                         </table>
                 </div>														
             </div><!-- end card-->					
         </div>
     </div>
+@endsection
+@section('scripts')
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Setup - add a text input to each footer cell
+        $('#example4 thead th').each( function () {
+            var title = $(this).text();
+            $(this).html( '<input type="text" style="width: 100% !important;" placeholder="'+title+'" />' );
+        } );
+    
+        // DataTable
+        var table = $('#example4').DataTable();
+    
+        // Apply the search
+        table.columns().every( function () {
+            var that = this;
+    
+            $( 'input', this.header() ).on( 'keyup change', function () {
+                if ( that.search() !== this.value ) {
+                    that
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+    } );
+</script>
 @endsection

@@ -29,6 +29,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $PENDING_LIST = array(9, 10, 14, 15, 16, 20, 21, 22, 23, 30, 40, 50, 60, 65, 66, 67, 68, 69, 100, 102, 103, 110, 115, 105, 120);
         $STATUS_COLOR_LIST = array
         (
             9 => 'FF0000',
@@ -81,15 +82,24 @@ class HomeController extends Controller
             $query->where('field_name', 'status');
         })
         ->whereHas('handler',function ($query) use ($user) {
-            $query->where('email', $user->email);
+            $query->where('email', 'biennguyen@pacificcross.com.vn');
         })
         ->whereHas('PROJECT',function ($query) use ($user) {
             $EXCLUDED_PROJECTS = array("'Gen. Inquiry'", "'Deleted'");
             $query->whereNotIn('name', $EXCLUDED_PROJECTS);
-        })
-        ->whereIn('status',[9,10,14,15,16,21,22,23,50,65,66,67,68,69,100,102,103,105,115,120])
-        ->whereNotiN('project_id',[1,4,5])->orderBy('status')->get();
+        });
+        
+        if($user->hasRole('ClaimGOP')){
+            $COUNT_PENDING = $MANTIS_BUG->whereIn('status',$PENDING_LIST)->where('project_id',5)->orderBy('status')->get();
+            $MANTIS_BUG = $MANTIS_BUG->whereIn('status',[9,10,14,15,16,21,22,23,50,65,66,67,68,69,100,102,103,105,115,120])
+            ->where('project_id',5)->orderBy('status')->get();
+        }else{
+            $COUNT_PENDING = $MANTIS_BUG->whereIn('status',$PENDING_LIST)->whereNotiN('project_id',[1,4,5])->orderBy('status')->get();
+            $MANTIS_BUG = $MANTIS_BUG->whereIn('status',[9,10,14,15,16,21,22,23,50,65,66,67,68,69,100,102,103,105,115,120])
+            ->whereNotiN('project_id',[1,4,5])->orderBy('status')->get();
+        }
+        
         //dd($MANTIS_BUG[0]->CUSTOM_FIELD_STRING);
-        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient','MANTIS_BUG','STATUS_COLOR_LIST'));
+        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient','MANTIS_BUG','STATUS_COLOR_LIST','COUNT_PENDING','PENDING_LIST'));
     }
 }
