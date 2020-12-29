@@ -82,7 +82,7 @@ class HomeController extends Controller
             $query->where('field_name', 'status');
         })
         ->whereHas('handler',function ($query) use ($user) {
-            $query->where('email', 'biennguyen@pacificcross.com.vn');
+            $query->where('email', $user->email);
         })
         ->whereHas('PROJECT',function ($query) use ($user) {
             $EXCLUDED_PROJECTS = array("'Gen. Inquiry'", "'Deleted'");
