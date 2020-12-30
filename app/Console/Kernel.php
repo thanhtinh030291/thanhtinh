@@ -34,11 +34,11 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();command:GetCPS
-        $schedule->command('command:GetCPS')->everyMinute()->appendOutputTo(storage_path('logs/inspire.log'));
-        $schedule->command('command:GetHBS')->everyMinute()->appendOutputTo(storage_path('logs/inspire.log'));
-        $schedule->command('command:GetRenewPayment')->everyMinute()->appendOutputTo(storage_path('logs/inspire.log'));
-        $schedule->command('command:UpdateFile')->everyMinute()->appendOutputTo(storage_path('logs/inspire.log'));
-        $schedule->command('command:CheckFinishAndPay')->everyFiveMinutes()->appendOutputTo(storage_path('logs/inspire.log'));
+        $schedule->command('command:GetCPS')->everyFiveMinutes();
+        $schedule->command('command:GetHBS')->everyFiveMinutes();
+        $schedule->command('command:GetRenewPayment')->everyFiveMinutes();
+        $schedule->command('command:UpdateFile')->everyFiveMinutes();
+        $schedule->command('command:CheckFinishAndPay')->everyFiveMinutes();
     }
 
     /**

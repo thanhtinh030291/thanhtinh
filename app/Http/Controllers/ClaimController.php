@@ -388,8 +388,7 @@ class ClaimController extends Controller
             $balance_cps = collect([]);
         }
         
-        $can_pay_rq = json_decode(json_encode(GetApiMantic('api/rest/plugins/apimanagement/issues/finish/'.$data->barcode)),true);
-        $can_pay_rq = data_get($can_pay_rq,'status') == 'success' ? 'success' : 'error';
+        $can_pay_rq = MANTIS_BUG::find($data->barcode)->CheckFinish;
         $manager_gop_accept_pay = 'error';
         $hospital_request = $claim->hospital_request;
         $list_diagnosis = $claim->hospital_request ? collect($claim->hospital_request->diagnosis)->pluck('text', 'id') : [];

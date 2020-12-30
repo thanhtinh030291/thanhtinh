@@ -34,4 +34,15 @@ class MANTIS_BUG extends BaseModelMantisDLVN
     public function HBS_DATA(){
         return $this->hasOne('App\MANTIS_HBS_DATA', 'bug_id', 'id');
     }
+
+    public function getCheckFinishAttribute()
+    {
+        $status = $this->CUSTOM_FIELD_STRING->where('field_id',64)->first();
+        if(!$status){
+            return 'error';
+        }else{
+            return $status->value == 'Finished' ? 'success' :  'error';
+        }
+    }
+    
 }
