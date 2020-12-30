@@ -140,7 +140,11 @@
         } );
     
         // DataTable
-        var table = $('#example4').DataTable();
+        var table = $('#example4').DataTable({
+        "orderable": false,
+        "searchable": false,
+        "ordering": false
+        });
     
         // Apply the search
         table.columns().every( function () {
