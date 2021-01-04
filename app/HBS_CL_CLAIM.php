@@ -37,7 +37,12 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         $fisrtClLine = $this->HBS_CL_LINE->first();
         if($fisrtClLine){
             $popl_oid = $fisrtClLine->popl_oid;
-            return HBS_MR_POLICY_PLAN::with('MR_POLICY')->findOrFail($popl_oid)->MR_POLICY;
+            if($popl_oid){
+                return HBS_MR_POLICY_PLAN::with('MR_POLICY')->findOrFail($popl_oid)->MR_POLICY;
+            }else{
+                return null;
+            }
+            
         }
         return null;
     }
