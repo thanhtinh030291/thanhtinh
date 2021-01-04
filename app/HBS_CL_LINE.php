@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HBS_CL_LINE extends BaseModelDB2
 {
-    protected $table = 'cl_line';
+    protected $table = 'vw_cl_txn_line';
     protected $guarded = ['id'];
     public function HBS_MR_MEMBER()
     {
