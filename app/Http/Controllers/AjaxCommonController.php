@@ -833,7 +833,7 @@ class AjaxCommonController extends Controller
         $present_amt = $HBS_CL_CLAIM->sumPresAmt;
         $payment_method = str_replace("CL_PAY_METHOD_","",$HBS_CL_CLAIM->payMethod);
         $payment_method = $payment_method == 'CA' ? "CH" : $payment_method;
-        $pocy_ref_no = $HBS_CL_CLAIM->Police->pocy_ref_no;
+        $pocy_ref_no = data_get($HBS_CL_CLAIM->Police,'pocy_ref_no');
         $memb_ref_no = $HBS_CL_CLAIM->member->memb_ref_no;
         $member_name = $HBS_CL_CLAIM->memberNameCap;
         return response()->json([ 'data' => $response,

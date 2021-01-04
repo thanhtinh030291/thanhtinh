@@ -180,18 +180,23 @@ class ClaimController extends Controller
     {
         $claim_type = $request->claim_type;
         //validate
-        $mantis_policy = MANTIS_CUSTOM_FIELD_STRING::where('bug_id',(int)$request->barcode)->where('field_id',1)->first();
-        $pocy_ref_no = (int)HBS_CL_CLAIM::findOrFail((int)$request->code_claim)->Police->pocy_ref_no;
-        if($mantis_policy){
-            if($pocy_ref_no != (int)$mantis_policy->value){
-                $request->session()->flash('errorStatus', 'Policy No trên HBS và Mantis chưa đồng nhất');
+        $mantis_policy = MANTIS_CUSTOM_FIELD_STRING::where('bug_id',(int)$request->barcode)->where('field_id',1)->first(); 
+        //$pocy_ref_no = (int)HBS_CL_CLAIM::find((int)$request->code_claim)->Police->pocy_ref_no;
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::findOrFail($request->code_claim);
+        $Police = $HBS_CL_CLAIM->Police;
+        $pocy_ref_no =   data_get($Police,'pocy_ref_no');
+        $COUNT_HBS_CL_LINE_CL = $HBS_CL_CLAIM->HBS_CL_LINE->where('scma_oid_cl_line_status',"!=",'CL_LINE_STATUS_CL')->count();
+        if ($COUNT_HBS_CL_LINE_CL > 0) {
+            if ($mantis_policy) {
+                if ($pocy_ref_no != (int)$mantis_policy->value) {
+                    $request->session()->flash('errorStatus', "Policy No trên HBS($pocy_ref_no) và Mantis({$mantis_policy->value}) chưa đồng nhất");
+                    return $claim_type == "P" ? redirect('/admin/P/claim/create')->withInput() : redirect('/admin/claim/create')->withInput() ;
+                }
+            } else {
+                $request->session()->flash('errorStatus', 'Vui Lòng cập nhật Policy No trên Etalk');
                 return $claim_type == "P" ? redirect('/admin/P/claim/create')->withInput() : redirect('/admin/claim/create')->withInput() ;
             }
-        }else{
-            $request->session()->flash('errorStatus', 'Vui Lòng cập nhật Policy No trên Etalk');
-            return $claim_type == "P" ? redirect('/admin/P/claim/create')->withInput() : redirect('/admin/claim/create')->withInput() ;
         }
-
         //end valid
         if ($request->_url_file_sorted) {
             saveFile($request->_url_file_sorted[0], config('constants.sortedClaimUpload'));
@@ -640,9 +645,9 @@ class ClaimController extends Controller
             $now = Carbon::now()->toDateTimeString();
             $HBS_CL_CLAIM = HBS_CL_CLAIM::findOrFail($claim->code_claim);
             $count_provider_not = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('prov_oid',config('constants.not_provider'))->count();
-            if($count_provider_not > 0){
-                return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại provider: "BUMRUNGRAD INTERNATIONAL HOSPITAL" vui lòng cập nhật lại HBS ');
-            }
+            // if($count_provider_not > 0){
+            //     return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại provider: "BUMRUNGRAD INTERNATIONAL HOSPITAL" vui lòng cập nhật lại HBS ');
+            // }
             $count_policy =  $HBS_CL_CLAIM->HBS_CL_LINE->pluck("MR_POLICY_PLAN.MR_POLICY.pocy_ref_no")->unique()->count();
             if($count_policy != 1){
                 $request->session()->flash('errorStatus', 'Claim chỉ được phép tồn tại 1 policy plan ');
@@ -680,7 +685,18 @@ class ClaimController extends Controller
                 }
             }
 
-           
+            $mantis_policy = MANTIS_CUSTOM_FIELD_STRING::where('bug_id',(int)$HBS_CL_CLAIM->barcode)->where('field_id',1)->first();
+            $pocy_ref_no = data_get($HBS_CL_CLAIM->Police,'pocy_ref_no');
+            $COUNT_HBS_CL_LINE_CL = $HBS_CL_CLAIM->HBS_CL_LINE->where('scma_oid_cl_line_status',"!=",'CL_LINE_STATUS_CL')->count();
+            if ($COUNT_HBS_CL_LINE_CL > 0) {
+                if ($mantis_policy) {
+                    if ($pocy_ref_no != (int)$mantis_policy->value) {
+                        return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Policy No trên HBS và Mantis chưa đồng nhất');
+                    }
+                } else {
+                    return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Vui Lòng cập nhật Policy No trên Etalk');
+                }
+            }
         //end Validate
         $claim->touch();
         $id = $request->id;
@@ -715,7 +731,7 @@ class ClaimController extends Controller
                     'hbs' => json_encode(HBS_CL_CLAIM::HBSData()->where('CL_NO',$claim->code_claim_show)->first()->toArray(),true),
                     'MANTIS_ID' => $claim->barcode,
                     'MEMB_NAME' => $HBS_CL_CLAIM->MemberNameCap,
-                    'POCY_REF_NO' =>  $HBS_CL_CLAIM->police->pocy_ref_no,
+                    'POCY_REF_NO' =>  data_get($HBS_CL_CLAIM->police,'pocy_ref_no'),
                     'MEMB_REF_NO' => $HBS_CL_CLAIM->member->memb_ref_no,
                 ]);
             }else{
@@ -724,7 +740,7 @@ class ClaimController extends Controller
                     'hbs' => json_encode(HBS_CL_CLAIM::HBSData()->where('CL_NO',$claim->code_claim_show)->first()->toArray(),true),
                     'MANTIS_ID' => $claim->barcode,
                     'MEMB_NAME' => $HBS_CL_CLAIM->MemberNameCap,
-                    'POCY_REF_NO' =>  $HBS_CL_CLAIM->police->pocy_ref_no,
+                    'POCY_REF_NO' =>  data_get($HBS_CL_CLAIM->police,'pocy_ref_no'),
                     'MEMB_REF_NO' => $HBS_CL_CLAIM->member->memb_ref_no,
 
                 ]);
@@ -1477,7 +1493,7 @@ class ClaimController extends Controller
         $content = str_replace('[[$applicantName]]', $HBS_CL_CLAIM->applicantName, $content);
         $content = str_replace('[[$benefitOfClaim]]', $benefitOfClaim , $content);
         $content = str_replace('[[$IOPDiag]]', $IOPDiag , $content);
-        $content = str_replace('[[$PRefNo]]', $police->pocy_ref_no, $content);
+        $content = str_replace('[[$PRefNo]]', data_get($police,'pocy_ref_no'), $content);
         $content = str_replace('[[$PhName]]', $policyHolder->poho_name_1, $content);
         $content = str_replace('[[$memberNameCap]]', $HBS_CL_CLAIM->memberNameCap, $content);
         $content = str_replace('[[$ltrDate]]', getVNLetterDate(), $content);
@@ -1489,8 +1505,8 @@ class ClaimController extends Controller
         $content = str_replace('[[$memRefNo]]', $HBS_CL_CLAIM->member->memb_ref_no , $content);
         $content = str_replace('[[$DOB]]', Carbon::parse($HBS_CL_CLAIM->member->dob)->format('d/m/Y') , $content);
         $content = str_replace('[[$SEX]]', str_replace('SEX_', "",$HBS_CL_CLAIM->member->scma_oid_sex) , $content);
-        $content = str_replace('[[$PoNo]]', $police->pocy_no, $content);
-        $content = str_replace('[[$EffDate]]', Carbon::parse($police->eff_date)->format('d/m/Y'), $content);
+        $content = str_replace('[[$PoNo]]', data_get($police,'pocy_no'), $content);
+        $content = str_replace('[[$EffDate]]', Carbon::parse(data_get($police,'eff_date'))->format('d/m/Y'), $content);
         $content = str_replace('[[$now]]', datepayment(), $content);
         $content = str_replace('[[$copay]]', $copay , $content);
         $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
