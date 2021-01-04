@@ -645,9 +645,9 @@ class ClaimController extends Controller
             $now = Carbon::now()->toDateTimeString();
             $HBS_CL_CLAIM = HBS_CL_CLAIM::findOrFail($claim->code_claim);
             $count_provider_not = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('prov_oid',config('constants.not_provider'))->count();
-            // if($count_provider_not > 0){
-            //     return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại provider: "BUMRUNGRAD INTERNATIONAL HOSPITAL" vui lòng cập nhật lại HBS ');
-            // }
+            if($count_provider_not > 0){
+                return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại provider: "BUMRUNGRAD INTERNATIONAL HOSPITAL" vui lòng cập nhật lại HBS ');
+            }
             $count_policy =  $HBS_CL_CLAIM->HBS_CL_LINE->pluck("MR_POLICY_PLAN.MR_POLICY.pocy_ref_no")->unique()->count();
             if($count_policy != 1){
                 $request->session()->flash('errorStatus', 'Claim chỉ được phép tồn tại 1 policy plan ');
