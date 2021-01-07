@@ -220,7 +220,7 @@ $('.remove_field').click(function(e){ //user click on remove text
 })
 $(document).ready(function() {
     // load online query
-        var myData = @json(json_decode(trim($member->queryOnline),true));
+        var myData = @json(json_decode(trim(QueryOnline($member->memb_ref_no)),true));
         var editor = new JsonEditor('#jsonViewer', myData);
     //end load online query
 

@@ -362,11 +362,11 @@ class ClaimController extends Controller
                 $export_letter[$key]['list_status'] = collect([]);
             }
         }
+        $MessageComfirmConract = MessageComfirmConract($HBS_CL_CLAIM->member->memb_ref_no);
         
         try {
             
             $IS_FREEZED = $HBS_CL_CLAIM->is_freezed == null ? 0 : $HBS_CL_CLAIM->is_freezed;
-            $MessageComfirmConract = $HBS_CL_CLAIM->member->MessageComfirmConract;
             $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($data->code_claim_show)->getContent(),true);
             $payment_history = data_get($payment_history_cps,'data_full',[]);
             $approve_amt = data_get($payment_history_cps,'approve_amt');
@@ -381,7 +381,6 @@ class ClaimController extends Controller
             $tranfer_amt = (int)$approve_amt - (int)collect($payment_history)->sum('TF_AMT')-$balance_cps->sum('DEBT_BALANCE');
             
         } catch (\Throwable $th) {
-            $MessageComfirmConract ="";
             $payment_history = [];
             $approve_amt = 0;
             $tranfer_amt = 0;
@@ -442,6 +441,7 @@ class ClaimController extends Controller
                 'issue_id' => $claim->barcode,
                 'text_note' => " Dear DLVN, \n Đính kèm là hồ sơ GOP. \n Thanks,",
             ];
+            //$body['status_id'] = config('constants.status_mantic_value.readyforprocess');
             $handle = fopen(storage_path("app/public/sortedClaim/{$dataUpdate['url_file_sorted']}"),'r');
             $treamfile = stream_get_contents($handle);
             fclose($handle);
@@ -1468,9 +1468,9 @@ class ClaimController extends Controller
         $content = str_replace('[[$ProvPstAmt]]', formatPrice(data_get($claim->hospital_request,'prov_gop_pres_amt')), $content);
         $content = str_replace('[[$ProDeniedAmt]]', formatPrice($sumAmountReject), $content);
         $content = str_replace('[[$ProvName]]', $Provider->prov_name, $content);
-        $content = str_replace('[[$bankNameProv]]', $Provider->cl_bank_name, $content);
-        $content = str_replace('[[$bankAddressProv]]', $Provider->cl_pay_bank_city, $content);
-        $content = str_replace('[[$acctNoProv]]', $Provider->cl_pay_acct_no, $content);
+        $content = str_replace('[[$bankNameProv]]', $Provider->bank_name, $content);
+        $content = str_replace('[[$bankAddressProv]]', $Provider->bank_city, $content);
+        $content = str_replace('[[$acctNoProv]]', $Provider->acct_no, $content);
         $content = str_replace('[[$payeeProv]]', $Provider->payee, $content);
         $content = str_replace('[[$ProAddress]]', implode(",",$prov_address), $content);
         $content = str_replace('[[$Diagnosis]]', $Diagnosis, $content);
