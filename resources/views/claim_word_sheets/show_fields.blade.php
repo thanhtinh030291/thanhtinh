@@ -60,7 +60,7 @@
     <div class="col-md-6">
         <p class="font-weight-bold">Plan: 
             @if ($copay)
-            Đồng thanh toán 20%
+            <span class="bg-danger text-white">Đồng thanh toán 20%</span>
             @endif
         </p>
         <div class="ml-5">

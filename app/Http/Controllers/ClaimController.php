@@ -1402,7 +1402,8 @@ class ClaimController extends Controller
         $letter = LetterTemplate::findOrFail($letter_template_id);
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        $copay = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotNull('copay_amt')->count() == 0 ? "":" – Đồng chi trả 20%" ;
+        $plan_id = data_get($HBS_CL_CLAIM->PolicePlan,'PD_PLAN.plan_id');
+        $copay = in_array($plan_id,['0013','0014','0015','0016','0017','0018']) ? " – Đồng chi trả 20%" : "" ;
         $namefile = Str::slug("{$letter->name}_{$HBS_CL_CLAIM->memberNameCap}", '-');
         $IOPDiag = IOPDiag($HBS_CL_CLAIM, $claim_id);
         $benefitOfClaim = benefitOfClaim($HBS_CL_CLAIM);

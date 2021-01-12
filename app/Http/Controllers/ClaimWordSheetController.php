@@ -99,7 +99,8 @@ class ClaimWordSheetController extends Controller
         
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        $copay = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotNull('copay_amt')->count();
+        $plan_id = data_get($HBS_CL_CLAIM->PolicePlan,'PD_PLAN.plan_id');
+        $copay = in_array($plan_id,['0013','0014','0015','0016','0017','0018']);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $condition_field = function($q) use ($claimWordSheet){
             $q->where('field_id', '4');
@@ -133,7 +134,8 @@ class ClaimWordSheetController extends Controller
 
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        $copay = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotNull('copay_amt')->count();
+        $plan_id = data_get($HBS_CL_CLAIM->PolicePlan,'PD_PLAN.plan_id');
+        $copay = in_array($plan_id,['0013','0014','0015','0016','0017','0018']);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $claim_line = $member->ClaimLine;
         //rmove claim line curent
@@ -245,7 +247,8 @@ class ClaimWordSheetController extends Controller
         $path_file = [] ;
         $claim  = Claim::itemClaimReject()->findOrFail($claimWordSheet->claim_id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        $copay = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotNull('copay_amt')->count();
+        $plan_id = data_get($HBS_CL_CLAIM->PolicePlan,'PD_PLAN.plan_id');
+        $copay = in_array($plan_id,['0013','0014','0015','0016','0017','0018']);
         $member = HBS_MR_MEMBER::where('MEMB_REF_NO',$claimWordSheet->mem_ref_no)->first();
         $claim_line = $member->ClaimLine;
         //rmove claim line curent
