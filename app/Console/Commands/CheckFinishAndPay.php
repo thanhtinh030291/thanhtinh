@@ -64,11 +64,18 @@ class CheckFinishAndPay extends Command
             FinishAndPay::whereIn('mantis_id',$res)->update(['finished' => 1]);
         }
         
-        $non_pay = FinishAndPay::where('notify',1)->where('finished', 1)->where('payed', 0)->pluck('cl_no')->toArray();
-
+        $non_pay = FinishAndPay::where('notify',1)->where('finished', 1)->where('pay_time', 1)->where('payed', 0)->pluck('cl_no')->toArray();
         $history = PaymentHistory::whereIn('CL_NO', $non_pay)->pluck('CL_NO')->toArray();
-
         FinishAndPay::whereIn('cl_no', $history)->update(['payed' => 1]);
+
+        $non_pay_many = FinishAndPay::where('notify',1)->where('finished', 1)->where('pay_time','!=', 1)->where('payed', 0)->get();
+        foreach ($non_pay_many as $key => $value) {
+            $t = PaymentHistory::where('claim_id', $value->claim_id)->where('PAYMENT_TIME',$value->pay_time)->count();
+            if($t > 0){
+                FinishAndPay::where('cl_no', $value->cl_no)->update(['payed' => 1]);
+            }
+        }
+        
         dump("End : " . Carbon::now());
     }
 }

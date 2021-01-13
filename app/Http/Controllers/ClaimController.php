@@ -40,6 +40,7 @@ use Illuminate\Support\Arr;
 use App\HBS_MR_MEMBER_PLAN;
 use Hfig\MAPI;
 use Hfig\MAPI\OLE\Pear;
+use App\PaymentHistory;
 
 class ClaimController extends Controller
 {
@@ -1061,6 +1062,7 @@ class ClaimController extends Controller
             $export_letter->info = $data;
             $export_letter->save();
             if ($export_letter->apv_amt > 0) {
+                $pay_time = PaymentHistory::where('CL_NO', $claim->code_claim_show)->count();
                 $claim->finish_and_pay()->updateOrCreate([], [
                     'cl_no' => $claim->code_claim_show,
                     'mantis_id' =>  $claim->barcode,
@@ -1069,6 +1071,7 @@ class ClaimController extends Controller
                     'payed' => 0,
                     'user' => $user->id,
                     'notify' => 1,
+                    'pay_time' => $pay_time + 1
                 ]);
             }
         }
