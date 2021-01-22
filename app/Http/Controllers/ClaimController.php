@@ -363,7 +363,6 @@ class ClaimController extends Controller
                 $export_letter[$key]['list_status'] = collect([]);
             }
         }
-        $MessageComfirmConract = MessageComfirmConract($HBS_CL_CLAIM->member->memb_ref_no);
         
         try {
             
@@ -405,7 +404,7 @@ class ClaimController extends Controller
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
         'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq',
         'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail','reject_code',
-        'MessageComfirmConract','IS_FREEZED']);
+        'IS_FREEZED']);
         
         if ($claim_type == 'P'){
             return view('claimGOPManagement.show', $compact);

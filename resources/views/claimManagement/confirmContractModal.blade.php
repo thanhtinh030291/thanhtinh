@@ -11,7 +11,7 @@
                 {{ Form::open(array('url' => '/admin/claim/confirmContract', 'method'=>'post', 'files' => true))}}
                 {{ Form::hidden('claim_id',  $data->id ) }}
                 {{ Form::label('message', 'Message', ['class' => 'labelas mt-1']) }}
-                {{ Form::textarea('message', $MessageComfirmConract, array('id' => 'message_confirm_status','class' => 'form-control')) }}<br>
+                {{ Form::textarea('message', "", array('id' => 'message_confirm_status','class' => 'form-control')) }}<br>
                 <div class="row">
                     <div id = 'button_save' class="pull-right">
                         {!! Form::button('Ok', ['type' => 'submit','name'=>'type_submit','value' => 'reject','class' => ' btn btn-info' ]) !!}

@@ -76,7 +76,14 @@ $totalAmount = 0;
                                     {!! Form::button('CSR File', ['data-toggle' => "modal" ,  'data-target' => "#csrModal", 'type' => 'button', 'class' => ' btn btn-info' ]) !!}<br>
 
                                     {{ Form::label('confirm_contract_status', 'Confirm Contract Status ', array('class' => 'labelas')) }}<br>
-                                    {!! Form::button('confirm', ['data-toggle' => "modal" ,  'data-target' => "#confirmContractModal", 'type' => 'button', 'class' => ' btn btn-info' ]) !!}<br>
+                                    {!! Form::button('confirm', [
+                                        'data-toggle' => "modal" ,  
+                                        'data-target' => "#confirmContractModal",
+                                        'data-membrefno' => $data->clClaim->member->memb_ref_no,
+                                        'type' => 'button', 
+                                        'class' => ' btn btn-info' ,
+                                        'onclick' => 'comfirmContract(this);',
+                                        ]) !!}<br>
                                     
                                     {{ Form::label('jet_case', 'Set Claim Is JETCASE: ', array('class' => 'labelas')) }}<br>
                                     {{ Form::open(array('url' => '/admin/claim/setJetcase/'.$data->id, 'method' => 'POST')) }}
@@ -619,6 +626,27 @@ $totalAmount = 0;
             
         });
         
+    }
+
+    function comfirmContract(e){
+        $('#message_confirm_status').val('');
+        $('.loader').show();
+        var member_Ref_No =  e.dataset.membrefno;
+        axios.get("{{ url('admin/MessageComfirmConract') }}/" + member_Ref_No)
+        .then(function (response) {
+            if(response.data.message == 'success'){
+                $('#message_confirm_status').val(response.data.data);
+            }else{
+                alert('Hệ Thống OnLine Query DLVN Đang gặp sự cố kết nối');
+            }
+            $(".loader").fadeOut("slow");
+        })
+        .catch(function (error) {
+            $(".loader").fadeOut("slow");
+            alert('Hệ Thống OnLine Query DLVN Đang gặp sự cố kết nối');
+            
+        });
+
     }
     function addInputItem(text,amt){
 

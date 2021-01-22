@@ -107,6 +107,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/AjaxValidClaim', 'AjaxCommonController@AjaxValidClaim')->name('AjaxValidClaim');
         Route::post('/renderEmailProv', 'AjaxCommonController@renderEmailProv')->name('renderEmailProv');
         Route::post('/offNotifyFinish', 'AjaxCommonController@offNotifyFinish')->name('offNotifyFinish');
+        Route::get('/MessageComfirmConract/{memb_ref_no}', 'AjaxCommonController@MessageComfirmConract')->name('MessageComfirmConract');
+        Route::get('/QueryOnline/{memb_ref_no}', 'AjaxCommonController@QueryOnline')->name('QueryOnline');
         
 
         Route::get('/dataAjaxHBSClaimRB', 'AjaxCommonController@dataAjaxHBSClaimRB')->name('dataAjaxHBSClaimRB');

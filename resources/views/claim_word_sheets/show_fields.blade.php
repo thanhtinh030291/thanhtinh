@@ -49,8 +49,8 @@
     </div>
     <div class="col-md-6">
     <p class="font-weight-bold">Status:  
-        {!! Form::textarea('status_online_query', $claimWordSheet->status_online_query ? $claimWordSheet->status_online_query : $member->statusQuery,['class' => 'editor_not_menu' , 'rows' => "3"]) !!}
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#onlineQueryModal">
+        {!! Form::textarea('status_online_query', $claimWordSheet->status_online_query ,['class' => 'editor_not_menu' , 'rows' => "3"]) !!}
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#onlineQueryModal" onclick="QueryOnline(this);" data-membrefno="{{$member->memb_ref_no}}">
             Online Query
         </button>
     </p>

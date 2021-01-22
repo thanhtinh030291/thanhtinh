@@ -218,11 +218,29 @@ function add_benefit(benefit_content , benefit_to , benefit_amount , default_ben
 $('.remove_field').click(function(e){ //user click on remove text
     e.preventDefault(); $(this).parent('div').remove(); 
 })
+
+function QueryOnline(e){
+        var member_Ref_No =  e.dataset.membrefno;
+        $('.loader').show();
+        axios.get("{{ url('admin/QueryOnline') }}/" + member_Ref_No)
+        .then(function (response) {
+            if(response.data.message == 'success'){
+                
+                var editor = new JsonEditor('#jsonViewer', JSON.parse(response.data.data));
+            }else{
+                alert('Hệ Thống OnLine Query DLVN Đang gặp sự cố kết nối');
+            }
+            $(".loader").fadeOut("slow");
+        })
+        .catch(function (error) {
+            $(".loader").fadeOut("slow");
+            alert('Hệ Thống OnLine Query DLVN Đang gặp sự cố kết nối');
+            
+        });
+
+    }
 $(document).ready(function() {
-    // load online query
-        var myData = @json(json_decode(trim(QueryOnline($member->memb_ref_no)),true));
-        var editor = new JsonEditor('#jsonViewer', myData);
-    //end load online query
+
 
     //type of visit
         var count_type = 1;
