@@ -369,7 +369,7 @@ function payMethod($HBS_CL_CLAIM){
             $notify = "Quý khách vui lòng kiểm tra tài khoản nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán.";
             $not_show_table = false;
             break;
-        case 'CL_PAYMENT_METHOD_CA':
+        case 'CL_PAYMENT_METHOD_CH':
             $name_reciever = $firt_line->beneficiary_name;
             $info_reciever = "CMND/Căn cước công dân: " .$firt_line->id_passport_no.', ngày cấp:  
             '.Carbon\Carbon::parse($firt_line->id_passport_date_of_issue)->format('d/m/Y').', nơi cấp: '. $firt_line->cash_id_passport_issue_place;
