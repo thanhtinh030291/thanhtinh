@@ -358,28 +358,28 @@ function payMethod($HBS_CL_CLAIM){
     $info_reciever = "";
     $banking = "";
     $notify = "";
-   
-    switch ($HBS_CL_CLAIM->payMethod) {
-        case 'CL_PAY_METHOD_TT':
+    $firt_line = $HBS_CL_CLAIM->firstLine;
+    switch ($HBS_CL_CLAIM->firstLine->scma_oid_cl_payment_method) {
+        case 'CL_PAYMENT_METHOD_TT':
             
-            $name_reciever = $HBS_CL_CLAIM->member->cl_pay_acct_name;
-            $info_reciever = 'Số tài khoản: '.$HBS_CL_CLAIM->member->cl_pay_acct_no;
+            $name_reciever = $firt_line->acct_name;
+            $info_reciever = 'Số tài khoản: '.$firt_line->acct_no;
             //$banking = $HBS_CL_CLAIM->member->bank_name.', '.$HBS_CL_CLAIM->member->cl_pay_bank_branch.', '. $HBS_CL_CLAIM->member->cl_pay_bank_city;
-            $banking = $HBS_CL_CLAIM->member->BankNameChange.', '.$HBS_CL_CLAIM->member->cl_pay_bank_branch.', '. $HBS_CL_CLAIM->member->cl_pay_bank_city;
+            $banking = $firt_line->BankNameChange.', '.$firt_line->bank_branch.', '. $firt_line->bank_city;
             $notify = "Quý khách vui lòng kiểm tra tài khoản nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán.";
             $not_show_table = false;
             break;
-        case 'CL_PAY_METHOD_CA':
-            $name_reciever = $HBS_CL_CLAIM->member->cash_beneficiary_name;
-            $info_reciever = "CMND/Căn cước công dân: " .$HBS_CL_CLAIM->member->cash_id_passport_no.', ngày cấp:  
-            '.Carbon\Carbon::parse($HBS_CL_CLAIM->member->cash_id_passport_date_of_issue)->format('d/m/Y').', nơi cấp: '. $HBS_CL_CLAIM->member->cash_id_passport_issue_place;
+        case 'CL_PAYMENT_METHOD_CA':
+            $name_reciever = $firt_line->beneficiary_name;
+            $info_reciever = "CMND/Căn cước công dân: " .$firt_line->id_passport_no.', ngày cấp:  
+            '.Carbon\Carbon::parse($firt_line->id_passport_date_of_issue)->format('d/m/Y').', nơi cấp: '. $firt_line->cash_id_passport_issue_place;
             //$banking = $HBS_CL_CLAIM->member->cash_bank_name.', '.$HBS_CL_CLAIM->member->cash_bank_branch.', '.$HBS_CL_CLAIM->member->cash_bank_city ;
-            $banking = $HBS_CL_CLAIM->member->CashBankNameChange.', '.$HBS_CL_CLAIM->member->cash_bank_branch.', '.$HBS_CL_CLAIM->member->cash_bank_city ;
+            $banking = $firt_line->BankNameChange.', '.$firt_line->bank_branch.', '. $firt_line->bank_city;
             $notify = "Quý khách vui lòng mang theo CMND đến Ngân hàng nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán";
             $not_show_table = false;
             break;
-        case 'CL_PAY_METHOD_CQ':
-            $name_reciever = $HBS_CL_CLAIM->member->cash_beneficiary_name;
+        case 'CL_PAYMENT_METHOD_CQ':
+            $name_reciever = $firt_line->beneficiary_name;
             $info_reciever = " ";
             $banking = "";
             $notify ="Nhận tiền mặt tại Pacific Cross Vietnam, Lầu 16, Tháp B, Tòa nhà Royal Centre, 235 Nguyễn Văn Cừ, Phường Nguyễn Cư Trinh, Quận 1, TP. HCM (Quý khách vui lòng mang theo CMND đến Văn phòng nhận tiền từ Thứ Hai đến Thứ Sáu hàng tuần sau 1 ngày làm việc kể từ ngày chấp nhận thanh toán)";
