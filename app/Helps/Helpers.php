@@ -374,7 +374,7 @@ function payMethod($HBS_CL_CLAIM){
             $name_reciever = $firt_line->beneficiary_name;
             $passport_date =  explode("-",$firt_line->id_passport_date_of_issue);
             $info_reciever = "CMND/Căn cước công dân: " .$firt_line->id_passport_no.', ngày cấp:  
-            '.data_get($passport_date,1)."-".substr(data_get($passport_date,0),-2)."-20".substr(data_get($passport_date,2),0,2).', nơi cấp: '. $firt_line->id_passport_issue_place;
+            '. substr(data_get($passport_date,0),-2) ."-".data_get($passport_date,1)."-20".substr(data_get($passport_date,2),0,2).', nơi cấp: '. $firt_line->id_passport_issue_place;
             //$banking = $HBS_CL_CLAIM->member->cash_bank_name.', '.$HBS_CL_CLAIM->member->cash_bank_branch.', '.$HBS_CL_CLAIM->member->cash_bank_city ;
             $banking = $firt_line->BankNameChange.', '.$firt_line->bank_branch.', '. $firt_line->bank_city;
             $notify = "Quý khách vui lòng mang theo CMND đến Ngân hàng nhận tiền sau 3-5 ngày làm việc kể từ ngày chấp nhận thanh toán";
