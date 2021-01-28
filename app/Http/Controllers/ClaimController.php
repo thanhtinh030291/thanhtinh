@@ -66,7 +66,7 @@ class ClaimController extends Controller
         $finder = [
             'budget_check' => $request->budget_check,
             'budget' => $request->budget,
-            'code_claim' => $request->code_claim,
+            'code_claim_show' => $request->code_claim_show,
             'created_user' => $request->created_user,
             'created_at' => $request->created_at,
             'updated_user' => $request->updated_user,

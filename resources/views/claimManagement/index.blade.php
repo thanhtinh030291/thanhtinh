@@ -30,7 +30,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             {{ Form::label('name', __('message.id_claim'), array('class' => 'labelas')) }}
-                            {{ Form::select('code_claim',[], $finder['code_claim'], ['class' => 'code_claim form-control']) }}
+                            {{ Form::text('code_claim_show', data_get($finder,'code_claim_show'), ['class' => ' form-control']) }}
 
                             {{ Form::label('created_user', __('message.account_create'), ['class' => 'labelas']) }}
                             {{ Form::select('created_user', $admin_list, data_get($finder ,'created_user'), ['id' => 'created_user', 'class' => 'select2 form-control', 'placeholder' => ' ']) }}
