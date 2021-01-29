@@ -654,7 +654,7 @@ class ClaimController extends Controller
                 return redirect('/admin/claim/'.$claim_id)->withInput();
             }
             $memb_ref_no = $HBS_CL_CLAIM->member->memb_ref_no;
-            $all_memb_oid = HBS_MR_MEMBER::where('memb_ref_no', $memb_ref_no)->pluck('memb_oid')->toArray();
+            
             $conditionPLB = function ($q) {
                 $q->with(['PD_BEN_HEAD']);
             };
@@ -665,12 +665,13 @@ class ClaimController extends Controller
             $conditionMPL = function ($q) use($conditionMPPB){
                 $q->with(['MR_POLICY_PLAN_BENEFIT' => $conditionMPPB]);
             };
-            $HBS_MR_MEMBER_PLAN = HBS_MR_MEMBER_PLAN::whereIn('memb_oid',$all_memb_oid)
+            $HBS_MR_MEMBER_PLAN = HBS_MR_MEMBER_PLAN::where('memb_oid', $HBS_CL_CLAIM->member->memb_oid)
             ->where('MR_MEMBER_PLAN.EFF_DATE','<=',$now)
             ->where('MR_MEMBER_PLAN.EXP_DATE','>=',$now)
             ->with(['MR_POLICY_PLAN' => $conditionMPL])
             ->where('status', null)
             ->where('term_date',null)->get();
+            
             if($HBS_MR_MEMBER_PLAN->count() > 1){
                 $all_pl = [];
                 foreach ($HBS_MR_MEMBER_PLAN as $key => $value) {
