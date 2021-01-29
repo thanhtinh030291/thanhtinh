@@ -1062,7 +1062,10 @@ class ClaimController extends Controller
             $export_letter->save();
             if ($export_letter->apv_amt > 0) {
                 $pay_time = PaymentHistory::where('CL_NO', $claim->code_claim_show)->count();
-                $claim->finish_and_pay()->updateOrCreate([], [
+                $claim->finish_and_pay()->updateOrCreate([
+                    'cl_no' => $claim->code_claim_show,
+                    'pay_time' => $pay_time + 1
+                ], [
                     'cl_no' => $claim->code_claim_show,
                     'mantis_id' =>  $claim->barcode,
                     'approve_amt' => $export_letter->apv_amt,
