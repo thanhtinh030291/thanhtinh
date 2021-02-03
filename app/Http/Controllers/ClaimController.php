@@ -1447,7 +1447,8 @@ class ClaimController extends Controller
             $time_pay = implode("<br>",$time_pay);
             $paymentAmt = $sumAppAmt - $sum_tf_amt;
         }
-        $Provider = $HBS_CL_CLAIM->FirstLine;
+        $Provider = $HBS_CL_CLAIM->Provider;
+        
         $prov_address = array_filter([
             $Provider->addr1,
             $Provider->addr2,
@@ -1476,9 +1477,9 @@ class ClaimController extends Controller
         $content = str_replace('[[$ProDeniedAmt]]', formatPrice($sumAmountReject), $content);
         $content = str_replace('[[$ProvName]]', $Provider->prov_name, $content);
         $content = str_replace('[[$bankNameProv]]', $Provider->bank_name, $content);
-        $content = str_replace('[[$bankAddressProv]]', $Provider->bank_city, $content);
-        $content = str_replace('[[$acctNoProv]]', $Provider->acct_no, $content);
-        $content = str_replace('[[$payeeProv]]', $Provider->payee, $content);
+        $content = str_replace('[[$bankAddressProv]]', $Provider->bank_addr, $content);
+        $content = str_replace('[[$acctNoProv]]', $Provider->cl_pay_acct_no, $content);
+        $content = str_replace('[[$payeeProv]]', $Provider->cl_pay_acct_name, $content);
         $content = str_replace('[[$ProAddress]]', implode(",",$prov_address), $content);
         $content = str_replace('[[$Diagnosis]]', $Diagnosis, $content);
         $content = str_replace('[[$incurDateTo]]',$incurDateTo, $content);
