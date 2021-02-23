@@ -79,6 +79,48 @@
                     </table>
             </div>
     </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fa fa-users"></i> MISSED OR DELAY PAYMENT</h3>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="table-responsive">
+                        <table id="example2" class="table table-bordered table-hover display">
+                            <thead>
+                                <tr>
+                                    <th>LINK ETALK</th>
+                                    <th>CA Link</th>
+                                    <th>User</th>
+                                    <th>Finish At</th>
+                                    <th style="width: 77px !important;">Days Of Delay</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($finishNotPay as $data)
+                            
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->mantis_id }}">{{$data->mantis_id}}</a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/claim/barcode/{{$data->claim_id}}" target="_blank">{{ $data->cl_no }}</a>
+                                    </td>
+                                    <td>{{data_get($listUser,$data->user)}}</td>
+                                    <td>{{$data->updated_at}}</td>
+                                    <td class="font-weight-bold text-danger">{{$data->diff_date}}</td>
+                                </tr>
+                            
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>														
+            </div><!-- end card-->					
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
@@ -123,6 +165,7 @@
                             @endforeach
                             </tbody>
                         </table>
+                    </div>
                 </div>														
             </div><!-- end card-->					
         </div>
@@ -145,6 +188,9 @@
         "searchable": false,
         "ordering": false
         });
+
+        // DataTable
+        var table2 = $('#example2').DataTable();
     
         // Apply the search
         table.columns().every( function () {

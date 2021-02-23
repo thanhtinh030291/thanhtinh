@@ -8,6 +8,7 @@ use App\Claim;
 use Carbon\Carbon;
 use App\MANTIS_BUG;
 use Redis;
+use App\FinishAndPay;
 
 
 class HomeController extends Controller
@@ -65,7 +66,7 @@ class HomeController extends Controller
             120 => 'e7ac7e'
         );
         $Ipclient = \Request::getClientIp(true);
-        $listUser = User::whereNotIn('id',[Auth::User()->id])->pluck('email', 'id');
+        $listUser = User::getListIncharge();
         $user = Auth::user()  ;
         $latestMessages = $user->messagesReceiver10;
         //dd($latestMessages);
@@ -97,8 +98,13 @@ class HomeController extends Controller
             $MANTIS_BUG = $MANTIS_BUG->whereIn('status',[9,10,14,15,16,21,22,23,50,65,66,67,68,69,100,102,103,105,115,120])
             ->whereNotiN('project_id',[1,4,5])->orderBy('id','DESC')->get();
         }
+        $date_check = (Carbon::now())->subDays(2);
+        
+        $finishNotPay = FinishAndPay::selectRaw('cl_no, claim_id, user, mantis_id, updated_at,  DATEDIFF(NOW(), updated_at) as diff_date ')
+        ->where('notify',1)->where('finished',1)->where('payed',0)->where('updated_at', '<=', $date_check)->get();
+        
         
         //dd($MANTIS_BUG[0]->CUSTOM_FIELD_STRING);
-        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient','MANTIS_BUG','STATUS_COLOR_LIST','COUNT_PENDING','PENDING_LIST'));
+        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient','MANTIS_BUG','STATUS_COLOR_LIST','COUNT_PENDING','PENDING_LIST','finishNotPay'));
     }
 }
