@@ -106,7 +106,7 @@
                                         <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->mantis_id }}">{{$data->mantis_id}}</a>
                                     </td>
                                     <td>
-                                        <a href="/admin/claim/barcode/{{$data->claim_id}}" target="_blank">{{ $data->cl_no }}</a>
+                                        <a href="/admin/claim/{{$data->claim_id}}" target="_blank">{{ $data->cl_no }}</a>
                                     </td>
                                     <td>{{data_get($listUser,$data->user)}}</td>
                                     <td>{{$data->updated_at}}</td>
