@@ -15,6 +15,7 @@ use App\HBS_CL_CLAIM;
 use App\HBS_CL_LINE;
 use App\LetterTemplate;
 use App\Setting;
+use App\ExtendClaim;
 use Auth;
 use App\ReasonReject;
 use App\Http\Requests\formClaimRequest;
@@ -1240,12 +1241,40 @@ class ClaimController extends Controller
             'status' => config('constants.statusExport.new'),
             'created_user' => $userId,
             'updated_user' => $userId,
-            'info' => ['approve_amt' => $request->apv_hbs , 'PCV_EXPENSE' => $request->PCV_EXPENSE , "DEBT_BALANCE" => $request->DEBT_BALANCE ],
+            'info' => [
+                'approve_amt' => data_get($request,"apv_hbs",0) , 
+                'PCV_EXPENSE' => data_get($request,"PCV_EXPENSE",0), 
+                "DEBT_BALANCE" => data_get($request,"DEBT_BALANCE",0)],
             'data_cps' => data_get($data_cps,'original.data'),
-            'apv_amt' => preg_replace('/[^0-9]/', "", $request->apv_hbs),
+            'apv_amt' => preg_replace('/[^0-9]/', "", data_get($request,"apv_hbs",0)),
         ] ;
-        ExportLetter::create($data);
-        return redirect('/admin/claim/'. $request->claim_id )->with('Status', 'Letter was successfully created');
+        try {
+            DB::beginTransaction();
+            ExportLetter::create($data);
+            if($request->begin_day_renewal){
+                ExtendClaim::updateOrCreate(
+                    ['claim_id' => $request->claim_id],
+                    [
+                        'cl_no' => $claim->code_claim_show, 
+                        'claim_id' => $request->claim_id,
+                        'user' => $userId,
+                        'notify' => 1,
+                        'begin_day_renewal' => $request->begin_day_renewal,
+                        'end_day_renewal' => Carbon::parse($request->begin_day_renewal)->addDays(45)->format('Y-m-d')
+                    ]
+                );
+            }
+            DB::commit();
+            return redirect('/admin/claim/'. $request->claim_id )->with('Status', 'Letter was successfully created');
+        } catch (Exception $e) {
+            Log::error(generateLogMsg($e));
+            DB::rollback();
+            $request->session()->flash(
+                'errorStatus', 
+                __('message.update_fail')
+            );
+            return redirect('/admin/claim/'. $request->claim_id);
+        }
     }
 
     public function exportLetter(Request $request){
@@ -1472,6 +1501,8 @@ class ClaimController extends Controller
         $incurDateFrom = data_get($claim->hospital_request,'incur_from',null) ?  data_get($claim->hospital_request,'incur_from') : $incurDateFrom->format('d/m/Y') ;
         $Diagnosis = data_get($claim->hospital_request,'diagnosis',null) ?  data_get($claim->hospital_request,'diagnosis') : $HBS_CL_CLAIM->FirstLine->RT_DIAGNOSIS->diag_desc_vn;
         $diffIncur_extb = data_get($claim->hospital_request,'incur_time_extb',null) ?  "/".data_get($claim->hospital_request,'incur_time_extb') : "" ;
+        $ExtendClaim = ExtendClaim::where('claim_id',$claim_id)->first();
+
         $content = $letter->template;
         $content = str_replace('[[$ProvPstAmt]]', formatPrice(data_get($claim->hospital_request,'prov_gop_pres_amt')), $content);
         $content = str_replace('[[$ProDeniedAmt]]', formatPrice($sumAmountReject), $content);
@@ -1518,6 +1549,11 @@ class ClaimController extends Controller
         $content = str_replace('[[$now]]', datepayment(), $content);
         $content = str_replace('[[$copay]]', $copay , $content);
         $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
+        if($ExtendClaim){
+            $content = str_replace('[[$begin_day_renewal]]', Carbon::parse($ExtendClaim->begin_day_renewal)->format('d/m/Y') , $content);
+            $content = str_replace('[[$end_day_renewal]]',  Carbon::parse($ExtendClaim->end_day_renewal)->format('d/m/Y') , $content);
+        }
+        
         if($CSRRemark){
             $content = str_replace('[[$CSRRemark]]', implode('',$CSRRemark) , $content);
             $content = str_replace('[[$TermRemark]]', implode('',array_unique($TermRemark)) , $content);

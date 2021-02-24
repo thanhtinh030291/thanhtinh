@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use App\FinishAndPay;
+use App\ExtendClaim;
 
 use Illuminate\Http\Request;
 
@@ -1060,6 +1061,15 @@ class AjaxCommonController extends Controller
         $data->save();
         return response()->json(['message' => 'success']);
     }
+
+    public function offNotifyExtend(Request $request){
+        
+        $data = ExtendClaim::findOrFail($request->id);
+        $data->notify = 0;
+        $data->save();
+        return response()->json(['message' => 'success']);
+    }
+
 
     public function MessageComfirmConract($memb_ref_no){
         

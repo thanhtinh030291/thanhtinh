@@ -128,6 +128,39 @@
                 });
                 
             });
+            let i_extend = parseInt($('.dropdown-extend').find('i[data-count]').data('count'));
+            $('.off-extend').click(function() {
+                var id_extend = $(this).data('id');
+                var li_row = $(this).closest('li');
+                axios.post("{{route('offNotifyExtend')}}",{
+                    'id' : id_extend 
+                })
+                .then(function (response) {
+                    li_row.remove();
+                    i_extend -= 1;
+                    $('.dropdown-extend').find('i[data-count]').attr('data-count', i_extend );
+                    if(i_extend == 0){
+                        $( ".button_flight" ).removeClass( "button_flight" );
+                    }
+                    $.notify({
+                        icon: 'fa fa-bell',
+                        title: '<strong>Hệ THống</strong>',
+                        message: "Tắt thông báo thành công"
+                    },{
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        },
+                        type: 'success'
+                    });
+                })
+                .catch(function (error) {
+                    alert(error);
+                    
+                });
+                
+            });
+
             $('.select2').select2();
             //pusher("{{config('broadcasting.connections.pusher.key')}}","{{config('broadcasting.connections.pusher.options.cluster')}}", "{{ Auth::user()->id }}");
         });

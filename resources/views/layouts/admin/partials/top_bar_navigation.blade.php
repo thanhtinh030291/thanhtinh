@@ -7,6 +7,39 @@
 
     <nav class="navbar-custom">
         <ul class="list-inline float-right mb-0">
+            <li class="list-inline-item dropdown notif dropdown-extend">
+                <a href="#" class="border {!! count($extendClaim) > 0 ? 'button_flight' : "" !!} text-white dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Claim quá 45 ngày gia hạn 
+                    <i data-count="{{count($extendClaim)}}" class="fa fa-bullhorn notification-icon text-warning"></i>
+                </a>
+                <ul class="dropdown-menu notify-drop">
+                    <div class="dropdown-toolbar">
+                    <h3 class="dropdown-toolbar-title ">Notifications</h3>
+                </div>
+                <!-- end notify title -->
+                <!-- notify content -->
+                <div class="drop-content" style = " max-height: 300px; overflow: hidden; overflow-y: scroll;width: 450px;
+                max-width: 450px;">
+                    @foreach ($extendClaim as $item)
+                    <li class="notification active">
+                        <div class="media">
+                            <div class="media-body">
+                            <strong class="notification-title"></strong>
+                            
+                            <div class="notification-meta">
+                                <span class="border border-danger">{{ $item->diff_date }} Days</span>
+                                <small class="timestamp">Claim No : {{$item->cl_no}}</small>
+                                <a href="{{route('claim.show',['claim'=>$item->claim_id])}}">Link Claim</a>
+                            <button type="button" data-id="{{$item->id}}" class="ml-5 btn btn-danger off-extend">OFF</button>
+                            </div>
+                            </div>
+                        </div>
+                    </li>
+                    @endforeach
+                </div>
+                
+                </ul>
+            </li>
             <li class="list-inline-item dropdown notif dropdown-finish">
                 <a href="#" class="border {!! count($finishAndPay) > 0 ? 'button_flight' : "" !!} text-white dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     Finish but don't pay 

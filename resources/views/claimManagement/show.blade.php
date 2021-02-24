@@ -50,8 +50,7 @@ $totalAmount = 0;
                                                 {{ Form::select('letter_template_id', $listLetterTemplate, old('letter_template_id'), array('id'=>'letterTemplate', 'class' => 'select2 form-control', 'required')) }}
                                             </div>
                                             <div class="col-md-4 p-0">
-                                                {!! Form::button('Send Letter', ['data-toggle' => "modal" ,  
-                                                'data-target' => "#comfirmPaymentModal",
+                                                {!! Form::button('Send Letter', [
                                                 'type' => 'button', 
                                                 'class' => ' btn btn-info' , 
                                                 'onclick' => 'comfirmPayment(this);',
@@ -472,6 +471,9 @@ $totalAmount = 0;
 {{-- Modal comfirm payment--}}
 @include('claimManagement.comfirmPaymentModal')
 
+{{-- Modal comfirm payment--}}
+@include('claimManagement.comfirmRenewalModal')
+
 {{-- Modal request payment--}}
 @include('claimManagement.requetPaymentModal')
 
@@ -596,35 +598,43 @@ $totalAmount = 0;
     }
 
     function comfirmPayment(e){
-        $('.loader').show();
         var letter_template_id  = $("#letterTemplate option:selected").val();
         var letter_template_name  = $("#letterTemplate option:selected").text();
-        $('#LetterTemplateId').val(letter_template_id);
-        $("#textLetter").val(letter_template_name);
-        $(".h_payment").remove();
 
-        axios.get("{{ url('admin/getPaymentHistoryCPS') }}/{{$data->code_claim_show}}")
-        .then(function (response) {
-            $.each( response.data.data, function( key, value ) {
-                addInputItem("Lần " + value.PAYMENT_TIME +". " + value.TF_DATE , formatPrice(value.TF_AMT));
-            });
-            $('#apv_hbs_in').val(formatPrice(response.data.approve_amt));
-            //get info balance
-            axios.get("{{ url('admin/getBalanceCPS') }}/{{$data->clClaim->member->memb_ref_no}}/{{$data->code_claim_show}}")
-            .then(response => { 
+        if(letter_template_name == 'Gia hạn thời gian xét hồ sơ'){
+            $('#LetterTemplateId_2').val(letter_template_id);
+            $('#comfirmRenewalModal').modal('show');
+        }else{
+            $('.loader').show();
+            $('#comfirmPaymentModal').modal('show'); 
+            $('#LetterTemplateId').val(letter_template_id);
+            $("#textLetter").val(letter_template_name);
+            $(".h_payment").remove();
+
+            axios.get("{{ url('admin/getPaymentHistoryCPS') }}/{{$data->code_claim_show}}")
+            .then(function (response) {
+                $.each( response.data.data, function( key, value ) {
+                    addInputItem("Lần " + value.PAYMENT_TIME +". " + value.TF_DATE , formatPrice(value.TF_AMT));
+                });
+                $('#apv_hbs_in').val(formatPrice(response.data.approve_amt));
+                //get info balance
+                axios.get("{{ url('admin/getBalanceCPS') }}/{{$data->clClaim->member->memb_ref_no}}/{{$data->code_claim_show}}")
+                .then(response => { 
+                    
+                    $('#PCV_EXPENSE').val(formatPrice(response.data.data.PCV_EXPENSE));
+                    $('#DEBT_BALANCE').val(formatPrice(response.data.data.DEBT_BALANCE));
+                });
+
+                $(".loader").fadeOut("slow");
+                amount_letter_print();
+            })
+            .catch(function (error) {
+                $(".loader").fadeOut("slow");
+                alert(error);
                 
-                $('#PCV_EXPENSE').val(formatPrice(response.data.data.PCV_EXPENSE));
-                $('#DEBT_BALANCE').val(formatPrice(response.data.data.DEBT_BALANCE));
             });
-
-            $(".loader").fadeOut("slow");
-            amount_letter_print();
-        })
-        .catch(function (error) {
-            $(".loader").fadeOut("slow");
-            alert(error);
-            
-        });
+        }
+        
         
     }
 
