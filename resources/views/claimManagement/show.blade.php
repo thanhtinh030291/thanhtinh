@@ -244,7 +244,7 @@ $totalAmount = 0;
                             <td>{{$item->id}}</td>
                             <td>
                                 {{$item->letter_template->name}}
-                                @if($item->status == $item->end_status && !isset($item->info['note']) && $item->created_user == $user->id )
+                                @if( ($item->status == $item->end_status || ($item->status == 0 && $item->end_status == 13 ))  && !isset($item->info['note']) && $item->created_user == $user->id )
                                 {{ Form::open(array('url' => '/admin/sendEtalk', 'method' => 'POST', 'class' => 'form-inline')) }}
                                     <div>
                                         {{ Form::hidden('id', $item->id) }}

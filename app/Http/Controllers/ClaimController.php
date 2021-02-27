@@ -355,7 +355,7 @@ class ClaimController extends Controller
             if($check_claim_5m || $claim->jetcase == 1){
                 $export_letter[$key]['end_status'] = 10;
             }
-            elseif( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000 && $value->letter_template->level != 8 ){
+            elseif( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000 && $level->id != 8){
                 $export_letter[$key]['end_status'] = 26;
             }else{
                 $export_letter[$key]['end_status'] = $level->end_status;
@@ -956,10 +956,11 @@ class ClaimController extends Controller
 
         ];
         if($claim->claim_type == 'M'){
+            $lt = $export_letter->approve ? data_get($export_letter->approve, 'data') : data_get($export_letter->wait, 'data');
             $body['files'] = [
                 [
                     'name' => $namefile.".doc",
-                    "content" => base64_encode("<html><body>" .data_get($export_letter->approve, 'data')."</body></html>")
+                    "content" => base64_encode("<html><body>" .$lt."</body></html>")
                 ]
                 ];
         }else{
