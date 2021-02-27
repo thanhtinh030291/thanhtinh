@@ -352,7 +352,7 @@ class ClaimController extends Controller
                 $export_letter[$key]['list_status'] = $list_status_ad;
             }
             $user_create = User::findOrFail($value->created_user);
-            if($check_claim_5m || $claim->jetcase == 1){
+            if(($check_claim_5m || $claim->jetcase == 1) && $level->id != 8){
                 $export_letter[$key]['end_status'] = 10;
             }
             elseif( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000 && $level->id != 8){
