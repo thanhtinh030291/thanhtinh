@@ -355,7 +355,7 @@ class ClaimController extends Controller
             if($check_claim_5m || $claim->jetcase == 1){
                 $export_letter[$key]['end_status'] = 10;
             }
-            elseif( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000 && $level->id != 8 ){
+            elseif( $user_create->hasRole('Claim Independent') && removeFormatPrice(data_get($value->info, 'approve_amt')) <= 50000000 && $value->letter_template->level != 8 ){
                 $export_letter[$key]['end_status'] = 26;
             }else{
                 $export_letter[$key]['end_status'] = $level->end_status;
