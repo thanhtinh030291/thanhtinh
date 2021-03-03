@@ -1544,10 +1544,12 @@ class ClaimController extends Controller
         $content = str_replace('[[$claimNo]]', $claim->code_claim_show , $content);
         $content = str_replace('[[$memRefNo]]', $HBS_CL_CLAIM->member->memb_ref_no , $content);
         $content = str_replace('[[$DOB]]', Carbon::parse($HBS_CL_CLAIM->member->dob)->format('d/m/Y') , $content);
-        $content = str_replace('[[$SEX]]', str_replace('SEX_', "",$HBS_CL_CLAIM->member->scma_oid_sex) , $content);
+        $content = str_replace('[[$SEX]]', $HBS_CL_CLAIM->member->scma_oid_sex == 'SEX_M' ? "Nam" : "Nữ" , $content);
+
         $content = str_replace('[[$PoNo]]', data_get($police,'pocy_no'), $content);
         $content = str_replace('[[$EffDate]]', Carbon::parse(data_get($police,'eff_date'))->format('d/m/Y'), $content);
         $content = str_replace('[[$now]]', datepayment(), $content);
+        $content = str_replace('[[$nowVn]]', dateNowVn(), $content);
         $content = str_replace('[[$copay]]', $copay , $content);
         $content = str_replace('[[$invoicePatient]]', implode(" ",$HBS_CL_CLAIM->HBS_CL_LINE->pluck('inv_no')->toArray()) , $content);
         if($ExtendClaim){
