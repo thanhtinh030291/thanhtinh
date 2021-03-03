@@ -1261,7 +1261,8 @@ class ClaimController extends Controller
                         'user' => $userId,
                         'notify' => 1,
                         'begin_day_renewal' => $request->begin_day_renewal,
-                        'end_day_renewal' => Carbon::parse($request->begin_day_renewal)->addDays(45)->format('Y-m-d')
+                        'end_day_renewal' => Carbon::parse($request->begin_day_renewal)->addDays(45)->format('Y-m-d'),
+                        'notify_day_renewal' => Carbon::parse($request->begin_day_renewal)->addDays(35)->format('Y-m-d')
                     ]
                 );
             }
