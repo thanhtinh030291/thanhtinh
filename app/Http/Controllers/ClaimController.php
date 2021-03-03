@@ -1299,15 +1299,35 @@ class ClaimController extends Controller
         }
         
         if($claim->claim_type == "M"){
-            header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-            header("Expires: 0");//no-cache
-            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
-            header("content-disposition: attachment;filename={$data['namefile']}.doc");
-            echo "<html>";      
-            echo "<body>";
-            echo $data['content'];
-            echo "</body>";
-            echo "</html>";
+            $match_pdf = preg_match('/(Giấy Giới Thiệu)/', $export_letter->letter_template->name , $matches_pdf);
+            if($match_pdf){
+                $mpdf = new \Mpdf\Mpdf(['tempDir' => base_path('resources/fonts/'),'margin_top' => 35]);
+                $mpdf->WriteHTML('
+                <div style="position: absolute; right: 5px; top: 0px;font-weight: bold; ">
+                    <img src="'.asset("images/header.jpg").'" alt="head">
+                </div>');
+                $mpdf->SetHTMLFooter('
+                <div style="text-align: right; font-weight: bold;">
+                    <img src="'.asset("images/footer.png").'" alt="foot">
+                </div>');
+                $mpdf->WriteHTML($data['content']);
+                header("Content-Type: application/pdf");
+                header("Expires: 0");//no-cache
+                header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+                header("content-disposition: attachment;filename={$data['namefile']}.pdf");
+                echo $mpdf->Output($data['namefile'].'.pdf',\Mpdf\Output\Destination::STRING_RETURN);
+
+            }else{
+                header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                header("Expires: 0");//no-cache
+                header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+                header("content-disposition: attachment;filename={$data['namefile']}.doc");
+                echo "<html>";
+                echo "<body>";
+                echo $data['content'];
+                echo "</body>";
+                echo "</html>";
+            }
         }else{
             $data['content'] = "<html><body>".$data['content']."</body></html>";
             //$create_user_sign = getUserSignThumb($export_letter->created_user);
