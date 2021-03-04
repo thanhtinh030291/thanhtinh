@@ -83,6 +83,89 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
             <div class="card mb-3">
                 <div class="card-header">
+                    <h3 class="text-danger"><i class="fa fa-users"></i> CHƯA GỬI FINANCE THANH TOÁN</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example7" class="table table-bordered table-hover display">
+                            <thead>
+                                <tr>
+                                    <th>LINK ETALK</th>
+                                    <th>CA Link</th>
+                                    <th>User</th>
+                                    <th>UPDATE DATE HBS</th>
+                                    <th>UPDATE USER HBS</th>
+                                    <th>APP AMT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($AUDIT_HBS_EXISTED as $data)
+                            
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->bug_id }}">{{$data->bug_id}}</a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/claim/barcode/{{$data->bug_id}}" target="_blank">{{ $data->CL_NO }}</a>
+                                    </td>
+
+                                    <td>{{$data->handler}}</td>
+                                    <td>{{$data->UPD_DATE}}</td>
+                                    <td>{{$data->UPD_USER}}</td>
+                                    <td class="font-weight-bold text-danger">{{$data->APP_AMT}}</td>
+                                </tr>
+                            
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>														
+            </div><!-- end card-->					
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="text-danger"><i class="fa fa-users"></i> HBS & FINANCE CÓ SỐ TIỀN KHÁC NHAU</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example6" class="table table-bordered table-hover display">
+                            <thead>
+                                <tr>
+                                    <th>LINK ETALK</th>
+                                    <th>CA Link</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($AUDIT_DLVN_HBS_CPS_DIFF_AMT as $data)
+                            
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->bug_id }}">{{$data->bug_id}}</a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/claim/barcode/{{$data->bug_id}}" target="_blank">{{ $data->CL_NO }}</a>
+                                    </td>
+                                    <td>{{$data->handler}}</td>
+                                </tr>
+                            
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>														
+            </div><!-- end card-->					
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+            <div class="card mb-3">
+                <div class="card-header">
                     <h3><i class="fa fa-users"></i> MISSED OR DELAY PAYMENT</h3>
                 </div>
                 <div class="card-body">
@@ -184,6 +267,18 @@
     
         // DataTable
         var table = $('#example4').DataTable({
+        "orderable": false,
+        "searchable": false,
+        "ordering": false
+        });
+
+        var table = $('#example6').DataTable({
+        "orderable": false,
+        "searchable": false,
+        "ordering": false
+        });
+
+        var table = $('#example7').DataTable({
         "orderable": false,
         "searchable": false,
         "ordering": false

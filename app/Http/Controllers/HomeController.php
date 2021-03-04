@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use App\MANTIS_BUG;
 use Redis;
 use App\FinishAndPay;
+use App\AUDIT_DLVN_HBS_CPS_DIFF_AMT;
+use App\AUDIT_HBS_EXISTED;
 
 
 class HomeController extends Controller
@@ -103,8 +105,10 @@ class HomeController extends Controller
         $finishNotPay = FinishAndPay::selectRaw('cl_no, claim_id, user, mantis_id, updated_at,  DATEDIFF(NOW(), updated_at) as diff_date ')
         ->where('notify',1)->where('finished',1)->where('payed',0)->where('updated_at', '<=', $date_check)->get();
         
+        $AUDIT_DLVN_HBS_CPS_DIFF_AMT = AUDIT_DLVN_HBS_CPS_DIFF_AMT::all();
         
-        //dd($MANTIS_BUG[0]->CUSTOM_FIELD_STRING);
-        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient','MANTIS_BUG','STATUS_COLOR_LIST','COUNT_PENDING','PENDING_LIST','finishNotPay'));
+        $AUDIT_HBS_EXISTED = AUDIT_HBS_EXISTED::all();
+        
+        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient','MANTIS_BUG','STATUS_COLOR_LIST','COUNT_PENDING','PENDING_LIST','finishNotPay','AUDIT_DLVN_HBS_CPS_DIFF_AMT','AUDIT_HBS_EXISTED'));
     }
 }

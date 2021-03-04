@@ -151,6 +151,32 @@ return [
             ],
         ],
 
+        'mysql_audit' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => '192.168.0.10',
+            'port' => '3306',
+            'database' => 'audit',
+            'username' => 'tinh',
+            'password' => 'KTgEiYWJ1umqtHrH',
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+            'options' =>[PDO::ATTR_EMULATE_PREPARES => true],
+            'modes'       => [
+                'ONLY_FULL_GROUP_BY',
+                'STRICT_TRANS_TABLES',
+                'NO_ZERO_IN_DATE',
+                'NO_ZERO_DATE',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_ENGINE_SUBSTITUTION',
+            ],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
