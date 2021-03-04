@@ -77,14 +77,120 @@ class HBS_MR_MEMBER extends  BaseModelDB2
 
     public function getPlanAttribute()
     {
-        //return [];
-        $plan = [];
-        $DLVN_MEMBER = DLVN_MEMBER::where('MEMB_REF_NO' , $this->memb_ref_no)->orderBy('pocy_eff_date', 'desc')->get();
-        foreach ($DLVN_MEMBER as $key => $value) {
-            $plan_merge = array_map('trim', array_filter($value->only(['ip_plan','op_plan','dt_plan'])));
-            $plan[] = implode(", ", $plan_merge) ." - ".Carbon::parse($value->pocy_eff_date)->format('d/m/Y');
+        $memb_ref_no = $this->memb_ref_no;
+
+        $conditionBNF = function($q) {
+            $q->with('PD_BEN_HEAD');
+        };
+        $conditionPOPL = function($q) use($conditionBNF){
+            $q->with('PD_PLAN');
+            $q->with(['PD_PLAN_BENEFIT' => $conditionBNF]);
+            $q->with('MR_POLICY');
+        };
+        $conditionMEMPL = function($q) use ($conditionPOPL){
+            $q->with(['MR_POLICY_PLAN' => $conditionPOPL]);
+        };
+        $HBS_MR_MEMBERs = HBS_MR_MEMBER::where('memb_ref_no',$memb_ref_no)->with(['MR_MEMBER_PLAN'=>$conditionMEMPL ])->get()->pluck('MR_MEMBER_PLAN.*.MR_POLICY_PLAN');
+        $MR_POLICY_PLANs = collect();
+        foreach ($HBS_MR_MEMBERs as $HBS_MR_MEMBER) {
+            
+            $MR_POLICY_PLANs = $MR_POLICY_PLANs->merge($HBS_MR_MEMBER);
         }
-        return $plan;
+        $plans = [];
+        foreach ($MR_POLICY_PLANs as $MR_POLICY_PLAN) {
+            $eff_date = Carbon::parse($MR_POLICY_PLAN->MR_POLICY->eff_date)->format('d/m/Y');
+            $plan = [];
+            foreach ($MR_POLICY_PLAN->PD_PLAN_BENEFIT as $PD_PLAN_BENEFIT) {
+                switch ($PD_PLAN_BENEFIT->PD_BEN_HEAD->scma_oid_ben_type) {
+                    case 'BENEFIT_TYPE_IP':
+                        switch ($MR_POLICY_PLAN->PD_PLAN->plan_id) {
+                            case '0001':
+                                $plan[] = 'IP 210M';
+                                break;
+                            case '0002':
+                            case '0006':
+                                $plan[] = 'IP 420M';
+                                break;
+                            case '0003':
+                            case '0004':
+                            case '0005':
+                                $plan[] = 'IP 630M';
+                                break;
+                            case '0007':
+                            case '0013':
+                                $plan[] = 'IP 300M';
+                                break;
+                            case '0008':
+                            case '0009':
+                            case '0014':
+                            case '0015':
+                                $plan[] = 'IP 630M';
+                                break;
+                            case '0010':
+                            case '0011':
+                            case '0012':
+                            case '0016':
+                            case '0017':
+                            case '0018':
+                                $plan[] = 'IP 630M';
+                                break;
+                            default:
+                                $plan[] = 'IP none';
+                                break;
+                        }
+                        break;
+                    case 'BENEFIT_TYPE_OP':
+                        switch ($MR_POLICY_PLAN->PD_PLAN->plan_id) {
+                            case '0001':
+                            case '0005':
+                            case '0006':
+                                $plan[] = 'OP 2.1M';
+                                break;
+                            case '0002':
+                            case '0004':
+                                $plan[] = 'OP 4.2M';
+                                break;
+                            case '0003':
+                                $plan[] = 'OP 6.3M';
+                                break;
+                            case '0007':
+                            case '0009':
+                            case '0012':
+                            case '0013':
+                            case '0015':
+                            case '0018':
+                                $plan[] = 'OP 5M';
+                                break;
+                            case '0008':
+                            case '0011':
+                            case '0014':
+                            case '0017':
+                                $plan[] = 'OP 10M';
+                                break;
+                            case '0010':
+                            case '0016':
+                                $plan[] = 'OP 15M';
+                                break;
+                            default:
+                                $plan[] = 'OP none';
+                                break;
+                        }    
+                        break;
+                    default:
+                        $plan[] = 'DT';
+                        break;
+                }
+            }
+            $plans[] = implode(", ", $plan) ." - " . "$eff_date";
+        }
+
+        // $plan = [];
+        // $DLVN_MEMBER = DLVN_MEMBER::where('MEMB_REF_NO' , $this->memb_ref_no)->orderBy('pocy_eff_date', 'desc')->get();
+        // foreach ($DLVN_MEMBER as $key => $value) {
+        //     $plan_merge = array_map('trim', array_filter($value->only(['ip_plan','op_plan','dt_plan'])));
+        //     $plan[] = implode(", ", $plan_merge) ." - ".Carbon::parse($value->pocy_eff_date)->format('d/m/Y');
+        // }
+        return $plans;
     }
 
     
