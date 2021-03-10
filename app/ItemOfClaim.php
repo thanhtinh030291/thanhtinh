@@ -8,6 +8,19 @@ class ItemOfClaim extends Model {
     protected $table   = 'item_of_claim';
     protected $guarded = ['id'];
     protected $dates = ['deleted_at'];
+    public $fillable = [
+        'content',
+        'amount',
+        'status',
+        'claim_id',
+        'reason_reject_id',
+        'parameters',
+        'created_user',
+        'updated_user',
+        'created_at',
+        'updated_at',
+        'benefit'
+    ];
     protected $casts   = [
         'parameters' => 'array',
     ];
