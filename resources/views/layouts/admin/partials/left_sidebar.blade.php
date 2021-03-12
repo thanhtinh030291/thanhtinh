@@ -12,7 +12,7 @@
                         <i class="fa fa-fw fa-ticket"></i> <span> {{__('message.claim_management')}} </span>
                     </a>
                     <ul class="list-unstyled">
-                        @hasanyrole('Header|Manager|Admin|Claim|Claim Independent|Lead|QC|Supper|view')
+                        @hasanyrole('Header|Manager|Admin|Claim|Claim Independent|Lead|QC|Supper|view|AdminClaim')
                         <li class="{{ setActive('admin/claim') }}"> 
                             <a class="{{ setActive('admin/claim') }}"
                             href="{{ url('admin/claim') }}"><span> {{ __('message.form_claim_M')}}</span></a>
