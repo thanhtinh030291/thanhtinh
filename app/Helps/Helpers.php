@@ -712,5 +712,38 @@ function typeGop($value){
     return $rp;
 }
 
+function getTokenMfile(){
+    $headers = [
+        'Content-Type' => 'application/json',
+    ];
+    $body = [
+        'email' => config('constants.account_mfile'),
+        'password' => config('constants.pass_mfile')
+    ];
+    $setting = Setting::where('id', 1)->first();
+    if($setting === null){
+        $setting = Setting::create([]);
+    }
+    
+    $startTime = Carbon\Carbon::parse($setting->updated_token_mfile_at);
+    $now = Carbon\Carbon::now();
+    $totalDuration = $startTime->diffInSeconds($now);
+    
+    if($setting->token_mfile == null || $totalDuration >= 3500){
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        
+        $response = $client->request("POST", config('constants.link_mfile').'login' , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        Setting::where('id', 1)->update([
+            'token_mfile' => data_get($response , 'token'),
+            'updated_token_mfile_at' => Carbon\Carbon::now()->toDateTimeString()
+        ]);
+        
+    }
+    return  $setting->token_mfile;
+}
+
 
 

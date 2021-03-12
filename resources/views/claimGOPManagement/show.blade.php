@@ -163,7 +163,15 @@ $totalAmount = 0;
                                     </div>
                                     <!-- End file image -->
                                     {{ Form::close() }}
-                                    
+                                    @hasanyrole('Admin|AdminClaim|Header|ManagerGOP|Manager')
+                                    <button type="button" onclick="sendMfile();" class="btn btn-success " ><i class="fa fa-mixcloud" aria-hidden="true"></i> Send M-File</button>
+                                    @if ($data->mfile_claim_id != null)
+                                        <p id="mfile-update-time">M-File latest version at {{$data->mfile_claim_update_at}}
+                                            <a target="_blank" href="/admin/viewMfile/{{$data->mfile_claim_id}}/{{$data->mfile_claim_file_id}}" ><i class="fa fa-eye"></i></a>
+                                    @else
+                                        <p id="mfile-update-time"></p>
+                                    @endif
+                                    @endhasanyrole
                                 </div> 
                             </div>
                         </div>
@@ -857,7 +865,35 @@ $totalAmount = 0;
     };
 
     $(".disableRow").find("input,textarea,select").attr("disabled", "disabled");
-    
+    function sendMfile(){
+        $(".loader").show();
+        axios.get("{{route('sendMfile', $data->id)}}")
+        .then(function (response) {
+            $(".loader").fadeOut("slow");
+            console.log(response.data);
+            var type = response.data.errorCode != 0 ? 'danger' : 'success';
+            var message
+            $.notify({
+                icon: 'fa fa-bell',
+                title: '<strong>Thông Báo :  </strong>',
+                message: response.data.errorMsg
+            },{
+                placement: {
+                    from: "top",
+                    align: "right"
+                },
+                type: type
+            });
+            if(response.data.errorCode == 0){
+                $('#mfile-update-time').text('Mfile update successfully!')
+            }
+            
+        })
+        .catch(function (error) {
+            $(".loader").fadeOut("slow");
+            alert(error);
+        });
+    }
     $(document).ready(function () {
         
         

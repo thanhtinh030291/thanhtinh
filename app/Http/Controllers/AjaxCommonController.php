@@ -1149,5 +1149,91 @@ class AjaxCommonController extends Controller
             return response()->json(['message' => 'error' ,'data' => '']);
         }
     }
+
+    public function sendMfile($claim_id){
+        $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
+        if($claim->url_file_sorted == null ){
+            return response()->json(['errorCode' => 999 ,'errorMsg' => 'File không tồn tại']);
+        }
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        $poho_oids = \App\HBS_MR_POLICYHOLDER::where('poho_ref_no', $HBS_CL_CLAIM->PolicyHolder->poho_ref_no)->pluck('poho_oid')->toArray();
+        $pocy_ref_nos =  \App\HBS_MR_POLICY::whereIn('poho_oid',$poho_oids)->pluck('pocy_ref_no')->unique()->toArray();
+
+
+
+        $handle = fopen(storage_path("app/public/sortedClaim/{$claim->url_file_sorted}"),'r');
+        $treamfile = stream_get_contents($handle);
+        $token = getTokenMfile();
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'bearer '.$token
+        ];
+        
+        $body = [
+            'mode' => config('constants.mode_mfile'),
+            'policy_holder' => [
+                "policy_holder_name" => strtoupper(Str::slug($HBS_CL_CLAIM->PolicyHolder->poho_name_1,' '))." (".$HBS_CL_CLAIM->PolicyHolder->poho_ref_no.")",
+                "policy_holder_no" =>  $HBS_CL_CLAIM->PolicyHolder->poho_ref_no,
+                "policy_holder_note" =>  "PO. " . implode(" + ", $pocy_ref_nos),
+
+            ],
+            'member' => [
+                "member_name" => strtoupper(Str::slug($HBS_CL_CLAIM->member->mbr_last_name. " " .$HBS_CL_CLAIM->member->mbr_first_name,' ')) ." (".$HBS_CL_CLAIM->member->memb_ref_no.")",
+                "member_no" =>  $HBS_CL_CLAIM->member->memb_ref_no,
+                "is_terminated" => "0",
+                "member_notes"=> ""
+        
+            ],
+            'claim' => [
+                "claim_info" => [
+                    "claim_no" => $claim->code_claim_show,
+                    "payee" => $claim->claim_type == "M" ? "Insured" : strtoupper(Str::slug($HBS_CL_CLAIM->Provider->prov_name , ' ')),
+                    "claim_note" => "Note something"
+                ],
+                "claim_file" =>  [
+                    "file_extension" => "pdf",
+                    "file_content" => $treamfile
+                ]
+            ]
+        ];
+        
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.link_mfile').'uploadmfile' , ['form_params'=>$body]);
+        $response =  json_decode($response->getBody()->getContents());
+        if($response->errorCode == 0){
+            Claim::where('id',$claim->id)->update([
+                'mfile_claim_id' => $response->info_claim->claim_id,
+                'mfile_claim_file_id' => $response->info_claim->claim_file_id,
+                'mfile_claim_update_at' => Carbon::now()
+             ]);
+        }
+        return response()->json(['errorCode' => $response->errorCode ,'errorMsg' => $response->errorMsg]);
+    }
+
+    public function viewMfile($mfile_claim_id, $mfile_claim_file_id){
+        $token = getTokenMfile();
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Authorization' => 'bearer '.$token
+        ];
+        $body = [
+            'mode' => config('constants.mode_mfile'),
+            'claim_id' => $mfile_claim_id,
+            'claim_file_id' => $mfile_claim_file_id
+        ];
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        $response = $client->request("POST", config('constants.link_mfile').'downloadfile' , ['form_params'=>$body]);
+        $response =  $response->getBody()->getContents();
+        header("Content-Type: application/pdf");
+        header("Expires: 0");//no-cache
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+        header("content-disposition: attachment;filename=mfile.pdf");
+        
+        echo $response;
+    }
     
 }

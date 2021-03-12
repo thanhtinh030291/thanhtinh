@@ -28,7 +28,7 @@ class AddNotifyDayRenewalToExtendClaimTable extends Migration
     {
         Schema::table('extend_claim', function (Blueprint $table) {
             //
-            Schema::dropIfExists('notify_day_renewal');
+            $table->dropColumn('notify_day_renewal');
         });
     }
 }

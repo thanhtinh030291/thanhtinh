@@ -110,6 +110,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/offNotifyExtend', 'AjaxCommonController@offNotifyExtend')->name('offNotifyExtend');
         Route::get('/MessageComfirmConract/{memb_ref_no}', 'AjaxCommonController@MessageComfirmConract')->name('MessageComfirmConract');
         Route::get('/QueryOnline/{memb_ref_no}', 'AjaxCommonController@QueryOnline')->name('QueryOnline');
+        Route::get('/sendMfile/{claim_id}', 'AjaxCommonController@sendMfile')->name('sendMfile');
+        Route::get('/viewMfile/{mfile_claim_id}/{mfile_claim_file_id}', 'AjaxCommonController@viewMfile')->name('viewMfile');
         
 
         Route::get('/dataAjaxHBSClaimRB', 'AjaxCommonController@dataAjaxHBSClaimRB')->name('dataAjaxHBSClaimRB');
