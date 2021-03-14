@@ -133,6 +133,10 @@ class HBS_CL_CLAIM extends  BaseModelDB2
         return round($sum);
     }
 
+    public function getAdminFeeAttribute(){
+        return $this->HBS_CL_LINE->pluck('admin_fee')->sum();
+    }
+
     public function getSumAppAmtAttribute(){
         $clLines = $this->HBS_CL_LINE->toArray();
         $sum = array_sum(array_column($clLines,'app_amt'));

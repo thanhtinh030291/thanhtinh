@@ -171,6 +171,8 @@ $totalAmount = 0;
 
                             {{ Form::label('type',  "Approve Amt HBS", array('class' => 'col-md-4 ')) }}
                             {{ Form::label('type', formatPrice($approve_amt, " đ"), array( "id" => "apv_hbs_show", 'class' => 'col-md-8 text-danger font-weight-bold')) }}
+                            {{ Form::label('type',  "Admin Fee HBS", array('class' => 'col-md-4 ')) }}
+                            {{ Form::label('type', formatPrice($adminFee, " đ"), array( "id" => "apv_hbs_show", 'class' => 'col-md-8 text-danger font-weight-bold')) }}
                             {{-- Cấn trừ --}}
                             {{ Form::label('type',  "Payment History", array('class' => 'col-md-6 ')) }}
                             <div id="payment_history_show" class="col-md-12 border border-danger p-3 mb-3">

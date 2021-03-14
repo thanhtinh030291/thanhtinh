@@ -205,6 +205,22 @@ $totalAmount = 0;
 
                             {{ Form::label('type',  "Approve Amt HBS", array('class' => 'col-md-4 ')) }}
                             {{ Form::label('type', formatPrice($approve_amt, " đ"), array( "id" => "apv_hbs_show", 'class' => 'col-md-8 text-danger font-weight-bold')) }}
+                            {{ Form::label('type',  "Admin Fee HBS", array('class' => 'col-md-4 ')) }}
+                            {{ Form::label('type', formatPrice($adminFee, " đ"), array( "id" => "apv_hbs_show", 'class' => 'col-md-8 text-danger font-weight-bold')) }}
+                            {{ Form::label('include_admin_fee', 'Thanh toán bao gồm AdminFee: ', array('class' => 'labelas')) }}<br>
+                            {{ Form::open(array('url' => '/admin/claim/setAdminFee/'.$data->id, 'method' => 'POST')) }}
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="customRadio" name="include_admin_fee" value="0" checked >
+                                    <label class="custom-control-label" for="customRadio">No</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="customRadio2" name="include_admin_fee" value="1" @if($data->include_admin_fee == 1 ) checked @endif>
+                                    <label class="custom-control-label" for="customRadio2">YES</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <button class="btn btn-info" type="submit" value="save">Save</button> 
+                                </div>
+                            {{ Form::close() }}
                             {{-- Cấn trừ --}}
                             {{ Form::label('type',  "Payment History", array('class' => 'col-md-6 ')) }}
                             <div id="payment_history_show" class="col-md-12 border border-danger p-3 mb-3">

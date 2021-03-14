@@ -243,9 +243,11 @@ class ClaimController extends Controller
         }
         // GET value add item
         if($request->_content){
+            
             $rowContent = $request->_content;
             $rowAmount = $request->_amount;
             $reasonInject = $request->_reasonInject;
+            
             foreach ($rowContent as $key => $value) {
                 $dataItems[] = new ItemOfClaim([
                     'content' => $value,
@@ -256,6 +258,7 @@ class ClaimController extends Controller
                     'updated_user' => $userId,
                 ]);
             }
+            
         }
         
         if ($request->_url_file_sorted) {
@@ -308,7 +311,7 @@ class ClaimController extends Controller
         $IS_FREEZED = 0;
         $setting = Setting::findOrFail(1);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        
+        $adminFee = $HBS_CL_CLAIM->adminFee;
         foreach ($export_letter as $key => $value) {
 
             $check_claim_5m = false;
@@ -379,7 +382,8 @@ class ClaimController extends Controller
             $member_name = data_get($payment_history_cps,'member_name');
             $balance_cps = json_decode(AjaxCommonController::getBalanceCPS($data->clClaim->member->memb_ref_no , $data->code_claim_show)->getContent(),true);
             $balance_cps = collect(data_get($balance_cps, 'data_full'));
-            $tranfer_amt = (int)$approve_amt - (int)collect($payment_history)->sum('TF_AMT')-$balance_cps->sum('DEBT_BALANCE');
+            $tranfer_amt = (int)$approve_amt - (int)collect($payment_history)->sum('TF_AMT')-$balance_cps->sum('DEBT_BALANCE') + (int)$adminFee;
+            $tranfer_amt = $claim->include_admin_fee == 1 ? $tranfer_amt : ($tranfer_amt - (int)$adminFee);
             
         } catch (\Throwable $th) {
             $payment_history = [];
@@ -405,7 +409,7 @@ class ClaimController extends Controller
         'listLetterTemplate' , 'list_status_ad', 'user', 'payment_history', 'approve_amt','tranfer_amt','present_amt',
         'payment_method','pocy_ref_no','memb_ref_no', 'member_name', 'balance_cps', 'can_pay_rq',
         'CsrFile','manager_gop_accept_pay','hospital_request', 'list_diagnosis', 'selected_diagnosis', 'fromEmail','reject_code',
-        'IS_FREEZED']);
+        'IS_FREEZED','adminFee']);
         
         if ($claim_type == 'P'){
             return view('claimGOPManagement.show', $compact);
@@ -1307,6 +1311,9 @@ class ClaimController extends Controller
                 <div style="position: absolute; right: 5px; top: 0px;font-weight: bold; ">
                     <img src="'.asset("images/header.jpg").'" alt="head">
                 </div>');
+                $mpdf->WriteHTML('<div style="position: absolute; bottom: 0;
+                right:5"><barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />
+                <div style="text-align: center">'.$claim->barcode.'</div></div>');
                 $mpdf->SetHTMLFooter('
                 <div style="text-align: right; font-weight: bold;">
                     <img src="'.asset("images/footer.png").'" alt="foot">
@@ -2564,6 +2571,16 @@ class ClaimController extends Controller
         $claim->save();
         return redirect('/admin/claim/'.$id)->with('status', 'Đã cập nhật thành công');
     }
+
+    public function setAdminFee(Request $request, $id){
+
+        $claim = Claim::findOrFail($id);
+        $claim->include_admin_fee = $request->include_admin_fee ? $request->include_admin_fee : 0;
+        $claim->save();
+        return redirect('/admin/claim/'.$id)->with('status', 'Đã cập nhật thành công');
+    }
+
+    
 
     public function unfreezed(Request $request, $id){
         $claim = Claim::findOrFail($id);
