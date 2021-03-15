@@ -1485,10 +1485,11 @@ class ClaimController extends Controller
         $itemsReject = $CSRRemark_TermRemark['itemsReject'];
         $sumAmountReject = $CSRRemark_TermRemark['sumAmountReject'];
         $sumAppAmt = (int)$HBS_CL_CLAIM->sumAppAmt ;
+        $adminfee = $claim->include_admin_fee == 1 ? $HBS_CL_CLAIM->adminFee : 0 ;
         $export_letter = ExportLetter::findOrFail($export_letter_id);
         $note_pay =  note_pay($export_letter);
         if($export_letter->data_cps == null || $export_letter->data_cps == [] ){
-            $time_pay = formatPrice($sumAppAmt);
+            $time_pay = formatPrice($sumAppAmt + $adminfee);
             $paymentAmt = $time_pay;
         }else{
             $time_pay = [];
@@ -1499,11 +1500,11 @@ class ClaimController extends Controller
                 
             };
             if(collect($export_letter->data_cps)->sum('TF_AMT') != $sumAppAmt){
-                $time_pay[] = 'Thanh toán bổ sung: ' . formatPrice($sumAppAmt - $sum_tf_amt);
+                $time_pay[] = 'Thanh toán bổ sung: ' . formatPrice($sumAppAmt + $adminfee - $sum_tf_amt);
             }
-            $time_pay[] = 'Tổng Cộng: '.formatPrice($sumAppAmt);
+            $time_pay[] = 'Tổng Cộng: '.formatPrice($sumAppAmt + $adminfee);
             $time_pay = implode("<br>",$time_pay);
-            $paymentAmt = $sumAppAmt - $sum_tf_amt;
+            $paymentAmt = $sumAppAmt + $adminfee - $sum_tf_amt;
         }
         $Provider = $HBS_CL_CLAIM->Provider;
         
@@ -1591,6 +1592,7 @@ class ClaimController extends Controller
         }
         $content = str_replace('[[$tableInfoPayment]]', $tableInfo , $content);
         $content = str_replace('[[$apvAmt]]', formatPrice((int)$sumAppAmt), $content);
+        $content = str_replace('[[$adminfee]]', formatPrice((int)$adminfee), $content);
         $content = str_replace('[[$time_pay]]', $time_pay, $content);
         $content = str_replace('[[$paymentAmt]]', formatPrice($paymentAmt), $content);
         return ['content' => $content , 'namefile' => $namefile];
