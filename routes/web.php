@@ -51,6 +51,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/claim/confirmContract', 'ClaimController@confirmContract')->name('claim.confirmContract');
         Route::post('/claim/setJetcase/{id}', 'ClaimController@setJetcase')->name('claim.setJetcase');
         Route::post('/claim/setAdminFee/{id}', 'ClaimController@setAdminFee')->name('claim.setAdminFee');
+        Route::get('/claimExport', 'ClaimController@claimExport')->name('claim.claimExport');
         
         
         
