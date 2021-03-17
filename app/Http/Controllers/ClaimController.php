@@ -2648,7 +2648,7 @@ class ClaimController extends Controller
             'created_at_to' => $request->created_at_to,
         ];
         if($request->export =='yes'){
-            return Excel::download(new \App\Exports\ClaimExport($request->created_at_from , $request->created_at_to),'users.csv');
+            return Excel::download(new \App\Exports\ClaimExport($request->created_at_from , $request->created_at_to),'Claim('.$request->created_at_from." To ". $request->created_at_to . ').xlsx');
 
         }
         if ($request->created_at_from != null) {
