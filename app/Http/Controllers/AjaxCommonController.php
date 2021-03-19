@@ -1203,11 +1203,22 @@ class AjaxCommonController extends Controller
         $response = $client->request("POST", config('constants.link_mfile').'uploadmfile' , ['form_params'=>$body]);
         $response =  json_decode($response->getBody()->getContents());
         if($response->errorCode == 0){
-            Claim::where('id',$claim->id)->update([
-                'mfile_claim_id' => $response->info_claim->claim_id,
-                'mfile_claim_file_id' => $response->info_claim->claim_file_id,
-                'mfile_claim_update_at' => Carbon::now()
-             ]);
+            \App\LogMfile::updateOrCreate([
+                'claim_id' => $claim_id,
+            ],[
+                'cl_no' => $claim->code_claim_show,
+                'm_errorCode' => $response->errorCode,
+                'm_errorMsg' => $response->errorMsg,
+                'm_policy_holder_id' => $response->info_policy_holder->policy_holder_id,
+                'm_policy_holder_latest_version' => $response->info_policy_holder->policy_holder_latest_version,
+                'm_member_id' => $response->info_member->member_id,
+                'm_member_latest_version' => $response->info_member->member_latest_version,
+                'm_claim_id' => $response->info_claim->claim_id,
+                'm_claim_latest_version' => $response->info_claim->claim_latest_version,
+                'm_claim_file_id' => $response->info_claim->claim_file_id,
+                'm_claim_file_latest_version' => $response->info_claim->claim_file_latest_version,
+                'have_ca' => 1
+            ]);
         }
         return response()->json(['errorCode' => $response->errorCode ,'errorMsg' => $response->errorMsg]);
     }

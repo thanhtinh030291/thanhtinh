@@ -19,11 +19,11 @@ class AddTokenMfileToSettingsTable extends Migration
             $table->text('token_mfile')->nullable();
         });
 
-        Schema::table('claim', function (Blueprint $table) {
-            $table->string('mfile_claim_id')->nullable();
-            $table->string('mfile_claim_file_id')->nullable();
-            $table->timestamp('mfile_claim_update_at')->nullable();
-        });    
+        // Schema::table('claim', function (Blueprint $table) {
+        //     $table->string('mfile_claim_id')->nullable();
+        //     $table->string('mfile_claim_file_id')->nullable();
+        //     $table->timestamp('mfile_claim_update_at')->nullable();
+        // });    
     }
 
     /**
@@ -40,10 +40,10 @@ class AddTokenMfileToSettingsTable extends Migration
             $table->dropColumn('token_mfile');
         });
 
-        Schema::table('claim', function (Blueprint $table) {
-            $table->dropColumn('mfile_claim_id');
-            $table->dropColumn('mfile_claim_file_id');
-            $table->dropColumn('mfile_claim_update_at');
-        });
+        // Schema::table('claim', function (Blueprint $table) {
+        //     $table->dropColumn('mfile_claim_id');
+        //     $table->dropColumn('mfile_claim_file_id');
+        //     $table->dropColumn('mfile_claim_update_at');
+        // });
     }
 }
