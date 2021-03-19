@@ -130,7 +130,7 @@ $totalAmount = 0;
                                     <!-- End file image -->
                                     {{ Form::close() }}
                                     
-                                    <button type="button" onclick="sendMfile();" class="btn btn-success " ><i class="fa fa-mixcloud" aria-hidden="true"></i> Send M-File</button>
+                                    <button type="button" onclick="sendMfile();" class="btn btn-success " ><i class="fa fa-mixcloud" aria-hidden="true"></i> Send To M-Files</button>
                                     @if ($data->mfile_claim_id != null)
                                         <p id="mfile-update-time">M-File latest version at {{$data->mfile_claim_update_at}}
                                             <a target="_blank" href="/admin/viewMfile/{{$data->mfile_claim_id}}/{{$data->mfile_claim_file_id}}" ><i class="fa fa-eye"></i></a>
