@@ -163,7 +163,7 @@ $totalAmount = 0;
                                     </div>
                                     <!-- End file image -->
                                     {{ Form::close() }}
-                                    @hasanyrole('Admin|AdminClaim|Header|ManagerGOP|Manager')
+                                    
                                     <button type="button" onclick="sendMfile();" class="btn btn-success " ><i class="fa fa-mixcloud" aria-hidden="true"></i> Send M-File</button>
                                     @if ($data->mfile_claim_id != null)
                                         <p id="mfile-update-time">M-File latest version at {{$data->mfile_claim_update_at}}
@@ -171,7 +171,7 @@ $totalAmount = 0;
                                     @else
                                         <p id="mfile-update-time"></p>
                                     @endif
-                                    @endhasanyrole
+                                    
                                 </div> 
                             </div>
                         </div>
