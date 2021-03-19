@@ -21,4 +21,8 @@ class PaymentHistory extends BaseModel
         return $this->hasOne('App\User', 'id', 'created_user');
     }
     
+    public function LogMfile()
+    {
+        return $this->belongsTo('App\LogMfile', 'claim_id', 'claim_id');
+    }
 }
