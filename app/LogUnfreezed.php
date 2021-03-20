@@ -10,4 +10,9 @@ class LogUnfreezed extends Model
     protected static $table_static = 'log_unfreezed';
     protected $guarded = ['id'];
 
+    public function LogMfile()
+    {
+        return $this->belongsTo('App\LogMfile', 'claim_id', 'claim_id')->where('reason','Close');
+    }
+
 }
