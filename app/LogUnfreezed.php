@@ -12,7 +12,7 @@ class LogUnfreezed extends Model
 
     public function LogMfile()
     {
-        return $this->belongsTo('App\LogMfile', 'claim_id', 'claim_id')->where('reason','Close');
+        return $this->belongsTo('App\LogMfile', 'claim_id', 'claim_id');
     }
 
 }
