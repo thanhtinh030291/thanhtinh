@@ -108,4 +108,9 @@ class Claim extends BaseModel
         };
         return $query->with(['item_of_claim' => $condition]);
     }
+
+    public function LogMfile()
+    {
+        return $this->belongsTo('App\LogMfile', 'claim_id', 'id');
+    }
 }
