@@ -9,6 +9,7 @@ use App\Console\Commands\GetCPS;
 use App\Console\Commands\GetHBS;
 use App\Console\Commands\GetRenewPayment;
 use App\Console\Commands\UpdateFile;
+use App\Console\Commands\UploadMfile;
 class Kernel extends ConsoleKernel
 {
     /**
@@ -39,6 +40,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('command:GetRenewPayment')->everyFiveMinutes();
         $schedule->command('command:UpdateFile')->everyFiveMinutes();
         $schedule->command('command:CheckFinishAndPay')->everyFiveMinutes();
+        $schedule->command('command:UploadMfile')->dailyAt('23:00');
+        
     }
 
     /**
