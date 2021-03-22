@@ -1150,7 +1150,7 @@ class AjaxCommonController extends Controller
         }
     }
 
-    public function sendMfile($claim_id){
+    public static function sendMfile($claim_id){
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         if($claim->url_file_sorted == null ){
             return response()->json(['errorCode' => 999 ,'errorMsg' => 'File không tồn tại']);
