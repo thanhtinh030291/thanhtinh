@@ -95,7 +95,7 @@ class UploadMfile extends Command
             }
         }
 
-        foreach ($variable as $key => $value) {
+        foreach ($arr_insert as $key => $value) {
             AjaxCommonController::getPaymentHistoryCPS($value);
         }
     }
