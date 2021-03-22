@@ -96,7 +96,7 @@ class UploadMfile extends Command
         }
 
         foreach ($arr_insert as $key => $value) {
-            \App\Http\Controllers\AjaxCommonController::getPaymentHistoryCPS($value);
+            \App\Http\Controllers\AjaxCommonController::sendMfile($value);
         }
     }
 }
