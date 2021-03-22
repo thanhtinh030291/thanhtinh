@@ -36,6 +36,11 @@
                             <a class="{{ setActive('admin/reportAdmins') }}"
                             href="{{ url('admin/reportAdmins') }}"><span> Report for Admin Claim</span></a>
                         </li>
+
+                        <li class="{{ setActive('admin/LogMfiles') }}"> 
+                            <a class="{{ setActive('admin/LogMfiles') }}"
+                            href="{{ url('admin/LogMfiles') }}"><span> Report Upload MFile</span></a>
+                        </li>
                         @endhasanyrole
                         @hasanyrole('Header|ManagerGOP|Admin|ClaimGOP|QC|view')
                         <li class="{{ setActive('admin/reportGop') }}"> 

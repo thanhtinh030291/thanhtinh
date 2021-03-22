@@ -161,6 +161,7 @@ Route::group(['prefix' => 'admin'], function () {
 
         //report for admin claim
         Route::resource('reportGop', 'ReportGopController');
+        Route::resource('LogMfiles', 'LogMfilesController');
         
     });
 
