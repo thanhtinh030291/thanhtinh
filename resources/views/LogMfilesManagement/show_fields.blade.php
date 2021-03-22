@@ -6,6 +6,7 @@
                 <th scope="col" class="noVis">Link (ID Etalk)</th>
                 <th scope="col" class="noVis">Claim Type</th>
                 <th scope="col" class="noVis">CL No</th>
+                <th scope="col" class="noVis">Sent M-Files At</th>
             </tr>
         </thead>
         <tbody>
@@ -15,6 +16,8 @@
                 <td><a target="_blank" rel="noopener" href="{!! url('/admin/claim/'.$item->claim_id) !!}">Link Etalk "{{$item->barcode}}"</a></td>
                 <td>{!! $item->claim_type !!}</td>
                 <td>{!! $item->cl_no !!}</td>
+                <td>{!! $item->updated_at !!}</td>
+                
             </tr>
             @endforeach
         </tbody>

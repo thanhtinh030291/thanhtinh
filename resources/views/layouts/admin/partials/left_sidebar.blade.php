@@ -39,7 +39,7 @@
 
                         <li class="{{ setActive('admin/LogMfiles') }}"> 
                             <a class="{{ setActive('admin/LogMfiles') }}"
-                            href="{{ url('admin/LogMfiles') }}"><span> Report Upload MFile</span></a>
+                            href="{{ url('admin/LogMfiles') }}"><span> Report Upload M-Files</span></a>
                         </li>
                         @endhasanyrole
                         @hasanyrole('Header|ManagerGOP|Admin|ClaimGOP|QC|view')
