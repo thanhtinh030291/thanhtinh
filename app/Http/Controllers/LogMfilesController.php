@@ -33,7 +33,7 @@ class LogMfilesController extends Controller
             // 'updated_user' => $request->get('updated_user'),
             // 'updated_at' => $request->get('updated_at'),
         ];
-        $LogMfiles = LogMfile::select(DB::raw('DISTINCT(DATE(updated_at)) AS date'))->where('updated_at',"!=",NULL)->orderBy('id', 'desc')->get();
+        $LogMfiles = LogMfile::select(DB::raw('DISTINCT(DATE(updated_at)) AS date'))->where('updated_at',"!=",NULL)->orderBy('updated_at', 'desc')->get();
         $admin_list = User::getListIncharge();
         //pagination result
         $limit_list = config('constants.limit_list');
