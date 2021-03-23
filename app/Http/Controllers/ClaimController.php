@@ -2326,13 +2326,7 @@ class ClaimController extends Controller
 
         if($request->type_submit == 'accept'){
             $to_user = [data_get($claim->manager_gop_accept_pay,'created_by')];
-            $claim->manager_gop_accept_pay = [
-                'status' => 'accept',
-                'message' => '',
-                'created_by' => $user->id,
-                'created_at' => Carbon::now()->toDateTimeString(),
-            ];
-            $claim->save();
+            
             $letter_template_id = LetterTemplate::where('name','Letter Payment (GOP)')->first()->id;
             $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
 
@@ -2386,6 +2380,32 @@ class ClaimController extends Controller
             try {
                 $res = PostApiMantic('api/rest/plugins/apimanagement/issues/add_note_reply_letter/files', $body);
                 $res = json_decode($res->getBody(),true);
+                DB::beginTransaction();
+                    $claim->manager_gop_accept_pay = [
+                        'status' => 'accept',
+                        'message' => '',
+                        'created_by' => $user->id,
+                        'created_at' => Carbon::now()->toDateTimeString(),
+                    ];
+                    $claim->save();
+                    //updata db
+                    $export_letter->update(['wait' => [
+                        'user' => $claim->created_user,
+                        'created_at' =>  Carbon::now()->toDateTimeString(),
+                        'data' => $data_htm
+                    ],
+                        'status' => 23, // Manager GOP approved
+                        'approve' =>[
+                            'user' => $user->id,
+                            'created_at' => Carbon::now()->toDateTimeString(),
+                            'data' => $data_htm_apv,
+                        ]
+                    ]);
+
+                    $claim->report_admin()->updateOrCreate(['claim_id' => $claim->id]
+                    ,['REQUEST_SEND' => 1]);
+                    
+                DB::commit();
             } catch (Exception $e) {
     
                 $request->session()->flash(
@@ -2395,23 +2415,10 @@ class ClaimController extends Controller
                 return redirect('/admin/claim/'.$id)->withInput();
             }
 
-            //updata db
-            $export_letter->update(['wait' => [
-                'user' => $claim->created_user,
-                'created_at' =>  Carbon::now()->toDateTimeString(),
-                'data' => $data_htm
-            ],
-                'status' => 23, // Manager GOP approved
-                'approve' =>[
-                    'user' => $user->id,
-                    'created_at' => Carbon::now()->toDateTimeString(),
-                    'data' => $data_htm_apv,
-                ]
-            ]);
+            
 
             // notifi admin claim
-            $claim->report_admin()->updateOrCreate(['claim_id' => $claim->id]
-                ,['REQUEST_SEND' => 1]);
+           
             $to_admin_claim = User::whereHas("roles", function($q){ $q->where("name", "AdminClaim"); })->get()->pluck('id')->toArray();
             if (!empty($to_admin_claim)) {
                 foreach ($to_admin_claim as $key => $value) {
@@ -2603,7 +2610,7 @@ class ClaimController extends Controller
         $user = Auth::User();
         $claim = Claim::findOrFail($id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        
+
         if($claim->url_file_sorted == null && $claim->claim_type == 'M'){
             return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng kiểm tra và upload Hồ sơ vào tệp đã sắp xếp ');
         }
