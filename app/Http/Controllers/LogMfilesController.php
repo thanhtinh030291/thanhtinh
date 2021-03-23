@@ -33,14 +33,13 @@ class LogMfilesController extends Controller
             // 'updated_user' => $request->get('updated_user'),
             // 'updated_at' => $request->get('updated_at'),
         ];
-        $LogMfiles = LogMfile::select(DB::raw('DISTINCT(DATE(updated_at)) AS date'))->where('updated_at',"!=",NULL)->orderBy('updated_at', 'desc')->get();
+        $LogMfiles = LogMfile::select(DB::raw('DISTINCT(DATE(created_at)) AS date'))->where('created_at',"!=",NULL)->orderBy('created_at', 'desc')->get();
         $admin_list = User::getListIncharge();
         //pagination result
         $limit_list = config('constants.limit_list');
         $limit = $request->get('limit');
         $per_page = !empty($limit) ? $limit : Arr::first($limit_list);
         $LogMfiles  = $LogMfiles->paginate($per_page);
-        
         return view('LogMfilesManagement.index', compact('search_params', 'admin_list', 'limit', 'limit_list', 'LogMfiles' ));
     }
 
@@ -48,7 +47,7 @@ class LogMfilesController extends Controller
     public function show($datereportAdmin)
     {
         $date = \Carbon\Carbon::createFromFormat('Y-m-d', $datereportAdmin);
-        $LogMfiles = LogMfile::leftJoin('claim', 'claim.id', '=', 'claim_id')->whereDate('log_mfile.updated_at', $date->toDateString())->get();
+        $LogMfiles = LogMfile::leftJoin('claim', 'claim.id', '=', 'claim_id')->whereDate('log_mfile.created_at', $date->toDateString())->limit(100)->get();
         $admin_list = User::getListIncharge();
         return view('LogMfilesManagement.show', compact('LogMfiles','admin_list'));
     }
