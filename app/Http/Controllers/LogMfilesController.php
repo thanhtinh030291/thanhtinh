@@ -47,7 +47,7 @@ class LogMfilesController extends Controller
     public function show($datereportAdmin)
     {
         $date = \Carbon\Carbon::createFromFormat('Y-m-d', $datereportAdmin);
-        $LogMfiles = LogMfile::select('log_mfile.*','claim.id','claim.barcode','claim.claim_type')->leftJoin('claim', 'claim.id', '=', 'claim_id')->whereDate('log_mfile.created_at', $date->toDateString())->limit(100)->get();
+        $LogMfiles = LogMfile::select('log_mfile.*','claim.id','claim.barcode','claim.claim_type')->leftJoin('claim', 'claim.id', '=', 'claim_id')->whereDate('log_mfile.created_at', $date->toDateString())->where('m_errorCode' ,0)->get();
         $admin_list = User::getListIncharge();
         return view('LogMfilesManagement.show', compact('LogMfiles','admin_list'));
     }
