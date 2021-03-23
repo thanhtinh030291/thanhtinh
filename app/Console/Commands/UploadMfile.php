@@ -90,7 +90,7 @@ class UploadMfile extends Command
                 \App\LogMfile::updateOrCreate([
                     'claim_id' => $value,
                 ],[
-                    'log_mfile' => 0
+                    'have_mfile' => 0
                 ]);
             }
         }
