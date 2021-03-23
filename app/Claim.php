@@ -111,6 +111,6 @@ class Claim extends BaseModel
 
     public function LogMfile()
     {
-        return $this->belongsTo('App\LogMfile', 'claim_id', 'id');
+        return $this->belongsTo('App\LogMfile', 'id', 'claim_id')->where('m_errorCode',0);
     }
 }
