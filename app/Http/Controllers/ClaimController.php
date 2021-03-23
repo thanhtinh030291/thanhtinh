@@ -2603,6 +2603,10 @@ class ClaimController extends Controller
         $user = Auth::User();
         $claim = Claim::findOrFail($id);
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
+        
+        if($claim->url_file_sorted == null && $claim->claim_type == 'M'){
+            return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng kiểm tra và upload Hồ sơ vào tệp đã sắp xếp ');
+        }
         $count_orther_close = $HBS_CL_CLAIM->HBS_CL_LINE->where('scma_oid_cl_line_status',"!=",'CL_LINE_STATUS_CL')->count();
         if($count_orther_close > 0){
             return redirect('/admin/claim/'.$id)->with('errorStatus', 'Vui lòng kiểm tra HBS tất cả claim line phải chuyển sang trang thái Close ');
