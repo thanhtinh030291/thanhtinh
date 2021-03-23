@@ -1153,6 +1153,14 @@ class AjaxCommonController extends Controller
     public static function sendMfile($claim_id){
         $claim  = Claim::itemClaimReject()->findOrFail($claim_id);
         if($claim->url_file_sorted == null ){
+            \App\LogMfile::updateOrCreate([
+                'claim_id' => $claim_id,
+            ],[
+                'cl_no' => $claim->code_claim_show,
+                'm_errorCode' => 999,
+                'have_ca' => 1,
+                'have_mfile' => 0
+            ]);
             return response()->json(['errorCode' => 999 ,'errorMsg' => 'File không tồn tại']);
         }
         $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
