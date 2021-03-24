@@ -157,8 +157,7 @@ $totalAmount = 0;
                                         {!! Form::button('Delete pages', ['data-toggle' => "modal" ,  
                                                 'data-target' => "#deletePagesModal",
                                                 'type' => 'button', 
-                                                'class' => ' btn text-danger' , 
-                                                'onclick' => 'comfirmPayment(this);',
+                                                'class' => ' btn text-danger'
                                                 ]) !!}
                                     </div>
                                     <!-- End file image -->
@@ -402,11 +401,11 @@ $totalAmount = 0;
                                         <br>
                                         {{$item->wait['created_at']}}
                                         
-                                        {{-- {{ Form::open(array('url' => '/admin/claim/sendSortedFile/'.$data->id, 'method'=>'post', 'files' => true))}}
+                                        {{ Form::open(array('url' => '/admin/claim/sendSortedFile/'.$data->id, 'method'=>'post', 'files' => true))}}
                                         {{ Form::hidden('export_letter_id', $item->id ) }}
                                         {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
                                         {!! Form::button('<i class="fa fa-repeat"></i> Lưu vào tệp đã sắp sếp', ['type' => 'submit', 'class' => 'btn btn-info btn-xs p-1']) !!}
-                                        {!! Form::close() !!} --}}
+                                        {!! Form::close() !!}
                                         
                                 @endif
                             </td>
