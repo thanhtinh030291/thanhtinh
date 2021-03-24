@@ -2135,10 +2135,24 @@ class ClaimController extends Controller
             $request->session()->flash('errorStatus', 'Claim chỉ được phép tồn tại 1 policy plan ');
             return redirect('/admin/claim/'.$id)->withInput();
         }
+        
+        $letter = $claim->export_letter;
+        if($letter->count() == 0 ){
+            $request->session()->flash('errorStatus', 'Phải tồn tại ít nhất 1 thư thanh toán');
+            return redirect('/admin/claim/'.$id)->withInput();
+        }
+
+        
+        
         $rp = AjaxCommonController::sendPayment($request,$id);
         switch (data_get($rp,'code')) {
             case '00':
                 HBS_CL_CLAIM::where('CLAM_OID',$claim->code_claim)->update(['IS_FREEZED'=>1]);
+                $request_mer = new Request([
+                    'export_letter_id' => $letter[0]->id,
+                    'letter_template_id' => $letter[0]->letter_template_id
+                ]);
+                $this->sendSortedFile($request_mer, $id);
                 return redirect('/admin/claim/'.$id)->with('status', data_get($rp,'description'));
                 break;
             case '01':

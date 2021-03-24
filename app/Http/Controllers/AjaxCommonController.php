@@ -1196,7 +1196,9 @@ class AjaxCommonController extends Controller
                 "claim_info" => [
                     "claim_no" => $claim->code_claim_show,
                     "payee" => $claim->claim_type == "M" ? "Insured" : strtoupper(Str::slug($HBS_CL_CLAIM->Provider->prov_name , ' ')),
-                    "claim_note" => "Note something"
+                    "claim_note" => "Note something",
+                    "claim_type" => "",
+                    "claim_lever" => "",
                 ],
                 "claim_file" =>  [
                     "file_extension" => "pdf",
