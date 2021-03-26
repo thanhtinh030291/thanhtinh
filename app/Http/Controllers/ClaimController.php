@@ -375,7 +375,7 @@ class ClaimController extends Controller
             $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($data->code_claim_show)->getContent(),true);
             $payment_history = data_get($payment_history_cps,'data_full',[]);
             $approve_amt = data_get($payment_history_cps,'approve_amt');
-            $present_amt = data_get($payment_history_cps,'present_amt') + $adminFee;
+            $present_amt = data_get($payment_history_cps,'present_amt');
             
             $payment_method = $claim_type == "P" ? "TT" :  data_get($payment_history_cps,'payment_method');
             $pocy_ref_no = data_get($payment_history_cps,'pocy_ref_no');
@@ -1535,7 +1535,7 @@ class ClaimController extends Controller
         $ExtendClaim = ExtendClaim::where('claim_id',$claim_id)->first();
 
         $content = $letter->template;
-        $content = str_replace('[[$ProvPstAmt]]', formatPrice(data_get($claim->hospital_request,'prov_gop_pres_amt')), $content);
+        $content = str_replace('[[$ProvPstAmt]]', formatPrice(data_get($claim->hospital_request,'prov_gop_pres_amt',0) + $adminfee), $content);
         $content = str_replace('[[$ProDeniedAmt]]', formatPrice($sumAmountReject), $content);
         $content = str_replace('[[$ProvName]]', $Provider->prov_name, $content);
         $content = str_replace('[[$bankNameProv]]', $Provider->bank_name, $content);
