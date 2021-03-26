@@ -1522,8 +1522,8 @@ class ClaimController extends Controller
         $SURGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('PD_BEN_HEAD.ben_head',['SUR','OPR','ANES','RADIA','CHEMO'])->sum('app_amt');
         $EXTBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','EXTB')->sum('app_amt');
         $ICUGOP = $HBS_CL_CLAIM->HBS_CL_LINE->where('PD_BEN_HEAD.ben_head','ICU')->sum('app_amt');
-        $OTHERGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotIn('PD_BEN_HEAD.ben_head',['RB','SUR','EXTB','ICU','OPR','ANES','RADIA','CHEMO'])->sum('app_amt');
-        $ProApvAmt = data_get($claim->hospital_request,'prov_gop_pres_amt',0) - $sumAmountReject;
+        $OTHERGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereNotIn('PD_BEN_HEAD.ben_head',['RB','SUR','EXTB','ICU','OPR','ANES','RADIA','CHEMO'])->sum('app_amt') + $adminfee;
+        $ProApvAmt = data_get($claim->hospital_request,'prov_gop_pres_amt',0) - $sumAmountReject + $adminfee;
         $typeGOP = typeGop(data_get($claim->hospital_request,'type_gop',0));
         $noteGOP = data_get($claim->hospital_request,'note',"");
         $total_incur_hbs = $incurDateTo->diffInDays($incurDateFrom) == 0 ? "1 Ngày" : $incurDateTo->diffInDays($incurDateFrom) . "Ngày";

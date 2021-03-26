@@ -16,7 +16,7 @@
                   <tr>
                     <td>
                       <p>Dear Team,</p>
-                    <p>PCV xác nhận bảo lãnh thực tế cho khách hàng  <span style="font-weight: bold">{{$data['HBS_CL_CLAIM']->MemberNameCap}}</span>  tại {{$data['HBS_CL_CLAIM']->Provider->prov_name}} từ  {{$data['incurDateFrom']}} đến {{$data['incurDateTo']}} với chẩn đoán <span style="font-weight: bold">"{{$data['Diagnosis']}}"</span> số tiền: <span style="font-weight: bold">{{formatPrice($data['HBS_CL_CLAIM']->SumAppAmt)}}</span> đồng. (chi tiết như file đính kèm)
+                    <p>PCV xác nhận bảo lãnh thực tế cho khách hàng  <span style="font-weight: bold">{{$data['HBS_CL_CLAIM']->MemberNameCap}}</span>  tại {{$data['HBS_CL_CLAIM']->Provider->prov_name}} từ  {{$data['incurDateFrom']}} đến {{$data['incurDateTo']}} với chẩn đoán <span style="font-weight: bold">"{{$data['Diagnosis']}}"</span> số tiền: <span style="font-weight: bold">{{formatPrice($data['HBS_CL_CLAIM']->SumAppAmt + $data['HBS_CL_CLAIM']->adminFee)}}</span> đồng. (chi tiết như file đính kèm)
                         </p>
                         <p class="MsoNormal"><strong><em><u><span style="font-size: 10.0pt; font-family: 'Times New Roman',serif; color: #c00000;">Lưu ý:</span></u></em></strong></p>
                         <ol style="margin-top: 0in;" start="1" type="1">

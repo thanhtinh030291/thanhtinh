@@ -16,7 +16,7 @@
                   <tr>
                     <td>
                       <p>Dear Team,</p>
-                      <p>PCV xác nhận bảo lãnh cho KH <span style="font-weight: bold">{{$data['HBS_CL_CLAIM']->MemberNameCap}}</span> với tổng chi phí dự kiến là <span style="font-weight: bold">{{formatPrice($data['HBS_CL_CLAIM']->SumAppAmt)}}</span> đồng.</p>
+                      <p>PCV xác nhận bảo lãnh cho KH <span style="font-weight: bold">{{$data['HBS_CL_CLAIM']->MemberNameCap}}</span> với tổng chi phí dự kiến là <span style="font-weight: bold">{{formatPrice($data['HBS_CL_CLAIM']->SumAppAmt + $data['HBS_CL_CLAIM']->adminFee)}}</span> đồng.</p>
                       <p>Lưu ý: Thời gian bảo lãnh: {{$data['incurDateFrom']}} – {{$data['incurDateTo']}} ({{$data['diffIncur']}} ngày)</p>
                       {{-- @foreach (data_get($data,'benefit.T_CT.amt_dis_life') as $item)
                         @if (data_get($item,'message'))
