@@ -349,13 +349,13 @@ $totalAmount = 0;
                                         ]) !!}
                                         <br>
                                         {{$item->wait['created_at']}}
-                                        {{-- @if($item->created_user == $user->id)
+                                        @if($item->created_user == $user->id && in_array($item->letter_template->id,[3,4,5]) )
                                             {{ Form::open(array('url' => '/admin/claim/sendSortedFile/'.$data->id, 'method'=>'post', 'files' => true))}}
                                             {{ Form::hidden('export_letter_id', $item->id ) }}
                                             {{ Form::hidden('letter_template_id', $item->letter_template->id ) }}
                                             {!! Form::button('<i class="fa fa-repeat"></i> Lưu vào tệp đã sắp sếp', ['type' => 'submit', 'class' => 'btn btn-info btn-xs p-1']) !!}
                                             {!! Form::close() !!}
-                                        @endif --}}
+                                        @endif
                                 @endif
                             </td>
                             <td>
