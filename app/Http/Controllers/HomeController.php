@@ -11,6 +11,10 @@ use Redis;
 use App\FinishAndPay;
 use App\AUDIT_DLVN_HBS_CPS_DIFF_AMT;
 use App\AUDIT_HBS_EXISTED;
+use App\AUDIT_HBS_EXISTED_BACODE;
+use App\AUDIT_HBS_MANTIS_DIFF_POCY;
+use App\AUDIT_HBS_MANTIS_DIFF_STATUS;
+use App\AUDIT_HBS_MANTIS_EXISTED_BUG_ID;
 
 
 class HomeController extends Controller
@@ -108,7 +112,10 @@ class HomeController extends Controller
         $AUDIT_DLVN_HBS_CPS_DIFF_AMT = AUDIT_DLVN_HBS_CPS_DIFF_AMT::all();
         
         $AUDIT_HBS_EXISTED = AUDIT_HBS_EXISTED::all();
-        
-        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient','MANTIS_BUG','STATUS_COLOR_LIST','COUNT_PENDING','PENDING_LIST','finishNotPay','AUDIT_DLVN_HBS_CPS_DIFF_AMT','AUDIT_HBS_EXISTED'));
+        $AUDIT_HBS_EXISTED_BACODE = AUDIT_HBS_EXISTED_BACODE::all();
+        $AUDIT_HBS_MANTIS_DIFF_POCY = AUDIT_HBS_MANTIS_DIFF_POCY::all();
+        $AUDIT_HBS_MANTIS_DIFF_STATUS = AUDIT_HBS_MANTIS_DIFF_STATUS::all();
+        $AUDIT_HBS_MANTIS_EXISTED_BUG_ID = AUDIT_HBS_MANTIS_EXISTED_BUG_ID::all();
+        return view('home', compact('listUser','latestMessages','sentMessages','sumMember','sumClaim','sumClaimToDate', 'Ipclient','MANTIS_BUG','STATUS_COLOR_LIST','COUNT_PENDING','PENDING_LIST','finishNotPay','AUDIT_DLVN_HBS_CPS_DIFF_AMT','AUDIT_HBS_EXISTED' , 'AUDIT_HBS_EXISTED_BACODE' ,'AUDIT_HBS_MANTIS_DIFF_POCY' , 'AUDIT_HBS_MANTIS_DIFF_STATUS', 'AUDIT_HBS_MANTIS_EXISTED_BUG_ID'));
     }
 }

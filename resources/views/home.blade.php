@@ -166,7 +166,165 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
             <div class="card mb-3">
                 <div class="card-header">
-                    <h3><i class="fa fa-users"></i> MISSED OR DELAY PAYMENT</h3>
+                    <h3 class="text-danger"><i class="fa fa-users"></i>Barcode trên HBS chưa chính xác</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example7" class="table table-bordered table-hover display">
+                            <thead>
+                                <tr>
+                                    <th>LINK ETALK</th>
+                                    <th>CA Link</th>
+                                    <th>HBS STATUS</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($AUDIT_HBS_EXISTED_BACODE as $data)
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->BARCODE }}">{{$data->BARCODE}}</a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/claim/barcode/{{$data->bug_id}}" target="_blank">{{ $data->CL_NO }}</a>
+                                    </td>
+                                    <td>{{$data->HBS_STATUS}}</td>
+                                    <td>{{$data->UPD_USER}}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>														
+            </div><!-- end card-->					
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="text-danger"><i class="fa fa-users"></i>Policy trên HBS và Mantis chưa đồng nhất</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example8" class="table table-bordered table-hover display">
+                            <thead>
+                                <tr>
+                                    <th>LINK ETALK</th>
+                                    <th>CA Link</th>
+                                    <th>Policy Ref No (HBS)</th>
+                                    <th>Policy Ref No (Etalk)</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($AUDIT_HBS_MANTIS_DIFF_POCY as $data)
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->bug_id }}">{{$data->bug_id}}</a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/claim/barcode/{{$data->bug_id}}" target="_blank">{{ $data->CL_NO }}</a>
+                                    </td>
+                                    <td>{{$data->HBS_POCY_REF_NO}}</td>
+                                    <td>{{$data->mantis_pocy_ref_no}}</td>
+                                    <td>{{$data->handler}}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>														
+            </div><!-- end card-->					
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="text-danger"><i class="fa fa-users"></i>Status trên HBS và Mantis chưa đồng nhất</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example9" class="table table-bordered table-hover display">
+                            <thead>
+                                <tr>
+                                    <th>LINK ETALK</th>
+                                    <th>CA Link</th>
+                                    <th>Status (HBS)</th>
+                                    <th>Status (Etalk)</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($AUDIT_HBS_MANTIS_DIFF_STATUS as $data)
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->bug_id }}">{{$data->bug_id}}</a>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/claim/barcode/{{$data->bug_id}}" target="_blank">{{ $data->CL_NO }}</a>
+                                    </td>
+                                    <td>{{$data->HBS_STATUS}}</td>
+                                    <td>{{$data->mantis_status}}</td>
+                                    <td>{{$data->username}}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>														
+            </div><!-- end card-->					
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="text-danger"><i class="fa fa-users"></i>Tồn tại issue trên etalk nhưng ko có trên Hbs</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="examplea" class="table table-bordered table-hover display">
+                            <thead>
+                                <tr>
+                                    <th>LINK ETALK</th>
+                                    <th>POCY REF NO</th>
+                                    <th>Status (Etalk)</th>
+                                    <th>Project</th>
+                                    <th>User</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach ($AUDIT_HBS_MANTIS_EXISTED_BUG_ID as $data)
+                                <tr>
+                                    <td>
+                                        <a class="btn btn-primary" target="_blank" href="{{config('constants.url_mantic').'view.php?id='.$data->bug_id }}">{{$data->bug_id}}</a>
+                                    </td>
+                                    <td>{{$data->pocy_ref_no}}</td>
+                                    <td>{{$data->status}}</td>
+                                    <td>{{$data->project}}</td>
+                                    <td>{{$data->handler}}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>														
+            </div><!-- end card-->					
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3><i class="fa fa-users"></i> DLVN FINISH Nhưng Chưa Thanh Toán</h3>
                 </div>
                 <div class="card-body">
                     
@@ -204,6 +362,7 @@
             </div><!-- end card-->					
         </div>
     </div>
+
 
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">						
@@ -283,6 +442,21 @@
         "searchable": false,
         "ordering": false
         });
+
+        var table = $('#example8').DataTable({
+        "orderable": false,
+        "searchable": false,
+        "ordering": false
+        });
+
+        var table = $('#example9').DataTable({
+        "orderable": false,
+        "searchable": false,
+        "ordering": false
+        });
+
+        var table = $('#examplea').DataTable();
+
 
         // DataTable
         var table2 = $('#example2').DataTable();
