@@ -2136,7 +2136,7 @@ class ClaimController extends Controller
             return redirect('/admin/claim/'.$id)->withInput();
         }
         
-        $letter = $claim->export_letter;
+        $letter = $claim->export_letter->whereIn('letter_template_id',[1,2,6,7,10]);
         if($letter->count() == 0 ){
             $request->session()->flash('errorStatus', 'Phải tồn tại ít nhất 1 thư thanh toán');
             return redirect('/admin/claim/'.$id)->withInput();
