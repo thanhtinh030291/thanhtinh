@@ -92,12 +92,13 @@ class HBS_MR_MEMBER extends  BaseModelDB2
         };
         $HBS_MR_MEMBERs = HBS_MR_MEMBER::where('memb_ref_no',$memb_ref_no)->with(['MR_MEMBER_PLAN'=>$conditionMEMPL ])->get()->pluck('MR_MEMBER_PLAN.*.MR_POLICY_PLAN');
         $MR_POLICY_PLANs = collect();
+        
         foreach ($HBS_MR_MEMBERs as $HBS_MR_MEMBER) {
             
             $MR_POLICY_PLANs = $MR_POLICY_PLANs->merge($HBS_MR_MEMBER);
         }
         $plans = [];
-        foreach ($MR_POLICY_PLANs as $MR_POLICY_PLAN) {
+        foreach ($MR_POLICY_PLANs->sortByDesc('popl_oid') as $MR_POLICY_PLAN) {
             $eff_date = Carbon::parse($MR_POLICY_PLAN->MR_POLICY->eff_date)->format('d/m/Y');
             $plan = [];
             foreach ($MR_POLICY_PLAN->PD_PLAN_BENEFIT as $PD_PLAN_BENEFIT) {
@@ -132,7 +133,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
                             case '0016':
                             case '0017':
                             case '0018':
-                                $plan[] = 'IP 630M';
+                                $plan[] = 'IP 1000M';
                                 break;
                             default:
                                 $plan[] = 'IP none';
