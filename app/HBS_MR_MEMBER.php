@@ -125,7 +125,7 @@ class HBS_MR_MEMBER extends  BaseModelDB2
                             case '0009':
                             case '0014':
                             case '0015':
-                                $plan[] = 'IP 630M';
+                                $plan[] = 'IP 600M';
                                 break;
                             case '0010':
                             case '0011':
