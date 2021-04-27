@@ -119,7 +119,20 @@ class ReportGopController extends Controller
         $reportGop =  CPS_VCBSHEETS::with(['vnbt_sheets' => $condition])->where('VCBS_ID', $VCBS_ID)->first();
         $PAYM_IDS = explode(",",$reportGop->PAYM_IDS);
         $reportAdmin = CPS_PAYMENTS::whereIn('PAYM_ID',$PAYM_IDS)->get();
+        $array_clno = $reportAdmin->pluck('CL_NO')->toArray();
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::whereIn('cl_no',$array_clno)->with(['HBS_CL_LINE'])->get()->pluck('HBS_CL_LINE','cl_no');
         $admin_list = User::getListIncharge();
+        foreach ($reportAdmin as $key => $CPS_PAYMENT) {
+            $hbs = $HBS_CL_CLAIM[$CPS_PAYMENT->CL_NO]->map(function ($c) {
+                $q=  collect($c)->only(['incur_date_from', 'incur_date_to']);
+                if($q['incur_date_from'] == $q['incur_date_to']){
+                    return str_replace(" 00:00:00", "",$q['incur_date_from']) ;
+                }else{
+                    return str_replace(" 00:00:00", "",$q['incur_date_from']) .' to ' . str_replace(" 00:00:00", "",$q['incur_date_to']);
+                }
+            })->unique()->toArray();
+            $reportAdmin[$key]['incur'] = implode(" ; ",$hbs);
+        }
         return view('report_gop.show', compact('reportAdmin','admin_list'));
     }
 

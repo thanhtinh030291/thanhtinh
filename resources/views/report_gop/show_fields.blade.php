@@ -23,6 +23,7 @@
                 <th scope="col">prov_name</th>
                 <th scope="col">payee</th>
                 <th scope="col">inv_no</th>
+                <th scope="col">Incur_date</th>
             </tr>
         </thead>
         <tbody>
@@ -49,6 +50,7 @@
                 <td>{{ $payment->PROV_NAME }}</td>
                 <td>{{ $payment->PAYEE }}</td>
                 <td>{{ $payment->INV_NO }}</td>
+                <td>{{  $payment->incur }}</td>
             </tr>
             @endforeach
         </tbody>
