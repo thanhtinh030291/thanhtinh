@@ -1795,7 +1795,7 @@ class ClaimController extends Controller
                     }
                 } else {
                     if ($valuet->limit_type == 'CH') {
-                        $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_OP')->whereIn('ben_head', ['ACUP', 'BSET', 'CGP', 'CMED', 'HERB', 'HLIS', 'HMEO', 'HYNO', 'OSTE']);
+                        $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_OP')->whereIn('ben_head', ['ACUP', 'BSET', 'CGP', 'CMED', 'HERB', 'HLIS', 'HMEO', 'HYNO', 'OSTE', 'CONG']);
                         if ($array->count() > 0) {
                             $data['amt_from'] = $data['amt_from'] >= $valuet->amt_yr ? $data['amt_from'] :  $valuet->amt_yr;
                         }
@@ -1903,6 +1903,16 @@ class ClaimController extends Controller
                 if ($ben_head == 'ER') {
                     if ($valuet->limit_type == 'H') {
                         $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head', 'ER');
+                        
+                        if ($array->count() > 0) {
+                            $data['amt'] = $valuet->amt_dis_yr;
+                        }
+                    }
+                }
+
+                if ($ben_head == 'CONG') {
+                    if ($valuet->limit_type == 'H') {
+                        $array  = $valuet->PD_BEN_HEAD->where('scma_oid_ben_type', 'BENEFIT_TYPE_IP')->where('ben_head', 'CONG');
                         
                         if ($array->count() > 0) {
                             $data['amt'] = $valuet->amt_dis_yr;
