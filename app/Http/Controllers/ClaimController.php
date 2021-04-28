@@ -654,6 +654,7 @@ class ClaimController extends Controller
             if($count_provider_not > 0){
                 return redirect('/admin/claim/'.$claim_id)->with('errorStatus', 'Tồn tại provider: "BUMRUNGRAD INTERNATIONAL HOSPITAL" vui lòng cập nhật lại HBS ');
             }
+            
             $count_policy =  $HBS_CL_CLAIM->HBS_CL_LINE->pluck("MR_POLICY_PLAN.MR_POLICY.pocy_ref_no")->unique()->filter()->count();
             if($count_policy != 1){
                 $request->session()->flash('errorStatus', 'Claim chỉ được phép tồn tại 1 policy plan ');
@@ -1477,7 +1478,7 @@ class ClaimController extends Controller
         $payMethod = payMethod($HBS_CL_CLAIM);
         $barcode = '<barcode code="'.$claim->barcode.'" type="C93"  height="1.3" />'
         .'<p style="text-align: right;">'.$claim->barcode.'</p>';
-        $CSRRemark_TermRemark = CSRRemark_TermRemark($claim);
+        $CSRRemark_TermRemark = CSRRemark_TermRemark($claim , $plan_id);
 
         $plan = $HBS_CL_CLAIM->plan;
         $CSR_REMASK_ALL_LINE = $HBS_CL_CLAIM->remark;
