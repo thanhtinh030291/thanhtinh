@@ -1516,7 +1516,7 @@ class ClaimController extends Controller
             $Provider->addr3,
             $Provider->addr4,
         ]);
-        $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM);
+        $tableInfo = $this->tableInfoPayment($HBS_CL_CLAIM , $plan_id);
         $incurDateTo = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_to);
         $incurDateFrom = Carbon::parse($HBS_CL_CLAIM->FirstLine->incur_date_from);
         $RBGOP = $HBS_CL_CLAIM->HBS_CL_LINE->whereIn('PD_BEN_HEAD.ben_head',['RB'])->sum('app_amt');
@@ -1601,7 +1601,7 @@ class ClaimController extends Controller
         
     }
 
-    function tableInfoPayment($HBS_CL_CLAIM){
+    function tableInfoPayment($HBS_CL_CLAIM , $plan_id = null){
         $sum_pre_amt = 0;
         $sum_app_amt = 0;
         $html = '
@@ -1654,7 +1654,12 @@ class ClaimController extends Controller
                     <td style="border: 1px solid black; font-family: arial, helvetica, sans-serif ; font-size: 11pt"></td>
                 </tr>';
             foreach ($valueIP as $key => $value) {
-                $content =config('constants.content_ip.'.$value->PD_BEN_HEAD->ben_head);
+                if(in_array($plan_id,['0013','0014','0015','0016','0017','0018']) && $value->PD_BEN_HEAD->ben_head == 'RB'){
+                    $content = 'Tiền phòng';
+                }else{
+                    $content =config('constants.content_ip.'.$value->PD_BEN_HEAD->ben_head);
+                }
+                
                 $range_pay = "";
                 $limit = $this->getlimitIP($value);
                 switch ($value->PD_BEN_HEAD->ben_head) {
