@@ -572,7 +572,7 @@ function CSRRemark_TermRemark($claim, $plan_id =null){
     foreach ($TermRemark as $key => $value) {
         switch ($key) {
             case '3':
-                if(in_array($plan_id,['0013','0014','0015','0016','0017','0018'])){
+                if(in_array($plan_id,['0007','0008','0009','0010','0011','0012','0013','0014','0015','0016','0017','0018'])){
                     $show_term[] = "<p style='text-align: justify;'><span style='font-family: arial, helvetica, sans-serif ; font-size: 11pt'>Quý khách vui lòng tham khảo Điều 3_ Các quy định loại trừ trách nhiệm bảo hiểm của Quy tắc và Điều khoản bảo hiểm Chăm sóc sức khỏe Toàn cầu: “Dai-ichi Life Việt Nam sẽ không thanh toán quyền lợi điều trị nội trú theo quy định tại Điều 2.1 và quyền lợi điều trị ngoại trú theo quy định tại Điều 2.2 của Quy tắc và Điều khoản sản phẩm bảo hiểm bổ sung này, nếu việc điều trị Bệnh tật/ Thương tật của Người được bảo hiểm phát sinh từ hoặc là hậu quả của bất kỳ trường hợp hoặc sự việc nào sau đây”: </span></p>";
                 }else{
                     $show_term[] = "<p style='text-align: justify;'><span style='font-family: arial, helvetica, sans-serif ; font-size: 11pt'>Quý khách vui lòng tham khảo Điều 3_ Các quy định loại trừ trách nhiệm bảo hiểm của Quy tắc và điều khoản bảo hiểm Chăm sóc sức khỏe: “Dai-ichi Life Việt Nam sẽ không thanh toán quyền lợi điều trị nội trú và điều trị ngoại trú theo quy định tại Điều 2 của Quy tắc, Điều khoản sản phẩm bổ sung này nếu việc điều trị Bệnh tật/Thương tật của Người được bảo hiểm thuộc bất kỳ trường hợp hoặc sự việc nào sau đây”: </span></p>";

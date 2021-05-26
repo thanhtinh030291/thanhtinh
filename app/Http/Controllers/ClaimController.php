@@ -1654,7 +1654,7 @@ class ClaimController extends Controller
                     <td style="border: 1px solid black; font-family: arial, helvetica, sans-serif ; font-size: 11pt"></td>
                 </tr>';
             foreach ($valueIP as $key => $value) {
-                if(in_array($plan_id,['0013','0014','0015','0016','0017','0018']) && $value->PD_BEN_HEAD->ben_head == 'RB'){
+                if(in_array($plan_id,['0007','0008','0009','0010','0011','0012','0013','0014','0015','0016','0017','0018']) && $value->PD_BEN_HEAD->ben_head == 'RB'){
                     $content = 'Tiền phòng';
                 }else{
                     $content =config('constants.content_ip.'.$value->PD_BEN_HEAD->ben_head);
