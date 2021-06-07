@@ -812,7 +812,7 @@ class ClaimController extends Controller
                 
                 // Claim GOP
                 
-                if($user->hasRole('ClaimGOP') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 50000000){
+                if($user->hasRole('ClaimGOP') && removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 8000000){
                     $to_user = $setting->manager_gop_claim;
                 }
                 if( $user->hasRole('ManagerGOP') &&  removeFormatPrice(data_get($export_letter->info, 'approve_amt')) > 100000000){
