@@ -311,8 +311,8 @@ class ClaimController extends Controller
         $user = Auth::User();
         $IS_FREEZED = 0;
         $setting = Setting::findOrFail(1);
-        $HBS_CL_CLAIM = HBS_CL_CLAIM::IOPDiag()->findOrFail($claim->code_claim);
-        $adminFee = $HBS_CL_CLAIM->adminFee;
+        $HBS_CL_CLAIM = HBS_CL_CLAIM::findOrFail($claim->code_claim);
+        
         foreach ($export_letter as $key => $value) {
 
             $check_claim_5m = false;
@@ -371,7 +371,6 @@ class ClaimController extends Controller
         
         try {
             
-            $IS_FREEZED = $HBS_CL_CLAIM->is_freezed == null ? 0 : $HBS_CL_CLAIM->is_freezed;
             $payment_history_cps = json_decode(AjaxCommonController::getPaymentHistoryCPS($data->code_claim_show)->getContent(),true);
             $payment_history = data_get($payment_history_cps,'data_full',[]);
             $approve_amt = data_get($payment_history_cps,'approve_amt');
@@ -383,6 +382,8 @@ class ClaimController extends Controller
             $member_name = data_get($payment_history_cps,'member_name');
             $balance_cps = json_decode(AjaxCommonController::getBalanceCPS($data->clClaim->member->memb_ref_no , $data->code_claim_show)->getContent(),true);
             $balance_cps = collect(data_get($balance_cps, 'data_full'));
+            $adminFee = data_get($payment_history_cps,'admin_fee');
+            $IS_FREEZED = data_get($payment_history_cps,'is_freezed');
             $tranfer_amt = (int)$approve_amt - (int)collect($payment_history)->sum('TF_AMT')-$balance_cps->sum('DEBT_BALANCE') + (int)$adminFee;
             $tranfer_amt = $claim->include_admin_fee == 1 ? $tranfer_amt : ($tranfer_amt - (int)$adminFee);
             
@@ -395,6 +396,7 @@ class ClaimController extends Controller
             $pocy_ref_no = "";
             $memb_ref_no = "";
             $payment_method = "";
+            $adminFee = 0;
             $balance_cps = collect([]);
         }
         
