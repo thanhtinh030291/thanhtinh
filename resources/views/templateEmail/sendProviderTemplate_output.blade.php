@@ -40,8 +40,6 @@
                         </td>
                         <td style="width: 305.9pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.4pt 0in 5.4pt; height: 52.3pt;" valign="top" width="408">
                         <p class="MsoNormal" style="line-height: 105%;"><strong><span style="font-size: 12.0pt; line-height: 105%; font-family: 'Times New Roman',serif; color: black;">Công ty TNHH Bảo hiểm Nhân thọ Dai-ichi Việt Nam</span></strong></p>
-                        <p class="MsoNormal" style="line-height: 105%;"><em><span style="font-size: 12.0pt; line-height: 105%; font-family: 'Times New Roman',serif; color: black;">Hoặc</span></em></p>
-                        <p class="MsoNormal" style="line-height: 105%;"><strong><span style="font-size: 12.0pt; line-height: 105%; font-family: 'Times New Roman',serif; color: black;">Công ty Bảo hiểm Nhân thọ Dai-ichi Việt Nam</span></strong></p>
                         </td>
                         </tr>
                         <tr style="mso-yfti-irow: 2; height: 27.6pt;">
